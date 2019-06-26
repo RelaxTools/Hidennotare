@@ -1,2 +1,2 @@
-# HecatonCheir
+# Hecatoncheir
 all-purpose VBA Library
