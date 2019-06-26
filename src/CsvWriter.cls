@@ -9,10 +9,10 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
-' [HecatonCheir] v1
+' [Hecatoncheir] v1
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
-' https://github.com/RelaxTools/HecatonCheir
+' https://github.com/RelaxTools/Hecatoncheir
 ' author:relaxtools@opensquare.net
 '
 ' The MIT License (MIT)
@@ -52,9 +52,9 @@ Implements IWriter
 Private IR As IWriter
 
 Private mFileName As String
-Private mNewLineCode As NewLineCodeConstants
-Private mEncode As EncodeConstants
-Private mMode As OpenModeConstants
+Private mNewLineCode As IWriterNewLineCodeConstants
+Private mEncode As IWriterEncodeConstants
+Private mMode As IWriterOpenModeConstants
 
 Private mDelimiter As String
 Private mQuotation As Boolean
@@ -66,9 +66,9 @@ Private Function IConstructor_Instancing(Args As Collection) As Object
     End If
     
     'Default
-    mNewLineCode = NewLineCodeConstants.CRLF
-    mEncode = EncodeConstants.CP932
-    mMode = OpenModeConstants.Output
+    mNewLineCode = IWriterNewLineCodeConstants.CRLF
+    mEncode = IWriterEncodeConstants.CP932
+    mMode = IWriterOpenModeConstants.Output
     
     mDelimiter = ","
     mQuotation = False

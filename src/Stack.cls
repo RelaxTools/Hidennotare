@@ -9,10 +9,10 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
-' [HecatonCheir] v1
+' [Hecatoncheir] v1
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
-' https://github.com/RelaxTools/HecatonCheir
+' https://github.com/RelaxTools/Hecatoncheir
 ' author:relaxtools@opensquare.net
 '
 ' The MIT License (MIT)
@@ -47,28 +47,36 @@ End Sub
 '---------------------
 ' ï€ë∂(Push)
 '---------------------
-Sub Push(ByVal strBuf As String)
-    mCol.Add strBuf
+Sub Push(ByVal v As Variant)
+    mCol.Add v
 End Sub
 '---------------------
 ' éÊÇËèoÇµ(Pop)
 '---------------------
-Function Pop() As String
+Function Pop() As Variant
     If mCol.Count = 0 Then
         Pop = ""
     Else
-        Pop = mCol(mCol.Count)
+        If IsObject(mCol(mCol.Count)) Then
+            Set Pop = mCol(mCol.Count)
+        Else
+            Pop = mCol(mCol.Count)
+        End If
         mCol.Remove mCol.Count
     End If
 End Function
 '---------------------
 ' éQè∆(çÌèúÇ»Çµ)
 '---------------------
-Function Peek() As String
+Function Peek() As Variant
     If mCol.Count = 0 Then
         Peek = ""
     Else
-        Peek = mCol(mCol.Count)
+        If IsObject(mCol(mCol.Count)) Then
+            Set Peek = mCol(mCol.Count)
+        Else
+            Peek = mCol(mCol.Count)
+        End If
     End If
 End Function
 '---------------------
@@ -77,10 +85,3 @@ End Function
 Property Get Count() As Long
     Count = mCol.Count
 End Property
-'Function Eof() As Boolean
-'    If mCol.Count = 0 Then
-'        Eof = True
-'    Else
-'        Eof = False
-'    End If
-'End Function

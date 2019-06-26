@@ -9,10 +9,10 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
-' [HecatonCheir] v1
+' [Hecatoncheir] v1
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
-' https://github.com/RelaxTools/HecatonCheir
+' https://github.com/RelaxTools/Hecatoncheir
 ' author:relaxtools@opensquare.net
 '
 ' The MIT License (MIT)
@@ -115,6 +115,19 @@ Private Function PrivatePlaceHolder(ByVal strMsg As String, ByVal p As Variant) 
     PrivatePlaceHolder = strMsg
 
 End Function
+''---------------------------------------
+'' エラー処理
+''---------------------------------------
+'Public Sub Throw(ByVal strSrc As String, ByVal strMsg As String, ParamArray p())
+'
+'    Dim strMessage As String
+'
+'    strMessage = PrivatePlaceHolder(strMsg, p)
+'
+'    Logger.LogFatal "Sorce=" & strSrc & " Description=" & strMessage
+'    Err.Raise vbObjectError + 1, strSrc, strMessage
+'
+'End Sub
 ' アプリケーション名取得
 Private Property Get Title() As String
     Title = ThisWorkbook.BuiltinDocumentProperties("Title").Value
@@ -130,3 +143,4 @@ Private Function Escape(ByVal v As String) As String
     Escape = v
     
 End Function
+

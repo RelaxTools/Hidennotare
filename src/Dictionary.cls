@@ -9,10 +9,10 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
-' [HecatonCheir] v1
+' [Hecatoncheir] v1
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
-' https://github.com/RelaxTools/HecatonCheir
+' https://github.com/RelaxTools/Hecatoncheir
 ' author:relaxtools@opensquare.net
 '
 ' The MIT License (MIT)
@@ -228,22 +228,35 @@ Public Function ToString() As String
         End If
     
         Select Case True
-            
-            Case IsObject(v)
+            Case IsObject(v), VarType(v) = vbDataObject
                 
                 sb.Append """" & KeyValue & """:" & v.ToString
             
             Case IsEmpty(v)
-
+                
                 sb.Append """" & KeyValue & """:" & "null"
-
-            Case VarType(v) = vbBoolean
-
-                sb.Append """" & KeyValue & """:" & LCase(CStr(v))
-
+            
             Case Else
-
-                sb.Append """" & KeyValue & """:" & Escape(v)
+                Select Case VarType(v)
+                    
+                    Case vbBoolean
+        
+                        sb.Append """" & KeyValue & """:" & LCase(CStr(v))
+        
+                    Case vbString
+                    
+                        sb.Append """" & KeyValue & """:" & Escape(v)
+                    
+                    Case vbByte, vbInteger, vbLong, vbSingle, vbDouble, vbCurrency, vbDecimal ', vbLongLong
+        
+                        sb.Append """" & KeyValue & """:" & v
+        
+                    Case Else
+        
+                        'ÉGÉâÅ[
+                        Err.Raise vbObjectError + 1, TypeName(Me) & ".ToString", Message.PlaceHolder("not cast type ", TypeName(v))
+        
+                End Select
 
         End Select
     

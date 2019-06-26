@@ -9,10 +9,10 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
-' [HecatonCheir] v1
+' [Hecatoncheir] v1
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
-' https://github.com/RelaxTools/HecatonCheir
+' https://github.com/RelaxTools/Hecatoncheir
 ' author:relaxtools@opensquare.net
 '
 ' The MIT License (MIT)
@@ -103,7 +103,6 @@ Function Replace(ByVal strText As String, ByVal strExp As String, ByVal strRepla
     Replace = strBuf
     
 End Function
-
 '--------------------------------------------------------------
 '  í èÌåüçı CollectionÇï‘ãp
 '--------------------------------------------------------------

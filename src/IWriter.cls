@@ -9,10 +9,10 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
-' [HecatonCheir] v1
+' [Hecatoncheir] v1
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
-' https://github.com/RelaxTools/HecatonCheir
+' https://github.com/RelaxTools/Hecatoncheir
 ' author:relaxtools@opensquare.net
 '
 ' The MIT License (MIT)
@@ -38,15 +38,17 @@ Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 
-Public Enum NewLineCodeConstants
+Public Enum IWriterNewLineCodeConstants
     CRLF
     LF
+    None
 End Enum
-Public Enum EncodeConstants
+Public Enum IWriterEncodeConstants
     CP932
     UTF8
+    UTF16LE
 End Enum
-Public Enum OpenModeConstants
+Public Enum IWriterOpenModeConstants
     Output
     AppendFile
 End Enum

@@ -9,10 +9,10 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
-' [HecatonCheir] v1
+' [Hecatoncheir] v1
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
-' https://github.com/RelaxTools/HecatonCheir
+' https://github.com/RelaxTools/Hecatoncheir
 ' author:relaxtools@opensquare.net
 '
 ' The MIT License (MIT)
@@ -44,7 +44,6 @@ Attribute VB_Exposed = False
 ' 2018-12-16 Ver.1.0.0 新規作成
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
-'Option Private Module
 '--------------------------------------------------------------
 'レジストリ読み込み
 '--------------------------------------------------------------

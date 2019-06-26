@@ -5,14 +5,14 @@ END
 Attribute VB_Name = "ArrayList"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = False
+Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
-' [HecatonCheir] v1
+' [Hecatoncheir] v1
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
-' https://github.com/RelaxTools/HecatonCheir
+' https://github.com/RelaxTools/Hecatoncheir
 ' author:relaxtools@opensquare.net
 '
 ' The MIT License (MIT)
@@ -36,11 +36,14 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
+' このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。配列関係のメソッドがあります。
+'-----------------------------------------------------------------------------------------------------
 '  ArrayList クラス
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements IConstructor
 Implements ICursor
+Implements IList
 
 Private mCol As Collection
 Private v() As Variant
@@ -77,12 +80,12 @@ Private Function IConstructor_Instancing(ByRef Args As Collection) As Object
                 
                 'コレクションからの変換
                 Case TypeOf Args(1) Is Collection
-                    Me.Clear
+                    Call IList_Clear
                     Set mCol = Args(1)
                 
                 '１次元配列からの変換
                 Case IsArray(Args(1))
-                    Me.Clear
+                    Call IList_Clear
                     For i = LBound(Args(1)) To UBound(Args(1))
                         mCol.Add Args(1)(i)
                     Next
@@ -93,7 +96,7 @@ Private Function IConstructor_Instancing(ByRef Args As Collection) As Object
         
         '引数からの追加
         Case Else
-            Me.Clear
+            Call IList_Clear
             For Each v In Args
                 mCol.Add v
             Next
@@ -102,10 +105,32 @@ Private Function IConstructor_Instancing(ByRef Args As Collection) As Object
     Set IConstructor_Instancing = Me
     
 End Function
+'---------------------------------------------------------------------------------------------------
+' 空配列対応 IsArray
+'---------------------------------------------------------------------
+' Dim a() As Variant --> Error 9 インデックスが有効範囲にありません。
+' a = Array() --> Ubound が -1
+'---------------------------------------------------------------------
+Public Function IsArray(v As Variant) As Boolean
+
+    On Error GoTo e
+
+    IsArray = False
+
+    If VBA.IsArray(v) Then
+        IsArray = IIf(UBound(v) < LBound(v), False, True)
+    Else
+        IsArray = False
+    End If
+
+e:
+    Exit Function
+
+End Function
 '--------------------------------------------------------------
 '  ArrayList から全ての項目を削除する。
 '--------------------------------------------------------------
-Public Sub Clear()
+Private Sub IList_Clear()
 
     Set mCol = New Collection
     mIndex = 0
@@ -114,7 +139,7 @@ End Sub
 '--------------------------------------------------------------
 '  ArrayList に項目を追加する。
 '--------------------------------------------------------------
-Public Sub Add(obj As Variant)
+Private Sub IList_Add(obj As Variant)
     
     mCol.Add obj
 
@@ -122,10 +147,10 @@ End Sub
 '--------------------------------------------------------------
 '  ArrayList の指定位置に項目を追加する。
 '--------------------------------------------------------------
-Public Sub Insert(Idx As Long, v As Variant)
+Private Sub IList_Insert(Idx As Long, v As Variant)
 
     If Idx < 0 Or Idx >= mCol.Count Then
-        Err.Raise vbObjectError + 512 + 1, , "IndexOutOfRangeException"
+        Err.Raise vbObjectError + 1, TypeName(Me) & ".Insert", "IndexOutOfRangeException"
     End If
     
     mCol.Add v, , Idx + 1
@@ -134,40 +159,38 @@ End Sub
 '--------------------------------------------------------------
 '  For Each 用
 '--------------------------------------------------------------
-Public Function NewEnum() As stdole.IUnknown
-Attribute NewEnum.VB_UserMemId = -4
-    Set NewEnum = mCol.[_NewEnum]
+Private Function IList_NewEnum() As stdole.IUnknown
+    Set IList_NewEnum = mCol.[_NewEnum]
 End Function
 '--------------------------------------------------------------
 '  ArrayList 要素数を返却
 '--------------------------------------------------------------
-Public Property Get Count() As Long
-    Count = mCol.Count
+Private Property Get IList_Count() As Long
+    IList_Count = mCol.Count
 End Property
 '--------------------------------------------------------------
 '  ArrayList の指定位置の項目を取得
 '--------------------------------------------------------------
-Public Property Get Item(Idx As Long) As Variant
-Attribute Item.VB_UserMemId = 0
+Private Property Get IList_Item(Idx As Long) As Variant
     
     If Idx < 0 Or Idx >= mCol.Count Then
-        Err.Raise vbObjectError + 512 + 1, , "IndexOutOfRangeException"
+        Err.Raise vbObjectError + 1, TypeName(Me) & ".Item", "IndexOutOfRangeException"
     End If
         
     If VBA.IsObject(mCol.Item(Idx + 1)) Then
-        Set Item = mCol.Item(Idx + 1)
+        Set IList_Item = mCol.Item(Idx + 1)
     Else
-        Item = mCol.Item(Idx + 1)
+        IList_Item = mCol.Item(Idx + 1)
     End If
     
 End Property
 '--------------------------------------------------------------
 '  ArrayList の指定位置の項目を削除
 '--------------------------------------------------------------
-Public Sub RemoveAt(Idx As Long)
+Private Sub IList_RemoveAt(Idx As Long)
     
     If Idx < 0 Or Idx >= mCol.Count Then
-        Err.Raise vbObjectError + 512 + 1, , "IndexOutOfRangeException"
+        Err.Raise vbObjectError + 1, TypeName(Me) & ".RemoveAt", "IndexOutOfRangeException"
     End If
     
     mCol.Remove Idx + 1
@@ -175,7 +198,7 @@ End Sub
 '--------------------------------------------------------------
 '  ArrayList のソート
 '--------------------------------------------------------------
-Public Sub Sort(Optional ByVal CP As IComparer = Nothing)
+Private Sub IList_Sort(Optional ByVal CP As IComparer = Nothing)
 
     Dim i As Long
     Dim j As Long
@@ -227,7 +250,7 @@ End Sub
 '--------------------------------------------------------------
 '  ArrayList を１次元配列に変換
 '--------------------------------------------------------------
-Public Function ToArray() As Variant
+Private Function IList_ToArray() As Variant
 
     Dim c As Variant
     Dim i As Long
@@ -244,21 +267,21 @@ Public Function ToArray() As Variant
         
     Next
 
-    ToArray = v
+    IList_ToArray = v
     
 End Function
 '--------------------------------------------------------------
 '  ArrayList をCollectionに変換
 '--------------------------------------------------------------
-Public Function ToCollection() As Collection
+Private Function IList_ToCollection() As Collection
     
-    Set ToCollection = mCol
+    Set IList_ToCollection = mCol
 
 End Function
 '--------------------------------------------------------------
 '  ArrayList をJSONに変換
 '--------------------------------------------------------------
-Public Function ToString() As String
+Private Function IList_ToString() As String
 
     Dim v As Variant
     Dim sb As StringBuilder
@@ -267,33 +290,46 @@ Public Function ToString() As String
     For Each v In mCol
     
         Select Case True
-            Case IsObject(v)
-
+            Case IsObject(v), VarType(v) = vbDataObject
+                
                 sb.Append v.ToString
-
+            
             Case IsEmpty(v)
-
+                
                 sb.Append "null"
             
-            Case VarType(v) = vbBoolean
-
-                sb.Append LCase(CStr(v))
-
             Case Else
-
-                sb.Append Escape(v)
-
+                Select Case VarType(v)
+                    
+                    Case vbBoolean
+        
+                        sb.Append LCase(CStr(v))
+        
+                    Case vbString
+                    
+                        sb.Append IList_Escape(v)
+                    
+                    Case vbByte, vbInteger, vbLong, vbSingle, vbDouble, vbCurrency, vbDecimal ', vbLongLong
+        
+                        sb.Append v
+        
+                    Case Else
+        
+                        'エラー
+                        Err.Raise vbObjectError + 1, TypeName(Me) & ".ToString", Message.PlaceHolder("not cast type ""{0}""", TypeName(v))
+        
+                End Select
         End Select
-    
+        
     Next
 
-    ToString = "[" & sb.ToJoin(", ") & "]"
+    IList_ToString = "[" & sb.ToJoin(", ") & "]"
 
 End Function
 '---------------------------------------------------------------------
 ' 制御文字変換
 '---------------------------------------------------------------------
-Private Function Escape(ByVal v As String) As String
+Private Function IList_Escape(ByVal v As String) As String
 
     Dim strChr As String
     Dim sb As StringBuilder
@@ -331,7 +367,7 @@ Private Function Escape(ByVal v As String) As String
     Next
     
     '本当にJSONするならここでUTF8変換
-    Escape = """" & sb.ToString & """"
+    IList_Escape = """" & sb.ToString & """"
 
 End Function
 'Unicode
@@ -346,8 +382,8 @@ End Function
 '--------------------------------------------------------------
 '  ArrayList の ICursor インターフェースを取得
 '--------------------------------------------------------------
-Public Property Get GetCursor() As ICursor
-    Set GetCursor = Me
+Private Property Get IList_GetCursor() As ICursor
+    Set IList_GetCursor = Me
 End Property
 '--------------------------------------------------------------
 '  ICursor の Eof プロパティを取得

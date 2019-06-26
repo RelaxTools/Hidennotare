@@ -1,10 +1,10 @@
 Attribute VB_Name = "ClassHelper"
 '-----------------------------------------------------------------------------------------------------
 '
-' [HecatonCheir] v1
+' [Hecatoncheir] v1
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
-' https://github.com/RelaxTools/HecatonCheir
+' https://github.com/RelaxTools/Hecatoncheir
 ' author:relaxtools@opensquare.net
 '
 ' The MIT License (MIT)
@@ -70,6 +70,9 @@ Public Function Constructor(ByRef obj As Object, ParamArray Args() As Variant) A
     End If
 
 End Function
+'VBA 個人的汎用処理 https://qiita.com/nukie_53/items/bde16afd9a6ca789949d
+'@nukie_53
+'Set/Letを隠蔽するプロパティ
 Public Property Let SetVar(outVariable As Variant, inExpression As Variant)
     
     If VBA.IsObject(inExpression) Then

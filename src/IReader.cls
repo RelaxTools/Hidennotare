@@ -2,7 +2,7 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "NewExcel"
+Attribute VB_Name = "IReader"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
@@ -36,49 +36,18 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-' 別プロセスのExcelを起動する。
-'-----------------------------------------------------------------------------------------------------
-' 依存クラス：IUsing
-' その他注意事項：起動時ではなく最初の参照時にExcelを起動する。
-'-----------------------------------------------------------------------------------------------------
-' 2019-05-22 Ver.1.0.0 新規作成
-'-----------------------------------------------------------------------------------------------------
 Option Explicit
-Implements IUsing
 
-Private mXL As Excel.Application
-'Instance を取得時にオブジェクトを生成する。
-Public Property Get GetInstance() As Excel.Application
-    If mXL Is Nothing Then
-        Set mXL = New Excel.Application
-        mXL.EnableEvents = False
-        mXL.PrintCommunication = False
-        mXL.DisplayAlerts = False
-    End If
-    Set GetInstance = mXL
-End Property
+Public Enum IReaderNewLineCodeConstants
+    CRLF
+    LF
+    None
+End Enum
+Public Enum IReaderEncodeConstants
+    CP932
+    UTF8
+    UTF16LE
+End Enum
+Function ReadAll() As Variant
 
-Private Sub Class_Terminate()
-    Call IUsing_Finish
-End Sub
-
-Private Sub IUsing_Begin()
-
-End Sub
-
-Private Sub IUsing_Finish()
-    
-    If Not mXL Is Nothing Then
-        '開いているブックがあれば全部閉じる
-        If mXL.Workbooks.Count > 0 Then
-            Dim WB As Workbook
-            For Each WB In mXL.Workbooks
-                WB.Close SaveChanges:=False
-            Next
-        End If
-        mXL.Quit
-    End If
-    Set mXL = Nothing
-
-End Sub
-
+End Function

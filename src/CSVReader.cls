@@ -1,0 +1,351 @@
+VERSION 1.0 CLASS
+BEGIN
+  MultiUse = -1  'True
+END
+Attribute VB_Name = "CSVReader"
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = False
+Attribute VB_PredeclaredId = False
+Attribute VB_Exposed = False
+'-----------------------------------------------------------------------------------------------------
+'
+' [Hecatoncheir] v1
+'
+' Copyright (c) 2019 Yasuhiro Watanabe
+' https://github.com/RelaxTools/Hecatoncheir
+' author:relaxtools@opensquare.net
+'
+' The MIT License (MIT)
+'
+' Permission is hereby granted, free of charge, to any person obtaining a copy
+' of this software and associated documentation files (the "Software"), to deal
+' in the Software without restriction, including without limitation the rights
+' to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+' copies of the Software, and to permit persons to whom the Software is
+' furnished to do so, subject to the following conditions:
+'
+' The above copyright notice and this permission notice shall be included in all
+' copies or substantial portions of the Software.
+'
+' THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+' IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+' FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+' AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+' LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+' OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+' SOFTWARE.
+'
+'-----------------------------------------------------------------------------------------------------
+' 依存モジュール
+'   IConstructor.cls
+'   TextReader.cls
+'   ICursor.cls
+'   IReader.cls
+'-----------------------------------------------------------------------------------------------------
+' 2018-12-06 Ver.1.0.0 新規作成 CSV入力クラス
+'-----------------------------------------------------------------------------------------------------
+
+Option Explicit
+Implements IConstructor
+Implements ICursor
+Implements IReader
+
+Private IR As IReader
+
+Private mFileName As String
+Private mNewLineCode As IReaderNewLineCodeConstants
+Private mEncode As IReaderEncodeConstants
+
+Private mDelimiter As String
+Private mQuotation As Boolean
+
+Private mCol As Collection
+Private mIndex As Long
+'--------------------------------------------------------------
+'　コンストラクタ
+'--------------------------------------------------------------
+Private Function IConstructor_Instancing(Args As Collection) As Object
+    
+    If Args.Count = 0 Then
+        Exit Function
+    End If
+    
+    'Default
+    mNewLineCode = IReaderNewLineCodeConstants.CRLF
+    mEncode = IReaderEncodeConstants.CP932
+    
+    mDelimiter = ","
+    mQuotation = False
+    
+    If Args.Count >= 1 Then
+        mFileName = Args(1)
+    End If
+    
+    If Args.Count >= 2 Then
+        mNewLineCode = Args(2)
+    End If
+    
+    If Args.Count >= 3 Then
+        mEncode = Args(3)
+    End If
+    
+    If Args.Count >= 4 Then
+        mDelimiter = Args(4)
+    End If
+    
+    If Args.Count >= 5 Then
+        mQuotation = Args(5)
+    End If
+    
+    'TextReaderに委譲する。コーテーションありの場合には改行コードをCsvReader側でパースする。
+    If mQuotation Then
+        Set IR = Constructor(New TextReader, mFileName, IReaderNewLineCodeConstants.None, mEncode)
+    Else
+        Set IR = Constructor(New TextReader, mFileName, mNewLineCode, mEncode)
+    End If
+    
+    Set mCol = CsvParser(IR.ReadAll)
+    
+    ICursor_MoveFirst
+    
+    Set IConstructor_Instancing = Me
+    
+End Function
+
+Private Sub Class_Terminate()
+    Set IR = Nothing
+End Sub
+'--------------------------------------------------------------
+'　CSVのパース
+'--------------------------------------------------------------
+Private Function CsvParser(ByVal strBuf As String) As Collection
+
+    Const C_QUAT As String = """"
+    Dim IC As ICursor
+    Dim sw As Boolean
+    Dim blnLineBreak As Boolean
+    Dim blnItemBreak As Boolean
+    Dim col As Collection
+    Dim row As Collection
+    Dim lngQuot As Long
+    
+    lngQuot = 0
+    
+    sw = False
+    
+    Set row = New Collection
+    
+    Set IC = Constructor(New CharCursor, strBuf)
+    Do Until IC.Eof
+        
+        '初期化
+        Set col = New Collection
+        blnLineBreak = False
+
+        Do Until IC.Eof Or blnLineBreak
+        
+            '初期化
+            Dim sb As StringBuilder
+            Set sb = New StringBuilder
+            blnItemBreak = False
+            
+            Do Until IC.Eof Or blnLineBreak Or blnItemBreak
+            
+                Select Case IC.Item
+                    Case C_QUAT
+                        
+                        'コーテーションありの場合
+                        If mQuotation Then
+                            
+                            lngQuot = lngQuot + 1
+                            
+                            If sw Then
+                                
+                                '次の文字がQuatation
+                                If IC.Item(1) = C_QUAT Then
+                                    lngQuot = lngQuot + 1
+                                    sb.Append C_QUAT
+                                    IC.MoveNext
+                                Else
+                                    sw = False
+                                End If
+                            
+                            Else
+                                sw = True
+                            End If
+                        End If
+                    
+                    Case vbCr
+                        
+                        If sw Then
+                            sb.Append IC.Item
+                        End If
+                    
+                    Case vbLf
+                        
+                        If sw Then
+                            sb.Append IC.Item
+                        Else
+                            blnLineBreak = True
+                        End If
+                    
+                    Case mDelimiter
+                    
+                        If sw Then
+                            sb.Append IC.Item
+                        Else
+                            blnItemBreak = True
+                        End If
+                    
+                    Case Else
+                        
+                        sb.Append IC.Item
+                
+                End Select
+            
+                IC.MoveNext
+            Loop
+            
+            '列追加処理
+            col.Add sb.ToString
+            
+        Loop
+        
+        '行追加処理
+        row.Add col
+        
+    Loop
+    
+    If lngQuot Mod 2 <> 0 Then
+        Err.Raise vbObjectError + 1, TypeName(Me) & ".CsvParser", "Invalid Format(Quotation)"
+    End If
+    
+    Set CsvParser = row
+    
+End Function
+'--------------------------------------------------------------
+'　配列読み込み
+'--------------------------------------------------------------
+Private Function IReader_ReadAll() As Variant
+
+    Dim lngCol As Long
+    Dim lngRow As Long
+    Dim i As Long
+    Dim j As Long
+    Dim c As Collection
+    
+    lngRow = mCol.Count
+    lngCol = 0
+    
+    If lngRow = 0 Then
+        IReader_ReadAll = Empty
+    Else
+        For Each c In mCol
+            If lngCol < c.Count Then
+                lngCol = c.Count
+            End If
+        Next
+    
+        Dim var() As Variant
+        ReDim var(1 To lngRow, 1 To lngCol)
+    
+        For i = 1 To lngRow
+            For j = 1 To lngCol
+                var(i, j) = mCol(i)(j)
+            Next
+        Next
+        
+        IReader_ReadAll = var
+    End If
+End Function
+'--------------------------------------------------------------
+' ICursor インターフェースを取得
+'--------------------------------------------------------------
+Public Property Get GetCursor() As ICursor
+    Set GetCursor = Me
+End Property
+'------------------------------------------------------
+' 終了判定
+'------------------------------------------------------
+Private Property Get ICursor_Eof() As Boolean
+    
+    If mCol Is Nothing Then
+        ICursor_Eof = True
+        Exit Sub
+    End If
+    
+    ICursor_Eof = mCol.Count < mIndex
+
+End Property
+'------------------------------------------------------
+' 項目取得
+'------------------------------------------------------
+Private Property Get ICursor_Item(Optional ByVal opt As Variant) As Variant
+    
+    If IsMissing(opt) Then
+        If ICursor_Eof Then
+            'EOF後は最後の値を返す
+            If IsObject(mCol(mCol.Count)) Then
+                Set ICursor_Item = mCol(mCol.Count)
+            Else
+                ICursor_Item = mCol(mCol.Count)
+            End If
+        Else
+            If IsObject(mCol(mIndex)) Then
+                Set ICursor_Item = mCol(mIndex)
+            Else
+                ICursor_Item = mCol(mIndex)
+            End If
+        End If
+    Else
+        If ICursor_Eof Then
+            'EOF後は最後の値を返す
+            If IsObject(mCol(mCol.Count)(opt)) Then
+                Set ICursor_Item = mCol(mCol.Count)(opt)
+            Else
+                ICursor_Item = mCol(mCol.Count)(opt)
+            End If
+        Else
+            If IsObject(mCol(mIndex)(opt)) Then
+                Set ICursor_Item = mCol(mIndex)(opt)
+            Else
+                ICursor_Item = mCol(mIndex)(opt)
+            End If
+        End If
+    End If
+End Property
+'------------------------------------------------------
+' 前項目取得
+'------------------------------------------------------
+Private Property Get ICursor_PreviousItem(Optional ByVal opt As Variant) As Variant
+
+    If IsMissing(opt) Then
+        If IsObject(mCol(mIndex - 1)) Then
+            Set ICursor_PreviousItem = mCol(mIndex - 1)
+        Else
+            ICursor_PreviousItem = mCol(mIndex - 1)
+        End If
+    Else
+        If IsObject(mCol(mIndex - 1)(opt)) Then
+            Set ICursor_PreviousItem = mCol(mIndex - 1)(opt)
+        Else
+            ICursor_PreviousItem = mCol(mIndex - 1)(opt)
+        End If
+    End If
+    
+End Property
+'------------------------------------------------------
+' 最初の行に移動
+'------------------------------------------------------
+Private Sub ICursor_MoveFirst()
+    mIndex = 1
+End Sub
+
+'------------------------------------------------------
+' 次行取得
+'------------------------------------------------------
+Private Sub ICursor_MoveNext()
+    mIndex = mIndex + 1
+End Sub
+
+

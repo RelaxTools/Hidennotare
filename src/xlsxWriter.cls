@@ -9,10 +9,10 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
-' [HecatonCheir] v1
+' [Hecatoncheir] v1
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
-' https://github.com/RelaxTools/HecatonCheir
+' https://github.com/RelaxTools/Hecatoncheir
 ' author:relaxtools@opensquare.net
 '
 ' The MIT License (MIT)
@@ -46,12 +46,6 @@ Private mstrFileName As String
 Private mWS As Worksheet
 Private mWB As Workbook
 
-Private Sub Class_Terminate()
-    mWB.Close SaveChanges:=False
-    Set mWS = Nothing
-    Set mWB = Nothing
-End Sub
-
 Private Function IConstructor_Instancing(Args As Collection) As Object
 
     If Args.Count = 0 Then
@@ -74,6 +68,15 @@ Private Function IConstructor_Instancing(Args As Collection) As Object
     Set IConstructor_Instancing = Me
 
 End Function
+Private Sub Class_Terminate()
+    
+    Call IWriter_Flush
+    
+    mWB.Close SaveChanges:=False
+    Set mWS = Nothing
+    Set mWB = Nothing
+End Sub
+
 Private Sub IWriter_Append(ByVal Args As Variant)
     
     Dim v As Variant

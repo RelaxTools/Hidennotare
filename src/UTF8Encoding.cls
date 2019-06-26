@@ -5,11 +5,11 @@ END
 Attribute VB_Name = "UTF8Encoding"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = False
+Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
-' [HecatonCheir] v1
+' [Hecatoncheir] v1
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/HecatonCheir
@@ -35,6 +35,8 @@ Attribute VB_Exposed = False
 ' OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 ' SOFTWARE.
 '
+'-----------------------------------------------------------------------------------------------------
+' このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Private Declare PtrSafe Function MultiByteToWideChar Lib "kernel32" (ByVal CodePage As Long, ByVal dwFlags As Long, ByVal lpMultiByteStr As LongPtr, ByVal cchMultiByte As Long, ByVal lpWideCharStr As LongPtr, ByVal cchWideChar As Long) As Long

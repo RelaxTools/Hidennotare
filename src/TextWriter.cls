@@ -9,10 +9,10 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
-' [HecatonCheir] v1
+' [Hecatoncheir] v1
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
-' https://github.com/RelaxTools/HecatonCheir
+' https://github.com/RelaxTools/Hecatoncheir
 ' author:relaxtools@opensquare.net
 '
 ' The MIT License (MIT)
@@ -45,16 +45,17 @@ Option Explicit
 Implements IConstructor
 Implements IWriter
 
-Private UTF8 As UTF8Encoding
-
 Private fp As Integer
 Private mOpen As Boolean
 
 'プロパティ保持
 Private mFileName As String
-Private mNewLineCode As NewLineCodeConstants
-Private mEncode As EncodeConstants
-Private mMode As OpenModeConstants
+Private mNewLineCode As IWriterNewLineCodeConstants
+Private mEncode As IWriterEncodeConstants
+Private mMode As IWriterOpenModeConstants
+Private mBOM As Boolean
+
+Private mFirst As Boolean
 
 Private Function IConstructor_Instancing(Args As Collection) As Object
 
@@ -63,9 +64,10 @@ Private Function IConstructor_Instancing(Args As Collection) As Object
     End If
     
     'Default
-    mNewLineCode = NewLineCodeConstants.CRLF
-    mEncode = EncodeConstants.CP932
-    mMode = OpenModeConstants.Output
+    mNewLineCode = IWriterNewLineCodeConstants.CRLF
+    mEncode = IWriterEncodeConstants.CP932
+    mMode = IWriterOpenModeConstants.Output
+    mBOM = False
     
     If Args.Count >= 1 Then
         mFileName = Args(1)
@@ -83,6 +85,10 @@ Private Function IConstructor_Instancing(Args As Collection) As Object
         mMode = Args(4)
     End If
     
+    If Args.Count >= 5 Then
+        mBOM = Args(5)
+    End If
+    
     Set IConstructor_Instancing = Me
 
 
@@ -94,13 +100,10 @@ Private Function IConstructor_Instancing(Args As Collection) As Object
     If Not FileIO.FolderExists(strFolder) Then
         Err.Raise 512 + 1, TypeName(Me) & ".OpenFile", "フォルダ(" & strFolder & ")が存在しません。"
     End If
-    
-    
-    If mEncode = EncodeConstants.UTF8 Then
-        Set UTF8 = New UTF8Encoding
-    End If
 
     Call fileOpen
+
+    mFirst = True
 
 End Function
 
@@ -108,21 +111,52 @@ Private Sub IWriter_Append(ByVal Args As Variant)
     
     Dim strLine As String
     Dim bytBuf() As Byte
+    Dim bytBom() As Byte
+    
+    If mBOM And mFirst And mMode = IWriterOpenModeConstants.Output Then
+        'エンコード
+        Select Case mEncode
+            Case IWriterEncodeConstants.UTF8
+                
+                ReDim bytBom(0 To 2)
+            
+                bytBom(0) = &HEF
+                bytBom(1) = &HBB
+                bytBom(2) = &HBF
+            
+                Put #fp, , bytBom
+            
+            Case IWriterEncodeConstants.UTF16LE
+                
+                ReDim bytBom(0 To 1)
+            
+                bytBom(0) = &HFF
+                bytBom(1) = &HFE
+        
+                Put #fp, , bytBom
+        
+        End Select
+        mFirst = False
+    End If
 
     '改行
     Select Case mNewLineCode
-        Case NewLineCodeConstants.CRLF
+        Case IWriterNewLineCodeConstants.CRLF
             strLine = Args & vbCrLf
-        Case NewLineCodeConstants.LF
+        Case IWriterNewLineCodeConstants.LF
             strLine = Args & vbLf
+        Case IWriterNewLineCodeConstants.None
+            strLine = Args
     End Select
         
-        'エンコード
+    'エンコード
     Select Case mEncode
-        Case EncodeConstants.CP932 'SJIS
+        Case IWriterEncodeConstants.CP932 'SJIS
             bytBuf = VBA.StrConv(strLine, vbFromUnicode)
-        Case EncodeConstants.UTF8
-            bytBuf = UTF8.GetBytes(strLine)
+        Case IWriterEncodeConstants.UTF8
+            bytBuf = UTF8Encoding.GetBytes(strLine)
+        Case IWriterEncodeConstants.UTF16LE
+            bytBuf = strLine
     End Select
 
     Put #fp, , bytBuf
@@ -156,14 +190,12 @@ Private Sub Class_Terminate()
         Close fp
     End If
 
-    Set UTF8 = Nothing
-
 End Sub
 
 Private Sub fileOpen()
     
     Select Case mMode
-        Case OpenModeConstants.Output
+        Case IWriterOpenModeConstants.Output
             
             fp = FreeFile()
             Open mFileName For Output As fp
@@ -173,7 +205,7 @@ Private Sub fileOpen()
             Open mFileName For Binary As fp
             mOpen = True
         
-        Case OpenModeConstants.AppendFile
+        Case IWriterOpenModeConstants.AppendFile
             
             fp = FreeFile
             Open mFileName For Binary As fp

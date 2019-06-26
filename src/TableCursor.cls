@@ -9,10 +9,10 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
-' [HecatonCheir] v1
+' [Hecatoncheir] v1
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
-' https://github.com/RelaxTools/HecatonCheir
+' https://github.com/RelaxTools/Hecatoncheir
 ' author:relaxtools@opensquare.net
 '
 ' The MIT License (MIT)
@@ -74,9 +74,9 @@ Private Function IConstructor_Instancing(ByRef Args As Collection) As Object
     
     If mLO.ListRows.Count > 0 Then
         'データの最初の行
-        mlngStartRow = mLO.DataBodyRange(1).Row
+        mlngStartRow = mLO.DataBodyRange(1).row
         'データの最後の行
-        mlngLastRow = mLO.DataBodyRange(mLO.DataBodyRange.Count).Row
+        mlngLastRow = mLO.DataBodyRange(mLO.DataBodyRange.Count).row
         'カレント行
         mlngRow = mlngStartRow
         

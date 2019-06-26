@@ -9,10 +9,10 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
-' [HecatonCheir] v1
+' [Hecatoncheir] v1
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
-' https://github.com/RelaxTools/HecatonCheir
+' https://github.com/RelaxTools/Hecatoncheir
 ' author:relaxtools@opensquare.net
 '
 ' The MIT License (MIT)
@@ -427,8 +427,6 @@ Public Function SearchTreeForFile(ByVal strPath As String, ByVal strFile As Stri
     End If
 
 End Function
-'--------------------------------------------------------------
-
 '--------------------------------------------------------------
 '　ファイルパス結合
 '--------------------------------------------------------------

@@ -9,10 +9,10 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
-' [HecatonCheir] v1
+' [Hecatoncheir] v1
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
-' https://github.com/RelaxTools/HecatonCheir
+' https://github.com/RelaxTools/Hecatoncheir
 ' author:relaxtools@opensquare.net
 '
 ' The MIT License (MIT)
@@ -157,14 +157,6 @@ End Property
 ' ’uŠ·
 '------------------------------------------------------
 Public Sub Replace(ByVal strFind As String, ByVal strReplace As String)
-'
-'    Dim strBuf As String
-'
-'    strBuf = Me.ToString
-'
-'    Me.Clear
-'
-'    Me.Append VBA.Replace(strBuf, strFind, strReplace)
 
     Dim i As Long
     If mlngCount > 0 Then
