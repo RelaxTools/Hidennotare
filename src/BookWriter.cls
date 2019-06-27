@@ -2,7 +2,7 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "xlsxWriter"
+Attribute VB_Name = "BookWriter"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
@@ -75,6 +75,7 @@ Private Sub Class_Terminate()
     mWB.Close SaveChanges:=False
     Set mWS = Nothing
     Set mWB = Nothing
+
 End Sub
 
 Private Sub IWriter_Append(ByVal Args As Variant)

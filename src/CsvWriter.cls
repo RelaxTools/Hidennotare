@@ -52,9 +52,10 @@ Implements IWriter
 Private IR As IWriter
 
 Private mFileName As String
-Private mNewLineCode As IWriterNewLineCodeConstants
-Private mEncode As IWriterEncodeConstants
-Private mMode As IWriterOpenModeConstants
+Private mNewLineCode As NewLineCodeConstants
+Private mEncode As EncodeConstants
+Private mMode As OpenModeConstants
+Private mBom As Boolean
 
 Private mDelimiter As String
 Private mQuotation As Boolean
@@ -66,9 +67,10 @@ Private Function IConstructor_Instancing(Args As Collection) As Object
     End If
     
     'Default
-    mNewLineCode = IWriterNewLineCodeConstants.CRLF
-    mEncode = IWriterEncodeConstants.CP932
-    mMode = IWriterOpenModeConstants.Output
+    mNewLineCode = NewLineCodeConstants.CRLF
+    mEncode = EncodeConstants.CP932
+    mMode = OpenModeConstants.Output
+    mBom = False
     
     mDelimiter = ","
     mQuotation = False
@@ -90,15 +92,19 @@ Private Function IConstructor_Instancing(Args As Collection) As Object
     End If
     
     If Args.Count >= 5 Then
-        mDelimiter = Args(5)
+        mMode = Args(5)
     End If
     
     If Args.Count >= 6 Then
-        mQuotation = Args(6)
+        mDelimiter = Args(6)
+    End If
+    
+    If Args.Count >= 7 Then
+        mQuotation = Args(7)
     End If
     
     'TextWriter‚ÉˆÏ÷‚·‚éB
-    Set IR = Constructor(New TextWriter, mFileName, mNewLineCode, mEncode, mMode)
+    Set IR = Constructor(New TextWriter, mFileName, mNewLineCode, mEncode, mMode, mBom)
     
     Set IConstructor_Instancing = Me
     

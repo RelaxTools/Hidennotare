@@ -2,7 +2,7 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "SimpleWorkbook"
+Attribute VB_Name = "BookReader"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
@@ -117,15 +117,13 @@ End Property
 Private Sub OpenFile(ByVal strBook As String, ByVal blnReadOnly As Boolean)
 
     If Not FileIO.FileExists(strBook) Then
-        MsgBox "Excelファイルが見つかりません。"
-        Exit Sub
+        Message.Throw 1, Me, "OpenFile", "Excelファイルが見つかりません。({0})", FileIO.GetFileName(strBook)
     End If
 
     Dim objWB As Workbook
     For Each objWB In XL.Workbooks
         If LCase(objWB.FullName) = LCase(strBook) Then
-            MsgBox "すでにExcelファイルが開かれています。"
-            Exit Sub
+            Message.Throw 2, Me, "OpenFile", "すでにExcelファイルが開かれています。({0})", FileIO.GetFileName(strBook)
         End If
     Next
     

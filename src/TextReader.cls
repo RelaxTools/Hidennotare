@@ -51,8 +51,8 @@ Private mOpen As Boolean
 
 'プロパティ保持
 Private mFileName As String
-Private mNewLineCode As IReaderNewLineCodeConstants
-Private mEncode As IReaderEncodeConstants
+Private mNewLineCode As NewLineCodeConstants
+Private mEncode As EncodeConstants
 
 Private mBuf As Variant
 Private mIndex As Long
@@ -66,8 +66,8 @@ Private Function IConstructor_Instancing(Args As Collection) As Object
     End If
     
     'Default
-    mNewLineCode = IReaderNewLineCodeConstants.CRLF
-    mEncode = IReaderEncodeConstants.CP932
+    mNewLineCode = NewLineCodeConstants.CRLF
+    mEncode = EncodeConstants.CP932
     
     If Args.Count >= 1 Then
         mFileName = Args(1)
@@ -86,7 +86,7 @@ Private Function IConstructor_Instancing(Args As Collection) As Object
 
     
     If Not FileIO.FileExists(mFileName) Then
-        Err.Raise 512 + 1, TypeName(Me) & ".OpenFile", "ファイル(" & mFileName & ")が存在しません。"
+        Message.Throw 1, Me, "IConstructor_Instancing", "ファイル({0})が存在しません。", mFileName
     End If
 
     'テキストファイルの一括読み込み
@@ -118,20 +118,21 @@ Private Function BulkRead() As Variant
         Get fp, , buffer()
         
         Select Case mEncode
-            Case IReaderEncodeConstants.CP932
+            
+            Case EncodeConstants.CP932
                 
                 strBuf = StrConv(buffer, vbUnicode)
             
-            Case IReaderEncodeConstants.UTF8
+            Case EncodeConstants.UTF8
             
                 'BOMがある場合取り除く
                 If StartWith(buffer, &HEF, &HBB, &HBF) Then
-                    strBuf = UTF8Encoding.GetString(MidB$(buffer, 4))
+                    strBuf = Convert.FromUTF8(MidB$(buffer, 4))
                 Else
-                    strBuf = UTF8Encoding.GetString(buffer)
+                    strBuf = Convert.FromUTF8(buffer)
                 End If
         
-            Case IReaderEncodeConstants.UTF16LE
+            Case EncodeConstants.UTF16LE
                 
                 'BOMがある場合取り除く
                 If StartWith(buffer, &HFF, &HFE) Then
@@ -143,15 +144,15 @@ Private Function BulkRead() As Variant
         End Select
         
         Select Case mNewLineCode
-            Case IReaderNewLineCodeConstants.CRLF
+            Case NewLineCodeConstants.CRLF
                 
                 BulkRead = Split(strBuf, vbCrLf)
             
-            Case IReaderNewLineCodeConstants.LF
+            Case NewLineCodeConstants.LF
                 
                 BulkRead = Split(strBuf, vbLf)
         
-            Case IReaderNewLineCodeConstants.None
+            Case NewLineCodeConstants.None
                 
                 BulkRead = strBuf
         

@@ -76,7 +76,7 @@ Sub RenameUniqSheet(WS As Worksheet, ByVal strDefName As String)
             If s.Name = strName Then
                 blnFind = True
                 lngCnt = lngCnt + 1
-                strName = strDefName & "(" & lngCnt & ")"
+                strName = strDefName & " (" & lngCnt & ")"
                 Exit For
             End If
         Next
@@ -85,6 +85,23 @@ Sub RenameUniqSheet(WS As Worksheet, ByVal strDefName As String)
     WS.Name = strName
     
 End Sub
+'--------------------------------------------------------------
+' 同一ブックOpenチェック
+'--------------------------------------------------------------
+Function IsOpenSameBook(ByVal strBook As String) As Boolean
+    
+    Dim v As Workbook
+    
+    IsOpenSameBook = False
+    
+    For Each v In Workbooks
+        If LCase(strBook) = LCase(v.Name) Then
+            IsOpenSameBook = True
+            Exit For
+        End If
+    Next
+
+End Function
 '---------------------------------------------------------------------------------------------------
 '　Application.Run / .OnKey / .OnAction / .OnUndo / .OnRepeat / .OnTime の頭にブック名を付ける
 '---------------------------------------------------------------------------------------------------

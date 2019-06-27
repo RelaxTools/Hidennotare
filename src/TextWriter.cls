@@ -50,10 +50,10 @@ Private mOpen As Boolean
 
 'プロパティ保持
 Private mFileName As String
-Private mNewLineCode As IWriterNewLineCodeConstants
-Private mEncode As IWriterEncodeConstants
-Private mMode As IWriterOpenModeConstants
-Private mBOM As Boolean
+Private mNewLineCode As NewLineCodeConstants
+Private mEncode As EncodeConstants
+Private mMode As OpenModeConstants
+Private mBom As Boolean
 
 Private mFirst As Boolean
 
@@ -64,10 +64,10 @@ Private Function IConstructor_Instancing(Args As Collection) As Object
     End If
     
     'Default
-    mNewLineCode = IWriterNewLineCodeConstants.CRLF
-    mEncode = IWriterEncodeConstants.CP932
-    mMode = IWriterOpenModeConstants.Output
-    mBOM = False
+    mNewLineCode = NewLineCodeConstants.CRLF
+    mEncode = EncodeConstants.CP932
+    mMode = OpenModeConstants.Output
+    mBom = False
     
     If Args.Count >= 1 Then
         mFileName = Args(1)
@@ -86,7 +86,7 @@ Private Function IConstructor_Instancing(Args As Collection) As Object
     End If
     
     If Args.Count >= 5 Then
-        mBOM = Args(5)
+        mBom = Args(5)
     End If
     
     Set IConstructor_Instancing = Me
@@ -98,7 +98,7 @@ Private Function IConstructor_Instancing(Args As Collection) As Object
     strFolder = FileIO.GetParentFolderName(mFileName)
     
     If Not FileIO.FolderExists(strFolder) Then
-        Err.Raise 512 + 1, TypeName(Me) & ".OpenFile", "フォルダ(" & strFolder & ")が存在しません。"
+        Message.Throw 1, Me, "IConstructor_Instancing", "フォルダ({0})が存在しません。", strFolder
     End If
 
     Call fileOpen
@@ -113,10 +113,11 @@ Private Sub IWriter_Append(ByVal Args As Variant)
     Dim bytBuf() As Byte
     Dim bytBom() As Byte
     
-    If mBOM And mFirst And mMode = IWriterOpenModeConstants.Output Then
+    '初回BOMの書き込みを行う。
+    If mBom And mFirst And mMode = OpenModeConstants.Output Then
         'エンコード
         Select Case mEncode
-            Case IWriterEncodeConstants.UTF8
+            Case EncodeConstants.UTF8
                 
                 ReDim bytBom(0 To 2)
             
@@ -126,7 +127,7 @@ Private Sub IWriter_Append(ByVal Args As Variant)
             
                 Put #fp, , bytBom
             
-            Case IWriterEncodeConstants.UTF16LE
+            Case EncodeConstants.UTF16LE
                 
                 ReDim bytBom(0 To 1)
             
@@ -141,21 +142,21 @@ Private Sub IWriter_Append(ByVal Args As Variant)
 
     '改行
     Select Case mNewLineCode
-        Case IWriterNewLineCodeConstants.CRLF
+        Case NewLineCodeConstants.CRLF
             strLine = Args & vbCrLf
-        Case IWriterNewLineCodeConstants.LF
+        Case NewLineCodeConstants.LF
             strLine = Args & vbLf
-        Case IWriterNewLineCodeConstants.None
+        Case NewLineCodeConstants.None
             strLine = Args
     End Select
         
     'エンコード
     Select Case mEncode
-        Case IWriterEncodeConstants.CP932 'SJIS
+        Case EncodeConstants.CP932 'SJIS
             bytBuf = VBA.StrConv(strLine, vbFromUnicode)
-        Case IWriterEncodeConstants.UTF8
-            bytBuf = UTF8Encoding.GetBytes(strLine)
-        Case IWriterEncodeConstants.UTF16LE
+        Case EncodeConstants.UTF8
+            bytBuf = Convert.ToUTF8(strLine)
+        Case EncodeConstants.UTF16LE
             bytBuf = strLine
     End Select
 
@@ -195,7 +196,7 @@ End Sub
 Private Sub fileOpen()
     
     Select Case mMode
-        Case IWriterOpenModeConstants.Output
+        Case OpenModeConstants.Output
             
             fp = FreeFile()
             Open mFileName For Output As fp
@@ -205,7 +206,7 @@ Private Sub fileOpen()
             Open mFileName For Binary As fp
             mOpen = True
         
-        Case IWriterOpenModeConstants.AppendFile
+        Case OpenModeConstants.AppendFile
             
             fp = FreeFile
             Open mFileName For Binary As fp

@@ -71,8 +71,7 @@ End Function
 Public Function ParseObject(ByVal strJSON As String) As Dictionary
     
     If Not StringHelper.StartsWith(strJSON, "{") Or Not StringHelper.EndsWith(strJSON, "}") Then
-        Err.Raise vbObjectError + JSONConstants.JSONFormatError
-        Exit Function
+        Message.Throw JSONConstants.JSONFormatError, Me, "ParseObject", "JSONFormatError"
     End If
     
     Dim objDic As Dictionary
@@ -112,7 +111,7 @@ Public Function ParseObject(ByVal strJSON As String) As Dictionary
                 Case ":"
                     
                     If Len(propertyName) = 0 Then
-                        Err.Raise vbObjectError + JSONConstants.JSONFormatError
+                        Message.Throw JSONConstants.JSONFormatError, Me, "ParseObject", "JSONFormatError"
                         Exit Function
                     End If
                     
@@ -141,7 +140,7 @@ Public Function ParseObject(ByVal strJSON As String) As Dictionary
         If Len(valueBuffer) > 0 Then
             
             If Len(propertyName) = 0 Then
-                Err.Raise vbObjectError + JSONConstants.JSONFormatError
+                Message.Throw JSONConstants.JSONFormatError, Me, "ParseObject", "JSONFormatError"
                 Exit Function
             End If
             
@@ -160,7 +159,7 @@ End Function
 Public Function ParseArray(strJSON As String) As ArrayList
     
     If Not StringHelper.StartsWith(strJSON, "[") Or Not StringHelper.EndsWith(strJSON, "]") Then
-        Err.Raise vbObjectError + JSONConstants.JSONFormatError
+        Message.Throw JSONConstants.JSONFormatError, Me, "ParseArray", "JSONFormatError"
         Exit Function
     End If
     
@@ -253,7 +252,7 @@ Private Function StringExtraction(ByRef IC As ICursor) As String
         Exit Function
     End If
         
-    Err.Raise vbObjectError + JSONConstants.JSONFormatError
+    Message.Throw JSONConstants.JSONFormatError, Me, "StringExtraction", "JSONFormatError"
 End Function
 '-------------------------------------------------
 ' 角カッコまたは波カッコの範囲取得
@@ -304,7 +303,7 @@ Private Function ElementExtraction(ByRef IC As ICursor) As String
         IC.MoveNext
     Loop
     
-    Err.Raise vbObjectError + JSONConstants.JSONFormatError
+    Message.Throw JSONConstants.JSONFormatError, Me, "ElementExtraction", "JSONFormatError"
 End Function
 '---------------------------------------------------------------------
 ' 文字列のパース
@@ -312,14 +311,15 @@ End Function
 Public Function ParseString(strJSON As String) As String
     
     If Not StringHelper.StartsWith(strJSON, """") Or Not StringHelper.EndsWith(strJSON, """") Then
-        Err.Raise vbObjectError + JSONConstants.JSONFormatError
+        Message.Throw JSONConstants.JSONFormatError, Me, "ParseString", "JSONFormatError"
         Exit Function
     End If
     
     '前後のダブルコーテーションを削除
     strJSON = Mid$(strJSON, 2, Len(strJSON) - 2)
     
-    ParseString = JSONToString(strJSON)
+    '文字列のUnEscape
+    ParseString = Convert.UnEscape(strJSON)
 
 End Function
 '---------------------------------------------------------------------
@@ -348,64 +348,64 @@ Private Function ParseValue(ByVal strJSON As String) As Variant
 
 End Function
 '---------------------------------------------------------------------
-' JSON→制御文字
-'---------------------------------------------------------------------
-Public Function JSONToString(ByVal v As String) As String
-
-    Dim strChr As String
-    Dim strBuf As String
-    Dim sb As StringBuilder
-    Dim i As Long
-    
-    '本当にJSONするならここでUTF8変換
-    
-    Set sb = New StringBuilder
-    i = 1
-    Do Until i > Len(v)
-
-        strChr = Mid$(v, i, 2)
-        
-        Select Case strChr
-            Case "\u"
-            
-                If i + 6 > Len(v) Then
-                    Err.Raise 513, , "error"
-                End If
-            
-                sb.Append ChrW$(Val("&H" & Mid$(v, i + 2, 4)))
-                i = i + 6
-            Case "\b"
-                sb.Append Chr$(&H8)
-                i = i + 2
-            Case "\t"
-                sb.Append vbTab
-                i = i + 2
-            Case "\n"
-                sb.Append vbLf
-                i = i + 2
-            Case "\f"
-                sb.Append Chr$(&HC)
-                i = i + 2
-            Case "\r"
-                sb.Append vbCr
-                i = i + 2
-            Case "\"""
-                sb.Append """"
-                i = i + 2
-            Case "\/"
-                sb.Append "/"
-                i = i + 2
-            Case "\\"
-                sb.Append "\"
-                i = i + 2
-            Case Else
-                sb.Append Left(strChr, 1)
-                i = i + 1
-        End Select
-
-    Loop
-    
-
-    JSONToString = sb.ToString
-
-End Function
+'' JSON→制御文字
+''---------------------------------------------------------------------
+'Public Function JSONToString(ByVal v As String) As String
+'
+'    Dim strChr As String
+'    Dim strBuf As String
+'    Dim sb As StringBuilder
+'    Dim i As Long
+'
+'    '本当にJSONするならここでUTF8変換
+'
+'    Set sb = New StringBuilder
+'    i = 1
+'    Do Until i > Len(v)
+'
+'        strChr = Mid$(v, i, 2)
+'
+'        Select Case strChr
+'            Case "\u"
+'
+'                If i + 6 > Len(v) Then
+'                    Err.Raise 513, , "error"
+'                End If
+'
+'                sb.Append ChrW$(Val("&H" & Mid$(v, i + 2, 4)))
+'                i = i + 6
+'            Case "\b"
+'                sb.Append Chr$(&H8)
+'                i = i + 2
+'            Case "\t"
+'                sb.Append vbTab
+'                i = i + 2
+'            Case "\n"
+'                sb.Append vbLf
+'                i = i + 2
+'            Case "\f"
+'                sb.Append Chr$(&HC)
+'                i = i + 2
+'            Case "\r"
+'                sb.Append vbCr
+'                i = i + 2
+'            Case "\"""
+'                sb.Append """"
+'                i = i + 2
+'            Case "\/"
+'                sb.Append "/"
+'                i = i + 2
+'            Case "\\"
+'                sb.Append "\"
+'                i = i + 2
+'            Case Else
+'                sb.Append Left(strChr, 1)
+'                i = i + 1
+'        End Select
+'
+'    Loop
+'
+'
+'    JSONToString = sb.ToString
+'
+'End Function

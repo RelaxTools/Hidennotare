@@ -254,7 +254,7 @@ Public Function ToString() As String
                     Case Else
         
                         'ÉGÉâÅ[
-                        Err.Raise vbObjectError + 1, TypeName(Me) & ".ToString", Message.PlaceHolder("not cast type ", TypeName(v))
+                        Message.Throw 1, Me, "ToString", "not cast type ""{0}""", TypeName(v)
         
                 End Select
 
@@ -268,43 +268,7 @@ End Function
 ' êßå‰ï∂éöïœä∑
 Private Function Escape(ByVal v As String) As String
 
-    Dim strChr As String
-    Dim sb As StringBuilder
-    Dim i As Long
-    
-    Set sb = New StringBuilder
-    
-    For i = 1 To Len(v)
-        
-        strChr = Mid$(v, i, 1)
-        
-        Select Case Unicode(strChr)
-            Case &H0 To &H7, &HB, &HE To &H1F, &H7F
-                sb.Append "\u" & Hex$(Unicode(strChr))
-            Case &H8
-                sb.Append "\b"
-            Case &H9
-                sb.Append "\t"
-            Case &HA
-                sb.Append "\n"
-            Case &HC
-                sb.Append "\f"
-            Case &HD
-                sb.Append "\r"
-            Case &H22
-                sb.Append "\"""
-            Case &H2F
-                sb.Append "\/"
-            Case &H5C
-                sb.Append "\\"
-            Case Else
-                sb.Append strChr
-        End Select
-
-    Next
-    
-    'ñ{ìñÇ…JSONÇ∑ÇÈÇ»ÇÁÇ±Ç±Ç≈UTF8ïœä∑
-    Escape = """" & sb.ToString & """"
+    Escape = """" & Convert.Escape(v) & """"
 
 End Function
 'Unicode
@@ -353,7 +317,7 @@ Private Property Get ICursor_PreviousItem(Optional ByVal opt As Variant) As Vari
     v = Me.SortedKeys
     
     If mIndex < 0 Then
-        Err.Raise vbObjectError + 512 + 1, , "IndexOutOfRangeException"
+        Message.Throw 1, Me, "ICursor_PreviousItem", "IndexOutOfRangeException"
     Else
         ICursor_PreviousItem = v(mIndex - 1)
     End If

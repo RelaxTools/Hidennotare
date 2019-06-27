@@ -38,12 +38,12 @@ Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 
-Public Enum IReaderNewLineCodeConstants
+Public Enum NewLineCodeConstants
     CRLF
     LF
     None
 End Enum
-Public Enum IReaderEncodeConstants
+Public Enum EncodeConstants
     CP932
     UTF8
     UTF16LE

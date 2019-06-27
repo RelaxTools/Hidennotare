@@ -53,13 +53,13 @@ Implements IReader
 Private IR As IReader
 
 Private mFileName As String
-Private mNewLineCode As IReaderNewLineCodeConstants
-Private mEncode As IReaderEncodeConstants
+Private mNewLineCode As NewLineCodeConstants
+Private mEncode As EncodeConstants
 
 Private mDelimiter As String
 Private mQuotation As Boolean
 
-Private mCol As Collection
+Private mList As Collection
 Private mIndex As Long
 '--------------------------------------------------------------
 '　コンストラクタ
@@ -71,8 +71,8 @@ Private Function IConstructor_Instancing(Args As Collection) As Object
     End If
     
     'Default
-    mNewLineCode = IReaderNewLineCodeConstants.CRLF
-    mEncode = IReaderEncodeConstants.CP932
+    mNewLineCode = NewLineCodeConstants.CRLF
+    mEncode = EncodeConstants.CP932
     
     mDelimiter = ","
     mQuotation = False
@@ -99,24 +99,23 @@ Private Function IConstructor_Instancing(Args As Collection) As Object
     
     'TextReaderに委譲する。コーテーションありの場合には改行コードをCsvReader側でパースする。
     If mQuotation Then
-        Set IR = Constructor(New TextReader, mFileName, IReaderNewLineCodeConstants.None, mEncode)
+        Set IR = Constructor(New TextReader, mFileName, NewLineCodeConstants.None, mEncode)
     Else
         Set IR = Constructor(New TextReader, mFileName, mNewLineCode, mEncode)
     End If
     
-    Set mCol = CsvParser(IR.ReadAll)
+    Set mList = CsvParser(IR.ReadAll)
     
     ICursor_MoveFirst
     
     Set IConstructor_Instancing = Me
     
 End Function
-
 Private Sub Class_Terminate()
     Set IR = Nothing
 End Sub
 '--------------------------------------------------------------
-'　CSVのパース
+'　CSVパーサー
 '--------------------------------------------------------------
 Private Function CsvParser(ByVal strBuf As String) As Collection
 
@@ -150,17 +149,17 @@ Private Function CsvParser(ByVal strBuf As String) As Collection
             blnItemBreak = False
             
             Do Until IC.Eof Or blnLineBreak Or blnItemBreak
-            
+
                 Select Case IC.Item
                     Case C_QUAT
-                        
+
                         'コーテーションありの場合
                         If mQuotation Then
-                            
+
                             lngQuot = lngQuot + 1
-                            
+
                             If sw Then
-                                
+
                                 '次の文字がQuatation
                                 If IC.Item(1) = C_QUAT Then
                                     lngQuot = lngQuot + 1
@@ -169,38 +168,38 @@ Private Function CsvParser(ByVal strBuf As String) As Collection
                                 Else
                                     sw = False
                                 End If
-                            
+
                             Else
                                 sw = True
                             End If
                         End If
-                    
+
                     Case vbCr
-                        
+
                         If sw Then
                             sb.Append IC.Item
                         End If
-                    
+
                     Case vbLf
-                        
+
                         If sw Then
                             sb.Append IC.Item
                         Else
                             blnLineBreak = True
                         End If
-                    
+
                     Case mDelimiter
-                    
+
                         If sw Then
                             sb.Append IC.Item
                         Else
                             blnItemBreak = True
                         End If
-                    
+
                     Case Else
-                        
+
                         sb.Append IC.Item
-                
+
                 End Select
             
                 IC.MoveNext
@@ -216,8 +215,9 @@ Private Function CsvParser(ByVal strBuf As String) As Collection
         
     Loop
     
+    'ダブルコーテーションが偶数ではない場合
     If lngQuot Mod 2 <> 0 Then
-        Err.Raise vbObjectError + 1, TypeName(Me) & ".CsvParser", "Invalid Format(Quotation)"
+        Message.Throw 1, Me, "CsvParser", "Invalid Format(Quotation)"
     End If
     
     Set CsvParser = row
@@ -228,35 +228,8 @@ End Function
 '--------------------------------------------------------------
 Private Function IReader_ReadAll() As Variant
 
-    Dim lngCol As Long
-    Dim lngRow As Long
-    Dim i As Long
-    Dim j As Long
-    Dim c As Collection
-    
-    lngRow = mCol.Count
-    lngCol = 0
-    
-    If lngRow = 0 Then
-        IReader_ReadAll = Empty
-    Else
-        For Each c In mCol
-            If lngCol < c.Count Then
-                lngCol = c.Count
-            End If
-        Next
-    
-        Dim var() As Variant
-        ReDim var(1 To lngRow, 1 To lngCol)
-    
-        For i = 1 To lngRow
-            For j = 1 To lngCol
-                var(i, j) = mCol(i)(j)
-            Next
-        Next
-        
-        IReader_ReadAll = var
-    End If
+    Set IReader_ReadAll = mList
+
 End Function
 '--------------------------------------------------------------
 ' ICursor インターフェースを取得
@@ -269,69 +242,54 @@ End Property
 '------------------------------------------------------
 Private Property Get ICursor_Eof() As Boolean
     
-    If mCol Is Nothing Then
+    If mList Is Nothing Then
         ICursor_Eof = True
         Exit Sub
     End If
     
-    ICursor_Eof = mCol.Count < mIndex
+    ICursor_Eof = mList.Count < mIndex
 
 End Property
 '------------------------------------------------------
 ' 項目取得
 '------------------------------------------------------
 Private Property Get ICursor_Item(Optional ByVal opt As Variant) As Variant
-    
-    If IsMissing(opt) Then
-        If ICursor_Eof Then
-            'EOF後は最後の値を返す
-            If IsObject(mCol(mCol.Count)) Then
-                Set ICursor_Item = mCol(mCol.Count)
-            Else
-                ICursor_Item = mCol(mCol.Count)
-            End If
+
+    If ICursor_Eof Then
+        'EOF後は最後の値を返す
+        If IsObject(mList.Item(mList.Count)(opt)) Then
+            Set ICursor_Item = mList.Item(mList.Count)(opt)
         Else
-            If IsObject(mCol(mIndex)) Then
-                Set ICursor_Item = mCol(mIndex)
-            Else
-                ICursor_Item = mCol(mIndex)
-            End If
+            ICursor_Item = mList.Item(mList.Count)(opt)
         End If
     Else
-        If ICursor_Eof Then
-            'EOF後は最後の値を返す
-            If IsObject(mCol(mCol.Count)(opt)) Then
-                Set ICursor_Item = mCol(mCol.Count)(opt)
-            Else
-                ICursor_Item = mCol(mCol.Count)(opt)
-            End If
+        If IsObject(mList.Item(mIndex)(opt)) Then
+            Set ICursor_Item = mList.Item(mIndex)(opt)
         Else
-            If IsObject(mCol(mIndex)(opt)) Then
-                Set ICursor_Item = mCol(mIndex)(opt)
-            Else
-                ICursor_Item = mCol(mIndex)(opt)
-            End If
+            ICursor_Item = mList.Item(mIndex)(opt)
         End If
     End If
+
 End Property
 '------------------------------------------------------
 ' 前項目取得
 '------------------------------------------------------
 Private Property Get ICursor_PreviousItem(Optional ByVal opt As Variant) As Variant
 
-    If IsMissing(opt) Then
-        If IsObject(mCol(mIndex - 1)) Then
-            Set ICursor_PreviousItem = mCol(mIndex - 1)
-        Else
-            ICursor_PreviousItem = mCol(mIndex - 1)
-        End If
-    Else
-        If IsObject(mCol(mIndex - 1)(opt)) Then
-            Set ICursor_PreviousItem = mCol(mIndex - 1)(opt)
-        Else
-            ICursor_PreviousItem = mCol(mIndex - 1)(opt)
-        End If
-    End If
+    Message.Throw 1, Me, "ICursor_PreviousItem", "Not Supported Property"
+'    If IsMissing(opt) Then
+'        If IsObject(mList(mIndex - 1)) Then
+'            Set ICursor_PreviousItem = mList(mIndex - 1)
+'        Else
+'            ICursor_PreviousItem = mList(mIndex - 1)
+'        End If
+'    Else
+'        If IsObject(mList(mIndex - 1)(opt)) Then
+'            Set ICursor_PreviousItem = mList(mIndex - 1)(opt)
+'        Else
+'            ICursor_PreviousItem = mList(mIndex - 1)(opt)
+'        End If
+'    End If
     
 End Property
 '------------------------------------------------------

@@ -102,7 +102,7 @@ Private Function PrivatePlaceHolder(ByVal strMsg As String, ByVal p As Variant) 
     If Not mLang Is Nothing Then
         strMsg = mLang.Trunslate(strMsg)
     Else
-        strMsg = Escape(strMsg)
+        strMsg = Convert.UnEscape(strMsg)
     End If
     
     If UBound(p) >= 0 Then
@@ -115,32 +115,29 @@ Private Function PrivatePlaceHolder(ByVal strMsg As String, ByVal p As Variant) 
     PrivatePlaceHolder = strMsg
 
 End Function
-''---------------------------------------
-'' エラー処理
-''---------------------------------------
-'Public Sub Throw(ByVal strSrc As String, ByVal strMsg As String, ParamArray p())
-'
-'    Dim strMessage As String
-'
-'    strMessage = PrivatePlaceHolder(strMsg, p)
-'
-'    Logger.LogFatal "Sorce=" & strSrc & " Description=" & strMessage
-'    Err.Raise vbObjectError + 1, strSrc, strMessage
-'
-'End Sub
+'---------------------------------------
+' エラー処理
+'---------------------------------------
+Public Sub Throw(ByVal lngNo As Long, ByVal Module As Variant, ByVal strSrc As String, ByVal strMsg As String, ParamArray p())
+
+    Dim strMessage As String
+    Dim strSource As String
+    
+    If IsObject(Module) Then
+        strSource = TypeName(Module) & "." & strSrc
+    Else
+        strSource = CStr(Module) & "." & strSrc
+    End If
+
+    'プレースホルダ変換
+    strMessage = PrivatePlaceHolder(strMsg, p)
+    
+    Err.Raise 512 + lngNo, strSource, strMessage
+
+End Sub
 ' アプリケーション名取得
 Private Property Get Title() As String
     Title = ThisWorkbook.BuiltinDocumentProperties("Title").Value
 End Property
-' 文字列のエスケープ
-Private Function Escape(ByVal v As String) As String
 
-    v = Replace(v, "\\", "\")
-    v = Replace(v, "\n", vbLf)
-    v = Replace(v, "\r", vbCr)
-    v = Replace(v, "\t", vbTab)
-    
-    Escape = v
-    
-End Function
 

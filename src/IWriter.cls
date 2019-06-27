@@ -38,17 +38,7 @@ Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 
-Public Enum IWriterNewLineCodeConstants
-    CRLF
-    LF
-    None
-End Enum
-Public Enum IWriterEncodeConstants
-    CP932
-    UTF8
-    UTF16LE
-End Enum
-Public Enum IWriterOpenModeConstants
+Public Enum OpenModeConstants
     Output
     AppendFile
 End Enum

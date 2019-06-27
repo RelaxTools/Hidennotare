@@ -1,4 +1,4 @@
-Attribute VB_Name = "ClassHelper"
+Attribute VB_Name = "Core"
 '-----------------------------------------------------------------------------------------------------
 '
 ' [Hecatoncheir] v1
@@ -31,7 +31,9 @@ Attribute VB_Name = "ClassHelper"
 ' コンストラクタ生成
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
-
+'-----------------------------------------------------------------------------------------------------
+' コンストラクタ生成
+'-----------------------------------------------------------------------------------------------------
 Public Function Constructor(ByRef obj As Object, ParamArray Args() As Variant) As Object
 
     Dim c As IConstructor
@@ -66,27 +68,69 @@ Public Function Constructor(ByRef obj As Object, ParamArray Args() As Variant) A
     
     'オブジェクトが返却されなかった場合エラー
     If Constructor Is Nothing Then
-        Err.Raise vbObjectError + 512 + 1, "Argument Error"
+        Message.Throw 1, "ClassHelper", "Constructor", "Argument Error"
     End If
 
 End Function
-'VBA 個人的汎用処理 https://qiita.com/nukie_53/items/bde16afd9a6ca789949d
-'@nukie_53
-'Set/Letを隠蔽するプロパティ
+'-----------------------------------------------------------------------------------------------------
+' VBA 個人的汎用処理 https://qiita.com/nukie_53/items/bde16afd9a6ca789949d
+' @nukie_53
+' Set/Letを隠蔽するプロパティ
+'-----------------------------------------------------------------------------------------------------
 Public Property Let SetVar(outVariable As Variant, inExpression As Variant)
     
-    If VBA.IsObject(inExpression) Then
+    Select Case True
+        Case VBA.IsObject(inExpression)
+            
+            Set outVariable = inExpression
         
-        Set outVariable = inExpression
-    
-    ElseIf VBA.VarType(inExpression) = vbDataObject Then
+        Case VBA.VarType(inExpression) = vbDataObject
+            
+            Set outVariable = inExpression
         
-        Set outVariable = inExpression
+        Case Else
+            
+            Let outVariable = inExpression
     
-    Else
-        
-        Let outVariable = inExpression
-    
-    End If
+    End Select
 
 End Property
+'-----------------------------------------------------------------------------------------------------
+' ソースのエクスポート
+'-----------------------------------------------------------------------------------------------------
+Sub Export()
+
+    Dim strFile As String
+    Dim strExt As String
+    Dim obj As Object
+    Dim strTo As String
+    
+    strFile = FileIO.BuildPath(FileIO.GetParentFolderName(ActiveWorkbook.FullName), "src")
+    FileIO.CreateFolder strFile
+    
+    For Each obj In ActiveWorkbook.VBProject.VBComponents
+    
+        If obj.Name Like "Module*" Then
+            GoTo pass
+        End If
+    
+        Select Case obj.Type
+            Case 1
+                strExt = ".bas"
+            Case 3
+                strExt = ".frm"
+            Case 2
+                strExt = ".cls"
+            Case 11, 100
+                GoTo pass
+        End Select
+        
+        strTo = FileIO.BuildPath(strFile, obj.Name & strExt)
+        obj.Export strTo
+pass:
+    Next
+    
+    MsgBox "ソースを保存しました。", vbInformation, "Export"
+    
+End Sub
+

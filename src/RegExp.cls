@@ -74,7 +74,7 @@ End Function
 '--------------------------------------------------------------
 Function Replace(ByVal strText As String, ByVal strExp As String, ByVal strReplace As String, Optional ByVal blnIgnoreCase As Boolean = False) As String
 
-    strReplace = Escape(strReplace)
+    strReplace = Convert.Escape(strReplace)
     
     With RE
         .Pattern = strExp
@@ -200,21 +200,3 @@ Sub ReplaceRange(ByRef r As Range, ByVal strExp As String, ByVal strReplace As S
 
 End Sub
 
-'----------------------------------------------------------------------------------
-'　文字列のエスケープ
-'----------------------------------------------------------------------------------
-Private Function Escape(ByVal v As String) As String
-
-    Dim sb As StringBuilder
-    
-    Set sb = New StringBuilder
-    
-    sb.Append v
-    sb.Replace "\\", "\"
-    sb.Replace "\n", vbLf
-    sb.Replace "\r", vbCr
-    sb.Replace "\t", vbTab
-    
-    Escape = sb.ToString
-    
-End Function
