@@ -38,6 +38,17 @@ Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 ' シート読み込みクラス(Cursor)
 '-----------------------------------------------------------------------------------------------------
+' Dim IC Ad ICursor
+'
+' Set IC = Core.Constructor(New SheetCursor, ActiveSheet, 10, "B")
+'
+' Do Until IC.Eof
+'
+'     IC("C").Value = "XXX"
+'
+'     IC.MoveNext
+' Loop
+'-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements IConstructor
 Implements ICursor

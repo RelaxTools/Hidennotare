@@ -38,10 +38,17 @@ Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '  ブック参照／編集クラス
 '-----------------------------------------------------------------------------------------------------
+'
+' With で使用しブックのオープン。End With でクローズ。
+' 別プロセスのExcelで使用する場合はApplicationオブジェクトを渡す。
+'
+'   With Constructor(New BookReader, ファイル名, 読み取り専用, Applicationオブジェクト)
+'
+'-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements IConstructor
 
-Public Enum SimpleWorkbookConstants
+Public Enum BookReaderConstants
     None = 0
     SetA1
 End Enum
@@ -152,11 +159,11 @@ End Sub
 '--------------------------------------------------------------
 '　保存
 '--------------------------------------------------------------
-Public Sub Save(Optional ByVal opt As SimpleWorkbookConstants = SimpleWorkbookConstants.None)
+Public Sub Save(Optional ByVal opt As BookReaderConstants = BookReaderConstants.None)
     
     If Not WB.ReadOnly Then
         'お作法
-        If opt = SimpleWorkbookConstants.SetA1 Then
+        If opt = BookReaderConstants.SetA1 Then
             setAllA1
         End If
         

@@ -40,13 +40,22 @@ Option Explicit
 '--------------------------------------------------------------
 ' 新ブックへのシートのコピー
 '--------------------------------------------------------------
-Function CopySheetAsNewBook(WS As Worksheet) As Worksheet
+Function CopySheetAsNewBook(WS As Worksheet, Optional ByVal Minimized As Boolean = False) As Worksheet
 
     WS.Copy
     With WS.Application
         Set CopySheetAsNewBook = .Workbooks(.Workbooks.Count).Sheets(1)
     End With
 
+    If Minimized Then
+        '最小化
+        With CopySheetAsNewBook
+            .Parent.Activate
+            .Application.WindowState = xlMinimized
+        End With
+        DoEvents
+    End If
+    
 End Function
 '--------------------------------------------------------------
 ' シートのコピー（シートの最後に追加）

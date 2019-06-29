@@ -41,7 +41,8 @@ Attribute VB_Exposed = False
 '   TextWriter.cls
 '   StringBuilder.cls
 '-----------------------------------------------------------------------------------------------------
-' 2018-12-06 Ver.1.0.0 新規作成 CSV出力クラス
+' 2018-12-06 Ver.1.0.0 新規作成 CSV出力クラス RFC4180準拠
+' http://www.kasai.fm/wiki/rfc4180jp
 '-----------------------------------------------------------------------------------------------------
 
 Option Explicit
@@ -99,10 +100,6 @@ Private Function IConstructor_Instancing(Args As Collection) As Object
         mDelimiter = Args(6)
     End If
     
-    If Args.Count >= 7 Then
-        mQuotation = Args(7)
-    End If
-    
     'TextWriterに委譲する。
     Set IR = Constructor(New TextWriter, mFileName, mNewLineCode, mEncode, mMode, mBom)
     
@@ -121,13 +118,13 @@ Private Sub IWriter_Append(ByVal Args As Variant)
 
     If IsArray(Args) Then
         For Each c In Args
-            sb.Append AddQuot(c, mQuotation)
+            sb.Append AddQuot(c)
         Next
         'TextWriterに委譲する。
         IR.Append sb.ToJoin(mDelimiter)
     Else
         'TextWriterに委譲する。
-        IR.Append AddQuot(Args, mQuotation)
+        IR.Append AddQuot(Args)
     End If
 
 End Sub
@@ -137,12 +134,16 @@ Private Sub IWriter_Flush()
     IR.Flush
 End Sub
 '囲み文字設定
-Private Function AddQuot(ByVal v As String, ByVal blnQuot As Boolean) As String
+Private Function AddQuot(ByVal v As String) As String
 
-    If Trim$(v) = "" Or blnQuot = False Then
-        AddQuot = v
-    Else
-        AddQuot = """" & v & """"
-    End If
+    'デリミタまたはコーテーションまたは改行を含む場合
+    Select Case True
+        Case InStr(v, mDelimiter) > 0, InStr(v, vbLf) > 0
+            AddQuot = """" & v & """"
+        Case InStr(v, """") > 0
+            AddQuot = """" & Replace(v, """", """""") & """"
+        Case Else
+            AddQuot = v
+    End Select
 
 End Function

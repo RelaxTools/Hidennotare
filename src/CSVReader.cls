@@ -38,13 +38,31 @@ Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 ' 依存モジュール
 '   IConstructor.cls
-'   TextReader.cls
 '   ICursor.cls
 '   IReader.cls
+'   TextReader.cls
 '-----------------------------------------------------------------------------------------------------
-' 2018-12-06 Ver.1.0.0 新規作成 CSV入力クラス
+' 2018-12-06 Ver.1.0.0 新規作成 CSV入力クラス RFC4180準拠
+' http://www.kasai.fm/wiki/rfc4180jp
 '-----------------------------------------------------------------------------------------------------
-
+' Dim IR As IReader
+' Set IR = Constructor(new CsvReader, ファイル名, 改行コード, エンコード, デリミタ, コーテーション有無
+'
+' IR.ReadAll
+'-----------------------------------------------------------------------------------------------------
+' Dim IC As ICursor
+' Set IC = Constructor(new CsvReader, ファイル名, 改行コード, エンコード, デリミタ, コーテーション有無
+'
+' Do Until IC.Eof
+'     Debug.Print IC(1) '列
+'     IC.MoveNext
+' Loop
+'-----------------------------------------------------------------------------------------------------
+' Dim CR As CsvReader
+' Set CR = Constructor(new CsvReader, ファイル名, 改行コード, エンコード, デリミタ, コーテーション有無
+'
+' CR.Paste 張り付けセルの左上, フィールド情報, ヘッダ設定
+'-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements IConstructor
 Implements ICursor
@@ -61,6 +79,11 @@ Private mQuotation As Boolean
 
 Private mList As Collection
 Private mIndex As Long
+Public Enum CsvReaderHeaderConstants
+    UseFirstRow
+    AddHedder
+    None
+End Enum
 '--------------------------------------------------------------
 '　コンストラクタ
 '--------------------------------------------------------------
@@ -97,12 +120,8 @@ Private Function IConstructor_Instancing(Args As Collection) As Object
         mQuotation = Args(5)
     End If
     
-    'TextReaderに委譲する。コーテーションありの場合には改行コードをCsvReader側でパースする。
-    If mQuotation Then
-        Set IR = Constructor(New TextReader, mFileName, NewLineCodeConstants.None, mEncode)
-    Else
-        Set IR = Constructor(New TextReader, mFileName, mNewLineCode, mEncode)
-    End If
+    'TextReaderに委譲する。改行コードをCsvReader側でパースする。
+    Set IR = Constructor(New TextReader, mFileName, NewLineCodeConstants.None, mEncode)
     
     Set mList = CsvParser(IR.ReadAll)
     
@@ -232,6 +251,107 @@ Private Function IReader_ReadAll() As Variant
 
 End Function
 '--------------------------------------------------------------
+'　シート貼り付け
+'--------------------------------------------------------------
+Public Sub Paste(ByRef TopLeft As Range, ByRef Fields As Dictionary, Optional ByVal Header As CsvReaderHeaderConstants = CsvReaderHeaderConstants.None)
+
+    Dim lngCol As Long
+    Dim lngRow As Long
+    Dim i As Long
+    Dim j As Long
+    Dim Key As Variant
+    Const DEFAULT_FIELD As String = "Field"
+    
+    lngCol = 0
+    lngRow = mList.Count
+    
+    '列数がまちまちの場合があるので最大列数を調べる。
+    For i = 1 To mList.Count
+        If lngCol < mList(i).Count Then
+            lngCol = mList(i).Count
+        End If
+    Next
+    
+    '設定したフィールドの個数が一致しない場合エラー
+    If lngCol <> Fields.Count Then
+        Message.Throw 1, Me, "Paste", "fields count does not match"
+    End If
+    
+    Dim var() As Variant
+    
+    Select Case Header
+        'ヘッダの追加
+        Case CsvReaderHeaderConstants.AddHedder
+            
+            ReDim var(1 To lngRow + 1, 1 To lngCol)
+            
+            For j = 1 To lngCol
+                If j <= Fields.Count Then
+                    var(1, j) = Fields.keys(j - 1)
+                Else
+                    var(1, j) = Default & Format$(j, "00")
+                End If
+            Next
+            
+            For i = 1 To mList.Count
+                For j = 1 To mList(i).Count
+                    var(i + 1, j) = mList(i)(j)
+                Next
+            Next
+        
+        Case Else
+            
+            ReDim var(1 To lngRow, 1 To lngCol)
+            
+            For i = 1 To mList.Count
+                For j = 1 To mList(i).Count
+                    var(i, j) = mList(i)(j)
+                Next
+            Next
+    
+    End Select
+    
+    Dim r As Range
+    Set r = TopLeft.resize(lngRow, lngCol)
+    
+    Select Case Header
+        '１行目をヘッダにする
+        Case CsvReaderHeaderConstants.UseFirstRow
+            
+            For j = 1 To lngCol
+                Key = var(j, 1)
+                If Fields.Exists(Key) Then
+                    r.Columns(i).NumberFormatLocal = Fields(Key)
+                End If
+            Next
+        
+        'ヘッダを追加する
+        Case CsvReaderHeaderConstants.AddHedder
+            
+            For j = 1 To lngCol
+                If j <= Fields.Count Then
+                    Key = Fields.keys(j - 1)
+                    If Fields.Exists(Key) Then
+                        r.Columns(j).NumberFormatLocal = Fields(Key)
+                    End If
+                End If
+            Next
+        
+        'ヘッダ無し
+        Case CsvReaderHeaderConstants.None
+            
+            For j = 1 To lngCol
+                Key = DEFAULT_FIELD & Format(j, "00")
+                If Fields.Exists(Key) Then
+                    r.Columns(i).NumberFormatLocal = Fields(Key)
+                End If
+            Next
+    End Select
+    
+    r.Value = var
+    
+End Sub
+'--------------------------------------------------------------
 ' ICursor インターフェースを取得
 '--------------------------------------------------------------
 Public Property Get GetCursor() As ICursor
@@ -277,19 +397,6 @@ End Property
 Private Property Get ICursor_PreviousItem(Optional ByVal opt As Variant) As Variant
 
     Message.Throw 1, Me, "ICursor_PreviousItem", "Not Supported Property"
-'    If IsMissing(opt) Then
-'        If IsObject(mList(mIndex - 1)) Then
-'            Set ICursor_PreviousItem = mList(mIndex - 1)
-'        Else
-'            ICursor_PreviousItem = mList(mIndex - 1)
-'        End If
-'    Else
-'        If IsObject(mList(mIndex - 1)(opt)) Then
-'            Set ICursor_PreviousItem = mList(mIndex - 1)(opt)
-'        Else
-'            ICursor_PreviousItem = mList(mIndex - 1)(opt)
-'        End If
-'    End If
     
 End Property
 '------------------------------------------------------

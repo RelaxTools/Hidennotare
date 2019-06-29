@@ -39,6 +39,18 @@ Attribute VB_Exposed = False
 ' このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。配列関係のメソッドがあります。
 '-----------------------------------------------------------------------------------------------------
 ' ArrayList クラス Collection をベースにしているが、添字は0からなので注意
+'
+' ArrayList.IsArray(var) (Static)
+'
+' Dim list As IList
+' Set list = New ArrayList
+'
+' Dim list As IList
+' Set list = Constructor(New ArrayList, コレクション)
+'
+' Dim list As IList
+' Set list = Constructor(New ArrayList, １次元配列)
+'
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements IConstructor
@@ -46,7 +58,6 @@ Implements ICursor
 Implements IList
 
 Private mCol As Collection
-Private v() As Variant
 Private mIndex As Long
 '--------------------------------------------------------------
 ' Initialize

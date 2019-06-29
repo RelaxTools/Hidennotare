@@ -38,8 +38,6 @@ Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 ' このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。
 '-----------------------------------------------------------------------------------------------------
-' 2018-12-16 Ver.1.0.0 新規作成 CreateObjectしなくても使えるFileSystemObject
-'-----------------------------------------------------------------------------------------------------
 Option Explicit
 'Excelの絶対参照文字列からRangeを生成する。
 Function BuildRange(ByVal strBook As String, ByVal strSheet As String, ByVal strAddress) As Range

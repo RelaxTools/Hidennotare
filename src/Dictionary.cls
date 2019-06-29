@@ -127,8 +127,8 @@ End Property
 '--------------------------------------------------------------
 '  ÉLÅ[ê›íË
 '--------------------------------------------------------------
-Public Property Let key(ByVal OldKey As String, NewKey As Variant)
-    mDic.key(OldKey) = NewKey
+Public Property Let Key(ByVal OldKey As String, NewKey As Variant)
+    mDic.Key(OldKey) = NewKey
 End Property
 '--------------------------------------------------------------
 '  çÌèú

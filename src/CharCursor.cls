@@ -38,6 +38,16 @@ Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 ' カーソル風文字列読み込みクラス
 '-----------------------------------------------------------------------------------------------------
+' Dim IC As ICursor
+' Set IC = Constructor(New CharCursor, 文字列)
+'
+' Do Until IC.Eof
+'
+'     Debug.Print IC.Item '1文字
+'
+'     IC.MoveNext
+' Loop
+'-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements IConstructor
 Implements ICursor

@@ -47,23 +47,23 @@ Option Explicit
 '--------------------------------------------------------------
 'レジストリ読み込み
 '--------------------------------------------------------------
-Public Function GetSetting(ByVal Section As String, ByVal key As String, Optional ByVal Default As String = "") As String
-    GetSetting = VBA.GetSetting(Title, Section, key, Default)
+Public Function GetSetting(ByVal Section As String, ByVal Key As String, Optional ByVal Default As String = "") As String
+    GetSetting = VBA.GetSetting(Title, Section, Key, Default)
 End Function
 '--------------------------------------------------------------
 'レジストリ書き込み
 '--------------------------------------------------------------
-Public Sub SaveSetting(ByVal Section As String, ByVal key As String, ByVal Value As String)
-    VBA.SaveSetting Title, Section, key, Value
+Public Sub SaveSetting(ByVal Section As String, ByVal Key As String, ByVal Value As String)
+    VBA.SaveSetting Title, Section, Key, Value
 End Sub
 '--------------------------------------------------------------
 'レジストリ削除
 '--------------------------------------------------------------
-Public Sub DeleteSetting(ByVal Section As String, Optional ByVal key As String = "")
-    If Len(key) = 0 Then
+Public Sub DeleteSetting(ByVal Section As String, Optional ByVal Key As String = "")
+    If Len(Key) = 0 Then
         VBA.DeleteSetting Title, Section
     Else
-        VBA.DeleteSetting Title, Section, key
+        VBA.DeleteSetting Title, Section, Key
     End If
 End Sub
 '--------------------------------------------------------------
@@ -77,14 +77,12 @@ Public Sub Export()
     Const C_FE As Byte = &HFE
     Dim FileName As Variant
     Dim strReg As String
-    Dim key As String
+    Dim Key As String
     
     Dim Reg, Locator, Service, SubKey, RegName, RegType
     Dim i As Long, j As Long, buf As String, RegData As String
     
     Dim fp As Integer
-    
-'    SetMyDocument
     
     FileName = Application.GetSaveAsFilename(InitialFileName:=Title & ".reg", fileFilter:="登録ファイル,*.reg")
     If FileName = False Then
@@ -102,9 +100,9 @@ Public Sub Export()
     Const HKEY_CURRENT_USER = &H80000001
     
     Const ROOT = "HKEY_CURRENT_USER\"
-    key = "Software\VB and VBA Program Settings\" & Title
+    Key = "Software\VB and VBA Program Settings\" & Title
     
-    Reg.EnumKey HKEY_CURRENT_USER, key, SubKey
+    Reg.EnumKey HKEY_CURRENT_USER, Key, SubKey
     
     fp = FreeFile()
     Open FileName For Output As fp
@@ -121,23 +119,23 @@ Public Sub Export()
     strBuf = "Windows Registry Editor Version 5.00" & vbCrLf & vbCrLf
     Put fp, , strBuf
     
-    strBuf = "[" & ROOT & key & "]" & vbCrLf
+    strBuf = "[" & ROOT & Key & "]" & vbCrLf
     Put fp, , strBuf
     
     For i = 0 To UBound(SubKey)
         
-        Reg.EnumValues HKEY_CURRENT_USER, key & "\" & SubKey(i), RegName, RegType
+        Reg.EnumValues HKEY_CURRENT_USER, Key & "\" & SubKey(i), RegName, RegType
             
-        strBuf = vbCrLf & "[" & ROOT & key & "\" & SubKey(i) & "]" & vbCrLf
+        strBuf = vbCrLf & "[" & ROOT & Key & "\" & SubKey(i) & "]" & vbCrLf
         Put fp, , strBuf
         
         For j = 0 To UBound(RegName)
         
             Select Case RegType(j)
                 Case 1
-                    Reg.GetStringValue HKEY_CURRENT_USER, key & "\" & SubKey(i), RegName(j), RegData
+                    Reg.GetStringValue HKEY_CURRENT_USER, Key & "\" & SubKey(i), RegName(j), RegData
                 Case Else
-                    Reg.GetMultiStringValue HKEY_CURRENT_USER, key & "\" & SubKey(i), RegName(j), RegData
+                    Reg.GetMultiStringValue HKEY_CURRENT_USER, Key & "\" & SubKey(i), RegName(j), RegData
                 
             End Select
         
@@ -171,5 +169,3 @@ End Sub
 Private Property Get Title() As String
     Title = ThisWorkbook.BuiltinDocumentProperties("Title").Value
 End Property
-
-
