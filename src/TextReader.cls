@@ -59,6 +59,10 @@ Private mIndex As Long
 '--------------------------------------------------------------
 ' コンストラクタ
 '--------------------------------------------------------------
+' Arg1 - FileName
+' Arg2 - NewLineCode : NewLineCodeConstants.CRLF/LF
+' Arg3 - Encode      : EncodeConstants.CP932/UTF8/UTF16LE
+'--------------------------------------------------------------
 Private Function IConstructor_Instancing(Args As Collection) As Object
 
     If Args.Count = 0 Then

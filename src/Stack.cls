@@ -44,15 +44,15 @@ End Sub
 Private Sub Class_Terminate()
     Set mCol = Nothing
 End Sub
-'---------------------
+'----------------------------------------
 ' ï€ë∂(Push)
-'---------------------
+'----------------------------------------
 Sub Push(ByVal v As Variant)
     mCol.Add v
 End Sub
-'---------------------
+'----------------------------------------
 ' éÊÇËèoÇµ(Pop)
-'---------------------
+'----------------------------------------
 Function Pop() As Variant
     If mCol.Count = 0 Then
         Pop = ""
@@ -65,9 +65,9 @@ Function Pop() As Variant
         mCol.Remove mCol.Count
     End If
 End Function
-'---------------------
+'----------------------------------------
 ' éQè∆(çÌèúÇ»Çµ)
-'---------------------
+'----------------------------------------
 Function Peek() As Variant
     If mCol.Count = 0 Then
         Peek = ""
@@ -79,9 +79,9 @@ Function Peek() As Variant
         End If
     End If
 End Function
-'---------------------
+'----------------------------------------
 ' å¬êî
-'---------------------
+'----------------------------------------
 Property Get Count() As Long
     Count = mCol.Count
 End Property

@@ -54,7 +54,7 @@ Public Function Constructor(ByRef obj As Object, ParamArray Args() As Variant) A
         
         For Each v In Args
             'Form‚ÌMew’è‚Ìê‡Controls‚ª“ü‚Á‚Ä‚µ‚Ü‚¤‘Îô
-            If TypeOf v Is MSForms.Controls Then
+            If TypeName(v) = "Controls" Then
                 col.Add v(1).Parent
             Else
                 col.Add v

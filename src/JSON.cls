@@ -67,19 +67,18 @@ End Function
 '-------------------------------------------------
 Public Function ParseObject(ByVal strJSON As String) As Dictionary
     
+    Dim objDic As Dictionary
+    Dim propertyName As String
+    Dim valueBuffer As String
+    Dim lineBreak As Boolean
+    
     If Not StringHelper.StartsWith(strJSON, "{") Or Not StringHelper.EndsWith(strJSON, "}") Then
         Message.Throw 1, Me, "ParseObject", "JSONFormatError"
     End If
     
-    Dim objDic As Dictionary
     Set objDic = New Dictionary
     
     strJSON = Mid$(strJSON, 2, Len(strJSON) - 2)
-    
-    Dim propertyName As String
-    Dim valueBuffer As String
-    Dim i As Long
-    Dim lineBreak As Boolean
     
     Dim IC As ICursor
     Set IC = Constructor(New CharCursor, strJSON)
@@ -155,22 +154,20 @@ End Function
 '-------------------------------------------------
 Public Function ParseArray(strJSON As String) As ArrayList
     
+    Dim objAry As IList
+    Dim itemBuffer As String
+    Dim lineBreak As Boolean
+    
     If Not StringHelper.StartsWith(strJSON, "[") Or Not StringHelper.EndsWith(strJSON, "]") Then
         Message.Throw 1, Me, "ParseArray", "JSONFormatError"
         Exit Function
     End If
     
-    Dim objAry As IList
     Set objAry = New ArrayList
     
     strJSON = Mid$(strJSON, 2, Len(strJSON) - 2)
     
-    Dim itemBuffer As String
-    Dim i As Long
-    Dim lineBreak As Boolean
-    
     Dim IC As ICursor
-    
     Set IC = Constructor(New CharCursor, strJSON)
     
     Do Until IC.Eof

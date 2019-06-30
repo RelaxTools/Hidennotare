@@ -45,7 +45,11 @@ Private mstrFileName As String
 
 Private mWS As Worksheet
 Private mWB As Workbook
-
+'--------------------------------------------------------------
+' コンストラクタ
+'--------------------------------------------------------------
+' Arg1 - Workbook Object or BookName
+'--------------------------------------------------------------
 Private Function IConstructor_Instancing(Args As Collection) As Object
 
     If Args.Count = 0 Then

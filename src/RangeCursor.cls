@@ -56,10 +56,11 @@ Private mRange As Range
 Private mStartRow As Long
 Private mEofCol As Variant
 Private mRow As Long
-
-'------------------------------------------------------
+'--------------------------------------------------------------
 ' コンストラクタ
-'------------------------------------------------------
+'--------------------------------------------------------------
+' Arg1 - Range   : UsedRange/ActiveSheet.Range(ActiveSheet.PrintArea) etc...
+'--------------------------------------------------------------
 Private Function IConstructor_Instancing(ByRef Args As Collection) As Object
 
     Const RANGE_AREA As Long = 1  '引数１　RANGE オブジェクト

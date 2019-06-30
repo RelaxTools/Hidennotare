@@ -73,9 +73,10 @@ Private Sub Class_Terminate()
     Set mCol = Nothing
 End Sub
 '--------------------------------------------------------------
-' IConstructor I/F
-'--------------------------------------------------------------
 ' コンストラクタ
+'--------------------------------------------------------------
+' Arg1 - Collection  : 1D Only
+' Arg2 - Array       : 1D Only
 '--------------------------------------------------------------
 Private Function IConstructor_Instancing(ByRef Args As Collection) As Object
 

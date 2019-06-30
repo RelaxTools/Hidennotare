@@ -56,7 +56,15 @@ Private mMode As OpenModeConstants
 Private mBom As Boolean
 
 Private mFirst As Boolean
-
+'--------------------------------------------------------------
+' コンストラクタ
+'--------------------------------------------------------------
+' Arg1 - FileName
+' Arg2 - NewLineCode : NewLineCodeConstants.CRLF/LF
+' Arg3 - Encode      : EncodeConstants.CP932/UTF8/UTF16LE
+' Arg4 - Mode        : OpenModeConstants.Output/Append
+' Arg5 - Bom         : True/False
+'--------------------------------------------------------------
 Private Function IConstructor_Instancing(Args As Collection) As Object
 
     If Args.Count = 0 Then

@@ -54,9 +54,11 @@ Implements ICursor
 
 Private mBuf As Variant
 Private mIndex As Long
-'------------------------------------------------------
+'--------------------------------------------------------------
 ' コンストラクタ
-'------------------------------------------------------
+'--------------------------------------------------------------
+' Arg1 - Array     : Array(2D)
+'--------------------------------------------------------------
 Private Function IConstructor_Instancing(ByRef Args As Collection) As Object
 
     Select Case Args.Count

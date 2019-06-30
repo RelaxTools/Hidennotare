@@ -54,9 +54,11 @@ Implements ICursor
 
 Private mCol As Collection
 Private mIndex As Long
-'------------------------------------------------------
+'--------------------------------------------------------------
 ' コンストラクタ
-'------------------------------------------------------
+'--------------------------------------------------------------
+' Arg1 - Collection   : Collection(1D)
+'--------------------------------------------------------------
 Private Function IConstructor_Instancing(ByRef Args As Collection) As Object
 
     Const C_COLLECTION As Long = 1

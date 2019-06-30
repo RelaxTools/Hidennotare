@@ -91,6 +91,9 @@ End Sub
 '--------------------------------------------------------------
 ' コンストラクタ
 '--------------------------------------------------------------
+' Arg1 - UserForm     : Me etc...
+' Arg2 - Button Name  : Cancel Button Name(Defallt 中断)
+'--------------------------------------------------------------
 Private Function IConstructor_Instancing(Args As Collection) As Object
     
     Select Case Args.Count

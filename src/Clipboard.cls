@@ -252,7 +252,7 @@ Public Function GetCopyClipText() As String
     Dim files As Long
     Dim i As Long
     Dim strFilePath As String
-    Dim ret As String
+    Dim Ret As String
     
     If OpenClipboard(0) <> 0 Then
    
@@ -274,9 +274,9 @@ Public Function GetCopyClipText() As String
                 lngSize = DragQueryFileW(hData, i, StrPtr(strFilePath), Len(strFilePath))
                 
                 If i = 0 Then
-                    ret = Left$(strFilePath, lngSize)
+                    Ret = Left$(strFilePath, lngSize)
                 Else
-                    ret = ret & vbCrLf & Left$(strFilePath, lngSize)
+                    Ret = Ret & vbCrLf & Left$(strFilePath, lngSize)
                 End If
             Next
         End If
@@ -284,7 +284,7 @@ Public Function GetCopyClipText() As String
     
     End If
     
-    GetCopyClipText = ret
+    GetCopyClipText = Ret
     
 End Function
 'クリップボードにテキストデータを書き込むプロシージャ

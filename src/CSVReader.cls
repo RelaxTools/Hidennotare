@@ -85,7 +85,13 @@ Public Enum CsvReaderHeaderConstants
     None
 End Enum
 '--------------------------------------------------------------
-'　コンストラクタ
+' コンストラクタ
+'--------------------------------------------------------------
+' Arg1 - FileName
+' Arg2 - NewLineCode : NewLineCodeConstants.CRLF/LF(Default CRLF)
+' Arg3 - Encode      : EncodeConstants.CP932/UTF8/UTF16LE(Default CP932)
+' Arg4 - Delimiter   : ","/vbTab etc...
+' Arg5 - Quotation   : True/False
 '--------------------------------------------------------------
 Private Function IConstructor_Instancing(Args As Collection) As Object
     

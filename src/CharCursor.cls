@@ -57,9 +57,11 @@ Private mIndex As Long
 Private Sub Class_Initialize()
     mIndex = 1
 End Sub
-'------------------------------------------------------
+'--------------------------------------------------------------
 ' コンストラクタ
-'------------------------------------------------------
+'--------------------------------------------------------------
+' Arg1 - String   : String
+'--------------------------------------------------------------
 Private Function IConstructor_Instancing(ByRef Args As Collection) As Object
 
     Select Case Args.Count

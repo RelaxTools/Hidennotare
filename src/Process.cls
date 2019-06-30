@@ -82,9 +82,7 @@ Function Exec(ByVal strCommand As String) As String
     
     Set WSH = CreateObject("WScript.Shell")
     
-'    Set wExec = WSH.exec("%ComSpec% /c " & strCommand)
     Set wExec = WSH.Exec(strCommand)
-'    Set wExec = WSH.exec("cscript " & strCommand)
     Do While wExec.Status = 0
         DoEvents
     Loop
@@ -115,7 +113,7 @@ End Function
 '--------------------------------------------------------------
 Sub Shell(ByVal strCommand As String, ParamArray p())
 
-    Dim ret As Variant
+    Dim Ret As Variant
     Dim strBuf As String
     Dim v As Variant
 
@@ -130,9 +128,9 @@ Sub Shell(ByVal strCommand As String, ParamArray p())
     End If
     
     On Error Resume Next
-    ret = VBA.Shell(strBuf, vbNormalFocus)
-    If ret <> 0 Then
-        AppActivate ret
+    Ret = VBA.Shell(strBuf, vbNormalFocus)
+    If Ret <> 0 Then
+        AppActivate Ret
     End If
 
 End Sub

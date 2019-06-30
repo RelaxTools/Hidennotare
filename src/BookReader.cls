@@ -65,9 +65,13 @@ End Sub
 Private Sub Class_Terminate()
     CloseFile
 End Sub
-'-------------------------------------------------
-'  コンストラクタ
-'-------------------------------------------------
+'--------------------------------------------------------------
+' コンストラクタ
+'--------------------------------------------------------------
+' Arg1 - BookName
+' Arg2 - ReadOnly    : True/False(Default True)
+' Arg3 - Application : Excel Application(Default Application)
+'--------------------------------------------------------------
 Private Function IConstructor_Instancing(ByRef Args As Collection) As Object
 
     Dim strBook As String

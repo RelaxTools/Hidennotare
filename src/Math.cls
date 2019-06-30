@@ -44,11 +44,10 @@ Attribute VB_Exposed = False
 ' 2018-12-16 Ver.1.0.0 新規作成
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
-
 '--------------------------------------------------------------
 'カウンタをインクリメント
 '--------------------------------------------------------------
-Public Sub Incl(ByRef lngCnt As Long, Optional ByVal Incriment As Long = 1)
+Public Sub Inc(ByRef lngCnt As Long, Optional ByVal Incriment As Long = 1)
     lngCnt = lngCnt + Incriment
 End Sub
 '--------------------------------------------------------------

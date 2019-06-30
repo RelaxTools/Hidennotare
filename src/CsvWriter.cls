@@ -60,12 +60,23 @@ Private mBom As Boolean
 
 Private mDelimiter As String
 Private mQuotation As Boolean
-
+'--------------------------------------------------------------
+' コンストラクタ
+'--------------------------------------------------------------
+' Arg1 - FileName
+' Arg2 - NewLineCode : NewLineCodeConstants.CRLF/LF(Default CRLF)
+' Arg3 - Encode      : EncodeConstants.CP932/UTF8/UTF16LE(Default CP932)
+' Arg4 - Mode        : OpenModeConstants.Output/Append(Default Output)
+' Arg5 - Bom         : True/False
+' Arg6 - Delimiter   : ","/vbTab etc...
+'--------------------------------------------------------------
 Private Function IConstructor_Instancing(Args As Collection) As Object
     
-    If Args.Count = 0 Then
-        Exit Function
-    End If
+    Select Case Args.Count
+        Case 1 To 6
+        Case Else
+            Exit Function
+    End Select
     
     'Default
     mNewLineCode = NewLineCodeConstants.CRLF
@@ -93,7 +104,7 @@ Private Function IConstructor_Instancing(Args As Collection) As Object
     End If
     
     If Args.Count >= 5 Then
-        mMode = Args(5)
+        mBom = Args(5)
     End If
     
     If Args.Count >= 6 Then

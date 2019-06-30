@@ -76,10 +76,15 @@ Enum SheetIteratorConstants
     DirectionRight = 1          '右方向カーソル
 End Enum
 Private mDirection As SheetIteratorConstants
-
-'------------------------------------------------------
+'--------------------------------------------------------------
 ' コンストラクタ
-'------------------------------------------------------
+'--------------------------------------------------------------
+' Arg1 - Worksheet
+' Arg2 - StartRow/Column : Start Row or ColumnF
+' Arg3 - EOF Row/Column  : Eof Row or Column
+' Arg4 - Direction       : SheetCursorConstants.DirectionDown/DirectionRight
+' Arg5 - EOF String      : Default ""
+'--------------------------------------------------------------
 Private Function IConstructor_Instancing(ByRef Args As Collection) As Object
 
     Const WORK_SHEET As Long = 1  '引数１　Worksheet オブジェクト

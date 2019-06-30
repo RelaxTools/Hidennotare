@@ -58,9 +58,11 @@ Private mWS As Worksheet
 Private mlngStartRow As Long
 Private mlngRow As Long
 Private mlngLastRow As Long
-'------------------------------------------------------
+'--------------------------------------------------------------
 ' コンストラクタ
-'------------------------------------------------------
+'--------------------------------------------------------------
+' Arg1 - Worksheet or Listobject
+'--------------------------------------------------------------
 Private Sub Class_Initialize()
 
 End Sub
