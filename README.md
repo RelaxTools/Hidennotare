@@ -8,3 +8,5 @@ all-purpose VBA Library
 [StringBuilderの使い方](https://github.com/RelaxTools/Hecatoncheir/wiki/StringBuilder-%E3%81%AE%E4%BD%BF%E3%81%84%E6%96%B9)
 
 [Messageクラスの使い方](https://github.com/RelaxTools/Hecatoncheir/wiki/Message%E3%82%AF%E3%83%A9%E3%82%B9%E3%81%AE%E4%BD%BF%E3%81%84%E6%96%B9)
+
+[Usingクラスの使い方](https://github.com/RelaxTools/Hecatoncheir/wiki/Using%E3%82%AF%E3%83%A9%E3%82%B9%E3%81%AE%E4%BD%BF%E3%81%84%E6%96%B9)
