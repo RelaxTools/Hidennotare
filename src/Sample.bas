@@ -75,3 +75,29 @@ Sub Message_Sample()
 
 
 End Sub
+
+Sub Using_Sample()
+
+    'IUsing に対応したクラスを Usingクラスのコンストラクタに
+    '指定することにより、開始・終了をマネジメントする。
+    
+    'NewExcel           ・・別プロセスでExcel起動・終了を行う。
+    'OneTimeSpeedBooster・・再計算、ScreenUpdating及びPrintCommunicationなどを
+    '                       停止・再開を行う。
+    
+    'Withで開始処理、End Withで終了処理を行う。C#でのUsing句のような動作を行う。
+    With Constructor(New Using, New NewExcel, New OneTimeSpeedBooster)
+    
+        'この間で処理を行う。
+        Debug.Print "Application.ScreenUpdating:" & Application.ScreenUpdating
+    
+        'Using クラスの引数１つ目のインスタンスを返す。
+        Debug.Print .Args(1).GetInstance.Caption
+        
+
+    End With
+    '終了
+    
+    Debug.Print "Application.ScreenUpdating:" & Application.ScreenUpdating
+
+End Sub

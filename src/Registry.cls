@@ -95,7 +95,7 @@ Public Sub Export()
 
     Set Locator = CreateObject("WbemScripting.SWbemLocator")
     Set Service = Locator.ConnectServer(vbNullString, "root\default")
-    Set Reg = Service.Get("StdRegProv")
+    Set Reg = Service.get("StdRegProv")
     
     Const HKEY_CURRENT_USER = &H80000001
     
