@@ -381,34 +381,34 @@ Private Function IList_ToString() As String
     Const PROC_NAME As String = "ToString"
 
     Dim v As Variant
-    Dim sb As StringBuilder
-    Set sb = New StringBuilder
+    Dim SB As StringBuilder
+    Set SB = New StringBuilder
     
     For Each v In mCol
     
         Select Case True
             Case IsObject(v), VarType(v) = vbDataObject
                 
-                sb.Append v.ToString
+                SB.Append v.ToString
             
             Case IsEmpty(v)
                 
-                sb.Append "null"
+                SB.Append "null"
             
             Case Else
                 Select Case VarType(v)
                     
                     Case vbBoolean
         
-                        sb.Append LCase(CStr(v))
+                        SB.Append LCase(CStr(v))
         
                     Case vbString
                     
-                        sb.Append Escape(v)
+                        SB.Append Escape(v)
                     
                     Case vbByte, vbInteger, vbLong, vbSingle, vbDouble, vbCurrency, vbDecimal ', vbLongLong
         
-                        sb.Append v
+                        SB.Append v
         
                     Case Else
         
@@ -420,7 +420,7 @@ Private Function IList_ToString() As String
         
     Next
 
-    IList_ToString = "[" & sb.ToJoin(", ") & "]"
+    IList_ToString = "[" & SB.ToJoin(", ") & "]"
 
 End Function
 '--------------------------------------------------------------

@@ -169,8 +169,8 @@ Private Function CsvParser(ByVal strBuf As String) As Collection
         Do Until IC.Eof Or blnLineBreak
         
             'èâä˙âª
-            Dim sb As StringBuilder
-            Set sb = New StringBuilder
+            Dim SB As StringBuilder
+            Set SB = New StringBuilder
             blnItemBreak = False
             
             Do Until IC.Eof Or blnLineBreak Or blnItemBreak
@@ -188,7 +188,7 @@ Private Function CsvParser(ByVal strBuf As String) As Collection
                                 'éüÇÃï∂éöÇ™Quatation
                                 If IC.Item(1) = C_QUAT Then
                                     lngQuot = lngQuot + 1
-                                    sb.Append C_QUAT
+                                    SB.Append C_QUAT
                                     IC.MoveNext
                                 Else
                                     sw = False
@@ -202,13 +202,13 @@ Private Function CsvParser(ByVal strBuf As String) As Collection
                     Case vbCr
 
                         If sw Then
-                            sb.Append IC.Item
+                            SB.Append IC.Item
                         End If
 
                     Case vbLf
 
                         If sw Then
-                            sb.Append IC.Item
+                            SB.Append IC.Item
                         Else
                             blnLineBreak = True
                         End If
@@ -216,14 +216,14 @@ Private Function CsvParser(ByVal strBuf As String) As Collection
                     Case mDelimiter
 
                         If sw Then
-                            sb.Append IC.Item
+                            SB.Append IC.Item
                         Else
                             blnItemBreak = True
                         End If
 
                     Case Else
 
-                        sb.Append IC.Item
+                        SB.Append IC.Item
 
                 End Select
             
@@ -231,7 +231,7 @@ Private Function CsvParser(ByVal strBuf As String) As Collection
             Loop
             
             'óÒí«â¡èàóù
-            col.Add sb.ToString
+            col.Add SB.ToString
             
         Loop
         

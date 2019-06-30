@@ -96,10 +96,10 @@ End Function
 Public Function Escape(ByVal v As String) As String
 
     Dim strChr As String
-    Dim sb As StringBuilder
+    Dim SB As StringBuilder
     Dim i As Long
     
-    Set sb = New StringBuilder
+    Set SB = New StringBuilder
     
     For i = 1 To Len(v)
         
@@ -107,30 +107,30 @@ Public Function Escape(ByVal v As String) As String
         
         Select Case Unicode(strChr)
             Case &H0 To &H7, &HB, &HE To &H1F, &H7F
-                sb.Append "\u" & Hex$(Unicode(strChr))
+                SB.Append "\u" & Hex$(Unicode(strChr))
             Case &H8
-                sb.Append "\b"
+                SB.Append "\b"
             Case &H9
-                sb.Append "\t"
+                SB.Append "\t"
             Case &HA
-                sb.Append "\n"
+                SB.Append "\n"
             Case &HC
-                sb.Append "\f"
+                SB.Append "\f"
             Case &HD
-                sb.Append "\r"
+                SB.Append "\r"
             Case &H22
-                sb.Append "\"""
+                SB.Append "\"""
             Case &H2F
-                sb.Append "\/"
+                SB.Append "\/"
             Case &H5C
-                sb.Append "\\"
+                SB.Append "\\"
             Case Else
-                sb.Append strChr
+                SB.Append strChr
         End Select
 
     Next
     
-    Escape = sb.ToString
+    Escape = SB.ToString
 
 End Function
 '---------------------------------------------------------------------
@@ -141,12 +141,12 @@ Public Function UnEscape(ByVal v As String) As String
 
     Dim strChr As String
     Dim strBuf As String
-    Dim sb As StringBuilder
+    Dim SB As StringBuilder
     Dim i As Long
     
     '–{“–‚ÉJSON‚·‚é‚È‚ç‚±‚±‚ÅUTF8•ÏŠ·
     
-    Set sb = New StringBuilder
+    Set SB = New StringBuilder
     i = 1
     Do Until i > Len(v)
 
@@ -159,40 +159,40 @@ Public Function UnEscape(ByVal v As String) As String
                     Message.Throw 1, Me, "UnEscape", "format error"
                 End If
             
-                sb.Append ChrW$(Val("&H" & Mid$(v, i + 2, 4)))
+                SB.Append ChrW$(Val("&H" & Mid$(v, i + 2, 4)))
                 i = i + 6
             Case "\b"
-                sb.Append Chr$(&H8)
+                SB.Append Chr$(&H8)
                 i = i + 2
             Case "\t"
-                sb.Append vbTab
+                SB.Append vbTab
                 i = i + 2
             Case "\n"
-                sb.Append vbLf
+                SB.Append vbLf
                 i = i + 2
             Case "\f"
-                sb.Append Chr$(&HC)
+                SB.Append Chr$(&HC)
                 i = i + 2
             Case "\r"
-                sb.Append vbCr
+                SB.Append vbCr
                 i = i + 2
             Case "\"""
-                sb.Append """"
+                SB.Append """"
                 i = i + 2
             Case "\/"
-                sb.Append "/"
+                SB.Append "/"
                 i = i + 2
             Case "\\"
-                sb.Append "\"
+                SB.Append "\"
                 i = i + 2
             Case Else
-                sb.Append Left(strChr, 1)
+                SB.Append Left(strChr, 1)
                 i = i + 1
         End Select
 
     Loop
 
-    UnEscape = sb.ToString
+    UnEscape = SB.ToString
 
 End Function
 '--------------------------------------------------------------

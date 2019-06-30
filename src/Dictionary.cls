@@ -216,8 +216,8 @@ Public Function ToString() As String
     
     Dim v  As Variant
     
-    Dim sb As StringBuilder
-    Set sb = New StringBuilder
+    Dim SB As StringBuilder
+    Set SB = New StringBuilder
     
     For Each KeyValue In mDic.keys
     
@@ -230,26 +230,26 @@ Public Function ToString() As String
         Select Case True
             Case IsObject(v), VarType(v) = vbDataObject
                 
-                sb.Append """" & KeyValue & """:" & v.ToString
+                SB.Append """" & KeyValue & """:" & v.ToString
             
             Case IsEmpty(v)
                 
-                sb.Append """" & KeyValue & """:" & "null"
+                SB.Append """" & KeyValue & """:" & "null"
             
             Case Else
                 Select Case VarType(v)
                     
                     Case vbBoolean
         
-                        sb.Append """" & KeyValue & """:" & LCase(CStr(v))
+                        SB.Append """" & KeyValue & """:" & LCase(CStr(v))
         
                     Case vbString
                     
-                        sb.Append """" & KeyValue & """:" & Escape(v)
+                        SB.Append """" & KeyValue & """:" & Escape(v)
                     
                     Case vbByte, vbInteger, vbLong, vbSingle, vbDouble, vbCurrency, vbDecimal ', vbLongLong
         
-                        sb.Append """" & KeyValue & """:" & v
+                        SB.Append """" & KeyValue & """:" & v
         
                     Case Else
         
@@ -262,7 +262,7 @@ Public Function ToString() As String
     
     Next
 
-    ToString = "{" & sb.ToJoin(", ") & "}"
+    ToString = "{" & SB.ToJoin(", ") & "}"
 
 End Function
 ' êßå‰ï∂éöïœä∑

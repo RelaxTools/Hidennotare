@@ -124,15 +124,15 @@ End Sub
 Private Sub IWriter_Append(ByVal Args As Variant)
     
     Dim c As Variant
-    Dim sb As StringBuilder
-    Set sb = New StringBuilder
+    Dim SB As StringBuilder
+    Set SB = New StringBuilder
 
     If IsArray(Args) Then
         For Each c In Args
-            sb.Append AddQuot(c)
+            SB.Append AddQuot(c)
         Next
         'TextWriter‚ÉˆÏ÷‚·‚éB
-        IR.Append sb.ToJoin(mDelimiter)
+        IR.Append SB.ToJoin(mDelimiter)
     Else
         'TextWriter‚ÉˆÏ÷‚·‚éB
         IR.Append AddQuot(Args)
