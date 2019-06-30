@@ -40,12 +40,7 @@ Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements ICursor
-
-Public Enum CompareMethod
-    BinaryCompare = 0
-    TextCompare = 1
-    DatabaseCompare = 2
-End Enum
+Implements IDictionary
 
 Private mDic As Object
 Private mIndex As Long
@@ -65,81 +60,80 @@ End Sub
 '--------------------------------------------------------------
 '  項目の追加
 '--------------------------------------------------------------
-Public Function Add(ByVal KeyValue As String, obj As Variant)
+Private Function IDictionary_Add(ByVal KeyValue As String, obj As Variant)
     mDic.Add KeyValue, obj
 End Function
 '--------------------------------------------------------------
 '  項目の存在チェック
 '--------------------------------------------------------------
-Public Function Exists(ByVal KeyValue As String) As Boolean
-    Exists = mDic.Exists(KeyValue)
+Private Function IDictionary_Exists(ByVal KeyValue As String) As Boolean
+    IDictionary_Exists = mDic.Exists(KeyValue)
 End Function
 '--------------------------------------------------------------
 '  キーリスト取得
 '--------------------------------------------------------------
-Public Function keys() As Variant
-    keys = mDic.keys
+Private Function IDictionary_Keys() As Variant
+    IDictionary_Keys = mDic.keys
 End Function
 '--------------------------------------------------------------
 '  ソート済みキーリスト取得
 '--------------------------------------------------------------
-Public Function SortedKeys(Optional ByRef CP As IComparer = Nothing) As Variant
-    SortedKeys = Sort(CP)
+Private Function IDictionary_SortedKeys(Optional ByRef CP As IComparer = Nothing) As Variant
+    IDictionary_SortedKeys = Sort(CP)
 End Function
 '--------------------------------------------------------------
 '  値リスト取得
 '--------------------------------------------------------------
-Public Function Items() As Variant
-    Items = mDic.Items
+Private Function IDictionary_Items() As Variant
+    IDictionary_Items = mDic.Items
 End Function
-Public Property Get CompareMode() As CompareMethod
-    CompareMode = mDic.CompareMode
+Private Property Get IDictionary_CompareMode() As CompareMethod
+    IDictionary_CompareMode = mDic.CompareMode
 End Property
-Public Property Let CompareMode(Mode As CompareMethod)
+Private Property Let IDictionary_CompareMode(Mode As CompareMethod)
     mDic.CompareMode = Mode
 End Property
-Public Property Get Count() As Long
-    Count = mDic.Count
+Private Property Get IDictionary_Count() As Long
+    IDictionary_Count = mDic.Count
 End Property
 '--------------------------------------------------------------
 '  値取得
 '--------------------------------------------------------------
-Public Property Get Item(ByVal KeyValue As String) As Variant
-Attribute Item.VB_UserMemId = 0
+Private Property Get IDictionary_Item(ByVal KeyValue As String) As Variant
     If VBA.IsObject(mDic.Item(KeyValue)) Then
-        Set Item = mDic.Item(KeyValue)
+        Set IDictionary_Item = mDic.Item(KeyValue)
     Else
-        Item = mDic.Item(KeyValue)
+        IDictionary_Item = mDic.Item(KeyValue)
     End If
 End Property
 '--------------------------------------------------------------
 '  値設定
 '--------------------------------------------------------------
-Public Property Let Item(ByVal KeyValue As String, NewItem As Variant)
+Private Property Let IDictionary_Item(ByVal KeyValue As String, NewItem As Variant)
     mDic.Item(KeyValue) = NewItem
 End Property
 '--------------------------------------------------------------
 '  値設定(オブジェクト)
 '--------------------------------------------------------------
-Public Property Set Item(ByVal KeyValue As String, NewItem As Variant)
+Private Property Set IDictionary_Item(ByVal KeyValue As String, NewItem As Variant)
     Set mDic.Item(KeyValue) = NewItem
 End Property
 '--------------------------------------------------------------
 '  キー設定
 '--------------------------------------------------------------
-Public Property Let Key(ByVal OldKey As String, NewKey As Variant)
+Private Property Let IDictionary_Key(ByVal OldKey As String, NewKey As Variant)
     mDic.Key(OldKey) = NewKey
 End Property
 '--------------------------------------------------------------
 '  削除
 '--------------------------------------------------------------
-Public Sub Remove(ByVal KeyValue As String)
+Private Sub IDictionary_Remove(ByVal KeyValue As String)
     mDic.Remove KeyValue
 End Sub
 '--------------------------------------------------------------
 '  全アイテム削除
 '--------------------------------------------------------------
-Public Sub RemoveAll()
+Private Sub IDictionary_RemoveAll()
     
     mDic.RemoveAll
     mIndex = 0
@@ -209,7 +203,7 @@ End Function
 '--------------------------------------------------------------
 '  シリアライズ化(JSON)
 '--------------------------------------------------------------
-Public Function ToString() As String
+Private Function IDictionary_ToString() As String
 
     Dim Item  As Variant
     Dim KeyValue As Variant
@@ -262,7 +256,7 @@ Public Function ToString() As String
     
     Next
 
-    ToString = "{" & SB.ToJoin(", ") & "}"
+    IDictionary_ToString = "{" & SB.ToJoin(", ") & "}"
 
 End Function
 ' 制御文字変換
@@ -283,8 +277,8 @@ End Function
 '--------------------------------------------------------------
 '  ICursor の ICursor インターフェースを取得
 '--------------------------------------------------------------
-Public Property Get GetCursor() As ICursor
-    Set GetCursor = Me
+Private Property Get IDictionary_GetCursor() As ICursor
+    Set IDictionary_GetCursor = Me
 End Property
 '--------------------------------------------------------------
 '  ICursor の Eof プロパティを取得
@@ -298,7 +292,7 @@ End Property
 Private Property Get ICursor_Item(Optional ByVal opt As Variant) As Variant
     Dim v As Variant
     
-    v = Me.SortedKeys
+    v = IDictionary_SortedKeys
     
     If mIndex > mDic.Count - 1 Then
         ICursor_Item = v(mDic.Count - 1)
@@ -314,7 +308,7 @@ Private Property Get ICursor_PreviousItem(Optional ByVal opt As Variant) As Vari
     
     Dim v As Variant
     
-    v = Me.SortedKeys
+    v = IDictionary_SortedKeys
     
     If mIndex < 0 Then
         Message.Throw 1, Me, "ICursor_PreviousItem", "IndexOutOfRangeException"

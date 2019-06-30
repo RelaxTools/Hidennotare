@@ -101,3 +101,37 @@ Sub Using_Sample()
     Debug.Print "Application.ScreenUpdating:" & Application.ScreenUpdating
 
 End Sub
+Sub Serialize_Sample()
+
+    Dim row As IList
+    Dim col As IDictionary
+    
+    Set row = New ArrayList
+    
+    Set col = New Dictionary
+    
+    col.Add "Field01", 10
+    col.Add "Field02", 20
+    col.Add "Field03", 30
+
+    row.Add col
+
+    Set col = New Dictionary
+    col.Add "Field01", 40
+    col.Add "Field02", 50
+    col.Add "Field03", 60
+
+    row.Add col
+    
+    Debug.Print row.ToString
+
+End Sub
+Sub desirialize_Sample()
+
+    Dim row As IList
+
+    Set row = JSON.ParseJSON("[{""Field01"":10, ""Field02"":20, ""Field03"":30}, {""Field01"":40, ""Field02"":50, ""Field03"":60}]")
+
+    Debug.Print row.ToString
+
+End Sub

@@ -65,9 +65,9 @@ End Function
 '-------------------------------------------------
 ' ObjectÇÃÉpÅ[ÉX
 '-------------------------------------------------
-Public Function ParseObject(ByVal strJSON As String) As Dictionary
+Public Function ParseObject(ByVal strJSON As String) As IDictionary
     
-    Dim objDic As Dictionary
+    Dim objDic As IDictionary
     Dim propertyName As String
     Dim valueBuffer As String
     Dim lineBreak As Boolean

@@ -259,7 +259,7 @@ End Function
 '--------------------------------------------------------------
 '　シート貼り付け
 '--------------------------------------------------------------
-Public Sub Paste(ByRef TopLeft As Range, ByRef Fields As Dictionary, Optional ByVal Header As CsvReaderHeaderConstants = CsvReaderHeaderConstants.None)
+Public Sub Paste(ByRef TopLeft As Range, ByRef Fields As IDictionary, Optional ByVal Header As CsvReaderHeaderConstants = CsvReaderHeaderConstants.None)
 
     Dim lngCol As Long
     Dim lngRow As Long
