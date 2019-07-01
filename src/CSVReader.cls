@@ -77,7 +77,7 @@ Private mEncode As EncodeConstants
 Private mDelimiter As String
 Private mQuotation As Boolean
 
-Private mList As Collection
+Private mCol As Collection
 Private mIndex As Long
 Public Enum CsvReaderHeaderConstants
     UseFirstRow
@@ -129,7 +129,7 @@ Private Function IConstructor_Instancing(Args As Collection) As Object
     'TextReaderに委譲する。改行コードをCsvReader側でパースする。
     Set IR = Constructor(New TextReader, mFileName, NewLineCodeConstants.None, mEncode)
     
-    Set mList = CsvParser(IR.ReadAll)
+    Set mCol = CsvParser(IR.ReadAll)
     
     ICursor_MoveFirst
     
@@ -253,7 +253,7 @@ End Function
 '--------------------------------------------------------------
 Private Function IReader_ReadAll() As Variant
 
-    Set IReader_ReadAll = mList
+    Set IReader_ReadAll = mCol
 
 End Function
 '--------------------------------------------------------------
@@ -269,12 +269,12 @@ Public Sub Paste(ByRef TopLeft As Range, ByRef Fields As IDictionary, Optional B
     Const DEFAULT_FIELD As String = "Field"
     
     lngCol = 0
-    lngRow = mList.Count
+    lngRow = mCol.Count
     
     '列数がまちまちの場合があるので最大列数を調べる。
-    For i = 1 To mList.Count
-        If lngCol < mList(i).Count Then
-            lngCol = mList(i).Count
+    For i = 1 To mCol.Count
+        If lngCol < mCol(i).Count Then
+            lngCol = mCol(i).Count
         End If
     Next
     
@@ -299,9 +299,9 @@ Public Sub Paste(ByRef TopLeft As Range, ByRef Fields As IDictionary, Optional B
                 End If
             Next
             
-            For i = 1 To mList.Count
-                For j = 1 To mList(i).Count
-                    var(i + 1, j) = mList(i)(j)
+            For i = 1 To mCol.Count
+                For j = 1 To mCol(i).Count
+                    var(i + 1, j) = mCol(i)(j)
                 Next
             Next
         
@@ -309,9 +309,9 @@ Public Sub Paste(ByRef TopLeft As Range, ByRef Fields As IDictionary, Optional B
             
             ReDim var(1 To lngRow, 1 To lngCol)
             
-            For i = 1 To mList.Count
-                For j = 1 To mList(i).Count
-                    var(i, j) = mList(i)(j)
+            For i = 1 To mCol.Count
+                For j = 1 To mCol(i).Count
+                    var(i, j) = mCol(i)(j)
                 Next
             Next
     
@@ -368,12 +368,12 @@ End Property
 '------------------------------------------------------
 Private Property Get ICursor_Eof() As Boolean
     
-    If mList Is Nothing Then
+    If mCol Is Nothing Then
         ICursor_Eof = True
         Exit Sub
     End If
     
-    ICursor_Eof = mList.Count < mIndex
+    ICursor_Eof = mCol.Count < mIndex
 
 End Property
 '------------------------------------------------------
@@ -383,16 +383,16 @@ Private Property Get ICursor_Item(Optional ByVal opt As Variant) As Variant
 
     If ICursor_Eof Then
         'EOF後は最後の値を返す
-        If IsObject(mList.Item(mList.Count)(opt)) Then
-            Set ICursor_Item = mList.Item(mList.Count)(opt)
+        If IsObject(mCol.Item(mCol.Count)(opt)) Then
+            Set ICursor_Item = mCol.Item(mCol.Count)(opt)
         Else
-            ICursor_Item = mList.Item(mList.Count)(opt)
+            ICursor_Item = mCol.Item(mCol.Count)(opt)
         End If
     Else
-        If IsObject(mList.Item(mIndex)(opt)) Then
-            Set ICursor_Item = mList.Item(mIndex)(opt)
+        If IsObject(mCol.Item(mIndex)(opt)) Then
+            Set ICursor_Item = mCol.Item(mIndex)(opt)
         Else
-            ICursor_Item = mList.Item(mIndex)(opt)
+            ICursor_Item = mCol.Item(mIndex)(opt)
         End If
     End If
 

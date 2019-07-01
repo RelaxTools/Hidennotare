@@ -2,17 +2,17 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "LineCursor"
+Attribute VB_Name = "MList"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hecatoncheir] v1
+' [MLangBuilder] v1
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
-' https://github.com/RelaxTools/Hecatoncheir
+' https://github.com/RelaxTools/MFunctionCreater
 ' author:relaxtools@opensquare.net
 '
 ' The MIT License (MIT)
@@ -36,88 +36,111 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-' カーソル風配列読み込みクラス
-'-----------------------------------------------------------------------------------------------------
-' Dim IC As ICursor
-' Set IC = Constructor(New LineCursor, 配列)
-'
-' Do Until IC.Eof
-'
-'     Debug.Print IC.Item '配列の要素
-'
-'     IC.MoveNext
-' Loop
+' Power Query M Language List Class(Collection Wrapper)
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements IConstructor
 Implements ICursor
+Implements IList
 
-Private mBuf As Variant
+Private mCol As IList
+Private v() As Variant
 Private mIndex As Long
 '--------------------------------------------------------------
-' コンストラクタ
+'  Initialize
 '--------------------------------------------------------------
-' Arg1 - Array     : Array(2D)
+Private Sub Class_Initialize()
+    Set mCol = New ArrayList
+End Sub
 '--------------------------------------------------------------
+'  Terminate
+'--------------------------------------------------------------
+Private Sub Class_Terminate()
+    Set mCol = Nothing
+End Sub
 Private Function IConstructor_Instancing(ByRef Args As Collection) As Object
 
-    Select Case Args.Count
-        Case 1
-            If IsArray(Args(1)) Then
-                mBuf = Args(1)
-            Else
-                Exit Function
-            End If
-        Case Else
-            Exit Function
-    End Select
-    
-    ICursor_MoveFirst
-    Set IConstructor_Instancing = Me
+    Dim IC As IConstructor
+    Set IC = mCol
+    Set IConstructor_Instancing = IC.Instancing(Args)
     
 End Function
-'--------------------------------------------------------------
-' ICursor インターフェースを取得
-'--------------------------------------------------------------
-Public Property Get GetCursor() As ICursor
-    Set GetCursor = Me
+Private Sub IList_Clear()
+    mCol.Clear
+End Sub
+Private Sub IList_Add(obj As Variant)
+    mCol.Add obj
+End Sub
+Private Sub IList_Insert(Idx As Long, v As Variant)
+    mCol.Insert Idx, v
+End Sub
+Private Function IList_NewEnum() As stdole.IUnknown
+    Set IList_NewEnum = mCol.NewEnum
+End Function
+Private Property Get IList_Count() As Long
+    IList_Count = mCol.Count
 End Property
-'------------------------------------------------------
-' 終了判定
-'------------------------------------------------------
-Private Property Get ICursor_Eof() As Boolean
-    ICursor_Eof = UBound(mBuf) < mIndex
-End Property
-'------------------------------------------------------
-' 現在の行取得
-'------------------------------------------------------
-Private Property Get ICursor_Item(Optional ByVal opt As Variant) As Variant
-    If ICursor_Eof Then
-        ICursor_Item = mBuf(UBound(mBuf))
+Private Property Get IList_Item(Idx As Long) As Variant
+    If VBA.IsObject(mCol.Item(Idx)) Then
+        Set IList_Item = mCol.Item(Idx)
     Else
-        ICursor_Item = mBuf(mIndex)
+        IList_Item = mCol.Item(Idx)
     End If
 End Property
-'------------------------------------------------------
-' 前の行取得
-'------------------------------------------------------
-Private Property Get ICursor_PreviousItem(Optional ByVal opt As Variant) As Variant
-    If ICursor_Eof Then
-        ICursor_PreviousItem = mBuf(UBound(mBuf))
-    Else
-        ICursor_PreviousItem = mBuf(mIndex - 1)
-    End If
-End Property
-'------------------------------------------------------
-' 最初の行に移動
-'------------------------------------------------------
-Private Sub ICursor_MoveFirst()
-    mIndex = LBound(mBuf)
+Private Sub IList_RemoveAt(Idx As Long)
+    mCol.RemoveAt Idx
 End Sub
-'------------------------------------------------------
-' 次行取得
-'------------------------------------------------------
-Private Sub ICursor_MoveNext()
-    mIndex = mIndex + 1
+Private Sub IList_Sort(Optional ByVal CP As IComparer = Nothing)
+    mCol.Sort CP
 End Sub
+Private Function IList_ToArray() As Variant
+    IList_ToArray = mCol.ToArray
+End Function
+Private Function IList_ToCollection() As Collection
+    Set IList_ToCollection = mCol.ToCollection
+End Function
+'--------------------------------------------------------------
+' MListを文字列に変換
+'--------------------------------------------------------------
+Private Function IList_ToString() As String
+    
+    Dim v As Variant
+    Dim SB As StringBuilder
+    Set SB = New StringBuilder
+    
+    For Each v In mCol
+    
+        Select Case True
+            Case IsObject(v)
 
+                SB.Append v.ToString
+
+            Case Else
+
+                SB.Append v
+
+        End Select
+    
+    Next
+
+    IList_ToString = "{" & SB.ToJoin(", ") & "}"
+
+End Function
+Private Property Get IList_GetCursor() As ICursor
+    Set IList_GetCursor = mCol.GetCursor
+End Property
+Private Property Get ICursor_Eof() As Boolean
+    ICursor_Eof = mCol.GetCursor.Eof
+End Property
+Private Property Get ICursor_Item(Optional ByVal opt As Variant) As Variant
+    ICursor_Item = mCol.GetCursor.Item
+End Property
+Private Property Get ICursor_PreviousItem(Optional ByVal opt As Variant) As Variant
+    ICursor_PreviousItem = mCol.GetCursor.PreviousItem
+End Property
+Private Sub ICursor_MoveFirst()
+    mCol.GetCursor.MoveFirst
+End Sub
+Private Sub ICursor_MoveNext()
+    mCol.GetCursor.MoveNext
+End Sub

@@ -462,9 +462,17 @@ End Property
 Private Property Get ICursor_Item(Optional ByVal opt As Variant) As Variant
     
     If mIndex >= mCol.Count Then
-        ICursor_Item = mCol(mCol.Count)
+        If IsObject(mCol.Item(mCol.Count)) Then
+            Set ICursor_Item = mCol(mCol.Count)
+        Else
+            ICursor_Item = mCol.Item(mCol.Count)
+        End If
     Else
-        ICursor_Item = mCol(mIndex + 1)
+        If IsObject(mCol.Item(mIndex + 1)) Then
+            Set ICursor_Item = mCol.Item(mIndex + 1)
+        Else
+            ICursor_Item = mCol.Item(mIndex + 1)
+        End If
     End If
     
 End Property
