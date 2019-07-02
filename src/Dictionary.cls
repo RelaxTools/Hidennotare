@@ -5,7 +5,7 @@ END
 Attribute VB_Name = "Dictionary"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = False
+Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
@@ -257,6 +257,27 @@ Private Function IDictionary_ToString() As String
     Next
 
     IDictionary_ToString = "{" & SB.ToJoin(", ") & "}"
+
+End Function
+'--------------------------------------------------------------
+'  他カスタムクラスに変換
+'--------------------------------------------------------------
+Private Function IDictionary_ToCustomClass(c As INewInstance) As Object
+
+    Dim Key As Variant
+    Dim d As Object
+    
+    Set d = c.NewInstance
+    
+    For Each Key In mDic.keys
+        If IsObject(mDic.Item(Key)) Then
+            CallByName d, Key, VbSet, mDic.Item(Key)
+        Else
+            CallByName d, Key, VbLet, mDic.Item(Key)
+        End If
+    Next
+    
+    Set IDictionary_ToCustomClass = d
 
 End Function
 ' 制御文字変換

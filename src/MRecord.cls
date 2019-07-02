@@ -134,6 +134,9 @@ Private Function IDictionary_ToString() As String
     IDictionary_ToString = "[" & SB.ToJoin(", ") & "]"
 
 End Function
+Private Function IDictionary_ToCustomClass(c As INewInstance) As Object
+    Set IDictionary_ToCustomClass = mDic.ToCustomClass(c)
+End Function
 Private Property Get IDictionary_GetCursor() As ICursor
     Set IDictionary_GetCursor = mDic.GetCursor
 End Property

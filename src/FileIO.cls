@@ -267,7 +267,7 @@ Public Sub FileSearchEx(ByVal strPath As String, _
                Optional ByVal NaturalSort As Boolean = True, _
                Optional ByVal varExcludedFolder As Variant = "")
 
-    Dim PL As PairLogger: Set PL = Constructor(New PairLogger, TypeName(Me) & ".FileSearchEx")
+'    Dim PL As PairLogger: Set PL = Constructor(New PairLogger, TypeName(Me) & ".FileSearchEx")
 
     Dim v As Variant
     Dim udtWin32FindData        As WIN32_FIND_DATA      '[WIN32_FIND_DATA]ç\ë¢ëÃ(åüçıåãâ )

@@ -2,7 +2,7 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "IDictionary"
+Attribute VB_Name = "INewInstance"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
@@ -36,47 +36,10 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
+'  INewInstance ƒNƒ‰ƒX
+'-----------------------------------------------------------------------------------------------------
 Option Explicit
 
-Public Enum CompareMethod
-    BinaryCompare = 0
-    TextCompare = 1
-    DatabaseCompare = 2
-End Enum
-Public Function Add(ByVal KeyValue As String, obj As Variant)
+Public Function NewInstance() As Object
 End Function
-Public Function Exists(ByVal KeyValue As String) As Boolean
-End Function
-Public Function keys() As Variant
-End Function
-Public Function SortedKeys(Optional ByRef CP As IComparer = Nothing) As Variant
-End Function
-Public Function Items() As Variant
-End Function
-Public Property Get CompareMode() As CompareMethod
-End Property
-Public Property Let CompareMode(Mode As CompareMethod)
-End Property
-Public Property Get Count() As Long
-End Property
-Public Property Get Item(ByVal KeyValue As String) As Variant
-End Property
-Public Property Let Item(ByVal KeyValue As String, NewItem As Variant)
-End Property
-Public Property Set Item(ByVal KeyValue As String, NewItem As Variant)
-End Property
-Public Property Let Key(ByVal OldKey As String, NewKey As Variant)
-End Property
-Public Sub Remove(ByVal KeyValue As String)
-End Sub
-Public Sub RemoveAll()
-End Sub
-Public Function ToString() As String
-End Function
-Public Function ToCustomClass(c As INewInstance) As Object
-End Function
-Public Property Get GetCursor() As ICursor
-End Property
-
-
 

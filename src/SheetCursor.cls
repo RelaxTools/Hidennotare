@@ -44,7 +44,7 @@ Attribute VB_Exposed = False
 '
 ' Do Until IC.Eof
 '
-'     IC("C").Value = "XXX"
+'     IC("C").Value = "XXX" 'Range
 '
 '     IC.MoveNext
 ' Loop
@@ -79,7 +79,7 @@ Private mDirection As SheetCursorConstants
 ' コンストラクタ
 '--------------------------------------------------------------
 ' Arg1 - Worksheet
-' Arg2 - StartRow/Column : Start Row or ColumnF
+' Arg2 - StartRow/Column : Start Row or Column
 ' Arg3 - EOF Row/Column  : Eof Row or Column
 ' Arg4 - Direction       : SheetCursorConstants.DirectionDown/DirectionRight
 ' Arg5 - EOF String      : Default ""

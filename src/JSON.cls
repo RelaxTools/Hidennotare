@@ -45,27 +45,27 @@ Attribute VB_Exposed = False
 ' 2018-12-16 Ver.1.0.0 新規作成
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
-
 '---------------------------------------------------------------
 ' JSONパース
 '---------------------------------------------------------------
-Public Function ParseJSON(ByVal strJSON As String) As Object
+Public Function ParseJSON(ByVal strJSON As String, Optional ByVal custom As INewInstance = Nothing) As Object
 
     Select Case Left$(strJSON, 1)
         Case """"
             ParseJSON = ParseString(strJSON)
         Case "{"
-            Set ParseJSON = ParseObject(strJSON)
+            Set ParseJSON = ParseObject(strJSON, custom)
+        Case "<"
+            Set ParseJSON = ParseCustom(strJSON, custom)
         Case "["
-            Set ParseJSON = ParseArray(strJSON)
+            Set ParseJSON = ParseArray(strJSON, custom)
     End Select
 
 End Function
-
 '-------------------------------------------------
 ' Objectのパース
 '-------------------------------------------------
-Public Function ParseObject(ByVal strJSON As String) As IDictionary
+Public Function ParseObject(ByVal strJSON As String, Optional ByVal custom As INewInstance = Nothing) As IDictionary
     
     Dim objDic As IDictionary
     Dim propertyName As String
@@ -113,12 +113,17 @@ Public Function ParseObject(ByVal strJSON As String) As IDictionary
                     
                 Case "["
                     
-                    objDic.Add propertyName, ParseArray(ElementExtraction(IC))
+                    objDic.Add propertyName, ParseArray(ElementExtraction(IC), custom)
                     propertyName = ""
                     
                 Case "{"
                     
-                    objDic.Add propertyName, ParseObject(ElementExtraction(IC))
+                    objDic.Add propertyName, ParseObject(ElementExtraction(IC), custom)
+                    propertyName = ""
+                
+                Case "<"
+                    
+                    objDic.Add propertyName, ParseCustom(ElementExtraction(IC), custom)
                     propertyName = ""
                 
                 Case " ", vbTab, vbCr, vbLf, vbCrLf
@@ -150,9 +155,100 @@ Public Function ParseObject(ByVal strJSON As String) As IDictionary
 
 End Function
 '-------------------------------------------------
+' カスタムクラスのパース
+'-------------------------------------------------
+Public Function ParseCustom(ByVal strJSON As String, Optional ByVal custom As INewInstance = Nothing) As Object
+    
+    Dim objCustom As Object
+    Dim propertyName As String
+    Dim valueBuffer As String
+    Dim lineBreak As Boolean
+    
+    If Not StringHelper.StartsWith(strJSON, "<") Or Not StringHelper.EndsWith(strJSON, ">") Then
+        Message.Throw 1, Me, "ParseCustom", "JSONFormatError"
+    End If
+    
+    Set objCustom = custom.NewInstance
+    
+    strJSON = Mid$(strJSON, 2, Len(strJSON) - 2)
+    
+    Dim IC As ICursor
+    Set IC = Constructor(New CharCursor, strJSON)
+    
+    Do Until IC.Eof
+        
+        propertyName = ""
+        valueBuffer = ""
+        lineBreak = False
+        
+        '終了または行の終わり
+        Do Until IC.Eof Or lineBreak
+        
+            Select Case IC.Item
+                Case """"
+                    
+                    If Len(propertyName) > 0 Then
+                        CallByName objCustom, propertyName, VbLet, ParseString(StringExtraction(IC))
+                        propertyName = ""
+                    
+                    Else
+                        propertyName = ParseString(StringExtraction(IC))
+                    End If
+                    
+                Case ":"
+                    
+                    If Len(propertyName) = 0 Then
+                        Message.Throw 2, Me, "ParseObject", "JSONFormatError"
+                        Exit Function
+                    End If
+                    
+                Case "["
+                    
+                    CallByName objCustom, propertyName, VbSet, ParseArray(ElementExtraction(IC), custom)
+                    propertyName = ""
+                    
+                Case "{"
+                    
+                    CallByName objCustom, propertyName, VbSet, ParseObject(ElementExtraction(IC), custom)
+                    propertyName = ""
+                
+                Case "<"
+                    
+                    CallByName objCustom, propertyName, VbLet, ParseCustom(ElementExtraction(IC), custom)
+                    propertyName = ""
+                
+                Case " ", vbTab, vbCr, vbLf, vbCrLf
+                
+                Case ","
+                    lineBreak = True
+                Case Else
+                    
+                    valueBuffer = valueBuffer & IC
+            
+            End Select
+            IC.MoveNext
+        Loop
+    
+        If Len(valueBuffer) > 0 Then
+            
+            If Len(propertyName) = 0 Then
+                Message.Throw 3, Me, "ParseCustom", "JSONFormatError"
+                Exit Function
+            End If
+            
+            CallByName objCustom, propertyName, VbLet, ParseValue(valueBuffer)
+            
+        End If
+    
+    Loop
+
+    Set ParseCustom = objCustom
+
+End Function
+'-------------------------------------------------
 ' Arrayのパース
 '-------------------------------------------------
-Public Function ParseArray(strJSON As String) As ArrayList
+Public Function ParseArray(strJSON As String, Optional ByVal custom As INewInstance = Nothing) As ArrayList
     
     Dim objAry As IList
     Dim itemBuffer As String
@@ -184,11 +280,15 @@ Public Function ParseArray(strJSON As String) As ArrayList
                     
                 Case "["
                     
-                    objAry.Add ParseArray(ElementExtraction(IC))
+                    objAry.Add ParseArray(ElementExtraction(IC), custom)
                     
                 Case "{"
                     
-                    objAry.Add ParseObject(ElementExtraction(IC))
+                    objAry.Add ParseObject(ElementExtraction(IC), custom)
+                
+                Case "<"
+                    
+                    objAry.Add ParseCustom(ElementExtraction(IC), custom)
                 
                 Case " ", vbTab, vbCr, vbLf, vbCrLf
                     
@@ -257,6 +357,7 @@ Private Function ElementExtraction(ByRef IC As ICursor) As String
     
     Dim squareBrackets As Long
     Dim curlyBraces As Long
+    Dim signBraces
     
     Dim sw As Boolean
     
@@ -285,11 +386,17 @@ Private Function ElementExtraction(ByRef IC As ICursor) As String
                     
                 Case "}"
                     curlyBraces = curlyBraces - 1
+                
+                Case "<"
+                    signBraces = signBraces + 1
+                    
+                Case ">"
+                    signBraces = signBraces - 1
             End Select
         
         End If
         
-        If squareBrackets = 0 And curlyBraces = 0 Then
+        If squareBrackets = 0 And curlyBraces = 0 And signBraces = 0 Then
             ElementExtraction = strBuf
             Exit Function
         End If
