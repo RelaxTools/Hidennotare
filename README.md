@@ -1,5 +1,5 @@
 # Hecatoncheir
-all-purpose VBA Library
+all-purpose VBA Library for Excel 2010/2013/2016/2019/365 32/64bit
 
 ### Wiki への参照
 
