@@ -248,7 +248,7 @@ End Function
 '-------------------------------------------------
 ' ArrayÇÃÉpÅ[ÉX
 '-------------------------------------------------
-Public Function ParseArray(strJSON As String, Optional ByVal custom As INewInstance = Nothing) As ArrayList
+Public Function ParseArray(strJSON As String, Optional ByVal custom As INewInstance = Nothing) As IList
     
     Dim objAry As IList
     Dim itemBuffer As String

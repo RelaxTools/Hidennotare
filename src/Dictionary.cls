@@ -204,6 +204,18 @@ End Function
 '  シリアライズ化(JSON)
 '--------------------------------------------------------------
 Private Function IDictionary_ToString() As String
+    IDictionary_ToString = ToString()
+End Function
+'--------------------------------------------------------------
+'  シリアライズ化(カスタムJSON)
+'--------------------------------------------------------------
+Private Function IDictionary_ToCustomString() As String
+    IDictionary_ToCustomString = ToString("<", ">")
+End Function
+'--------------------------------------------------------------
+'  シリアライズ化(JSON)
+'--------------------------------------------------------------
+Private Function ToString(Optional ByVal LQuot As String = "{", Optional ByVal RQuot As String = "}") As String
 
     Dim Item  As Variant
     Dim KeyValue As Variant
@@ -256,30 +268,10 @@ Private Function IDictionary_ToString() As String
     
     Next
 
-    IDictionary_ToString = "{" & SB.ToJoin(", ") & "}"
+    ToString = LQuot & SB.ToJoin(", ") & RQuot
 
 End Function
-'--------------------------------------------------------------
-'  他カスタムクラスに変換
-'--------------------------------------------------------------
-Private Function IDictionary_ToCustomClass(c As INewInstance) As Object
 
-    Dim Key As Variant
-    Dim d As Object
-    
-    Set d = c.NewInstance
-    
-    For Each Key In mDic.keys
-        If IsObject(mDic.Item(Key)) Then
-            CallByName d, Key, VbSet, mDic.Item(Key)
-        Else
-            CallByName d, Key, VbLet, mDic.Item(Key)
-        End If
-    Next
-    
-    Set IDictionary_ToCustomClass = d
-
-End Function
 ' 制御文字変換
 Private Function Escape(ByVal v As String) As String
 

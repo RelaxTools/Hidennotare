@@ -40,4 +40,5 @@ Option Explicit
 
 Public Function NewEnum() As IEnumVARIANT
 Attribute NewEnum.VB_UserMemId = -4
+    'Attribute NewEnum.VB_UserMemId = -4
 End Function

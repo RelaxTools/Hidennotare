@@ -60,6 +60,8 @@ End Property
 Public Property Get Count() As Long
 End Property
 Public Property Get Item(ByVal KeyValue As String) As Variant
+Attribute Item.VB_UserMemId = 0
+    'Attribute Item.VB_UserMemId = 0
 End Property
 Public Property Let Item(ByVal KeyValue As String, NewItem As Variant)
 End Property
@@ -73,7 +75,7 @@ Public Sub RemoveAll()
 End Sub
 Public Function ToString() As String
 End Function
-Public Function ToCustomClass(c As INewInstance) As Object
+Public Function ToCustomString() As String
 End Function
 Public Property Get GetCursor() As ICursor
 End Property

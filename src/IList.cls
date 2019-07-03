@@ -46,11 +46,13 @@ Public Sub Insert(Idx As Long, v As Variant)
 End Sub
 Public Function NewEnum() As stdole.IUnknown
 Attribute NewEnum.VB_UserMemId = -4
+    'Attribute NewEnum.VB_UserMemId = -4
 End Function
 Public Property Get Count() As Long
 End Property
 Public Property Get Item(Idx As Long) As Variant
 Attribute Item.VB_UserMemId = 0
+    'Attribute Item.VB_UserMemId = 0
 End Property
 Public Sub RemoveAt(Idx As Long)
 End Sub

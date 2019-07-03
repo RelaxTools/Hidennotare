@@ -96,6 +96,10 @@ End Sub
 Private Sub IDictionary_RemoveAll()
     mDic.RemoveAll
 End Sub
+Private Function IDictionary_ToCustomString() As String
+    IDictionary_ToCustomString = mDic.ToCustomString
+End Function
+
 '--------------------------------------------------------------
 '  シリアライズ化(MRecord)
 '--------------------------------------------------------------
@@ -133,9 +137,6 @@ Private Function IDictionary_ToString() As String
 
     IDictionary_ToString = "[" & SB.ToJoin(", ") & "]"
 
-End Function
-Private Function IDictionary_ToCustomClass(c As INewInstance) As Object
-    Set IDictionary_ToCustomClass = mDic.ToCustomClass(c)
 End Function
 Private Property Get IDictionary_GetCursor() As ICursor
     Set IDictionary_GetCursor = mDic.GetCursor

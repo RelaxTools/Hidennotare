@@ -44,8 +44,9 @@ Public Sub MoveFirst(): End Sub
 
 Public Sub MoveNext(): End Sub
 
-Public Property Get Item(Optional ByVal opt As Variant) As Variant: End Property
+Public Property Get Item(Optional ByVal opt As Variant) As Variant
 Attribute Item.VB_UserMemId = 0
-
+    'Attribute Item.VB_UserMemId = 0
+End Property
 Public Property Get PreviousItem(Optional ByVal opt As Variant) As Variant: End Property
 
