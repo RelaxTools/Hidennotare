@@ -57,7 +57,7 @@ Private Function IDictionary_Exists(ByVal KeyValue As String) As Boolean
     IDictionary_Exists = mDic.Exists(KeyValue)
 End Function
 Private Function IDictionary_Keys() As Variant
-    IDictionary_Keys = mDic.keys
+    IDictionary_Keys = mDic.Keys
 End Function
 Private Function IDictionary_SortedKeys(Optional ByRef CP As IComparer = Nothing) As Variant
     IDictionary_SortedKeys = mDic.SortedKeys
@@ -96,10 +96,6 @@ End Sub
 Private Sub IDictionary_RemoveAll()
     mDic.RemoveAll
 End Sub
-Private Function IDictionary_ToCustomString() As String
-    IDictionary_ToCustomString = mDic.ToCustomString
-End Function
-
 '--------------------------------------------------------------
 '  シリアライズ化(MRecord)
 '--------------------------------------------------------------
@@ -113,7 +109,7 @@ Private Function IDictionary_ToString() As String
     Dim SB As StringBuilder
     Set SB = New StringBuilder
     
-    For Each KeyValue In mDic.keys
+    For Each KeyValue In mDic.Keys
     
         If VBA.IsObject(mDic.Item(KeyValue)) Then
             Set v = mDic.Item(KeyValue)

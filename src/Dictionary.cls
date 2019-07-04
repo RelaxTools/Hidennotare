@@ -73,7 +73,7 @@ End Function
 '  キーリスト取得
 '--------------------------------------------------------------
 Private Function IDictionary_Keys() As Variant
-    IDictionary_Keys = mDic.keys
+    IDictionary_Keys = mDic.Keys
 End Function
 '--------------------------------------------------------------
 '  ソート済みキーリスト取得
@@ -154,7 +154,7 @@ Private Function Sort(ByVal CP As IComparer) As Variant
         Set CP = New IComparer
     End If
     
-    strKey = mDic.keys
+    strKey = mDic.Keys
 
     '要素数
     n = UBound(strKey) - LBound(strKey) + 1
@@ -207,12 +207,6 @@ Private Function IDictionary_ToString() As String
     IDictionary_ToString = ToString()
 End Function
 '--------------------------------------------------------------
-'  シリアライズ化(カスタムJSON)
-'--------------------------------------------------------------
-Private Function IDictionary_ToCustomString() As String
-    IDictionary_ToCustomString = ToString("<", ">")
-End Function
-'--------------------------------------------------------------
 '  シリアライズ化(JSON)
 '--------------------------------------------------------------
 Private Function ToString(Optional ByVal LQuot As String = "{", Optional ByVal RQuot As String = "}") As String
@@ -225,7 +219,7 @@ Private Function ToString(Optional ByVal LQuot As String = "{", Optional ByVal R
     Dim SB As StringBuilder
     Set SB = New StringBuilder
     
-    For Each KeyValue In mDic.keys
+    For Each KeyValue In mDic.Keys
     
         If VBA.IsObject(mDic.Item(KeyValue)) Then
             Set v = mDic.Item(KeyValue)
@@ -347,4 +341,5 @@ Private Sub ICursor_MoveNext()
     End If
 
 End Sub
+
 

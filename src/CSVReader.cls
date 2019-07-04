@@ -293,7 +293,7 @@ Public Sub Paste(ByRef TopLeft As Range, ByRef Fields As IDictionary, Optional B
             
             For j = 1 To lngCol
                 If j <= Fields.Count Then
-                    var(1, j) = Fields.keys(j - 1)
+                    var(1, j) = Fields.Keys(j - 1)
                 Else
                     var(1, j) = Default & Format$(j, "00")
                 End If
@@ -336,7 +336,7 @@ Public Sub Paste(ByRef TopLeft As Range, ByRef Fields As IDictionary, Optional B
             
             For j = 1 To lngCol
                 If j <= Fields.Count Then
-                    Key = Fields.keys(j - 1)
+                    Key = Fields.Keys(j - 1)
                     If Fields.Exists(Key) Then
                         r.Columns(j).NumberFormatLocal = Fields(Key)
                     End If
