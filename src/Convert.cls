@@ -460,34 +460,6 @@ Private Function Unicode(ByVal strBuf As String) As Long
     End If
 End Function
 
-'--------------------------------------------------------------
-'  RGBからCSS表記
-'--------------------------------------------------------------
-Function RGBToCSS(ByVal lngColor As Variant) As String
-
-    Dim strBuf As String
-    If IsNull(lngColor) Then
-        RGBToCSS = "#000000"
-    Else
-        strBuf = Right$("000000" & Hex$(lngColor), 6)
-        RGBToCSS = "#" & Mid$(strBuf, 5, 2) & Mid$(strBuf, 3, 2) & Mid$(strBuf, 1, 2)
-    End If
-End Function
-'--------------------------------------------------------------
-'  ＨＴＭＬ文字列のサニタイジングを行う。
-'--------------------------------------------------------------
-Public Function Sanitizing(ByVal strBuf As String) As String
-
-    Dim strRep As String
-
-    strRep = Replace(strRep, "&", "&amp;")
-    strRep = Replace(strBuf, """", "&quot;")
-    strRep = Replace(strRep, "<", "&lt;")
-    strRep = Replace(strRep, ">", "&gt;")
-    strRep = Replace(strRep, "'", "&#39;")
-    Sanitizing = strRep
-
-End Function
 '----------------------------------------------------------------------------------
 '　ローマ数字変換
 '----------------------------------------------------------------------------------
