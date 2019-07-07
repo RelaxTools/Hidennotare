@@ -2,7 +2,7 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "MRecord"
+Attribute VB_Name = "SortedDictionary"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
@@ -36,28 +36,52 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-' Power Query M Language Record Class(Dictionary Wrapper)
+' SortedDictionary クラス
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements ICursor
 Implements IDictionary
+Implements IConstructor
+Implements INewInstance
 
 'VBAでは「継承」ができないため「委譲」する。
 Private mDic As IDictionary
+Private mCP As IComparer
+Private mIndex As Long
 Private Sub Class_Initialize()
     Set mDic = New Dictionary
+    mIndex = 0
 End Sub
 Private Sub Class_Terminate()
     Set mDic = Nothing
 End Sub
+'--------------------------------------------------------------
+' コンストラクタ
+'--------------------------------------------------------------
+Private Function IConstructor_Instancing(Args As Collection) As Object
+    
+    'コンパレータ
+    If Args.Count = 1 Then
+        Set mCP = Args(1)
+    Else
+        Exit Function
+    End If
+    
+    Set IConstructor_Instancing = Me
+
+End Function
+
 Private Function IDictionary_Add(ByVal KeyValue As String, obj As Variant)
     mDic.Add KeyValue, obj
 End Function
 Private Function IDictionary_ContainsKey(ByVal KeyValue As String) As Boolean
     IDictionary_ContainsKey = mDic.ContainsKey(KeyValue)
 End Function
+'--------------------------------------------------------------
+'  ソート済みキーリスト取得
+'--------------------------------------------------------------
 Private Property Get IDictionary_Keys() As Variant
-    IDictionary_Keys = mDic.Keys
+    IDictionary_Keys = Sort()
 End Property
 Private Property Get IDictionary_Count() As Long
     IDictionary_Count = mDic.Count
@@ -84,61 +108,131 @@ End Sub
 Private Sub IDictionary_Clear()
     mDic.Clear
 End Sub
-'--------------------------------------------------------------
-'  シリアライズ化(MRecord)
-'--------------------------------------------------------------
 Private Function IDictionary_ToString() As String
-
-    Dim Item  As Variant
-    Dim KeyValue As Variant
-    
-    Dim v  As Variant
-    
-    Dim SB As StringBuilder
-    Set SB = New StringBuilder
-    
-    For Each KeyValue In mDic.Keys
-    
-        If VBA.IsObject(mDic.Item(KeyValue)) Then
-            Set v = mDic.Item(KeyValue)
-        Else
-            v = mDic.Item(KeyValue)
-        End If
-    
-        Select Case True
-            
-            Case IsObject(v)
-                
-                SB.Append KeyValue & "=" & v.ToString
-            
-            Case Else
-
-                SB.Append KeyValue & "=" & v
-
-        End Select
-    
-    Next
-
-    IDictionary_ToString = "[" & SB.ToJoin(", ") & "]"
-
+    IDictionary_ToString = mDic.ToString
 End Function
 Private Property Get IDictionary_GetCursor() As ICursor
-    Set IDictionary_GetCursor = mDic.GetCursor
+    Set IDictionary_GetCursor = Me
 End Property
+'--------------------------------------------------------------
+'  ICursor の Eof プロパティを取得
+'--------------------------------------------------------------
 Private Property Get ICursor_Eof() As Boolean
-    ICursor_Eof = mDic.GetCursor.Eof
+    ICursor_Eof = mIndex > mDic.Count - 1
 End Property
+'--------------------------------------------------------------
+'  ICursor の Item プロパティを取得
+'--------------------------------------------------------------
 Private Property Get ICursor_Item(Optional ByVal opt As Variant) As Variant
-    ICursor_Item = mDic.GetCursor.Item
+    
+    Dim v As Variant
+    
+    v = Sort()
+    
+    If mIndex > mDic.Count - 1 Then
+        ICursor_Item = v(mDic.Count - 1)
+    Else
+        ICursor_Item = v(mIndex)
+    End If
+
 End Property
+'--------------------------------------------------------------
+'  ICursor の PreviousItem プロパティを取得
+'--------------------------------------------------------------
 Private Property Get ICursor_PreviousItem(Optional ByVal opt As Variant) As Variant
-    ICursor_PreviousItem = mDic.GetCursor.PreviousItem
+    
+    Dim v As Variant
+    
+    v = Sort()
+    
+    If mIndex < 0 Then
+        Message.Throw 1, Me, "ICursor_PreviousItem", "IndexOutOfRangeException"
+    Else
+        ICursor_PreviousItem = v(mIndex - 1)
+    End If
+
 End Property
+'--------------------------------------------------------------
+'  ICursor の カーソル位置を初期化
+'--------------------------------------------------------------
 Private Sub ICursor_MoveFirst()
-    mDic.GetCursor.MoveFirst
+    mIndex = 0
 End Sub
+'--------------------------------------------------------------
+'  ICursor の カーソル位置を次に移動
+'--------------------------------------------------------------
 Private Sub ICursor_MoveNext()
-    mDic.GetCursor.MoveNext
+
+    mIndex = mIndex + 1
+    If mIndex > mDic.Count Then
+        mIndex = mDic.Count
+    End If
+
 End Sub
+'--------------------------------------------------------------
+'  キーのソート
+'--------------------------------------------------------------
+Private Function Sort() As Variant
 
+    Dim i As Long
+    Dim j As Long
+    Dim n As Long
+    Dim wk As String
+    Dim strKey As Variant
+    
+    If mCP Is Nothing Then
+        Set mCP = New IComparer
+    End If
+    
+    strKey = mDic.Keys
 
+    '要素数
+    n = UBound(strKey) - LBound(strKey) + 1
+    
+    'ソート不要
+    If n <= 1 Then
+        GoTo e
+    End If
+
+    '挿入ソート
+    For i = 1 To n - 1
+
+        wk = strKey(i)
+        
+        Dim lngCmp As Long
+        
+        lngCmp = mCP.Compare(strKey(i - 1), wk)
+
+        If lngCmp > 0 Then
+
+            j = i
+
+            Do
+
+                strKey(j) = strKey(j - 1)
+
+                j = j - 1
+
+                If j = 0 Then
+                    Exit Do
+                End If
+
+                lngCmp = mCP.Compare(strKey(j - 1), wk)
+            
+            Loop While lngCmp > 0
+            
+            strKey(j) = wk
+
+        End If
+    Next
+
+e:
+    Sort = strKey
+
+End Function
+'--------------------------------------------------------------
+' インスタンス生成 I/F
+'--------------------------------------------------------------
+Private Function INewInstance_NewInstance() As Object
+    Set INewInstance_NewInstance = New SortedDictionary
+End Function

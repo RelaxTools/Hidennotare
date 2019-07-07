@@ -56,6 +56,7 @@ Option Explicit
 Implements IConstructor
 Implements ICursor
 Implements IList
+Implements INewInstance
 
 Private mCol As Collection
 Private mIndex As Long
@@ -511,4 +512,9 @@ Private Sub ICursor_MoveNext()
     End If
 
 End Sub
-
+'--------------------------------------------------------------
+' インスタンス生成 I/F
+'--------------------------------------------------------------
+Private Function INewInstance_NewInstance() As Object
+    Set INewInstance_NewInstance = New Dictionary
+End Function

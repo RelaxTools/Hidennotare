@@ -2,7 +2,7 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "MRecord"
+Attribute VB_Name = "OrderedDictionary"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
@@ -36,28 +36,45 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-' Power Query M Language Record Class(Dictionary Wrapper)
+' OrderedDictionary クラス
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements ICursor
 Implements IDictionary
+Implements INewInstance
 
 'VBAでは「継承」ができないため「委譲」する。
 Private mDic As IDictionary
+Private mCP As IComparer
+Private mIndex As Long
+Private mKeys As Variant
 Private Sub Class_Initialize()
     Set mDic = New Dictionary
+    mIndex = 0
+    mKeys = Array()
 End Sub
 Private Sub Class_Terminate()
     Set mDic = Nothing
 End Sub
 Private Function IDictionary_Add(ByVal KeyValue As String, obj As Variant)
+    
     mDic.Add KeyValue, obj
+    
+    '配列にキーーを保存
+    ReDim Preserve mKeys(0 To mDic.Count - 1)
+    mKeys(mDic.Count - 1) = KeyValue
+
 End Function
 Private Function IDictionary_ContainsKey(ByVal KeyValue As String) As Boolean
     IDictionary_ContainsKey = mDic.ContainsKey(KeyValue)
 End Function
+'--------------------------------------------------------------
+'  ソート済みキーリスト取得
+'--------------------------------------------------------------
 Private Property Get IDictionary_Keys() As Variant
-    IDictionary_Keys = mDic.Keys
+   
+    IDictionary_Keys = mKeys
+
 End Property
 Private Property Get IDictionary_Count() As Long
     IDictionary_Count = mDic.Count
@@ -76,69 +93,110 @@ Private Property Set IDictionary_Item(ByVal KeyValue As String, NewItem As Varia
     Set mDic.Item(KeyValue) = NewItem
 End Property
 Private Property Let IDictionary_Key(ByVal OldKey As String, NewKey As Variant)
+    
     mDic.Key(OldKey) = NewKey
+    
+    Dim i As Long
+    For i = LBound(mKeys) To UBound(mKeys)
+        If mKeys(i) = OldKey Then
+            mKeys(i) = NewKey
+            Exit Property
+        End If
+    Next
+    
 End Property
 Private Sub IDictionary_Remove(ByVal KeyValue As String)
+    
     mDic.Remove KeyValue
+    
+    If mDic.Count = 0 Then
+        mKeys = Array()
+    Else
+    
+        Dim lngCnt As Long
+        Dim i As Long
+        Dim j As Long
+        Dim NewKeys As Variant
+        
+        NewKeys = Array()
+        
+        lngCnt = mDic.Count - 1
+        
+        ReDim NewKeys(0 To lngCnt)
+        
+        j = 0
+        For i = LBound(mKeys) To UBound(mKeys)
+            If mKeys(i) <> KeyValue Then
+                NewKeys(j) = mKeys(i)
+                j = j + 1
+            End If
+        Next
+    
+        mKeys = NewKeys
+    
+    End If
+
 End Sub
 Private Sub IDictionary_Clear()
     mDic.Clear
+    mKeys = Array()
 End Sub
-'--------------------------------------------------------------
-'  シリアライズ化(MRecord)
-'--------------------------------------------------------------
 Private Function IDictionary_ToString() As String
-
-    Dim Item  As Variant
-    Dim KeyValue As Variant
-    
-    Dim v  As Variant
-    
-    Dim SB As StringBuilder
-    Set SB = New StringBuilder
-    
-    For Each KeyValue In mDic.Keys
-    
-        If VBA.IsObject(mDic.Item(KeyValue)) Then
-            Set v = mDic.Item(KeyValue)
-        Else
-            v = mDic.Item(KeyValue)
-        End If
-    
-        Select Case True
-            
-            Case IsObject(v)
-                
-                SB.Append KeyValue & "=" & v.ToString
-            
-            Case Else
-
-                SB.Append KeyValue & "=" & v
-
-        End Select
-    
-    Next
-
-    IDictionary_ToString = "[" & SB.ToJoin(", ") & "]"
-
+    IDictionary_ToString = mDic.ToString
 End Function
 Private Property Get IDictionary_GetCursor() As ICursor
-    Set IDictionary_GetCursor = mDic.GetCursor
+    Set IDictionary_GetCursor = Me
 End Property
+'--------------------------------------------------------------
+'  ICursor の Eof プロパティを取得
+'--------------------------------------------------------------
 Private Property Get ICursor_Eof() As Boolean
-    ICursor_Eof = mDic.GetCursor.Eof
+    ICursor_Eof = mIndex > mDic.Count - 1
 End Property
+'--------------------------------------------------------------
+'  ICursor の Item プロパティを取得
+'--------------------------------------------------------------
 Private Property Get ICursor_Item(Optional ByVal opt As Variant) As Variant
-    ICursor_Item = mDic.GetCursor.Item
+    
+    If mIndex > mDic.Count - 1 Then
+        ICursor_Item = mKeys(mDic.Count - 1)
+    Else
+        ICursor_Item = mKeys(mIndex)
+    End If
+
 End Property
+'--------------------------------------------------------------
+'  ICursor の PreviousItem プロパティを取得
+'--------------------------------------------------------------
 Private Property Get ICursor_PreviousItem(Optional ByVal opt As Variant) As Variant
-    ICursor_PreviousItem = mDic.GetCursor.PreviousItem
+    
+    If mIndex < 0 Then
+        Message.Throw 1, Me, "ICursor_PreviousItem", "IndexOutOfRangeException"
+    Else
+        ICursor_PreviousItem = mKeys(mIndex - 1)
+    End If
+
 End Property
+'--------------------------------------------------------------
+'  ICursor の カーソル位置を初期化
+'--------------------------------------------------------------
 Private Sub ICursor_MoveFirst()
-    mDic.GetCursor.MoveFirst
+    mIndex = 0
 End Sub
+'--------------------------------------------------------------
+'  ICursor の カーソル位置を次に移動
+'--------------------------------------------------------------
 Private Sub ICursor_MoveNext()
-    mDic.GetCursor.MoveNext
+
+    mIndex = mIndex + 1
+    If mIndex > mDic.Count Then
+        mIndex = mDic.Count
+    End If
+
 End Sub
-
-
+'--------------------------------------------------------------
+' インスタンス生成 I/F
+'--------------------------------------------------------------
+Private Function INewInstance_NewInstance() As Object
+    Set INewInstance_NewInstance = New OrderedDictionary
+End Function

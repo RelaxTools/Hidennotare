@@ -48,24 +48,24 @@ Option Explicit
 '---------------------------------------------------------------
 ' JSONパース
 '---------------------------------------------------------------
-Public Function ParseJSON(ByVal strJSON As String, Optional ByVal custom As IJSONObject = Nothing) As Object
+Public Function ParseJSON(ByVal strJSON As String, Optional ByVal dic As INewInstance, Optional ByVal lst As INewInstance, Optional ByRef custom As IJSONObject = Nothing) As Object
 
+    Dim PL As PairLoggerInfo: Set PL = Constructor(New PairLoggerInfo, TypeName(Me) & ".ParseJSON")
+    
     Select Case Left$(strJSON, 1)
         Case """"
             ParseJSON = ParseString(strJSON)
         Case "{"
-            Set ParseJSON = ParseObject(strJSON, custom)
+            Set ParseJSON = ParseObject(strJSON, dic, lst, custom)
         Case "["
-            Set ParseJSON = ParseArray(strJSON, custom)
+            Set ParseJSON = ParseArray(strJSON, dic, lst, custom)
     End Select
 
 End Function
 '-------------------------------------------------
 ' Objectのパース
 '-------------------------------------------------
-Public Function ParseObject(ByVal strJSON As String, Optional ByVal custom As IJSONObject = Nothing) As Object
-    
-    Dim PL As PairLoggerInfo: Set PL = Constructor(New PairLoggerInfo, TypeName(Me) & ".ParseObject")
+Public Function ParseObject(ByVal strJSON As String, Optional ByVal dic As INewInstance, Optional ByVal lst As INewInstance, Optional ByVal custom As IJSONObject = Nothing) As Object
     
     Dim objDic As IDictionary
     Dim propertyName As String
@@ -76,7 +76,11 @@ Public Function ParseObject(ByVal strJSON As String, Optional ByVal custom As IJ
         Message.Throw 1, Me, "ParseObject", "JSONFormatError"
     End If
     
-    Set objDic = New Dictionary
+    If dic Is Nothing Then
+        Set objDic = New Dictionary
+    Else
+        Set objDic = dic.NewInstance
+    End If
     
     strJSON = Mid$(strJSON, 2, Len(strJSON) - 2)
     
@@ -113,12 +117,12 @@ Public Function ParseObject(ByVal strJSON As String, Optional ByVal custom As IJ
                     
                 Case "["
                     
-                    objDic.Add propertyName, ParseArray(ElementExtraction(IC), custom)
+                    objDic.Add propertyName, ParseArray(ElementExtraction(IC), dic, lst, custom)
                     propertyName = ""
                     
                 Case "{"
                     
-                    objDic.Add propertyName, ParseObject(ElementExtraction(IC), custom)
+                    objDic.Add propertyName, ParseObject(ElementExtraction(IC), dic, lst, custom)
                     propertyName = ""
                 
                 Case " ", vbTab, vbCr, vbLf, vbCrLf
@@ -163,9 +167,7 @@ End Function
 '-------------------------------------------------
 ' Arrayのパース
 '-------------------------------------------------
-Public Function ParseArray(strJSON As String, Optional ByVal custom As IJSONObject = Nothing) As IList
-    
-    Dim PL As PairLoggerInfo: Set PL = Constructor(New PairLoggerInfo, TypeName(Me) & ".ParseArray")
+Public Function ParseArray(strJSON As String, Optional ByVal dic As INewInstance, Optional ByVal lst As INewInstance, Optional ByVal custom As IJSONObject = Nothing) As IList
     
     Dim objAry As IList
     Dim lineBreak As Boolean
@@ -176,7 +178,11 @@ Public Function ParseArray(strJSON As String, Optional ByVal custom As IJSONObje
         Exit Function
     End If
     
-    Set objAry = New ArrayList
+    If objAry Is Nothing Then
+        Set objAry = New ArrayList
+    Else
+        Set objAry = lst.NewInstance
+    End If
     
     strJSON = Mid$(strJSON, 2, Len(strJSON) - 2)
     
@@ -197,11 +203,11 @@ Public Function ParseArray(strJSON As String, Optional ByVal custom As IJSONObje
                     
                 Case "["
                     
-                    objAry.Add ParseArray(ElementExtraction(IC), custom)
+                    objAry.Add ParseArray(ElementExtraction(IC), dic, lst, custom)
                     
                 Case "{"
                     
-                    objAry.Add ParseObject(ElementExtraction(IC), custom)
+                    objAry.Add ParseObject(ElementExtraction(IC), dic, lst, custom)
                 
                 Case " ", vbTab, vbCr, vbLf, vbCrLf
                     

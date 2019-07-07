@@ -38,24 +38,16 @@ Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 
-Public Enum CompareMethod
-    BinaryCompare = 0
-    TextCompare = 1
-    DatabaseCompare = 2
-End Enum
+'Public Enum CompareMethod
+'    BinaryCompare = 0
+'    TextCompare = 1
+'    DatabaseCompare = 2
+'End Enum
 Public Function Add(ByVal KeyValue As String, obj As Variant)
 End Function
-Public Function Exists(ByVal KeyValue As String) As Boolean
+Public Function ContainsKey(ByVal KeyValue As String) As Boolean
 End Function
-Public Function Keys() As Variant
-End Function
-Public Function SortedKeys(Optional ByRef CP As IComparer = Nothing) As Variant
-End Function
-Public Function Items() As Variant
-End Function
-Public Property Get CompareMode() As CompareMethod
-End Property
-Public Property Let CompareMode(Mode As CompareMethod)
+Public Property Get Keys() As Variant
 End Property
 Public Property Get Count() As Long
 End Property
@@ -71,7 +63,7 @@ Public Property Let Key(ByVal OldKey As String, NewKey As Variant)
 End Property
 Public Sub Remove(ByVal KeyValue As String)
 End Sub
-Public Sub RemoveAll()
+Public Sub Clear()
 End Sub
 Public Function ToString() As String
 End Function

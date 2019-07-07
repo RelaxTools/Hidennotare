@@ -326,7 +326,7 @@ Public Sub Paste(ByRef TopLeft As Range, ByRef Fields As IDictionary, Optional B
             
             For j = 1 To lngCol
                 Key = var(j, 1)
-                If Fields.Exists(Key) Then
+                If Fields.ContainsKey(Key) Then
                     r.Columns(i).NumberFormatLocal = Fields(Key)
                 End If
             Next
@@ -337,7 +337,7 @@ Public Sub Paste(ByRef TopLeft As Range, ByRef Fields As IDictionary, Optional B
             For j = 1 To lngCol
                 If j <= Fields.Count Then
                     Key = Fields.Keys(j - 1)
-                    If Fields.Exists(Key) Then
+                    If Fields.ContainsKey(Key) Then
                         r.Columns(j).NumberFormatLocal = Fields(Key)
                     End If
                 End If
@@ -348,7 +348,7 @@ Public Sub Paste(ByRef TopLeft As Range, ByRef Fields As IDictionary, Optional B
             
             For j = 1 To lngCol
                 Key = DEFAULT_FIELD & Format(j, "00")
-                If Fields.Exists(Key) Then
+                If Fields.ContainsKey(Key) Then
                     r.Columns(i).NumberFormatLocal = Fields(Key)
                 End If
             Next

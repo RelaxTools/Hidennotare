@@ -41,6 +41,7 @@ Attribute VB_Exposed = False
 Option Explicit
 Implements ICursor
 Implements IDictionary
+Implements INewInstance
 
 Private mDic As Object
 Private mIndex As Long
@@ -66,33 +67,18 @@ End Function
 '--------------------------------------------------------------
 '  項目の存在チェック
 '--------------------------------------------------------------
-Private Function IDictionary_Exists(ByVal KeyValue As String) As Boolean
-    IDictionary_Exists = mDic.Exists(KeyValue)
+Private Function IDictionary_ContainsKey(ByVal KeyValue As String) As Boolean
+    IDictionary_ContainsKey = mDic.Exists(KeyValue)
 End Function
 '--------------------------------------------------------------
 '  キーリスト取得
 '--------------------------------------------------------------
-Private Function IDictionary_Keys() As Variant
+Private Property Get IDictionary_Keys() As Variant
     IDictionary_Keys = mDic.Keys
-End Function
-'--------------------------------------------------------------
-'  ソート済みキーリスト取得
-'--------------------------------------------------------------
-Private Function IDictionary_SortedKeys(Optional ByRef CP As IComparer = Nothing) As Variant
-    IDictionary_SortedKeys = Sort(CP)
-End Function
+End Property
 '--------------------------------------------------------------
 '  値リスト取得
 '--------------------------------------------------------------
-Private Function IDictionary_Items() As Variant
-    IDictionary_Items = mDic.Items
-End Function
-Private Property Get IDictionary_CompareMode() As CompareMethod
-    IDictionary_CompareMode = mDic.CompareMode
-End Property
-Private Property Let IDictionary_CompareMode(Mode As CompareMethod)
-    mDic.CompareMode = Mode
-End Property
 Private Property Get IDictionary_Count() As Long
     IDictionary_Count = mDic.Count
 End Property
@@ -133,73 +119,11 @@ End Sub
 '--------------------------------------------------------------
 '  全アイテム削除
 '--------------------------------------------------------------
-Private Sub IDictionary_RemoveAll()
-    
+Private Sub IDictionary_Clear()
     mDic.RemoveAll
     mIndex = 0
-
 End Sub
-'--------------------------------------------------------------
-'  キーのソート
-'--------------------------------------------------------------
-Private Function Sort(ByVal CP As IComparer) As Variant
 
-    Dim i As Long
-    Dim j As Long
-    Dim n As Long
-    Dim wk As String
-    Dim strKey As Variant
-    
-    If CP Is Nothing Then
-        Set CP = New IComparer
-    End If
-    
-    strKey = mDic.Keys
-
-    '要素数
-    n = UBound(strKey) - LBound(strKey) + 1
-    
-    'ソート不要
-    If n <= 1 Then
-        GoTo e
-    End If
-
-    '挿入ソート
-    For i = 1 To n - 1
-
-        wk = strKey(i)
-        
-        Dim lngCmp As Long
-        
-        lngCmp = CP.Compare(strKey(i - 1), wk)
-
-        If lngCmp > 0 Then
-
-            j = i
-
-            Do
-
-                strKey(j) = strKey(j - 1)
-
-                j = j - 1
-
-                If j = 0 Then
-                    Exit Do
-                End If
-
-                lngCmp = CP.Compare(strKey(j - 1), wk)
-            
-            Loop While lngCmp > 0
-            
-            strKey(j) = wk
-
-        End If
-    Next
-
-e:
-    Sort = strKey
-
-End Function
 '--------------------------------------------------------------
 '  シリアライズ化(JSON)
 '--------------------------------------------------------------
@@ -299,7 +223,7 @@ End Property
 Private Property Get ICursor_Item(Optional ByVal opt As Variant) As Variant
     Dim v As Variant
     
-    v = IDictionary_SortedKeys
+    v = IDictionary_Keys
     
     If mIndex > mDic.Count - 1 Then
         ICursor_Item = v(mDic.Count - 1)
@@ -315,7 +239,7 @@ Private Property Get ICursor_PreviousItem(Optional ByVal opt As Variant) As Vari
     
     Dim v As Variant
     
-    v = IDictionary_SortedKeys
+    v = IDictionary_Keys
     
     If mIndex < 0 Then
         Message.Throw 1, Me, "ICursor_PreviousItem", "IndexOutOfRangeException"
@@ -341,5 +265,9 @@ Private Sub ICursor_MoveNext()
     End If
 
 End Sub
-
-
+'--------------------------------------------------------------
+' インスタンス生成 I/F
+'--------------------------------------------------------------
+Private Function INewInstance_NewInstance() As Object
+    Set INewInstance_NewInstance = New Dictionary
+End Function
