@@ -38,11 +38,6 @@ Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 
-'Public Enum CompareMethod
-'    BinaryCompare = 0
-'    TextCompare = 1
-'    DatabaseCompare = 2
-'End Enum
 Public Function Add(ByVal KeyValue As String, obj As Variant)
 End Function
 Public Function ContainsKey(ByVal KeyValue As String) As Boolean

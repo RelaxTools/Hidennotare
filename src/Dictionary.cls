@@ -36,7 +36,9 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-'  Dictionary ラッパークラス (参照設定はしたくないけどインテリセンスしたいわがままクラス）
+' Dictionary ラッパークラス
+'-----------------------------------------------------------------------------------------------------
+' TODO : 本家と異なる点。For Each を使う場合には XX.Keys を省略できない。
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements ICursor
@@ -123,7 +125,6 @@ Private Sub IDictionary_Clear()
     mDic.RemoveAll
     mIndex = 0
 End Sub
-
 '--------------------------------------------------------------
 '  シリアライズ化(JSON)
 '--------------------------------------------------------------
@@ -229,22 +230,6 @@ Private Property Get ICursor_Item(Optional ByVal opt As Variant) As Variant
         ICursor_Item = v(mDic.Count - 1)
     Else
         ICursor_Item = v(mIndex)
-    End If
-
-End Property
-'--------------------------------------------------------------
-'  ICursor の PreviousItem プロパティを取得
-'--------------------------------------------------------------
-Private Property Get ICursor_PreviousItem(Optional ByVal opt As Variant) As Variant
-    
-    Dim v As Variant
-    
-    v = IDictionary_Keys
-    
-    If mIndex < 0 Then
-        Message.Throw 1, Me, "ICursor_PreviousItem", "IndexOutOfRangeException"
-    Else
-        ICursor_PreviousItem = v(mIndex - 1)
     End If
 
 End Property

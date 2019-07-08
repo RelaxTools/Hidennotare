@@ -448,15 +448,11 @@ Private Property Get IList_GetCursor() As ICursor
     Set IList_GetCursor = Me
 End Property
 '--------------------------------------------------------------
-' ICursor I/F
-'--------------------------------------------------------------
 ' ICursor の Eof プロパティを取得
 '--------------------------------------------------------------
 Private Property Get ICursor_Eof() As Boolean
     ICursor_Eof = mIndex >= mCol.Count
 End Property
-'--------------------------------------------------------------
-' ICursor I/F
 '--------------------------------------------------------------
 ' ICursor の Item プロパティを取得
 '--------------------------------------------------------------
@@ -478,29 +474,11 @@ Private Property Get ICursor_Item(Optional ByVal opt As Variant) As Variant
     
 End Property
 '--------------------------------------------------------------
-' ICursor I/F
-'--------------------------------------------------------------
-' ICursor の PreviousItem プロパティを取得
-'--------------------------------------------------------------
-Private Property Get ICursor_PreviousItem(Optional ByVal opt As Variant) As Variant
-    
-    If mIndex <= 0 Then
-        Message.Throw 1, Me, "ICursor_PreviousItem", "IndexOutOfRangeException"
-    Else
-        ICursor_PreviousItem = mCol(mIndex)
-    End If
-
-End Property
-'--------------------------------------------------------------
-' ICursor I/F
-'--------------------------------------------------------------
 ' ICursor の カーソル位置を初期化
 '--------------------------------------------------------------
 Private Sub ICursor_MoveFirst()
     mIndex = 0
 End Sub
-'--------------------------------------------------------------
-' ICursor I/F
 '--------------------------------------------------------------
 ' ICursor の カーソル位置を次に移動
 '--------------------------------------------------------------
@@ -516,5 +494,5 @@ End Sub
 ' インスタンス生成 I/F
 '--------------------------------------------------------------
 Private Function INewInstance_NewInstance() As Object
-    Set INewInstance_NewInstance = New Dictionary
+    Set INewInstance_NewInstance = New ArrayList
 End Function

@@ -37,6 +37,9 @@ Attribute VB_Exposed = False
 '
 '-----------------------------------------------------------------------------------------------------
 ' SortedDictionary クラス
+' 委譲 : Dictionary
+'-----------------------------------------------------------------------------------------------------
+' TODO : 本家と異なる点。For Each を使う場合には XX.Keys を省略できない。
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements ICursor
@@ -48,6 +51,7 @@ Implements INewInstance
 Private mDic As IDictionary
 Private mCP As IComparer
 Private mIndex As Long
+Private mKeys As Variant
 Private Sub Class_Initialize()
     Set mDic = New Dictionary
     mIndex = 0
@@ -81,7 +85,7 @@ End Function
 '  ソート済みキーリスト取得
 '--------------------------------------------------------------
 Private Property Get IDictionary_Keys() As Variant
-    IDictionary_Keys = Sort()
+    IDictionary_Keys = Sort(mDic.Keys)
 End Property
 Private Property Get IDictionary_Count() As Long
     IDictionary_Count = mDic.Count
@@ -113,6 +117,7 @@ Private Function IDictionary_ToString() As String
 End Function
 Private Property Get IDictionary_GetCursor() As ICursor
     Set IDictionary_GetCursor = Me
+    mKeys = Sort(mDic.Keys)
 End Property
 '--------------------------------------------------------------
 '  ICursor の Eof プロパティを取得
@@ -125,30 +130,10 @@ End Property
 '--------------------------------------------------------------
 Private Property Get ICursor_Item(Optional ByVal opt As Variant) As Variant
     
-    Dim v As Variant
-    
-    v = Sort()
-    
     If mIndex > mDic.Count - 1 Then
-        ICursor_Item = v(mDic.Count - 1)
+        ICursor_Item = mKeys(mDic.Count - 1)
     Else
-        ICursor_Item = v(mIndex)
-    End If
-
-End Property
-'--------------------------------------------------------------
-'  ICursor の PreviousItem プロパティを取得
-'--------------------------------------------------------------
-Private Property Get ICursor_PreviousItem(Optional ByVal opt As Variant) As Variant
-    
-    Dim v As Variant
-    
-    v = Sort()
-    
-    If mIndex < 0 Then
-        Message.Throw 1, Me, "ICursor_PreviousItem", "IndexOutOfRangeException"
-    Else
-        ICursor_PreviousItem = v(mIndex - 1)
+        ICursor_Item = mKeys(mIndex)
     End If
 
 End Property
@@ -172,19 +157,16 @@ End Sub
 '--------------------------------------------------------------
 '  キーのソート
 '--------------------------------------------------------------
-Private Function Sort() As Variant
+Private Function Sort(ByVal strKey As Variant) As Variant
 
     Dim i As Long
     Dim j As Long
     Dim n As Long
     Dim wk As String
-    Dim strKey As Variant
     
     If mCP Is Nothing Then
         Set mCP = New IComparer
     End If
-    
-    strKey = mDic.Keys
 
     '要素数
     n = UBound(strKey) - LBound(strKey) + 1

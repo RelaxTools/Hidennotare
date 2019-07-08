@@ -135,9 +135,6 @@ End Property
 Private Property Get ICursor_Item(Optional ByVal opt As Variant) As Variant
     ICursor_Item = mCol.GetCursor.Item
 End Property
-Private Property Get ICursor_PreviousItem(Optional ByVal opt As Variant) As Variant
-    ICursor_PreviousItem = mCol.GetCursor.PreviousItem
-End Property
 Private Sub ICursor_MoveFirst()
     mCol.GetCursor.MoveFirst
 End Sub

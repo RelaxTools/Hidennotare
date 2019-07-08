@@ -199,16 +199,6 @@ Private Property Get ICursor_Item(Optional ByVal opt As Variant) As Variant
     End If
 End Property
 '------------------------------------------------------
-' ‘O‚ÌƒZƒ‹æ“¾
-'------------------------------------------------------
-Private Property Get ICursor_PreviousItem(Optional ByVal opt As Variant) As Variant
-    If mDirection = DirectionDown Then
-        Set ICursor_PreviousItem = mWS.Cells(mRow - 1, opt)
-    Else
-        Set ICursor_PreviousItem = mWS.Cells(opt, mCol - 1)
-    End If
-End Property
-'------------------------------------------------------
 ' Å‰‚Ìs‚ÉˆÚ“®
 '------------------------------------------------------
 Private Sub ICursor_MoveFirst()

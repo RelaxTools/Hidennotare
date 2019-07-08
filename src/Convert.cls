@@ -144,8 +144,6 @@ Public Function UnEscape(ByVal v As String) As String
     Dim SB As StringBuilder
     Dim i As Long
     
-    '–{“–‚ÉJSON‚·‚é‚È‚ç‚±‚±‚ÅUTF8•ÏŠ·
-    
     Set SB = New StringBuilder
     i = 1
     Do Until i > Len(v)

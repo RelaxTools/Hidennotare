@@ -114,12 +114,6 @@ Private Property Get ICursor_Item(Optional ByVal opt As Variant) As Variant
     Set ICursor_Item = mRange.Cells(mRow, opt)
 End Property
 '------------------------------------------------------
-' ‘O‚ÌƒZƒ‹æ“¾
-'------------------------------------------------------
-Private Property Get ICursor_PreviousItem(Optional ByVal opt As Variant) As Variant
-    Set ICursor_PreviousItem = mRange.Cells(mRow - 1, opt)
-End Property
-'------------------------------------------------------
 ' Å‰‚Ìs‚ÉˆÚ“®
 '------------------------------------------------------
 Private Sub ICursor_MoveFirst()

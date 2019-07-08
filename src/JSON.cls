@@ -249,7 +249,7 @@ Private Function StringExtraction(ByRef IC As ICursor) As String
     
         SB.Append IC.Item
         
-        If IC.Item = """" And IC.PreviousItem <> "\" Then
+        If IC.Item = """" And IC.Item(-1) <> "\" Then
             doubleQuat = doubleQuat + 1
         End If
         If doubleQuat = 2 Then
@@ -285,7 +285,7 @@ Private Function ElementExtraction(ByRef IC As ICursor) As String
         
         SB.Append IC.Item
         
-        If IC.Item = """" And IC.PreviousItem <> "\" Then
+        If IC.Item = """" And IC.Item(-1) <> "\" Then
             sw = Not sw
         End If
         

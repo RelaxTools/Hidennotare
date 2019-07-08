@@ -99,16 +99,6 @@ Private Property Get ICursor_Item(Optional ByVal opt As Variant) As Variant
     End If
 End Property
 '------------------------------------------------------
-' ëOÇÃçséÊìæ
-'------------------------------------------------------
-Private Property Get ICursor_PreviousItem(Optional ByVal opt As Variant) As Variant
-    If ICursor_Eof Then
-        ICursor_PreviousItem = mBuf(UBound(mBuf))
-    Else
-        ICursor_PreviousItem = mBuf(mIndex - 1)
-    End If
-End Property
-'------------------------------------------------------
 ' ç≈èâÇÃçsÇ…à⁄ìÆ
 '------------------------------------------------------
 Private Sub ICursor_MoveFirst()

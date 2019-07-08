@@ -37,6 +37,10 @@ Attribute VB_Exposed = False
 '
 '-----------------------------------------------------------------------------------------------------
 ' OrderedDictionary クラス
+' 委譲 : Dictionary
+'-----------------------------------------------------------------------------------------------------
+' TODO:Orderd なので追加順を維持するため削除のパフォーマンスは悪いので注意すべし。
+' Collectionを使用しない理由は、Collectionは大文字小文字を同一視するため。
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements ICursor
@@ -49,9 +53,14 @@ Private mCP As IComparer
 Private mIndex As Long
 Private mKeys As Variant
 Private Sub Class_Initialize()
+    
     Set mDic = New Dictionary
+    
     mIndex = 0
+    
+    '配列の初期化
     mKeys = Array()
+
 End Sub
 Private Sub Class_Terminate()
     Set mDic = Nothing
@@ -110,19 +119,20 @@ Private Sub IDictionary_Remove(ByVal KeyValue As String)
     mDic.Remove KeyValue
     
     If mDic.Count = 0 Then
+        
+        '配列の初期化
         mKeys = Array()
+    
     Else
     
-        Dim lngCnt As Long
         Dim i As Long
         Dim j As Long
         Dim NewKeys As Variant
         
+        '配列の初期化
         NewKeys = Array()
         
-        lngCnt = mDic.Count - 1
-        
-        ReDim NewKeys(0 To lngCnt)
+        ReDim NewKeys(0 To mDic.Count - 1)
         
         j = 0
         For i = LBound(mKeys) To UBound(mKeys)
@@ -162,18 +172,6 @@ Private Property Get ICursor_Item(Optional ByVal opt As Variant) As Variant
         ICursor_Item = mKeys(mDic.Count - 1)
     Else
         ICursor_Item = mKeys(mIndex)
-    End If
-
-End Property
-'--------------------------------------------------------------
-'  ICursor の PreviousItem プロパティを取得
-'--------------------------------------------------------------
-Private Property Get ICursor_PreviousItem(Optional ByVal opt As Variant) As Variant
-    
-    If mIndex < 0 Then
-        Message.Throw 1, Me, "ICursor_PreviousItem", "IndexOutOfRangeException"
-    Else
-        ICursor_PreviousItem = mKeys(mIndex - 1)
     End If
 
 End Property

@@ -137,12 +137,6 @@ Private Property Get ICursor_Item(Optional ByVal opt As Variant) As Variant
     Set ICursor_Item = mWS.Cells(mlngRow, mLO.ListColumns(opt).Range(1).Column)
 End Property
 '------------------------------------------------------
-' ‘O‚ÌƒZƒ‹æ“¾
-'------------------------------------------------------
-Private Property Get ICursor_PreviousItem(Optional ByVal opt As Variant) As Variant
-    Set ICursor_PreviousItem = mWS.Cells(mlngRow - 1, mLO.ListColumns(opt).Range(1).Column)
-End Property
-'------------------------------------------------------
 ' Å‰‚Ìs‚ÉˆÚ“®
 '------------------------------------------------------
 Private Sub ICursor_MoveFirst()

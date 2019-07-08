@@ -178,3 +178,22 @@ Sub OrderedDictionary_sample()
 
 
 End Sub
+
+Sub a()
+
+    Dim a As Collection
+    
+    Set a = New Collection
+    
+    
+    a.Add "a"
+    a.Add "b"
+    
+    
+
+    
+    
+
+
+
+End Sub

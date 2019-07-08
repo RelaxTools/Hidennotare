@@ -37,6 +37,7 @@ Attribute VB_Exposed = False
 '
 '-----------------------------------------------------------------------------------------------------
 ' Power Query M Language Record Class(Dictionary Wrapper)
+' àœè˜ : Dictionary
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements ICursor
@@ -130,9 +131,6 @@ Private Property Get ICursor_Eof() As Boolean
 End Property
 Private Property Get ICursor_Item(Optional ByVal opt As Variant) As Variant
     ICursor_Item = mDic.GetCursor.Item
-End Property
-Private Property Get ICursor_PreviousItem(Optional ByVal opt As Variant) As Variant
-    ICursor_PreviousItem = mDic.GetCursor.PreviousItem
 End Property
 Private Sub ICursor_MoveFirst()
     mDic.GetCursor.MoveFirst

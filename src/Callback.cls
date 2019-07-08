@@ -2,7 +2,7 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "ICursor"
+Attribute VB_Name = "Callback"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
@@ -36,15 +36,26 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
+' Callback クラス
+'-----------------------------------------------------------------------------------------------------
+' Application.Run / .OnKey / .OnAction / .OnUndo / .OnRepeat / .OnTime の呼び出しを
+' クラスのイベントに変換するクラス。
+'-----------------------------------------------------------------------------------------------------
 Option Explicit
 
-Public Property Get Eof() As Boolean: End Property
-
-Public Sub MoveFirst(): End Sub
-
-Public Sub MoveNext(): End Sub
-
-Public Property Get Item(Optional ByVal opt As Variant) As Variant
-Attribute Item.VB_UserMemId = 0
-    'Attribute Item.VB_UserMemId = 0
-End Property
+'メインイベント
+Public Event OnAction(ByVal Action As Long, ByVal opt As String)
+Public Tag As String
+Private mKey As String
+Public Function CreateOnAction(ByVal Action As Long, Optional ByVal opt As String = "") As String
+    CreateOnAction = ExcelHelper.BuildOnAction("'Core.OnActionCallback """ & mKey & """, """ & Action & """, """ & opt & """ '")
+End Function
+Public Sub OnActionCallback(ByVal Action As Long, ByVal opt As String)
+    RaiseEvent OnAction(Action, opt)
+End Sub
+Private Sub Class_Initialize()
+    mKey = Core.InstallCallback(Me)
+End Sub
+Private Sub Class_Terminate()
+    Core.UninstallCallback mKey
+End Sub

@@ -223,7 +223,7 @@ Public Function SplitEx(ByVal strBuf As String, Optional ByVal Separator As Stri
         
         Do Until IC.Eof Or blnBreak
         
-            If IC = C_QUAT And IC.PreviousItem <> "\" Then
+            If IC.Item = C_QUAT And IC.Item(-1) <> "\" Then
                 blnSw = Not blnSw
             End If
             

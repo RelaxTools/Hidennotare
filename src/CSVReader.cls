@@ -398,14 +398,6 @@ Private Property Get ICursor_Item(Optional ByVal opt As Variant) As Variant
 
 End Property
 '------------------------------------------------------
-' ‘O€–Úæ“¾
-'------------------------------------------------------
-Private Property Get ICursor_PreviousItem(Optional ByVal opt As Variant) As Variant
-
-    Message.Throw 1, Me, "ICursor_PreviousItem", "Not Supported Property"
-    
-End Property
-'------------------------------------------------------
 ' Å‰‚Ìs‚ÉˆÚ“®
 '------------------------------------------------------
 Private Sub ICursor_MoveFirst()

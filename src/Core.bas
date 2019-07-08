@@ -31,6 +31,10 @@ Attribute VB_Name = "Core"
 ' コンストラクタ生成
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
+
+'Callback用
+Private mCallback As IDictionary
+
 '-----------------------------------------------------------------------------------------------------
 ' コンストラクタ生成
 '-----------------------------------------------------------------------------------------------------
@@ -80,11 +84,7 @@ End Function
 Public Property Let SetVar(outVariable As Variant, inExpression As Variant)
     
     Select Case True
-        Case VBA.IsObject(inExpression)
-            
-            Set outVariable = inExpression
-        
-        Case VBA.VarType(inExpression) = vbDataObject
+        Case VBA.IsObject(inExpression), VBA.VarType(inExpression) = vbDataObject
             
             Set outVariable = inExpression
         
@@ -133,4 +133,48 @@ pass:
     MsgBox "ソースを保存しました。", vbInformation, "Export"
     
 End Sub
+
+'---------------------------------------------------------------------------------------------------
+'　Callbackの際のInstallメソッド
+'---------------------------------------------------------------------------------------------------
+Public Function InstallCallback(MH As Callback) As String
+
+    Dim Key As String
+
+    If mCallback Is Nothing Then
+        Set mCallback = New Dictionary
+    End If
+    
+    Key = CStr(ObjPtr(MH))
+    
+    mCallback.Add Key, MH
+    
+    InstallCallback = Key
+    
+End Function
+'---------------------------------------------------------------------------------------------------
+'　Callbackの際のUnInstallメソッド
+'---------------------------------------------------------------------------------------------------
+Public Sub UninstallCallback(ByVal Key As String)
+
+    If mCallback.ContainsKey(Key) Then
+        mCallback.Remove Key
+    End If
+    
+End Sub
+'---------------------------------------------------------------------------------------------------
+'　Callbackの際に呼び出されるメソッド
+'---------------------------------------------------------------------------------------------------
+Public Function OnActionCallback(ByVal Key As String, ByVal lngEvent As Long, ByVal opt As String)
+
+    Dim MH As Callback
+    
+    If mCallback.ContainsKey(Key) Then
+        
+        Set MH = mCallback(Key)
+        Call MH.OnActionCallback(lngEvent, opt)
+        
+    End If
+
+End Function
 

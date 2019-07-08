@@ -119,19 +119,3 @@ Private Property Get ICursor_Item(Optional ByVal opt As Variant) As Variant
     End If
 
 End Property
-'------------------------------------------------------
-' ‘O‚Ì•¶ŽšŽæ“¾
-'------------------------------------------------------
-Private Property Get ICursor_PreviousItem(Optional ByVal opt As Variant) As Variant
-    
-    Dim lngPos As Long
-    
-    lngPos = mIndex - 1
-
-    If lngPos < 1 Or lngPos > Len(mBuf) Then
-        ICursor_PreviousItem = ""
-    Else
-        ICursor_PreviousItem = Mid$(mBuf, lngPos, 1)
-    End If
-
-End Property

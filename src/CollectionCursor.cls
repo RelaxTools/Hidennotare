@@ -125,18 +125,6 @@ Private Property Get ICursor_Item(Optional ByVal opt As Variant) As Variant
 
 End Property
 '------------------------------------------------------
-' ‘O€–Úæ“¾
-'------------------------------------------------------
-Private Property Get ICursor_PreviousItem(Optional ByVal opt As Variant) As Variant
-
-    If IsObject(mCol(mIndex - 1)) Then
-        Set ICursor_PreviousItem = mCol(mIndex - 1)
-    Else
-        ICursor_PreviousItem = mCol(mIndex - 1)
-    End If
-
-End Property
-'------------------------------------------------------
 ' Å‰‚Ìs‚ÉˆÚ“®
 '------------------------------------------------------
 Private Sub ICursor_MoveFirst()
