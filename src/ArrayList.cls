@@ -494,5 +494,11 @@ End Sub
 ' インスタンス生成 I/F
 '--------------------------------------------------------------
 Private Function INewInstance_NewInstance() As Object
-    Set INewInstance_NewInstance = New ArrayList
+
+    Dim lst As IList
+    
+    Set lst = New ArrayList
+    
+    Set INewInstance_NewInstance = lst
+
 End Function

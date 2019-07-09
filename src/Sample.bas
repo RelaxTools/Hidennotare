@@ -139,16 +139,16 @@ End Sub
 Sub SortedDictionary_sample()
 
 
-    Dim D As IDictionary
+    Dim d As IDictionary
     Dim v As Variant
 '    Set D = New SortedDictionary
-    Set D = Constructor(New SortedDictionary, New ExplorerComparer)
+    Set d = Constructor(New SortedDictionary, New ExplorerComparer)
     
-    D.Add "10", "10"
-    D.Add "1", "1"
-    D.Add "2", "2"
+    d.Add "10", "10"
+    d.Add "1", "1"
+    d.Add "2", "2"
 
-    For Each v In D.Keys
+    For Each v In d.Keys
         Debug.Print v
     Next
 
@@ -157,24 +157,24 @@ End Sub
 Sub OrderedDictionary_sample()
 
 
-    Dim D As IDictionary
+    Dim d As IDictionary
     Dim v As Variant
-    Set D = New OrderedDictionary
+    Set d = New OrderedDictionary
     
-    D.Add "10", "10"
-    D.Add "1", "1"
-    D.Add "2", "2"
+    d.Add "10", "10"
+    d.Add "1", "1"
+    d.Add "2", "2"
 
-    D.Remove "1"
+    d.Remove "1"
     
-    D.Key("2") = "3"
+    d.Key("2") = "3"
 
-    For Each v In D.Keys
+    For Each v In d.Keys
         Debug.Print v
     Next
     
 '    D.Remove "2"
-    D.Remove "10"
+    d.Remove "10"
 
 
 End Sub

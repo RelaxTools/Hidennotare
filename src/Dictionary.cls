@@ -44,9 +44,16 @@ Option Explicit
 Implements ICursor
 Implements IDictionary
 Implements INewInstance
+Implements IJSONObject
 
 Private mDic As Object
 Private mIndex As Long
+'--------------------------------------------------------------
+'  IDictionary I/F 取得
+'--------------------------------------------------------------
+Public Function GetIDictionary() As IDictionary
+    Set GetIDictionary = Me
+End Function
 '--------------------------------------------------------------
 '  Initialize
 '--------------------------------------------------------------
@@ -254,5 +261,19 @@ End Sub
 ' インスタンス生成 I/F
 '--------------------------------------------------------------
 Private Function INewInstance_NewInstance() As Object
-    Set INewInstance_NewInstance = New Dictionary
+    
+    Dim d As IDictionary
+    Set d = New Dictionary
+    
+    Set INewInstance_NewInstance = d
+
 End Function
+'--------------------------------------------------------------
+' JSON Object I/F
+'--------------------------------------------------------------
+Private Sub IJSONObject_SetProperty(prop As Variant, Val As Variant)
+    
+    Me.GetIDictionary.Add prop, Val
+    
+End Sub
+

@@ -47,27 +47,40 @@ Attribute VB_Exposed = False
 Option Explicit
 '---------------------------------------------------------------
 ' JSONパース
+'
+' strJSON     : JSON文字列
+' obj(省略可) : 省略時、JSON Object = Dictionary
+'                       JSON Array  = ArrayList でパースされます。
+'             : パースするオブジェクトを指定する場合
+'　　　　　　　　       単数：オブジェクトを直接指定
+'　　　　　　　　       複数：コレクションにオブジェクトを設定して指定
+'
 '---------------------------------------------------------------
-Public Function ParseJSON(ByVal strJSON As String, Optional ByVal dic As INewInstance, Optional ByVal lst As INewInstance, Optional ByRef custom As IJSONObject = Nothing) As Object
+Public Function ParseJSON(ByVal strJSON As String, Optional ByRef obj As Object = Nothing) As Object
 
     Dim PL As PairLoggerInfo: Set PL = Constructor(New PairLoggerInfo, TypeName(Me) & ".ParseJSON")
+    
+    Dim Level As Long
+    
+    Level = 0
     
     Select Case Left$(strJSON, 1)
         Case """"
             ParseJSON = ParseString(strJSON)
         Case "{"
-            Set ParseJSON = ParseObject(strJSON, dic, lst, custom)
+            Set ParseJSON = ParseObject(strJSON, obj, Level)
         Case "["
-            Set ParseJSON = ParseArray(strJSON, dic, lst, custom)
+            Set ParseJSON = ParseArray(strJSON, obj, Level)
     End Select
 
 End Function
 '-------------------------------------------------
 ' Objectのパース
 '-------------------------------------------------
-Public Function ParseObject(ByVal strJSON As String, Optional ByVal dic As INewInstance, Optional ByVal lst As INewInstance, Optional ByVal custom As IJSONObject = Nothing) As Object
+Private Function ParseObject(ByVal strJSON As String, obj As Object, ByVal Level As Long) As Object
     
-    Dim objDic As IDictionary
+    Dim objJObj As Object
+    
     Dim propertyName As String
     Dim lineBreak As Boolean
     Dim SB As StringBuilder
@@ -76,11 +89,20 @@ Public Function ParseObject(ByVal strJSON As String, Optional ByVal dic As INewI
         Message.Throw 1, Me, "ParseObject", "JSONFormatError"
     End If
     
-    If dic Is Nothing Then
-        Set objDic = New Dictionary
-    Else
-        Set objDic = dic.NewInstance
-    End If
+    Level = Level + 1
+    
+    Select Case True
+        
+        Case obj Is Nothing
+            Set objJObj = GetNewInstance(New Dictionary)
+        
+        Case TypeOf obj Is Collection
+            Set objJObj = GetNewInstance(obj(Level))
+        
+        Case Else
+            Set objJObj = GetNewInstance(obj)
+    
+    End Select
     
     strJSON = Mid$(strJSON, 2, Len(strJSON) - 2)
     
@@ -101,7 +123,7 @@ Public Function ParseObject(ByVal strJSON As String, Optional ByVal dic As INewI
                     
                     If Len(propertyName) > 0 Then
                         
-                        objDic.Add propertyName, ParseString(StringExtraction(IC))
+                        ToJSONObject(objJObj).SetProperty propertyName, ParseString(StringExtraction(IC))
                         propertyName = ""
                     
                     Else
@@ -117,12 +139,12 @@ Public Function ParseObject(ByVal strJSON As String, Optional ByVal dic As INewI
                     
                 Case "["
                     
-                    objDic.Add propertyName, ParseArray(ElementExtraction(IC), dic, lst, custom)
+                    ToJSONObject(objJObj).SetProperty propertyName, ParseArray(ElementExtraction(IC), obj, Level)
                     propertyName = ""
                     
                 Case "{"
                     
-                    objDic.Add propertyName, ParseObject(ElementExtraction(IC), dic, lst, custom)
+                    ToJSONObject(objJObj).SetProperty propertyName, ParseObject(ElementExtraction(IC), obj, Level)
                     propertyName = ""
                 
                 Case " ", vbTab, vbCr, vbLf, vbCrLf
@@ -144,30 +166,31 @@ Public Function ParseObject(ByVal strJSON As String, Optional ByVal dic As INewI
                 Exit Function
             End If
             
-            objDic.Add propertyName, ParseValue(SB.ToString)
+            ToJSONObject(objJObj).SetProperty propertyName, ParseValue(SB.ToString)
             
         End If
     
     Loop
     
-    'カスタムが指定されている場合、変換できるか試行する。
-    If Not custom Is Nothing Then
-        
-        '互換性がある場合コピー
-        If custom.IsCompatible(objDic) Then
-            Set ParseObject = custom.CopyFromJSONObject(objDic, True)
-        Else
-            Set ParseObject = objDic
-        End If
-    
-    Else
-        Set ParseObject = objDic
-    End If
+    Set ParseObject = objJObj
+
+End Function
+'-------------------------------------------------
+' IJSONObjectへキャスト
+'-------------------------------------------------
+Private Function ToJSONObject(obj As Object) As IJSONObject
+    Set ToJSONObject = obj
+End Function
+'-------------------------------------------------
+' インスタンス生成
+'-------------------------------------------------
+Private Function GetNewInstance(obj As INewInstance) As Object
+    Set GetNewInstance = obj.NewInstance
 End Function
 '-------------------------------------------------
 ' Arrayのパース
 '-------------------------------------------------
-Public Function ParseArray(strJSON As String, Optional ByVal dic As INewInstance, Optional ByVal lst As INewInstance, Optional ByVal custom As IJSONObject = Nothing) As IList
+Private Function ParseArray(strJSON As String, obj As Object, ByVal Level As Long) As IList
     
     Dim objAry As IList
     Dim lineBreak As Boolean
@@ -178,11 +201,21 @@ Public Function ParseArray(strJSON As String, Optional ByVal dic As INewInstance
         Exit Function
     End If
     
-    If objAry Is Nothing Then
-        Set objAry = New ArrayList
-    Else
-        Set objAry = lst.NewInstance
-    End If
+    Level = Level + 1
+    
+    Select Case True
+        
+        Case obj Is Nothing
+            Set objAry = GetNewInstance(New ArrayList)
+        
+        Case TypeOf obj Is Collection
+            Set objAry = GetNewInstance(obj(Level))
+        
+        Case Else
+            Set objAry = GetNewInstance(obj)
+    
+    End Select
+    
     
     strJSON = Mid$(strJSON, 2, Len(strJSON) - 2)
     
@@ -203,11 +236,11 @@ Public Function ParseArray(strJSON As String, Optional ByVal dic As INewInstance
                     
                 Case "["
                     
-                    objAry.Add ParseArray(ElementExtraction(IC), dic, lst, custom)
+                    objAry.Add ParseArray(ElementExtraction(IC), obj, Level)
                     
                 Case "{"
                     
-                    objAry.Add ParseObject(ElementExtraction(IC), dic, lst, custom)
+                    objAry.Add ParseObject(ElementExtraction(IC), obj, Level)
                 
                 Case " ", vbTab, vbCr, vbLf, vbCrLf
                     
@@ -321,7 +354,7 @@ End Function
 '---------------------------------------------------------------------
 ' 文字列のパース
 '---------------------------------------------------------------------
-Public Function ParseString(strJSON As String) As String
+Private Function ParseString(strJSON As String) As String
     
     If Not StringHelper.StartsWith(strJSON, """") Or Not StringHelper.EndsWith(strJSON, """") Then
         Message.Throw 1, Me, "ParseString", "JSONFormatError"
@@ -360,3 +393,5 @@ Private Function ParseValue(ByVal strJSON As String) As Variant
     End Select
 
 End Function
+
+

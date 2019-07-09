@@ -36,10 +36,10 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
+' カスタムクラスをJSONパース時に生成できるようにするInterface
+'-----------------------------------------------------------------------------------------------------
 Option Explicit
-Public Function IsCompatible(dic As IDictionary) As Boolean
+Public Sub SetProperty(prop As Variant, Val As Variant)
 
-End Function
-Public Function CopyFromJSONObject(dic As IDictionary, Optional ByVal NewInstance As Boolean = False) As Object
+End Sub
 
-End Function

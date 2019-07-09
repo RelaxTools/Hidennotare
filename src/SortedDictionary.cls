@@ -46,12 +46,12 @@ Implements ICursor
 Implements IDictionary
 Implements IConstructor
 Implements INewInstance
+Implements IJSONObject
 
 'VBAでは「継承」ができないため「委譲」する。
 Private mDic As IDictionary
 Private mCP As IComparer
 Private mIndex As Long
-Private mKeys As Variant
 Private Sub Class_Initialize()
     Set mDic = New Dictionary
     mIndex = 0
@@ -74,7 +74,12 @@ Private Function IConstructor_Instancing(Args As Collection) As Object
     Set IConstructor_Instancing = Me
 
 End Function
-
+'--------------------------------------------------------------
+'  IDictionary I/F 取得
+'--------------------------------------------------------------
+Public Function GetIDictionary() As IDictionary
+    Set GetIDictionary = Me
+End Function
 Private Function IDictionary_Add(ByVal KeyValue As String, obj As Variant)
     mDic.Add KeyValue, obj
 End Function
@@ -85,7 +90,7 @@ End Function
 '  ソート済みキーリスト取得
 '--------------------------------------------------------------
 Private Property Get IDictionary_Keys() As Variant
-    IDictionary_Keys = Sort(mDic.Keys)
+    IDictionary_Keys = Sort()
 End Property
 Private Property Get IDictionary_Count() As Long
     IDictionary_Count = mDic.Count
@@ -117,7 +122,6 @@ Private Function IDictionary_ToString() As String
 End Function
 Private Property Get IDictionary_GetCursor() As ICursor
     Set IDictionary_GetCursor = Me
-    mKeys = Sort(mDic.Keys)
 End Property
 '--------------------------------------------------------------
 '  ICursor の Eof プロパティを取得
@@ -130,10 +134,14 @@ End Property
 '--------------------------------------------------------------
 Private Property Get ICursor_Item(Optional ByVal opt As Variant) As Variant
     
+    Dim v As Variant
+    
+    v = Sort()
+    
     If mIndex > mDic.Count - 1 Then
-        ICursor_Item = mKeys(mDic.Count - 1)
+        ICursor_Item = v(mDic.Count - 1)
     Else
-        ICursor_Item = mKeys(mIndex)
+        ICursor_Item = v(mIndex)
     End If
 
 End Property
@@ -157,16 +165,19 @@ End Sub
 '--------------------------------------------------------------
 '  キーのソート
 '--------------------------------------------------------------
-Private Function Sort(ByVal strKey As Variant) As Variant
+Private Function Sort() As Variant
 
     Dim i As Long
     Dim j As Long
     Dim n As Long
     Dim wk As String
+    Dim strKey As Variant
     
     If mCP Is Nothing Then
         Set mCP = New IComparer
     End If
+    
+    strKey = mDic.Keys
 
     '要素数
     n = UBound(strKey) - LBound(strKey) + 1
@@ -216,5 +227,20 @@ End Function
 ' インスタンス生成 I/F
 '--------------------------------------------------------------
 Private Function INewInstance_NewInstance() As Object
-    Set INewInstance_NewInstance = New SortedDictionary
+
+    Dim d As IDictionary
+    
+    Set d = New SortedDictionary
+    
+    Set INewInstance_NewInstance = d
+
 End Function
+'--------------------------------------------------------------
+' JSON Object I/F
+'--------------------------------------------------------------
+Private Sub IJSONObject_SetProperty(prop As Variant, Val As Variant)
+    
+    Me.GetIDictionary.Add prop, Val
+    
+End Sub
+

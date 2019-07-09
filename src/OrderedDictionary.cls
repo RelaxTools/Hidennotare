@@ -46,6 +46,7 @@ Option Explicit
 Implements ICursor
 Implements IDictionary
 Implements INewInstance
+Implements IJSONObject
 
 'VBAでは「継承」ができないため「委譲」する。
 Private mDic As IDictionary
@@ -53,18 +54,20 @@ Private mCP As IComparer
 Private mIndex As Long
 Private mKeys As Variant
 Private Sub Class_Initialize()
-    
     Set mDic = New Dictionary
-    
     mIndex = 0
-    
-    '配列の初期化
     mKeys = Array()
-
 End Sub
 Private Sub Class_Terminate()
     Set mDic = Nothing
 End Sub
+'--------------------------------------------------------------
+'  IDictionary I/F 取得
+'--------------------------------------------------------------
+Public Function GetIDictionary() As IDictionary
+    Set GetIDictionary = Me
+End Function
+
 Private Function IDictionary_Add(ByVal KeyValue As String, obj As Variant)
     
     mDic.Add KeyValue, obj
@@ -119,20 +122,19 @@ Private Sub IDictionary_Remove(ByVal KeyValue As String)
     mDic.Remove KeyValue
     
     If mDic.Count = 0 Then
-        
-        '配列の初期化
         mKeys = Array()
-    
     Else
     
+        Dim lngCnt As Long
         Dim i As Long
         Dim j As Long
         Dim NewKeys As Variant
         
-        '配列の初期化
         NewKeys = Array()
         
-        ReDim NewKeys(0 To mDic.Count - 1)
+        lngCnt = mDic.Count - 1
+        
+        ReDim NewKeys(0 To lngCnt)
         
         j = 0
         For i = LBound(mKeys) To UBound(mKeys)
@@ -196,5 +198,18 @@ End Sub
 ' インスタンス生成 I/F
 '--------------------------------------------------------------
 Private Function INewInstance_NewInstance() As Object
-    Set INewInstance_NewInstance = New OrderedDictionary
+
+    Dim d As IDictionary
+    
+    Set d = New OrderedDictionary
+
+    Set INewInstance_NewInstance = d
+
 End Function
+'--------------------------------------------------------------
+' JSON Object I/F
+'--------------------------------------------------------------
+Private Sub IJSONObject_SetProperty(prop As Variant, Val As Variant)
+    Me.GetIDictionary.Add prop, Val
+End Sub
+
