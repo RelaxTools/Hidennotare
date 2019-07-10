@@ -48,12 +48,32 @@ Option Explicit
 '---------------------------------------------------------------
 ' JSONパース
 '
-' strJSON     : JSON文字列
-' obj(省略可) : 省略時、JSON Object = Dictionary
-'                       JSON Array  = ArrayList でパースされます。
-'             : パースするオブジェクトを指定する場合
-'　　　　　　　　       単数：オブジェクトを直接指定
-'　　　　　　　　       複数：コレクションにオブジェクトを設定して指定
+' JSON文字列からDictionary(OrderedDictionary/SortedDictionary) または ArrayList を復元（デシリアライズ）する機能。
+' IJSONObject(I/F)とINewInstance(I/F)に対応すれば、通常のクラスにも復元可能。
+'
+' 逆（シリアライズ）を行う場合 Dictionary(OrderedDictionary/SortedDictionary) または ArrayListで、ToString する。
+' 通常のクラスでシリアライズする場合、Dictionaryを生成した後、ToString すると楽に作成できる。
+'
+' strJSON : JSON文字列
+' obj     : オブジェクト（省略可）省略した場合、Object = Dictionary, Array = ArrayList でパースされます。
+'           JSON文字列がネストおり、復元するオブジェクトを指定したい場合、Collection にインスタンスを
+'           設定したものを指定する。
+'
+'           ex. 複数指定する場合、Collectionに詰めて指定する
+'
+'                Dim col As Collection
+'                Set col = new Collection
+'
+'                col.Add New OrderdDictionary  'ネストの1レベル目に使用されるオブジェクト
+'                col.Add New ArrayList         'ネストの2レベル目に使用されるオブジェクト
+'                col.Add New CustomPerson      'ネストの3レベル目に使用されるオブジェクト
+'
+'                Set dic = JSON.ParseJSON(strJSON, col)
+'
+'
+'           ex. 単数指定する場合、Collection を用いず直接指定する
+'
+'                Set dic = JSON.ParseJSON(strJSON, New CustomPerson)
 '
 '---------------------------------------------------------------
 Public Function ParseJSON(ByVal strJSON As String, Optional ByRef obj As Object = Nothing) As Object
@@ -89,16 +109,20 @@ Private Function ParseObject(ByVal strJSON As String, obj As Object, ByVal Level
         Message.Throw 1, Me, "ParseObject", "JSONFormatError"
     End If
     
+    'JSONのネストレベル
     Level = Level + 1
     
     Select Case True
         
+        'Default
         Case obj Is Nothing
             Set objJObj = GetNewInstance(New Dictionary)
         
+        'ネストレベル指定
         Case TypeOf obj Is Collection
             Set objJObj = GetNewInstance(obj(Level))
         
+        '直接指定
         Case Else
             Set objJObj = GetNewInstance(obj)
     
@@ -139,18 +163,22 @@ Private Function ParseObject(ByVal strJSON As String, obj As Object, ByVal Level
                     
                 Case "["
                     
+                    '下位レベルのパース（Array)
                     ToJSONObject(objJObj).SetProperty propertyName, ParseArray(ElementExtraction(IC), obj, Level)
                     propertyName = ""
                     
                 Case "{"
                     
+                    '下位レベルのパース（Object)
                     ToJSONObject(objJObj).SetProperty propertyName, ParseObject(ElementExtraction(IC), obj, Level)
                     propertyName = ""
                 
                 Case " ", vbTab, vbCr, vbLf, vbCrLf
+                    '無視
                 
                 Case ","
                     lineBreak = True
+                
                 Case Else
                     
                     SB.Append IC.Item
@@ -236,10 +264,12 @@ Private Function ParseArray(strJSON As String, obj As Object, ByVal Level As Lon
                     
                 Case "["
                     
+                    '下位レベルのパース（Array)
                     objAry.Add ParseArray(ElementExtraction(IC), obj, Level)
                     
                 Case "{"
                     
+                    '下位レベルのパース（Object)
                     objAry.Add ParseObject(ElementExtraction(IC), obj, Level)
                 
                 Case " ", vbTab, vbCr, vbLf, vbCrLf

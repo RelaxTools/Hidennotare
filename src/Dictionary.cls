@@ -5,7 +5,7 @@ END
 Attribute VB_Name = "Dictionary"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = True
+Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
@@ -39,6 +39,14 @@ Attribute VB_Exposed = False
 ' Dictionary ラッパークラス
 '-----------------------------------------------------------------------------------------------------
 ' TODO : 本家と異なる点。For Each を使う場合には XX.Keys を省略できない。
+'        IDictionary I/F を使用する必要がある。
+'
+' Dim dic As IDictionary
+' Set dic = New Dictionary
+'
+'-----------------------------------------------------------------------------------------------------
+' ToString すると JSON Object を出力します。
+' https://www.json.org/json-ja.html
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements ICursor
@@ -48,12 +56,6 @@ Implements IJSONObject
 
 Private mDic As Object
 Private mIndex As Long
-'--------------------------------------------------------------
-'  IDictionary I/F 取得
-'--------------------------------------------------------------
-Public Function GetIDictionary() As IDictionary
-    Set GetIDictionary = Me
-End Function
 '--------------------------------------------------------------
 '  Initialize
 '--------------------------------------------------------------
@@ -67,6 +69,12 @@ End Sub
 Private Sub Class_Terminate()
     Set mDic = Nothing
 End Sub
+'--------------------------------------------------------------
+'  IDictionary I/F 取得
+'--------------------------------------------------------------
+Public Function GetIDictionary() As IDictionary
+    Set GetIDictionary = Me
+End Function
 '--------------------------------------------------------------
 '  項目の追加
 '--------------------------------------------------------------
@@ -141,7 +149,7 @@ End Function
 '--------------------------------------------------------------
 '  シリアライズ化(JSON)
 '--------------------------------------------------------------
-Private Function ToString(Optional ByVal LQuot As String = "{", Optional ByVal RQuot As String = "}") As String
+Private Function ToString() As String
 
     Dim Item  As Variant
     Dim KeyValue As Variant
@@ -160,7 +168,7 @@ Private Function ToString(Optional ByVal LQuot As String = "{", Optional ByVal R
         End If
     
         Select Case True
-            Case IsObject(v), VarType(v) = vbDataObject
+            Case IsObject(v)
                 
                 SB.Append """" & KeyValue & """:" & v.ToString
             
@@ -179,9 +187,13 @@ Private Function ToString(Optional ByVal LQuot As String = "{", Optional ByVal R
                     
                         SB.Append """" & KeyValue & """:" & Escape(v)
                     
-                    Case vbByte, vbInteger, vbLong, vbSingle, vbDouble, vbCurrency, vbDecimal ', vbLongLong
+#If Win64 Then
+                    Case vbByte, vbInteger, vbLong, vbSingle, vbDouble, vbCurrency, vbDecimal, vbLongLong
+#Else
+                    Case vbByte, vbInteger, vbLong, vbSingle, vbDouble, vbCurrency, vbDecimal
+#End If
         
-                        SB.Append """" & KeyValue & """:" & v
+                        SB.Append """" & KeyValue & """:" & CStr(v)
         
                     Case Else
         
@@ -194,7 +206,7 @@ Private Function ToString(Optional ByVal LQuot As String = "{", Optional ByVal R
     
     Next
 
-    ToString = LQuot & SB.ToJoin(", ") & RQuot
+    ToString = "{" & SB.ToJoin(", ") & "}"
 
 End Function
 

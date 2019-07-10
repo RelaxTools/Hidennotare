@@ -38,7 +38,9 @@ Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 ' このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。配列関係のメソッドがあります。
 '-----------------------------------------------------------------------------------------------------
-' ArrayList クラス Collection をベースにしているが、添字は0からなので注意
+' ArrayList クラス
+'-----------------------------------------------------------------------------------------------------
+' TODO : ArrayList クラス Collection をベースにしているが、添字は0からなので注意
 '
 ' ArrayList.IsArray(var) (Static)
 '
@@ -51,6 +53,9 @@ Attribute VB_Exposed = False
 ' Dim list As IList
 ' Set list = Constructor(New ArrayList, １次元配列)
 '
+'-----------------------------------------------------------------------------------------------------
+' NOTE : ToString で JSON Array を出力します。
+'        https://www.json.org/json-ja.html
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements IConstructor
@@ -379,7 +384,6 @@ End Function
 ' ArrayList をJSONに変換
 '--------------------------------------------------------------
 Private Function IList_ToString() As String
-    Const PROC_NAME As String = "ToString"
 
     Dim v As Variant
     Dim SB As StringBuilder
@@ -388,7 +392,7 @@ Private Function IList_ToString() As String
     For Each v In mCol
     
         Select Case True
-            Case IsObject(v), VarType(v) = vbDataObject
+            Case IsObject(v)
                 
                 SB.Append v.ToString
             
@@ -407,9 +411,12 @@ Private Function IList_ToString() As String
                     
                         SB.Append Escape(v)
                     
-                    Case vbByte, vbInteger, vbLong, vbSingle, vbDouble, vbCurrency, vbDecimal ', vbLongLong
-        
-                        SB.Append v
+#If Win64 Then
+                    Case vbByte, vbInteger, vbLong, vbSingle, vbDouble, vbCurrency, vbDecimal, vbLongLong
+#Else
+                    Case vbByte, vbInteger, vbLong, vbSingle, vbDouble, vbCurrency, vbDecimal
+#End If
+                        SB.Append CStr(v)
         
                     Case Else
         

@@ -37,10 +37,23 @@ Attribute VB_Exposed = False
 '
 '-----------------------------------------------------------------------------------------------------
 ' OrderedDictionary クラス
+'-----------------------------------------------------------------------------------------------------
 ' 委譲 : Dictionary
 '-----------------------------------------------------------------------------------------------------
-' TODO:Orderd なので追加順を維持するため削除のパフォーマンスは悪いので注意すべし。
-' Collectionを使用しない理由は、Collectionは大文字小文字を同一視するため。
+' TODO : Keyの追加順を保障するクラス。
+'        本家と異なる点。For Each を使う場合には XX.Keys を省略できない。
+'        IDictionary I/F を使用する必要がある。
+'        Orderd なので追加順を維持するため削除のパフォーマンスは悪いので注意すべし。
+'        Collectionを使用しない理由は、Collectionは大文字小文字を同一視するため。
+'
+'        Dim dic As IDictionary
+'        Set dic = New OrderedDictionary
+'
+'        dic.Add Key, Value
+'
+'-----------------------------------------------------------------------------------------------------
+' NOTE : ToString で JSON Object を出力します。
+'        https://www.json.org/json-ja.html
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements ICursor
@@ -67,7 +80,6 @@ End Sub
 Public Function GetIDictionary() As IDictionary
     Set GetIDictionary = Me
 End Function
-
 Private Function IDictionary_Add(ByVal KeyValue As String, obj As Variant)
     
     mDic.Add KeyValue, obj
@@ -81,7 +93,7 @@ Private Function IDictionary_ContainsKey(ByVal KeyValue As String) As Boolean
     IDictionary_ContainsKey = mDic.ContainsKey(KeyValue)
 End Function
 '--------------------------------------------------------------
-'  ソート済みキーリスト取得
+'  追加順キーリスト取得
 '--------------------------------------------------------------
 Private Property Get IDictionary_Keys() As Variant
    
