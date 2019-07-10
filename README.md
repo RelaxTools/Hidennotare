@@ -1,5 +1,5 @@
 # Hidennotare 
-All-purpose Secret Source VBA Library for Excel 2010/2013/2016/2019/365 32/64bit
+Secret Source VBA Library for Excel 2010/2013/2016/2019/365 32/64bit
 
 ### Wiki への参照
 
