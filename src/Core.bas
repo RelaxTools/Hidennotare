@@ -1,10 +1,10 @@
 Attribute VB_Name = "Core"
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hecatoncheir] v1
+' [hidennotare] v1
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
-' https://github.com/RelaxTools/Hecatoncheir
+' https://github.com/RelaxTools/hidennotare
 ' author:relaxtools@opensquare.net
 '
 ' The MIT License (MIT)

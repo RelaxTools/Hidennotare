@@ -9,10 +9,10 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hecatoncheir] v4
+' [hidennotare] v1
 '
-' Copyright (c) 2009 Yasuhiro Watanabe
-' https://github.com/RelaxTools/RelaxTools-Addin
+' Copyright (c) 2019 Yasuhiro Watanabe
+' https://github.com/RelaxTools/hidennotare
 ' author:relaxtools@opensquare.net
 '
 ' The MIT License (MIT)
