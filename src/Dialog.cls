@@ -9,10 +9,10 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
-' [hidennotare] v1
+' [Hidennotare] v1
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
-' https://github.com/RelaxTools/hidennotare
+' https://github.com/RelaxTools/Hidennotare
 ' author:relaxtools@opensquare.net
 '
 ' The MIT License (MIT)
