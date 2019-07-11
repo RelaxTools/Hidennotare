@@ -92,38 +92,38 @@ End Function
 Public Function GetIDictionary() As IDictionary
     Set GetIDictionary = Me
 End Function
-Private Function IDictionary_Add(ByVal KeyValue As String, obj As Variant)
+Private Sub IDictionary_Add(KeyValue As Variant, obj As Variant)
     mDic.Add KeyValue, obj
-End Function
-Private Function IDictionary_ContainsKey(ByVal KeyValue As String) As Boolean
+End Sub
+Private Function IDictionary_ContainsKey(KeyValue As Variant) As Boolean
     IDictionary_ContainsKey = mDic.ContainsKey(KeyValue)
 End Function
 '--------------------------------------------------------------
 '  ソート済みキーリスト取得
 '--------------------------------------------------------------
-Private Property Get IDictionary_Keys() As Variant
+Private Function IDictionary_Keys() As Variant
     IDictionary_Keys = Sort()
-End Property
+End Function
 Private Property Get IDictionary_Count() As Long
     IDictionary_Count = mDic.Count
 End Property
-Private Property Get IDictionary_Item(ByVal KeyValue As String) As Variant
+Private Property Get IDictionary_Item(KeyValue As Variant) As Variant
     If VBA.IsObject(mDic.Item(KeyValue)) Then
         Set IDictionary_Item = mDic.Item(KeyValue)
     Else
         IDictionary_Item = mDic.Item(KeyValue)
     End If
 End Property
-Private Property Let IDictionary_Item(ByVal KeyValue As String, NewItem As Variant)
+Private Property Let IDictionary_Item(KeyValue As Variant, NewItem As Variant)
     mDic.Item(KeyValue) = NewItem
 End Property
-Private Property Set IDictionary_Item(ByVal KeyValue As String, NewItem As Variant)
+Private Property Set IDictionary_Item(KeyValue As Variant, NewItem As Variant)
     Set mDic.Item(KeyValue) = NewItem
 End Property
-Private Property Let IDictionary_Key(ByVal OldKey As String, NewKey As Variant)
+Private Property Let IDictionary_Key(OldKey As Variant, NewKey As Variant)
     mDic.Key(OldKey) = NewKey
 End Property
-Private Sub IDictionary_Remove(ByVal KeyValue As String)
+Private Sub IDictionary_Remove(KeyValue As Variant)
     mDic.Remove KeyValue
 End Sub
 Private Sub IDictionary_Clear()

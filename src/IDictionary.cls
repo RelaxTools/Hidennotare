@@ -38,33 +38,53 @@ Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 
-Public Function Add(ByVal KeyValue As String, obj As Variant)
-End Function
-Public Function ContainsKey(ByVal KeyValue As String) As Boolean
-End Function
-Public Property Get Keys() As Variant
-End Property
+Public Sub Add(Key As Variant, Item As Variant)
+
+End Sub
+
 Public Property Get Count() As Long
+
 End Property
-Public Property Get Item(ByVal KeyValue As String) As Variant
+
+Public Function ContainsKey(Key As Variant) As Boolean
+
+End Function
+
+Public Property Let Item(Key As Variant, RHS As Variant)
 Attribute Item.VB_UserMemId = 0
     'Attribute Item.VB_UserMemId = 0
 End Property
-Public Property Let Item(ByVal KeyValue As String, NewItem As Variant)
-End Property
-Public Property Set Item(ByVal KeyValue As String, NewItem As Variant)
-End Property
-Public Property Let Key(ByVal OldKey As String, NewKey As Variant)
-End Property
-Public Sub Remove(ByVal KeyValue As String)
-End Sub
-Public Sub Clear()
-End Sub
-Public Function ToString() As String
-End Function
-Public Property Get GetCursor() As ICursor
+
+Public Property Get Item(Key As Variant) As Variant
+
 End Property
 
+Public Property Set Item(Key As Variant, RHS As Variant)
+
+End Property
+
+Public Property Let Key(Key As Variant, RHS As Variant)
+
+End Property
+
+Public Function Keys() As Variant
+
+End Function
+
+Public Sub Remove(Key As Variant)
+
+End Sub
+
+Public Sub Clear()
+
+End Sub
+Public Function ToString() As String
+
+End Function
+
+Public Property Get GetCursor() As ICursor
+
+End Property
 
 
 

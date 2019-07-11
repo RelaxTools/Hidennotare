@@ -78,21 +78,21 @@ End Function
 '--------------------------------------------------------------
 '  項目の追加
 '--------------------------------------------------------------
-Private Function IDictionary_Add(ByVal KeyValue As String, obj As Variant)
+Private Sub IDictionary_Add(KeyValue As Variant, obj As Variant)
     mDic.Add KeyValue, obj
-End Function
+End Sub
 '--------------------------------------------------------------
 '  項目の存在チェック
 '--------------------------------------------------------------
-Private Function IDictionary_ContainsKey(ByVal KeyValue As String) As Boolean
+Private Function IDictionary_ContainsKey(KeyValue As Variant) As Boolean
     IDictionary_ContainsKey = mDic.Exists(KeyValue)
 End Function
 '--------------------------------------------------------------
 '  キーリスト取得
 '--------------------------------------------------------------
-Private Property Get IDictionary_Keys() As Variant
+Private Function IDictionary_Keys() As Variant
     IDictionary_Keys = mDic.Keys
-End Property
+End Function
 '--------------------------------------------------------------
 '  値リスト取得
 '--------------------------------------------------------------
@@ -102,7 +102,7 @@ End Property
 '--------------------------------------------------------------
 '  値取得
 '--------------------------------------------------------------
-Private Property Get IDictionary_Item(ByVal KeyValue As String) As Variant
+Private Property Get IDictionary_Item(KeyValue As Variant) As Variant
     If VBA.IsObject(mDic.Item(KeyValue)) Then
         Set IDictionary_Item = mDic.Item(KeyValue)
     Else
@@ -112,25 +112,25 @@ End Property
 '--------------------------------------------------------------
 '  値設定
 '--------------------------------------------------------------
-Private Property Let IDictionary_Item(ByVal KeyValue As String, NewItem As Variant)
+Private Property Let IDictionary_Item(KeyValue As Variant, NewItem As Variant)
     mDic.Item(KeyValue) = NewItem
 End Property
 '--------------------------------------------------------------
 '  値設定(オブジェクト)
 '--------------------------------------------------------------
-Private Property Set IDictionary_Item(ByVal KeyValue As String, NewItem As Variant)
+Private Property Set IDictionary_Item(KeyValue As Variant, NewItem As Variant)
     Set mDic.Item(KeyValue) = NewItem
 End Property
 '--------------------------------------------------------------
 '  キー設定
 '--------------------------------------------------------------
-Private Property Let IDictionary_Key(ByVal OldKey As String, NewKey As Variant)
+Private Property Let IDictionary_Key(OldKey As Variant, NewKey As Variant)
     mDic.Key(OldKey) = NewKey
 End Property
 '--------------------------------------------------------------
 '  削除
 '--------------------------------------------------------------
-Private Sub IDictionary_Remove(ByVal KeyValue As String)
+Private Sub IDictionary_Remove(KeyValue As Variant)
     mDic.Remove KeyValue
 End Sub
 '--------------------------------------------------------------
