@@ -58,7 +58,7 @@ Implements ICursor
 Implements IDictionary
 Implements IConstructor
 Implements INewInstance
-Implements IJSONObject
+Implements IDictionaryAccessor
 
 'VBAでは「継承」ができないため「委譲」する。
 Private mDic As IDictionary
@@ -248,11 +248,18 @@ Private Function INewInstance_NewInstance() As Object
 
 End Function
 '--------------------------------------------------------------
-' JSON Object I/F
+' IDictionaryAccessor I/F
 '--------------------------------------------------------------
-Private Sub IJSONObject_SetProperty(prop As Variant, Val As Variant)
+Private Sub IDictionaryAccessor_SetProperty(prop As Variant, Val As Variant)
     
     Me.GetIDictionary.Add prop, Val
     
 End Sub
+Private Function IDictionaryAccessor_GetProperty(prop As Variant) As Variant
+    If IsObject(Me.GetIDictionary.Item(prop)) Then
+        Set IDictionaryAccessor_GetProperty = Me.GetIDictionary.Item(prop)
+    Else
+        Let IDictionaryAccessor_GetProperty = Me.GetIDictionary.Item(prop)
+    End If
+End Function
 

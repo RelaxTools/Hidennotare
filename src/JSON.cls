@@ -147,7 +147,7 @@ Private Function ParseObject(ByVal strJSON As String, obj As Object, ByVal Level
                     
                     If Len(propertyName) > 0 Then
                         
-                        ToJSONObject(objJObj).SetProperty propertyName, ParseString(StringExtraction(IC))
+                        ToIDictionaryAccessor(objJObj).SetProperty propertyName, ParseString(StringExtraction(IC))
                         propertyName = ""
                     
                     Else
@@ -164,13 +164,13 @@ Private Function ParseObject(ByVal strJSON As String, obj As Object, ByVal Level
                 Case "["
                     
                     '下位レベルのパース（Array)
-                    ToJSONObject(objJObj).SetProperty propertyName, ParseArray(ElementExtraction(IC), obj, Level)
+                    ToIDictionaryAccessor(objJObj).SetProperty propertyName, ParseArray(ElementExtraction(IC), obj, Level)
                     propertyName = ""
                     
                 Case "{"
                     
                     '下位レベルのパース（Object)
-                    ToJSONObject(objJObj).SetProperty propertyName, ParseObject(ElementExtraction(IC), obj, Level)
+                    ToIDictionaryAccessor(objJObj).SetProperty propertyName, ParseObject(ElementExtraction(IC), obj, Level)
                     propertyName = ""
                 
                 Case " ", vbTab, vbCr, vbLf, vbCrLf
@@ -194,7 +194,7 @@ Private Function ParseObject(ByVal strJSON As String, obj As Object, ByVal Level
                 Exit Function
             End If
             
-            ToJSONObject(objJObj).SetProperty propertyName, ParseValue(SB.ToString)
+            ToIDictionaryAccessor(objJObj).SetProperty propertyName, ParseValue(SB.ToString)
             
         End If
     
@@ -204,10 +204,10 @@ Private Function ParseObject(ByVal strJSON As String, obj As Object, ByVal Level
 
 End Function
 '-------------------------------------------------
-' IJSONObjectへキャスト
+' IDictionaryAccessorへキャスト
 '-------------------------------------------------
-Private Function ToJSONObject(obj As Object) As IJSONObject
-    Set ToJSONObject = obj
+Private Function ToIDictionaryAccessor(obj As Object) As IDictionaryAccessor
+    Set ToIDictionaryAccessor = obj
 End Function
 '-------------------------------------------------
 ' インスタンス生成

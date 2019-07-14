@@ -60,6 +60,7 @@ End Sub
 'ƒŒƒWƒXƒgƒŠíœ
 '--------------------------------------------------------------
 Public Sub DeleteSetting(ByVal Section As String, Optional ByVal Key As String = "")
+    On Error Resume Next
     If Len(Key) = 0 Then
         VBA.DeleteSetting Title, Section
     Else

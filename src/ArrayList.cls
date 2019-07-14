@@ -78,6 +78,9 @@ End Sub
 Private Sub Class_Terminate()
     Set mCol = Nothing
 End Sub
+Public Function GetIList() As IList
+    Set GetIList = Me
+End Function
 '--------------------------------------------------------------
 ' コンストラクタ
 '--------------------------------------------------------------
@@ -184,6 +187,222 @@ Public Function TryLBound(ary As Variant, lngIdx As Long, Optional ByVal dimensi
 e:
     TryLBound = False
 
+End Function
+''-------------------------------------------
+'' １～２次元配列からArrayListに変換
+''-------------------------------------------
+'Public Function ParseArray(ary As Variant, Optional obj As Object = Nothing, Optional Fields As Variant) As Object
+'
+'    Dim lngVal As Long
+'    Dim lineStart As Long
+'    Dim lineStop As Long
+'    Dim fieldStart As Long
+'    Dim fieldStop As Long
+'
+'    '2次元フラグ
+'    Dim bln2d As Boolean
+'
+'    bln2d = True
+'
+'    '1次元目
+'    If TryLBound(ary, lngVal) Then
+'        lineStart = lngVal
+'        If TryUBound(ary, lngVal) Then
+'            lineStop = lngVal
+'        Else
+'            Message.Throw 1, Me, "ParseArray", "not array"
+'        End If
+'    Else
+'        Message.Throw 1, Me, "ParseArray", "not array"
+'    End If
+'
+'    '2次元目
+'    If TryLBound(ary, lngVal, 2) Then
+'        fieldStart = lngVal
+'        If TryUBound(ary, lngVal, 2) Then
+'            fieldStop = lngVal
+'        Else
+'            '2次元ではない
+'            bln2d = False
+'        End If
+'    Else
+'        '2次元ではない
+'        bln2d = False
+'    End If
+'
+'    Dim i As Long
+'    Dim j As Long
+'
+'    Dim obj1 As Object
+'    Dim obj2 As Object
+'
+'    '2次元配列の場合
+'    If bln2d Then
+'
+'        '引数によりインスタンス化するオブジェクトを判定
+'        Select Case True
+'            Case obj Is Nothing
+'                Set obj1 = GetNewInstance(New ArrayList)
+'            Case TypeOf obj Is Collection
+'                Set obj1 = GetNewInstance(obj(1))
+'            Case Else
+'                Set obj1 = GetNewInstance(obj)
+'        End Select
+'
+'        For i = lineStart To lineStop
+'
+'            '引数によりインスタンス化するオブジェクトを判定
+'            Select Case True
+'                Case obj Is Nothing
+'                    Set obj2 = GetNewInstance(New ArrayList)
+'                Case TypeOf obj Is Collection
+'                    Set obj2 = GetNewInstance(obj(2))
+'                Case Else
+'                    Set obj2 = GetNewInstance(obj)
+'            End Select
+'
+'            For j = fieldStart To fieldStop
+'
+'                If IsMissing(Fields) Then
+'                    ToIDictionaryAccessor(obj2).SetProperty "", ary(i, j)
+'                Else
+'                    ToIDictionaryAccessor(obj2).SetProperty Fields(j), ary(i, j)
+'                End If
+'
+'            Next
+'
+'            ToIDictionaryAccessor(obj1).SetProperty "", obj2
+'
+'        Next
+'
+'    '1次元配列の場合
+'    Else
+'
+'        '引数によりインスタンス化するオブジェクトを判定
+'        Select Case True
+'            Case obj Is Nothing
+'                Set obj1 = GetNewInstance(New ArrayList)
+'            Case TypeOf obj Is Collection
+'                Set obj1 = GetNewInstance(obj(1))
+'            Case Else
+'                Set obj1 = GetNewInstance(obj)
+'        End Select
+'
+'        For i = lineStart To lineStop
+'
+'            If IsMissing(Fields) Then
+'                ToIDictionaryAccessor(obj1).SetProperty "", ary(i)
+'            Else
+'                ToIDictionaryAccessor(obj1).SetProperty Fields(i), ary(i)
+'            End If
+'
+'        Next
+'
+'    End If
+'
+'    Set ParseArray = obj1
+'
+'End Function
+'-------------------------------------------
+' Listbox（Combobox）からArrayList変換
+' Tagにフィールド情報（カンマ区切り）が必須。
+'-------------------------------------------
+Public Function ParseArrayFromListbox(objList As Object, Optional obj As Object = Nothing) As Object
+
+    Dim ary As IList
+    Dim objRec As Object
+    Dim Fields As Variant
+    Dim i As Long
+    Dim j As Long
+    
+    'Tagにフィールド情報が無い場合
+    If objList.Tag = "" Then
+        Message.Throw 1, Me, "ParseArrayFromListbox", "never set tag in 'fields string'"
+    End If
+    
+    '配列に変換
+    Fields = Split(objList.Tag, ",")
+    
+    '1次元目はArrayList固定
+    Set ary = New ArrayList
+        
+    For i = 0 To objList.ListCount - 1
+        
+        '引数によりインスタンス化するオブジェクトを判定
+        Select Case True
+            Case obj Is Nothing
+                Set objRec = GetNewInstance(New Dictionary)
+            Case Else
+                Set objRec = GetNewInstance(obj)
+        End Select
+        
+        For j = 0 To objList.ColumnCount - 1
+        
+            '設定されているフィールドのみコピーする。
+            If Fields(j) <> "" Then
+                ToIDictionaryAccessor(objRec).SetProperty Fields(j), objList.List(i, j)
+            End If
+        Next
+            
+        ary.Add objRec
+    
+    Next
+
+    Set ParseArrayFromListbox = ary
+
+End Function
+'-------------------------------------------
+' ArrayListの内容をListbox(Combobox)にコピーする。
+' Tagにフィールド情報（カンマ区切り）が必須。
+'-------------------------------------------
+Public Sub CopyToListbox(objList As Object)
+
+    Dim ary As IList
+    Dim objRec As Object
+    Dim Fields As Variant
+    Dim v As Variant
+
+    'Tagにフィールド情報が無い場合
+    If objList.Tag = "" Then
+        Message.Throw 1, Me, "CopyToListbox", "never set tag in 'fields string'"
+    End If
+
+    '配列に変換
+    Fields = Split(objList.Tag, ",")
+
+    '1次元目はArrayList固定
+    Set ary = Me
+
+    'リストボックスのクリア
+    objList.Clear
+
+    Dim i As Long
+    Dim j As Long
+    i = 0
+    For Each objRec In ary
+        j = 0
+        objList.AddItem
+        For Each v In Fields
+
+            '設定されているフィールドのみコピーする。
+            If v <> "" Then
+                objList.List(i, j) = ToIDictionaryAccessor(objRec).GetProperty(v)
+            End If
+            j = j + 1
+        Next
+        i = i + 1
+    Next
+
+End Sub
+
+Function GetNewInstance(obj As INewInstance) As Object
+    Set GetNewInstance = obj.NewInstance
+End Function
+'-------------------------------------------------
+' ToIDictionaryAccessorへキャスト
+'-------------------------------------------------
+Private Function ToIDictionaryAccessor(obj As Object) As IDictionaryAccessor
+    Set ToIDictionaryAccessor = obj
 End Function
 '--------------------------------------------------------------
 ' ArrayList から全ての項目を削除する。
@@ -316,16 +535,18 @@ Private Function IList_ToArray() As Variant
     Dim lngCol As Long
     Dim i As Long
     Dim j As Long
-    Dim result() As Variant
-    Dim list As IList
+    Dim result As Variant
+    Dim List As IList
+    
+    result = Array()
     
     lngRow = mCol.Count
     lngCol = 0
     
-    Set list = Me
+    Set List = Me
     
     'ArrayList/ArrayList の２次元を想定
-    For Each v In list
+    For Each v In List
         If TypeName(v) = "ArrayList" Then
             If lngCol < v.Count Then
                 lngCol = v.Count
@@ -343,11 +564,11 @@ Private Function IList_ToArray() As Variant
         
             ReDim result(0 To lngRow - 1)
         
-            For i = 0 To list.Count - 1
-                If IsObject(list(i)) Then
-                    Set result(i) = list(i)
+            For i = 0 To List.Count - 1
+                If IsObject(List(i)) Then
+                    Set result(i) = List(i)
                 Else
-                    Let result(i) = list(i)
+                    Let result(i) = List(i)
                 End If
             Next
     
@@ -358,12 +579,12 @@ Private Function IList_ToArray() As Variant
         
             ReDim result(0 To lngRow - 1, 0 To lngCol - 1)
         
-            For i = 0 To list.Count - 1
-                For j = 0 To list(i).Count - 1
-                    If IsObject(list(i)(j)) Then
-                        Set result(i, j) = list(i)(j)
+            For i = 0 To List.Count - 1
+                For j = 0 To List(i).Count - 1
+                    If IsObject(List(i)(j)) Then
+                        Set result(i, j) = List(i)(j)
                     Else
-                        Let result(i, j) = list(i)(j)
+                        Let result(i, j) = List(i)(j)
                     End If
                 Next
             Next

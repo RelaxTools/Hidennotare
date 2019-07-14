@@ -52,7 +52,7 @@ Option Explicit
 Implements ICursor
 Implements IDictionary
 Implements INewInstance
-Implements IJSONObject
+Implements IDictionaryAccessor
 
 Private mDic As Object
 Private mIndex As Long
@@ -281,11 +281,17 @@ Private Function INewInstance_NewInstance() As Object
 
 End Function
 '--------------------------------------------------------------
-' JSON Object I/F
+' IDictionaryAccessor I/F
 '--------------------------------------------------------------
-Private Sub IJSONObject_SetProperty(prop As Variant, Val As Variant)
+Private Sub IDictionaryAccessor_SetProperty(prop As Variant, Val As Variant)
     
     Me.GetIDictionary.Add prop, Val
     
 End Sub
-
+Private Function IDictionaryAccessor_GetProperty(prop As Variant) As Variant
+    If IsObject(Me.GetIDictionary.Item(prop)) Then
+        Set IDictionaryAccessor_GetProperty = Me.GetIDictionary.Item(prop)
+    Else
+        Let IDictionaryAccessor_GetProperty = Me.GetIDictionary.Item(prop)
+    End If
+End Function

@@ -326,8 +326,8 @@ Public Function CreateHistory(c As ComboBox, Optional ByVal max As Long = 10) As
     '—š—ğ‚Ìì¬
     cnt = 1
     For i = 0 To c.ListCount - 1
-        If c.list(i) <> c.Text Then
-            strBuf = strBuf & vbTab & c.list(i)
+        If c.List(i) <> c.Text Then
+            strBuf = strBuf & vbTab & c.List(i)
             cnt = cnt + 1
             'ƒŠƒXƒg‚ÍÅ‘å‚P‚O
             If cnt >= max Then

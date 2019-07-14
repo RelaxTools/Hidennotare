@@ -250,6 +250,116 @@ Public Function SplitEx(ByVal strBuf As String, Optional ByVal Separator As Stri
     
 End Function
 '--------------------------------------------------------------
+' CSVパーサー RFC4180準拠
+' コーテーションの有無, デリミタ指定あり
+'--------------------------------------------------------------
+Public Function CsvParser(ByVal strBuf As String, Optional ByVal Quatation As Boolean = False, Optional ByVal Delimiter As String = ",") As Collection
+
+    Const C_QUAT As String = """"
+    Dim IC As ICursor
+    Dim sw As Boolean
+    Dim blnLineBreak As Boolean
+    Dim blnItemBreak As Boolean
+    Dim col As Collection
+    Dim row As Collection
+    Dim lngQuot As Long
+    
+    lngQuot = 0
+    
+    sw = False
+    
+    Set row = New Collection
+    
+    Set IC = Constructor(New CharCursor, strBuf)
+    Do Until IC.Eof
+        
+        '初期化
+        Set col = New Collection
+        blnLineBreak = False
+
+        Do Until IC.Eof Or blnLineBreak
+        
+            '初期化
+            Dim SB As StringBuilder
+            Set SB = New StringBuilder
+            blnItemBreak = False
+            
+            Do Until IC.Eof Or blnLineBreak Or blnItemBreak
+
+                Select Case IC.Item
+                    Case C_QUAT
+
+                        'コーテーションありの場合
+                        If Quatation Then
+
+                            lngQuot = lngQuot + 1
+
+                            If sw Then
+
+                                '次の文字がQuatation
+                                If IC.Item(1) = C_QUAT Then
+                                    lngQuot = lngQuot + 1
+                                    SB.Append C_QUAT
+                                    IC.MoveNext
+                                Else
+                                    sw = False
+                                End If
+
+                            Else
+                                sw = True
+                            End If
+                        End If
+
+                    Case vbCr
+
+                        If sw Then
+                            SB.Append IC.Item
+                        End If
+
+                    Case vbLf
+
+                        If sw Then
+                            SB.Append IC.Item
+                        Else
+                            blnLineBreak = True
+                        End If
+
+                    Case Delimiter
+
+                        If sw Then
+                            SB.Append IC.Item
+                        Else
+                            blnItemBreak = True
+                        End If
+
+                    Case Else
+
+                        SB.Append IC.Item
+
+                End Select
+            
+                IC.MoveNext
+            Loop
+            
+            '列追加処理
+            col.Add SB.ToString
+            
+        Loop
+        
+        '行追加処理
+        row.Add col
+        
+    Loop
+    
+    'ダブルコーテーションが偶数ではない場合
+    If lngQuot Mod 2 <> 0 Then
+        Message.Throw 1, Me, "CsvParser", "Invalid Format(Quotation)"
+    End If
+    
+    Set CsvParser = row
+    
+End Function
+'--------------------------------------------------------------
 '　開始文字列の判定
 '--------------------------------------------------------------
 Public Function StartsWith(ByVal strBuf As String, ByVal strWith As String) As Boolean
