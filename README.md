@@ -32,9 +32,9 @@ https://github.com/RelaxTools/Hidennotare/wiki/2.1.4.-IDictionary-%E3%82%A4%E3%8
 |2|ArrayList.cls|ArrayListクラス(拡張Collection)|
 |3|BookReader.cls|ブック読み込みクラス|
 |4|BookWriter.cls|ブック書き込みクラス|
-|5|Callback.cls|コールバッククラス|
+|5|Callback.cls|OnAction/OnTime等コールバッククラス|
 |6|CharCursor.cls|文字単位カーソルクラス|
-|7|CheckDigit.cls|チェックでじっとクラス|
+|7|CheckDigit.cls|チェックディジットクラス|
 |8|Clipboard.cls|クリップボードクラス|
 |9|CollectionCursor.cls|コレクションカーソルクラス|
 |10|Convert.cls|変換クラス|
