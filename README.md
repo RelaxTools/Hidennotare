@@ -11,6 +11,14 @@
 [1.5. CSV Parser の使い方](https://github.com/RelaxTools/Hidennotare/wiki/1.5.-CSV-Parser-%E3%81%AE%E4%BD%BF%E3%81%84%E6%96%B9)  
 [1.6. ArrayListとDictionaryのシリアライズ化](https://github.com/RelaxTools/Hidennotare/wiki/1.6.-ArrayList%E3%81%A8Dictionary%E3%81%AE%E3%82%B7%E3%83%AA%E3%82%A2%E3%83%A9%E3%82%A4%E3%82%BA%E5%8C%96)  
 [1.7. ArrayListとDictionaryのデシリアライズ化](https://github.com/RelaxTools/Hidennotare/wiki/1.7.-ArrayList%E3%81%A8Dictionary%E3%81%AE%E3%83%87%E3%82%B7%E3%83%AA%E3%82%A2%E3%83%A9%E3%82%A4%E3%82%BA%E5%8C%96)  
-
 #### 2. リファレンス
+##### 2.1. インターフェイス
+[2.1.1. IConstructor インターフェース](https://github.com/RelaxTools/Hidennotare/wiki/2.1.1.-IConstructor%E3%82%A4%E3%83%B3%E3%82%BF%E3%83%BC%E3%83%95%E3%82%A7%E3%82%A4%E3%82%B9)  
+[2.1.2. ICursor インターフェース](https://github.com/RelaxTools/Hidennotare/wiki/2.1.2.-ICursor-%E3%82%A4%E3%83%B3%E3%82%BF%E3%83%BC%E3%83%95%E3%82%A7%E3%82%A4%E3%82%B9)  
+[2.1.3. IList インターフェース](https://github.com/RelaxTools/Hidennotare/wiki/2.1.3.-IList-%E3%82%A4%E3%83%B3%E3%82%BF%E3%83%BC%E3%83%95%E3%82%A7%E3%83%BC%E3%82%B9)  
+[2.1.4. IDictionary インターフェース](
+https://github.com/RelaxTools/Hidennotare/wiki/2.1.4.-IDictionary-%E3%82%A4%E3%83%B3%E3%82%BF%E3%83%BC%E3%83%95%E3%82%A7%E3%82%A4%E3%82%B9)  
+##### 2.2. クラス
+[2.2.1. ArrayList クラス](https://github.com/RelaxTools/Hidennotare/wiki/2.2.1.-ArrayList-%E3%82%AF%E3%83%A9%E3%82%B9)  
+
 
