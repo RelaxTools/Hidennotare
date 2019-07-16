@@ -89,12 +89,12 @@ End Function
 '--------------------------------------------------------------
 Function Execute(ByVal strText As String, ByVal strExp As String, Optional ByVal blnIgnoreCase As Boolean = False) As Collection
 
-    Dim col As Collection
+    Dim Col As Collection
     Dim matches As Object
     Dim m As Object
     Dim r As MatchBean
     
-    Set col = New Collection
+    Set Col = New Collection
 
     With RE
         
@@ -109,11 +109,11 @@ Function Execute(ByVal strText As String, ByVal strExp As String, Optional ByVal
     For Each m In matches
     
         'FirstIndexÇÕ0Ç©ÇÁÇ»ÇÃÇ≈+1
-        col.Add Constructor(New MatchBean, m.FirstIndex + 1, m.Length, m.Value)
+        Col.Add Constructor(New MatchBean, m.FirstIndex + 1, m.Length, m.Value)
     
     Next
         
-    Set Execute = col
+    Set Execute = Col
     
 End Function
 '--------------------------------------------------------------
@@ -144,19 +144,19 @@ End Function
 '--------------------------------------------------------------
 Sub ReplaceShape(ByRef sh As Shape, ByVal strExp As String, ByVal strReplace As String, Optional ByVal blnIgnoreCase As Boolean = False)
 
-    Dim col As Collection
+    Dim Col As Collection
     Dim bean As MatchBean
     Dim i As Long
 
     With sh.TextFrame2.TextRange
 
         'åüçı
-        Set col = Me.Execute(.Text, strExp, blnIgnoreCase)
+        Set Col = Me.Execute(.Text, strExp, blnIgnoreCase)
 
         'íuä∑Ç∑ÇÈÇ∆IndexÇ™Ç∏ÇÍÇÈÇÃÇ≈ãtèáÇ…èàóù
-        For i = col.Count To 1 Step -1
+        For i = Col.Count To 1 Step -1
 
-            Set bean = col(i)
+            Set bean = Col(i)
 
             Call .Characters(bean.Index, bean.Length).Delete
 
@@ -174,19 +174,19 @@ End Sub
 '--------------------------------------------------------------
 Sub ReplaceRange(ByRef r As Range, ByVal strExp As String, ByVal strReplace As String, Optional ByVal blnIgnoreCase As Boolean = False)
 
-    Dim col As Collection
+    Dim Col As Collection
     Dim bean As MatchBean
     Dim i As Long
 
     With r
 
         'åüçı
-        Set col = Me.Execute(.Value, strExp, blnIgnoreCase)
+        Set Col = Me.Execute(.Value, strExp, blnIgnoreCase)
 
         'íuä∑Ç∑ÇÈÇ∆IndexÇ™Ç∏ÇÍÇÈÇÃÇ≈ãtèáÇ…èàóù
-        For i = col.Count To 1 Step -1
+        For i = Col.Count To 1 Step -1
 
-            Set bean = col(i)
+            Set bean = Col(i)
 
             Call .Characters(bean.Index, bean.Length).Delete
 

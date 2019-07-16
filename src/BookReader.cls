@@ -110,16 +110,16 @@ End Function
 Public Property Get VisibleSheets() As Collection
 
     Dim WS As Worksheet
-    Dim col As Collection
-    Set col = New Collection
+    Dim Col As Collection
+    Set Col = New Collection
     
     For Each WS In WB.Worksheets
         If WS.visible = xlSheetVisible Then
-            col.Add WS, WS.Name
+            Col.Add WS, WS.Name
         End If
     Next
     
-    Set VisibleSheets = col
+    Set VisibleSheets = Col
 
 End Property
 '-------------------------------------------------

@@ -260,21 +260,21 @@ Public Function CsvParser(ByVal strBuf As String, Optional ByVal Quatation As Bo
     Dim sw As Boolean
     Dim blnLineBreak As Boolean
     Dim blnItemBreak As Boolean
-    Dim col As Collection
-    Dim row As Collection
+    Dim Col As Collection
+    Dim Row As Collection
     Dim lngQuot As Long
     
     lngQuot = 0
     
     sw = False
     
-    Set row = New Collection
+    Set Row = New Collection
     
     Set IC = Constructor(New CharCursor, strBuf)
     Do Until IC.Eof
         
         'èâä˙âª
-        Set col = New Collection
+        Set Col = New Collection
         blnLineBreak = False
 
         Do Until IC.Eof Or blnLineBreak
@@ -342,12 +342,12 @@ Public Function CsvParser(ByVal strBuf As String, Optional ByVal Quatation As Bo
             Loop
             
             'óÒí«â¡èàóù
-            col.Add SB.ToString
+            Col.Add SB.ToString
             
         Loop
         
         'çsí«â¡èàóù
-        row.Add col
+        Row.Add Col
         
     Loop
     
@@ -356,7 +356,7 @@ Public Function CsvParser(ByVal strBuf As String, Optional ByVal Quatation As Bo
         Message.Throw 1, Me, "CsvParser", "Invalid Format(Quotation)"
     End If
     
-    Set CsvParser = row
+    Set CsvParser = Row
     
 End Function
 '--------------------------------------------------------------

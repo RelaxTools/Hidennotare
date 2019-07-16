@@ -174,7 +174,7 @@ Function Except(r As Range, s As Range) As Range
     Dim m As Range
     For Each m In r
         '‹¤’Ê•”‚ª”ÍˆÍŠO‚È‚ç‘ÎÛ
-        If n(1).row <= m.row And n(1).Column <= m.Column And n(n.Count).row >= m.row And n(n.Count).Column >= m.Column Then
+        If n(1).Row <= m.Row And n(1).Column <= m.Column And n(n.Count).Row >= m.Row And n(n.Count).Column >= m.Column Then
         Else
             Set u = Me.Union(u, m)
         End If

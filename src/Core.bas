@@ -53,21 +53,21 @@ Public Function Constructor(ByRef obj As Object, ParamArray Args() As Variant) A
     'その他クラスのコンストラクタ
     Else
         '引数をCollectionに詰め替える
-        Dim col As Collection
-        Set col = New Collection
+        Dim Col As Collection
+        Set Col = New Collection
         
         For Each v In Args
             'FormのMe指定の場合Controlsが入ってしまう対策
             If TypeName(v) = "Controls" Then
-                col.Add v(1).Parent
+                Col.Add v(1).Parent
             Else
-                col.Add v
+                Col.Add v
             End If
         Next
         
         'IConstructor Interfaceを呼び出す。
         Set c = obj
-        Set Constructor = c.Instancing(col)
+        Set Constructor = c.Instancing(Col)
     End If
     
     'オブジェクトが返却されなかった場合エラー

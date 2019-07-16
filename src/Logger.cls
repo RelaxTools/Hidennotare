@@ -267,31 +267,31 @@ Private Sub OpenLog()
     'ログフォルダ作成
     strLogFolder = AppDataFolder
 
-    Dim col As Collection
+    Dim Col As Collection
     Dim objFolder As Object
     Dim objFile As Object
 
-    Set col = New Collection
+    Set Col = New Collection
 
     'ログフォルダを Collection に追加
     Set objFolder = mFSO.GetFolder(strLogFolder)
     For Each objFile In objFolder.files
     
-        For i = 1 To col.Count
-            If col(i) >= objFile.Name Then
-                col.Add objFile.Name, , i
+        For i = 1 To Col.Count
+            If Col(i) >= objFile.Name Then
+                Col.Add objFile.Name, , i
                 GoTo pass
             End If
         Next
-        col.Add objFile.Name
+        Col.Add objFile.Name
 pass:
     Next
 
     Dim v As Variant
 
     'フォルダ名の昇順に処理する
-    i = col.Count
-    For Each v In col
+    i = Col.Count
+    For Each v In Col
 
         If i > mlngHistory Then
             Kill strLogFolder & "\" & v
@@ -299,7 +299,7 @@ pass:
         i = i - 1
     Next
 
-    Set col = Nothing
+    Set Col = Nothing
     Set objFolder = Nothing
 
     strFile = mFSO.BuildPath(strLogFolder, Format(Now, "yyyymmdd") & ".log")

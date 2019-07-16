@@ -103,36 +103,36 @@ Sub Using_Sample()
 End Sub
 Sub Serialize_Sample()
 
-    Dim row As IList
-    Dim col As IDictionary
+    Dim Row As IList
+    Dim Col As IDictionary
     
-    Set row = New ArrayList
+    Set Row = New ArrayList
     
-    Set col = New Dictionary
+    Set Col = New Dictionary
     
-    col.Add "Field01", 10
-    col.Add "Field02", 20
-    col.Add "Field03", 30
+    Col.Add "Field01", 10
+    Col.Add "Field02", 20
+    Col.Add "Field03", 30
 
-    row.Add col
+    Row.Add Col
 
-    Set col = New Dictionary
-    col.Add "Field01", 40
-    col.Add "Field02", 50
-    col.Add "Field03", 60
+    Set Col = New Dictionary
+    Col.Add "Field01", 40
+    Col.Add "Field02", 50
+    Col.Add "Field03", 60
 
-    row.Add col
+    Row.Add Col
     
-    Debug.Print row.ToString
+    Debug.Print Row.ToString
 
 End Sub
 Sub desirialize_Sample()
 
-    Dim row As IList
+    Dim Row As IList
 
-    Set row = JSON.ParseJSON("[{""Field01"":10, ""Field02"":20, ""Field03"":30}, {""Field01"":40, ""Field02"":50, ""Field03"":60}]")
+    Set Row = JSON.ParseJSON("[{""Field01"":10, ""Field02"":20, ""Field03"":30}, {""Field01"":40, ""Field02"":50, ""Field03"":60}]")
 
-    Debug.Print row.ToString
+    Debug.Print Row.ToString
 
 End Sub
 
@@ -176,5 +176,22 @@ Sub OrderedDictionary_sample()
 '    D.Remove "2"
     d.Remove "10"
 
+
+End Sub
+Sub CsvParser_Sample()
+
+    Dim strBuf As String
+    Dim Row As Collection
+    Dim Col As Collection
+    Dim v As Variant
+    strBuf = "1, Watanabe, Fukushima, 36, ""ÉJÉìÉ}Ç™Ç†Ç¡ÇƒÇ‡,OK""" & vbCrLf & "2, satoh, chiba, 24, ""â¸çsÇ™Ç†Ç¡ÇƒÇ‡" & vbLf & "OKÇ‚Ç≈"""
+
+    Set Row = StringHelper.CsvParser(strBuf, True)
+
+    For Each Col In Row
+        For Each v In Col
+            Debug.Print v
+        Next
+    Next
 
 End Sub

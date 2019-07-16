@@ -61,6 +61,7 @@ Private mIndex As Long
 '--------------------------------------------------------------
 Private Sub Class_Initialize()
     Set mDic = CreateObject("Scripting.Dictionary")
+    mDic.CompareMode = vbBinaryCompare
     mIndex = 0
 End Sub
 '--------------------------------------------------------------

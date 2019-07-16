@@ -87,9 +87,9 @@ Private Function IConstructor_Instancing(ByRef Args As Collection) As Object
     
     If mLO.ListRows.Count > 0 Then
         'データの最初の行
-        mlngStartRow = mLO.DataBodyRange(1).row
+        mlngStartRow = mLO.DataBodyRange(1).Row
         'データの最後の行
-        mlngLastRow = mLO.DataBodyRange(mLO.DataBodyRange.Count).row
+        mlngLastRow = mLO.DataBodyRange(mLO.DataBodyRange.Count).Row
         'カレント行
         mlngRow = mlngStartRow
         
