@@ -1,6 +1,5 @@
 ![Hidennotare](https://raw.githubusercontent.com/wiki/RelaxTools/Hidennotare/image/Hidennotare.png)
 
-# Hidennotare v1
 Secret Source VBA Library for Excel 2010/2013/2016/2019/365 32/64bit
 
 ### Wiki への参照
