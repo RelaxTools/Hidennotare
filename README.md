@@ -20,5 +20,7 @@
 https://github.com/RelaxTools/Hidennotare/wiki/2.1.4.-IDictionary-%E3%82%A4%E3%83%B3%E3%82%BF%E3%83%BC%E3%83%95%E3%82%A7%E3%82%A4%E3%82%B9)  
 ##### 2.2. クラス
 [2.2.1. ArrayList クラス](https://github.com/RelaxTools/Hidennotare/wiki/2.2.1.-ArrayList-%E3%82%AF%E3%83%A9%E3%82%B9)  
-
+[2.2.2. Dictionary クラス](https://github.com/RelaxTools/Hidennotare/wiki/2.2.2.-Dictionary-%E3%82%AF%E3%83%A9%E3%82%B9)  
+[2.2.3. OrderedDictionary クラス](https://github.com/RelaxTools/Hidennotare/wiki/2.2.3.-OrderedDictionary-%E3%82%AF%E3%83%A9%E3%82%B9)  
+[2.2.4. SortedDictionary クラス](https://github.com/RelaxTools/Hidennotare/wiki/2.2.4.-SortedDictionary-%E3%82%AF%E3%83%A9%E3%82%B9)  
 
