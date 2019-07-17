@@ -49,7 +49,7 @@ Option Explicit
 ' JSONパース
 '
 ' JSON文字列からDictionary(OrderedDictionary/SortedDictionary) または ArrayList を復元（デシリアライズ）する機能。
-' IJSONObject(I/F)とINewInstance(I/F)に対応すれば、通常のクラスにも復元可能。
+' IDictionaryAccessor(I/F)とINewInstance(I/F)に対応すれば、通常のクラスにも復元可能。
 '
 ' 逆（シリアライズ）を行う場合 Dictionary(OrderedDictionary/SortedDictionary) または ArrayListで、ToString する。
 ' 通常のクラスでシリアライズする場合、Dictionaryを生成した後、ToString すると楽に作成できる。

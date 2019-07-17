@@ -394,7 +394,78 @@ Public Sub CopyToListbox(objList As Object)
     Next
 
 End Sub
+'-------------------------------------------
+' ListObject（テーブル機能）からArrayList変換
+' テーブルの列ヘッダの情報が必須。
+'-------------------------------------------
+Public Function ParseArrayFromListObject(LO As ListObject, Optional obj As Object = Nothing) As Object
 
+    Dim lst As IList
+    Dim objRec As Object
+    Dim i As Long
+    Dim j As Long
+    
+    '1次元目はArrayList固定
+    Set lst = New ArrayList
+        
+    For i = 1 To LO.DataBodyRange.Rows.Count
+        
+        '引数によりインスタンス化するオブジェクトを判定
+        Select Case True
+            Case obj Is Nothing
+                Set objRec = GetNewInstance(New Dictionary)
+            Case Else
+                Set objRec = GetNewInstance(obj)
+        End Select
+        
+        For j = 1 To LO.HeaderRowRange.Columns.Count
+        
+            ToIDictionaryAccessor(objRec).SetProperty LO.HeaderRowRange(, j).Value, LO.DataBodyRange.Cells(i, j).Value
+        Next
+    
+        lst.Add objRec
+    
+    Next
+
+    Set ParseArrayFromListObject = lst
+
+End Function
+'-------------------------------------------
+' ArrayListの内容をListObject(テーブル機能)にコピーする。
+' テーブルの列ヘッダの情報が必須。
+'-------------------------------------------
+Public Sub CopyToListObject(LO As ListObject)
+
+    Dim lst As IList
+    Dim objRec As Object
+    Dim Fields As Variant
+    Dim v As Variant
+
+    '1次元目はArrayList固定
+    Set lst = Me
+
+    'リストオブジェクトのクリア
+    If Not LO.DataBodyRange Is Nothing Then
+        LO.DataBodyRange.ClearContents
+        LO.DataBodyRange.Delete
+    End If
+    
+    Dim i As Long
+    Dim j As Long
+    
+    i = 1
+    For Each objRec In lst
+        
+        LO.ListRows.Add
+        For j = 1 To LO.HeaderRowRange.Columns.Count
+
+            LO.DataBodyRange.Cells(i, j).Value = ToIDictionaryAccessor(objRec).GetProperty(LO.HeaderRowRange(, j).Value)
+        
+        Next
+        i = i + 1
+    Next
+
+End Sub
 Function GetNewInstance(obj As INewInstance) As Object
     Set GetNewInstance = obj.NewInstance
 End Function
