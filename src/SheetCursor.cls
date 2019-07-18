@@ -128,7 +128,7 @@ Private Function IConstructor_Instancing(ByRef Args As Collection) As Object
                 If IsNumeric(Args(START_NUM)) Then
                     mCol = Args(START_NUM)
                 Else
-                    mCol = mWS.Columns(Args(START_NUM)).Column
+                    mCol = mWS.columns(Args(START_NUM)).Column
                 End If
                 
                 mStartCol = mCol
@@ -168,7 +168,7 @@ End Sub
 ' 非表示列をスキップ
 '------------------------------------------------------
 Private Sub SkipHiddenCol()
-    Do Until Not mWS.Columns(mCol).Hidden Or ICursor_Eof
+    Do Until Not mWS.columns(mCol).Hidden Or ICursor_Eof
         mCol = mCol + 1
     Loop
 End Sub

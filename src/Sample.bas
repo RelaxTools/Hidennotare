@@ -195,13 +195,13 @@ Sub CsvParser_Sample()
     Next
 
 End Sub
-Sub ParseArrayFromListObject_sample()
+Sub ArrayList_ParseFromListObject_Sample()
 
     Dim lst As IList
     Dim dic As IDictionary
     Dim Key As Variant
 
-    Set lst = ArrayList.ParseArrayFromListObject(ActiveSheet.ListObjects(1))
+    Set lst = ArrayList.ParseFromListObject(ActiveSheet.ListObjects(1))
 
     For Each dic In lst
 
@@ -218,5 +218,57 @@ Sub ParseArrayFromListObject_sample()
     Set a = lst
     
     a.CopyToListObject ActiveSheet.ListObjects(2)
+
+End Sub
+Sub Dictionary_ParseFromListObject_Sample()
+
+    Dim lst As IDictionary
+    Dim dic As IDictionary
+    Dim Key As Variant
+    Dim Key2 As Variant
+
+    Set lst = Dictionary.ParseFromListObject(ActiveSheet.ListObjects(1), "A")
+
+    For Each Key In lst.Keys
+
+        Set dic = lst.Item(Key)
+
+        For Each Key2 In dic.Keys
+        
+            Debug.Print dic.Item(Key2)
+        
+        Next
+
+    Next
+
+    Dim a As Dictionary
+    
+    Set a = lst
+    
+    a.CopyToListObject ActiveSheet.ListObjects(2)
+
+End Sub
+
+Sub a()
+
+    Dim dic As Object
+    
+    
+    Set dic = New Dictionary
+    
+    Debug.Print IsDictionary(dic)
+
+    Set dic = New OrderedDictionary
+    
+    Debug.Print IsDictionary(dic)
+
+    Set dic = New SortedDictionary
+    
+    Debug.Print IsDictionary(dic)
+
+    Set dic = CreateObject("Scripting.Dictionary")
+    
+    Debug.Print IsDictionary(dic)
+
 
 End Sub

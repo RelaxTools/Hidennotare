@@ -307,7 +307,7 @@ End Function
 ' Listbox（Combobox）からArrayList変換
 ' Tagにフィールド情報（カンマ区切り）が必須。
 '-------------------------------------------
-Public Function ParseArrayFromListbox(objList As Object, Optional obj As Object = Nothing) As Object
+Public Function ParseFromListbox(objList As Object, Optional obj As Object = Nothing) As IList
 
     Dim ary As IList
     Dim objRec As Object
@@ -317,7 +317,7 @@ Public Function ParseArrayFromListbox(objList As Object, Optional obj As Object 
     
     'Tagにフィールド情報が無い場合
     If objList.Tag = "" Then
-        Message.Throw 1, Me, "ParseArrayFromListbox", "never set tag in 'fields string'"
+        Message.Throw 1, Me, "ParseFromListbox", "never set tag in 'fields string'"
     End If
     
     '配列に変換
@@ -348,7 +348,7 @@ Public Function ParseArrayFromListbox(objList As Object, Optional obj As Object 
     
     Next
 
-    Set ParseArrayFromListbox = ary
+    Set ParseFromListbox = ary
 
 End Function
 '-------------------------------------------
@@ -398,7 +398,7 @@ End Sub
 ' ListObject（テーブル機能）からArrayList変換
 ' テーブルの列ヘッダの情報が必須。
 '-------------------------------------------
-Public Function ParseArrayFromListObject(LO As ListObject, Optional obj As Object = Nothing) As Object
+Public Function ParseFromListObject(LO As ListObject, Optional obj As Object = Nothing) As IList
 
     Dim lst As IList
     Dim objRec As Object
@@ -418,7 +418,7 @@ Public Function ParseArrayFromListObject(LO As ListObject, Optional obj As Objec
                 Set objRec = GetNewInstance(obj)
         End Select
         
-        For j = 1 To LO.HeaderRowRange.Columns.Count
+        For j = 1 To LO.HeaderRowRange.columns.Count
         
             ToIDictionaryAccessor(objRec).SetProperty LO.HeaderRowRange(, j).Value, LO.DataBodyRange.Cells(i, j).Value
         Next
@@ -427,7 +427,7 @@ Public Function ParseArrayFromListObject(LO As ListObject, Optional obj As Objec
     
     Next
 
-    Set ParseArrayFromListObject = lst
+    Set ParseFromListObject = lst
 
 End Function
 '-------------------------------------------
@@ -457,7 +457,7 @@ Public Sub CopyToListObject(LO As ListObject)
     For Each objRec In lst
         
         LO.ListRows.Add
-        For j = 1 To LO.HeaderRowRange.Columns.Count
+        For j = 1 To LO.HeaderRowRange.columns.Count
 
             LO.DataBodyRange.Cells(i, j).Value = ToIDictionaryAccessor(objRec).GetProperty(LO.HeaderRowRange(, j).Value)
         
@@ -607,17 +607,17 @@ Private Function IList_ToArray() As Variant
     Dim i As Long
     Dim j As Long
     Dim result As Variant
-    Dim List As IList
+    Dim lst As IList
     
     result = Array()
     
     lngRow = mCol.Count
     lngCol = 0
     
-    Set List = Me
+    Set lst = Me
     
     'ArrayList/ArrayList の２次元を想定
-    For Each v In List
+    For Each v In lst
         If TypeName(v) = "ArrayList" Then
             If lngCol < v.Count Then
                 lngCol = v.Count
@@ -635,11 +635,11 @@ Private Function IList_ToArray() As Variant
         
             ReDim result(0 To lngRow - 1)
         
-            For i = 0 To List.Count - 1
-                If IsObject(List(i)) Then
-                    Set result(i) = List(i)
+            For i = 0 To lst.Count - 1
+                If IsObject(lst(i)) Then
+                    Set result(i) = lst(i)
                 Else
-                    Let result(i) = List(i)
+                    Let result(i) = lst(i)
                 End If
             Next
     
@@ -650,12 +650,12 @@ Private Function IList_ToArray() As Variant
         
             ReDim result(0 To lngRow - 1, 0 To lngCol - 1)
         
-            For i = 0 To List.Count - 1
-                For j = 0 To List(i).Count - 1
-                    If IsObject(List(i)(j)) Then
-                        Set result(i, j) = List(i)(j)
+            For i = 0 To lst.Count - 1
+                For j = 0 To lst(i).Count - 1
+                    If IsObject(lst(i)(j)) Then
+                        Set result(i, j) = lst(i)(j)
                     Else
-                        Let result(i, j) = List(i)(j)
+                        Let result(i, j) = lst(i)(j)
                     End If
                 Next
             Next
@@ -713,7 +713,7 @@ Private Function IList_ToString() As String
                     Case Else
         
                         'エラー
-                        Message.Throw 1, Me, "ToString", "not cast type ""{0}""", TypeName(v)
+                        Message.Throw 1, Me, "ToString", "don't cast type ""{0}""", TypeName(v)
         
                 End Select
         End Select

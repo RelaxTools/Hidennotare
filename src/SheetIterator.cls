@@ -128,7 +128,7 @@ Private Function IConstructor_Instancing(ByRef Args As Collection) As Object
                 If IsNumeric(Args(START_NUM)) Then
                     mStartCol = Args(START_NUM)
                 Else
-                    mStartCol = mWS.Columns(Args(START_NUM)).Column
+                    mStartCol = mWS.columns(Args(START_NUM)).Column
                 End If
                 mEofRow = CLng(Args(EOF_NUM))
             End If
@@ -146,15 +146,15 @@ Private Function IConstructor_Instancing(ByRef Args As Collection) As Object
         lngCnt = mStartRow
         Do Until mWS.Cells(lngCnt, mEofCol).Value = mEofStr
             If Not mWS.Rows(lngCnt).Hidden Then
-                mEnum.Add mWS.Rows(lngCnt).Columns
+                mEnum.Add mWS.Rows(lngCnt).columns
             End If
             lngCnt = lngCnt + 1
         Loop
     Else
         lngCnt = mStartCol
         Do Until mWS.Cells(mEofRow, lngCnt).Value = mEofStr
-            If Not mWS.Columns(lngCnt).Hidden Then
-                mEnum.Add mWS.Columns(lngCnt).Rows
+            If Not mWS.columns(lngCnt).Hidden Then
+                mEnum.Add mWS.columns(lngCnt).Rows
             End If
             lngCnt = lngCnt + 1
         Loop

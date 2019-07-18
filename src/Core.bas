@@ -176,4 +176,21 @@ Public Function OnActionCallback(ByVal Key As String, ByVal lngEvent As Long, By
     End If
 
 End Function
+'---------------------------------------------------------------------------------------------------
+' Dictionary”»’è
+'---------------------------------------------------------------------------------------------------
+Public Function IsDictionary(obj As Object) As Boolean
+
+    IsDictionary = True
+    
+    Select Case TypeName(obj)
+        Case "Dictionary"
+        Case "OrderedDictionary"
+        Case "SortedDictionary"
+        Case Else
+            IsDictionary = False
+    End Select
+
+End Function
+
 

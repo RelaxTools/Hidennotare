@@ -5,7 +5,7 @@ END
 Attribute VB_Name = "Dictionary"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = False
+Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
@@ -75,6 +75,202 @@ End Sub
 '--------------------------------------------------------------
 Public Function GetIDictionary() As IDictionary
     Set GetIDictionary = Me
+End Function
+'-------------------------------------------
+' Listbox（Combobox）からDictionary変換
+' Tagにフィールド情報（カンマ区切り）が必須。
+'-------------------------------------------
+Public Function ParseFromListbox(objList As Object, KeyName As String, Optional obj As Object = Nothing) As IDictionary
+
+    Dim ary As IDictionary
+    Dim objRec As Object
+    Dim Fields As Variant
+    Dim i As Long
+    Dim j As Long
+    Dim Key As Variant
+    
+    'Tagにフィールド情報が無い場合
+    If objList.Tag = "" Then
+        Message.Throw 1, Me, "ParseFromListbox", "never set tag in 'fields string'"
+    End If
+    
+    '配列に変換
+    Fields = Split(objList.Tag, ",")
+    
+    '1次元目はArrayList固定
+    Set ary = New Dictionary
+        
+    For i = 0 To objList.ListCount - 1
+        
+        '引数によりインスタンス化するオブジェクトを判定
+        Select Case True
+            Case obj Is Nothing
+                Set objRec = GetNewInstance(New Dictionary)
+            Case Else
+                Set objRec = GetNewInstance(obj)
+        End Select
+        
+        For j = 0 To objList.ColumnCount - 1
+        
+            '設定されているフィールドのみコピーする。
+            If Fields(j) <> "" Then
+                ToIDictionaryAccessor(objRec).SetProperty Fields(j), objList.List(i, j)
+                
+                If KeyName = Fields(j) Then
+                    Key = objList.List(i, j)
+                End If
+            
+            End If
+        Next
+            
+        ary.Add Key, objRec
+    
+    Next
+
+    Set ParseFromListbox = ary
+
+End Function
+'-------------------------------------------
+' Dictionaryの内容をListbox(Combobox)にコピーする。
+' Tagにフィールド情報（カンマ区切り）が必須。
+'-------------------------------------------
+Public Sub CopyToListbox(objList As Object)
+
+    Dim ary As IDictionary
+    Dim objRec As Object
+    Dim Fields As Variant
+    Dim v As Variant
+    Dim Key As Variant
+
+    'Tagにフィールド情報が無い場合
+    If objList.Tag = "" Then
+        Message.Throw 1, Me, "CopyToListbox", "never set tag in 'fields string'"
+    End If
+
+    '配列に変換
+    Fields = Split(objList.Tag, ",")
+
+    '1次元目はArrayList固定
+    Set ary = Me
+
+    'リストボックスのクリア
+    objList.Clear
+
+    Dim i As Long
+    Dim j As Long
+    i = 0
+    For Each Key In ary.Keys
+    
+        Set objRec = ary.Item(Key)
+    
+        j = 0
+        objList.AddItem
+        For Each v In Fields
+
+            '設定されているフィールドのみコピーする。
+            If v <> "" Then
+                objList.List(i, j) = ToIDictionaryAccessor(objRec).GetProperty(v)
+            End If
+            j = j + 1
+        Next
+        i = i + 1
+    Next
+
+End Sub
+'-------------------------------------------
+' ListObject（テーブル機能）からDictionary変換
+' テーブルの列ヘッダの情報が必須。
+'-------------------------------------------
+Public Function ParseFromListObject(LO As ListObject, KeyField As String, Optional obj As Object = Nothing) As IDictionary
+
+    Dim lst As IDictionary
+    Dim objRec As Object
+    Dim i As Long
+    Dim j As Long
+    Dim Key As Variant
+        
+    
+    '1次元目はArrayList固定
+    Set lst = New Dictionary
+        
+    For i = 1 To LO.DataBodyRange.Rows.Count
+        
+        '引数によりインスタンス化するオブジェクトを判定
+        Select Case True
+            Case obj Is Nothing
+                Set objRec = GetNewInstance(New Dictionary)
+            Case Else
+                Set objRec = GetNewInstance(obj)
+        End Select
+        
+        For j = 1 To LO.HeaderRowRange.columns.Count
+            ToIDictionaryAccessor(objRec).SetProperty LO.HeaderRowRange(, j).Value, LO.DataBodyRange.Cells(i, j).Value
+        Next
+    
+        'Keyフィールド取得
+        j = LO.ListColumns(KeyField).Index
+        Key = LO.DataBodyRange.Cells(i, j).Value
+        
+        If lst.ContainsKey(Key) Then
+            Message.Throw 1, Me, "ParseFromListObject", "Duplicate Key"
+        End If
+        
+        lst.Add Key, objRec
+    
+    Next
+
+    Set ParseFromListObject = lst
+
+End Function
+'-------------------------------------------
+' Dictionaryの内容をListObject(テーブル機能)にコピーする。
+' テーブルの列ヘッダの情報が必須。
+'-------------------------------------------
+Public Sub CopyToListObject(LO As ListObject)
+
+    Dim lst As IDictionary
+    Dim Key As Variant
+    Dim obj As Object
+    Dim v As Variant
+
+    '1次元目はDictionary固定
+    Set lst = Me
+
+    'リストオブジェクトのクリア
+    If Not LO.DataBodyRange Is Nothing Then
+        LO.DataBodyRange.ClearContents
+        LO.DataBodyRange.Delete
+    End If
+    
+    Dim i As Long
+    Dim j As Long
+    
+    i = 1
+    For Each Key In lst.Keys
+        
+        Set obj = lst.Item(Key)
+        
+        LO.ListRows.Add
+        For j = 1 To LO.HeaderRowRange.columns.Count
+
+            LO.DataBodyRange.Cells(i, j).Value = ToIDictionaryAccessor(obj).GetProperty(LO.HeaderRowRange(, j).Value)
+        
+        Next
+        i = i + 1
+    Next
+
+End Sub
+'-------------------------------------------------
+' NewInstance
+'-------------------------------------------------
+Private Function GetNewInstance(obj As INewInstance) As Object
+    Set GetNewInstance = obj.NewInstance
+End Function
+'-------------------------------------------------
+' ToIDictionaryAccessorへキャスト
+'-------------------------------------------------
+Private Function ToIDictionaryAccessor(obj As Object) As IDictionaryAccessor
+    Set ToIDictionaryAccessor = obj
 End Function
 '--------------------------------------------------------------
 '  項目の追加
@@ -286,7 +482,19 @@ End Function
 '--------------------------------------------------------------
 Private Sub IDictionaryAccessor_SetProperty(prop As Variant, Val As Variant)
     
-    Me.GetIDictionary.Add prop, Val
+    Dim dic As IDictionary
+    
+    Set dic = Me.GetIDictionary
+    
+    If dic.ContainsKey(prop) Then
+        If IsObject(Val) Then
+            Set dic.Item(prop) = Val
+        Else
+            dic.Item(prop) = Val
+        End If
+    Else
+        dic.Add prop, Val
+    End If
     
 End Sub
 Private Function IDictionaryAccessor_GetProperty(prop As Variant) As Variant
