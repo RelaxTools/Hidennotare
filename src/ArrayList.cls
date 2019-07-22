@@ -305,7 +305,8 @@ End Function
 'End Function
 '-------------------------------------------
 ' Listbox（Combobox）からArrayList変換
-' Tagにフィールド情報（カンマ区切り）が必須。
+' Tagにフィールド名（カンマ区切り）が必須。
+' Listbox.Tag = "No,Name,Address"
 '-------------------------------------------
 Public Function ParseFromListbox(objList As Object, Optional obj As Object = Nothing) As IList
 
@@ -317,7 +318,7 @@ Public Function ParseFromListbox(objList As Object, Optional obj As Object = Not
     
     'Tagにフィールド情報が無い場合
     If objList.Tag = "" Then
-        Message.Throw 1, Me, "ParseFromListbox", "never set tag in 'fields string'"
+        Message.Throw 1, Me, "ParseFromListbox", "Item name is not set in tag"
     End If
     
     '配列に変換
@@ -354,6 +355,7 @@ End Function
 '-------------------------------------------
 ' ArrayListの内容をListbox(Combobox)にコピーする。
 ' Tagにフィールド情報（カンマ区切り）が必須。
+' Listbox.Tag = "No,Name,Address"
 '-------------------------------------------
 Public Sub CopyToListbox(objList As Object)
 
@@ -364,7 +366,7 @@ Public Sub CopyToListbox(objList As Object)
 
     'Tagにフィールド情報が無い場合
     If objList.Tag = "" Then
-        Message.Throw 1, Me, "CopyToListbox", "never set tag in 'fields string'"
+        Message.Throw 1, Me, "CopyToListbox", "Item name is not set in tag"
     End If
 
     '配列に変換
@@ -464,6 +466,27 @@ Public Sub CopyToListObject(LO As ListObject)
         Next
         i = i + 1
     Next
+
+End Sub
+'-----------------------------------------------------
+' 指定されたRangeを起点にArrayListの内容を貼り付ける
+'-----------------------------------------------------
+Public Sub CopyToRange(TopLeft As Range)
+
+    Dim v As Variant
+    Dim lngRow As Long
+    Dim lngCol As Long
+    
+    v = IList_ToArray
+    
+    If Not TryUBound(v, lngRow, 1) Then
+        Exit Sub
+    End If
+    If Not TryUBound(v, lngCol, 2) Then
+        Exit Sub
+    End If
+
+    TopLeft.resize(lngRow + 1, lngCol + 1).Value = v
 
 End Sub
 Function GetNewInstance(obj As INewInstance) As Object
@@ -616,9 +639,9 @@ Private Function IList_ToArray() As Variant
     
     Set lst = Me
     
-    'ArrayList/ArrayList の２次元を想定
+    'Dictionary or ArrayList の２次元を想定
     For Each v In lst
-        If TypeName(v) = "ArrayList" Then
+        If IsDictionary(v) Or IsList(v) Then
             If lngCol < v.Count Then
                 lngCol = v.Count
             End If
@@ -651,13 +674,38 @@ Private Function IList_ToArray() As Variant
             ReDim result(0 To lngRow - 1, 0 To lngCol - 1)
         
             For i = 0 To lst.Count - 1
-                For j = 0 To lst(i).Count - 1
-                    If IsObject(lst(i)(j)) Then
-                        Set result(i, j) = lst(i)(j)
-                    Else
-                        Let result(i, j) = lst(i)(j)
-                    End If
-                Next
+            
+                Select Case True
+                    'List系の場合
+                    Case IsList(lst(i))
+                        For j = 0 To lst(i).Count - 1
+                            If IsObject(lst(i)(j)) Then
+                                Set result(i, j) = lst(i)(j)
+                            Else
+                                Let result(i, j) = lst(i)(j)
+                            End If
+                        Next
+                    
+                    'Dictionary系の場合
+                    Case IsDictionary(lst(i))
+                        Dim dic As Object
+                        Dim Key As Variant
+                        
+                        Set dic = lst(i)
+                        j = 0
+                        For Each Key In dic.Keys
+                    
+                            If IsObject(dic.Item(Key)) Then
+                                Set result(i, j) = dic.Item(Key)
+                            Else
+                                Let result(i, j) = dic.Item(Key)
+                            End If
+                            
+                            j = j + 1
+                        Next
+                
+                End Select
+                
             Next
     
             IList_ToArray = result

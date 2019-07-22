@@ -249,7 +249,7 @@ Sub Dictionary_ParseFromListObject_Sample()
 
 End Sub
 
-Sub a()
+Sub IsDictionary_Sample()
 
     Dim dic As Object
     

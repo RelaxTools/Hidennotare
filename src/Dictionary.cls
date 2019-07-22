@@ -78,7 +78,8 @@ Public Function GetIDictionary() As IDictionary
 End Function
 '-------------------------------------------
 ' Listbox（Combobox）からDictionary変換
-' Tagにフィールド情報（カンマ区切り）が必須。
+' Tagにフィールド名（カンマ区切り）が必須。
+' Listbox.Tag = "No,Name,Address"
 '-------------------------------------------
 Public Function ParseFromListbox(objList As Object, KeyName As String, Optional obj As Object = Nothing) As IDictionary
 
@@ -91,7 +92,7 @@ Public Function ParseFromListbox(objList As Object, KeyName As String, Optional 
     
     'Tagにフィールド情報が無い場合
     If objList.Tag = "" Then
-        Message.Throw 1, Me, "ParseFromListbox", "never set tag in 'fields string'"
+        Message.Throw 1, Me, "ParseFromListbox", "Item name is not set in tag"
     End If
     
     '配列に変換
@@ -132,7 +133,8 @@ Public Function ParseFromListbox(objList As Object, KeyName As String, Optional 
 End Function
 '-------------------------------------------
 ' Dictionaryの内容をListbox(Combobox)にコピーする。
-' Tagにフィールド情報（カンマ区切り）が必須。
+' Tagにフィールド名（カンマ区切り）が必須。
+' Listbox.Tag = "No,Name,Address"
 '-------------------------------------------
 Public Sub CopyToListbox(objList As Object)
 
@@ -144,7 +146,7 @@ Public Sub CopyToListbox(objList As Object)
 
     'Tagにフィールド情報が無い場合
     If objList.Tag = "" Then
-        Message.Throw 1, Me, "CopyToListbox", "never set tag in 'fields string'"
+        Message.Throw 1, Me, "CopyToListbox", "Item name is not set in tag"
     End If
 
     '配列に変換

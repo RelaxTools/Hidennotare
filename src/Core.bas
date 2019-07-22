@@ -179,11 +179,11 @@ End Function
 '---------------------------------------------------------------------------------------------------
 ' Dictionary”»’è
 '---------------------------------------------------------------------------------------------------
-Public Function IsDictionary(obj As Object) As Boolean
+Public Function IsDictionary(v As Variant) As Boolean
 
     IsDictionary = True
     
-    Select Case TypeName(obj)
+    Select Case TypeName(v)
         Case "Dictionary"
         Case "OrderedDictionary"
         Case "SortedDictionary"
@@ -192,5 +192,18 @@ Public Function IsDictionary(obj As Object) As Boolean
     End Select
 
 End Function
+'---------------------------------------------------------------------------------------------------
+' List”»’è
+'---------------------------------------------------------------------------------------------------
+Public Function IsList(v As Variant) As Boolean
 
+    IsList = True
+    
+    Select Case TypeName(v)
+        Case "ArrayList"
+        Case "Collection"
+        Case Else
+            IsList = False
+    End Select
 
+End Function
