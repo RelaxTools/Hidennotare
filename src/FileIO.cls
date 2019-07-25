@@ -36,14 +36,16 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-' このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。
-'-----------------------------------------------------------------------------------------------------
-' 依存モジュール
-'   Lang.bas
-'   Registry.bas
-'-----------------------------------------------------------------------------------------------------
-' 2018-12-16 Ver.1.0.0 新規作成 CreateObjectしなくても使えるFileSystemObject
-'-----------------------------------------------------------------------------------------------------
+'>### 2.2.7 FileIO クラス
+'>
+'>**Remarks**
+'>
+'>CreateObject しなくても使える FileSystemObject<br>
+'>**このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。**
+'>
+'>**Dependent**
+'>
+'>
 Option Explicit
 
 Private Declare PtrSafe Function FindFirstFileExW Lib "kernel32" (ByVal lpFileName As LongPtr, ByVal fInfoLevelId As Long, ByRef lpFindFileData As WIN32_FIND_DATA, ByVal fSearchOp As Long, ByVal lpSearchFilter As LongPtr, ByVal dwAdditionalFlags As Long) As LongPtr
@@ -115,16 +117,42 @@ Private Type SystemTime
     Second          As Integer
     Milliseconds    As Integer
 End Type
-
+'--------------------------------------------------------------
+' Inisialize
+'--------------------------------------------------------------
 Private Sub Class_Initialize()
     Set FSO = CreateObject("Scripting.FileSystemObject")
 End Sub
+'--------------------------------------------------------------
+' Terminate
+'--------------------------------------------------------------
 Private Sub Class_Terminate()
     Set FSO = Nothing
 End Sub
-'--------------------------------------------------------------
-'　ファイル存在チェック
-'--------------------------------------------------------------
+'>---
+'>#### ファイル存在チェック
+'>
+'>**Syntax**
+'>
+'>```
+'>boolean = FileIO.FileExists(strFile)
+'>```
+'>
+'>|Part|Description|
+'>----|----
+'>|FileIO|必須。FileIOを指定してください。|
+'>|strFile|必須。 存在チェックを行うファイルをフルパスで指定してください。|
+'>
+'>**Remarks**
+'>
+'>指定されたファイルの存在チェックを行い、存在する場合には True を存在しない場合には Falseを戻します。
+'>
+'>**Example**
+'>
+'>**See also**
+'>
+'>FileIO.FolderExists
+'>
 Public Function FileExists(ByVal strFile As String) As Boolean
  
     With FSO
@@ -132,9 +160,61 @@ Public Function FileExists(ByVal strFile As String) As Boolean
     End With
 
 End Function
-'--------------------------------------------------------------
-'　ファイルオブジェクト取得
-'--------------------------------------------------------------
+'>---
+'>#### フォルダ存在チェック
+'>
+'>**Syntax**
+'>
+'>```
+'>boolean = FileIO.FolderExists(strFolder)
+'>```
+'>
+'>|Part|Description|
+'>----|----
+'>|FileIO   |必須。FileIOを指定してください。|
+'>|strFolder|必須。 存在チェックを行うフォルダを指定してください。|
+'>
+'>**Remarks**
+'>
+'>指定されたフォルダの存在チェックを行い、存在する場合には True を存在しない場合には Falseを戻します。
+'>
+'>**Example**
+'>
+'>**See also**
+'>
+'>FileIO.FileExists
+'>
+Public Function FolderExists(ByVal strFolder As String) As Boolean
+ 
+    With FSO
+        FolderExists = .FolderExists(strFolder)
+    End With
+
+End Function
+'>---
+'>#### ファイルオブジェクト取得
+'>
+'>**Syntax**
+'>
+'>```
+'>Set Object = FileIO.GetFile(strFile)
+'>```
+'>
+'>|Part|Description|
+'>----|----
+'>|FileIO|必須。FileIOを指定してください。|
+'>|strFile|必須。 存在チェックを行うフォルダを指定してください。|
+'>
+'>**Remarks**
+'>
+'>Scripting.FileSystemObject の FileObject を返却します。
+'>
+'>**Example**
+'>
+'>**See also**
+'>
+'>FileIO.GetFolder
+'>
 Public Function GetFile(ByVal strFile As String) As Object
  
     With FSO
@@ -149,16 +229,6 @@ Public Function GetFolder(ByVal strFolder As String) As Object
  
     With FSO
         Set GetFolder = .GetFolder(strFolder)
-    End With
-
-End Function
-'--------------------------------------------------------------
-'　フォルダ存在チェック
-'--------------------------------------------------------------
-Public Function FolderExists(ByVal strFile As String) As Boolean
- 
-    With FSO
-        FolderExists = .FolderExists(strFile)
     End With
 
 End Function
@@ -925,8 +995,6 @@ Public Sub CreateFolderImage(ByVal strSource As String, ByVal strDest As String)
     End With
 
 End Sub
-
-
 'アプリケーション名取得
 Private Property Get Title() As String
     Title = ThisWorkbook.BuiltinDocumentProperties("Title").Value

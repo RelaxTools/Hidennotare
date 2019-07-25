@@ -105,10 +105,10 @@ Sub Export()
     Dim obj As Object
     Dim strTo As String
     
-    strFile = FileIO.BuildPath(FileIO.GetParentFolderName(ActiveWorkbook.FullName), "src")
+    strFile = FileIO.BuildPath(FileIO.GetParentFolderName(ThisWorkbook.FullName), "src")
     FileIO.CreateFolder strFile
     
-    For Each obj In ActiveWorkbook.VBProject.VBComponents
+    For Each obj In ThisWorkbook.VBProject.VBComponents
     
         If obj.Name Like "Module*" Then
             GoTo pass
@@ -133,6 +133,133 @@ pass:
     MsgBox "ソースを保存しました。", vbInformation, "Export"
     
 End Sub
+'-----------------------------------------------------------------------------------------------------
+' Markdown出力
+' Markdownがある行の先頭に「'>」があるものについてファイルに出力する。
+'-----------------------------------------------------------------------------------------------------
+Sub OutputMarkDown()
+    
+    Dim obj As Object
+    Dim strFolder As String
+    Dim strFile As String
+    Dim SB As StringBuilder
+    Dim strBuf As String
+    Dim No() As Long
+    Dim strMark As String
+    Dim i As Long
+    
+    Const Level As Long = 4
+    
+    ReDim No(1 To Level)
+    
+    For i = 1 To Level
+        No(i) = 0
+    Next
+    
+    strFolder = FileIO.BuildPath(FileIO.GetParentFolderName(ThisWorkbook.FullName), "md")
+    FileIO.CreateFolder strFolder
+    
+    For Each obj In ThisWorkbook.VBProject.VBComponents
+    
+        strFile = FileIO.BuildPath(strFolder, obj.Name & ".md")
+        
+        With obj.CodeModule
+            
+            Set SB = New StringBuilder
+            
+            For i = 1 To .CountOfLines
+                '指定位置から１行取得
+                strBuf = .Lines(i, 1)
+                If Left$(strBuf, 2) = "'>" Then
+                    strMark = Mid$(strBuf, 3)
+                    SB.Append LevelNo(strMark, No(), Level)
+                End If
+            Next i
+        
+            '対象があれば出力する
+            If SB.Length > 0 Then
+                Dim fp As Integer
+                fp = FreeFile()
+                Open strFile For Output As fp
+                Print #fp, SB.ToJoin(vbCrLf)
+                Close
+            End If
+            
+            Set SB = Nothing
+        End With
+    
+    Next
+
+End Sub
+Private Function LevelNo(ByVal strBuf As String, No() As Long, ByVal lngLevel As Long) As String
+
+    Dim Col As Collection
+    Dim SB As StringBuilder
+    Dim lngLen As Long
+    Dim i As Long
+    
+    Set Col = RegExp.Execute(strBuf, "^#+ ")
+
+    If Col.Count > 0 Then
+    
+        lngLen = Len(Col(1).Value) - 1
+        
+        Dim strLeft As String
+        Dim strRight As String
+        
+        strLeft = Col(1).Value
+        strRight = Mid$(strBuf, Col(1).Length + 1)
+        
+        If lngLen <= lngLevel Then
+        
+            '初期値があるか？
+            Dim c As Collection
+            
+            Set c = RegExp.Execute(strRight, "^[0-9.]+")
+            
+            If c.Count > 0 Then
+            
+                Dim a As Variant
+                
+                a = Split(c(1).Value, ".")
+        
+                For i = LBound(a) To UBound(a)
+                    No(i + 1) = a(i)
+                Next
+            
+                LevelNo = strBuf
+            Else
+            
+                '初回上位レベルが0の場合1を設定
+                For i = 1 To lngLen - 1
+                    If No(i) = 0 Then
+                        No(i) = 1
+                    End If
+                Next
+            
+                No(lngLen) = No(lngLen) + 1
+                
+                Set SB = New StringBuilder
+                For i = 1 To lngLen
+                    SB.Append CStr(No(i))
+                Next
+            
+                For i = lngLen + 1 To lngLevel
+                    No(i) = 0
+                Next
+        
+                LevelNo = strLeft & SB.ToJoin(".") & strRight
+            
+            End If
+        
+        Else
+            LevelNo = strBuf
+        End If
+    Else
+        LevelNo = strBuf
+    End If
+
+End Function
 '---------------------------------------------------------------------------------------------------
 '　Callbackの際のInstallメソッド
 '---------------------------------------------------------------------------------------------------
