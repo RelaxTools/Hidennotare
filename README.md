@@ -3,28 +3,35 @@
 ### Secret Source VBA Library for Excel 2010/2013/2016/2019/365 32/64bit
 
 ### 目次
-#### 1. 使用方法
-[1.1. ICursor 系コマンドの使い方](https://github.com/RelaxTools/Hidennotare/wiki/1.1.-ICursor-%E7%B3%BB%E3%82%B3%E3%83%9E%E3%83%B3%E3%83%89%E3%81%AE%E4%BD%BF%E3%81%84%E6%96%B9)  
-[1.2. StringBuilderの使い方](https://github.com/RelaxTools/Hidennotare/wiki/1.2.-StringBuilder-%E3%81%AE%E4%BD%BF%E3%81%84%E6%96%B9)  
-[1.3. Messageクラスの使い方](https://github.com/RelaxTools/Hidennotare/wiki/1.3.-Message%E3%82%AF%E3%83%A9%E3%82%B9%E3%81%AE%E4%BD%BF%E3%81%84%E6%96%B9)  
-[1.4. Usingクラスの使い方](https://github.com/RelaxTools/Hidennotare/wiki/1.4.-Using%E3%82%AF%E3%83%A9%E3%82%B9%E3%81%AE%E4%BD%BF%E3%81%84%E6%96%B9)  
-[1.5. CSV Parser の使い方](https://github.com/RelaxTools/Hidennotare/wiki/1.5.-CSV-Parser-%E3%81%AE%E4%BD%BF%E3%81%84%E6%96%B9)  
-[1.6. ArrayListとDictionaryのシリアライズ化](https://github.com/RelaxTools/Hidennotare/wiki/1.6.-ArrayList%E3%81%A8Dictionary%E3%81%AE%E3%82%B7%E3%83%AA%E3%82%A2%E3%83%A9%E3%82%A4%E3%82%BA%E5%8C%96)  
-[1.7. ArrayListとDictionaryのデシリアライズ化](https://github.com/RelaxTools/Hidennotare/wiki/1.7.-ArrayList%E3%81%A8Dictionary%E3%81%AE%E3%83%87%E3%82%B7%E3%83%AA%E3%82%A2%E3%83%A9%E3%82%A4%E3%82%BA%E5%8C%96)  
-#### 2. リファレンス
-##### 2.1. インターフェイス
-[2.1.1. IConstructor インターフェース](https://github.com/RelaxTools/Hidennotare/wiki/2.1.1.-IConstructor%E3%82%A4%E3%83%B3%E3%82%BF%E3%83%BC%E3%83%95%E3%82%A7%E3%82%A4%E3%82%B9)  
-[2.1.2. ICursor インターフェース](https://github.com/RelaxTools/Hidennotare/wiki/2.1.2.-ICursor-%E3%82%A4%E3%83%B3%E3%82%BF%E3%83%BC%E3%83%95%E3%82%A7%E3%82%A4%E3%82%B9)  
-[2.1.3. IList インターフェース](https://github.com/RelaxTools/Hidennotare/wiki/2.1.3.-IList-%E3%82%A4%E3%83%B3%E3%82%BF%E3%83%BC%E3%83%95%E3%82%A7%E3%83%BC%E3%82%B9)  
-[2.1.4. IDictionary インターフェース](
-https://github.com/RelaxTools/Hidennotare/wiki/2.1.4.-IDictionary-%E3%82%A4%E3%83%B3%E3%82%BF%E3%83%BC%E3%83%95%E3%82%A7%E3%82%A4%E3%82%B9)  
-##### 2.2. クラス
-[2.2.1. ArrayList クラス](https://github.com/RelaxTools/Hidennotare/wiki/2.2.1.-ArrayList-%E3%82%AF%E3%83%A9%E3%82%B9)  
-[2.2.2. Dictionary クラス](https://github.com/RelaxTools/Hidennotare/wiki/2.2.2.-Dictionary-%E3%82%AF%E3%83%A9%E3%82%B9)  
-[2.2.3. OrderedDictionary クラス](https://github.com/RelaxTools/Hidennotare/wiki/2.2.3.-OrderedDictionary-%E3%82%AF%E3%83%A9%E3%82%B9)  
-[2.2.4. SortedDictionary クラス](https://github.com/RelaxTools/Hidennotare/wiki/2.2.4.-SortedDictionary-%E3%82%AF%E3%83%A9%E3%82%B9)  
-[2.2.5. JSON クラス](https://github.com/RelaxTools/Hidennotare/wiki/2.2.5.-JSON-%E3%82%AF%E3%83%A9%E3%82%B9)  
-[2.2.6. Clipboard クラス](https://github.com/RelaxTools/Hidennotare/wiki/2.2.6.-Clipboard-%E3%82%AF%E3%83%A9%E3%82%B9)  
+#### 1 使用方法
+[1.1 ICursor 系コマンドの使い方](https://github.com/RelaxTools/Hidennotare/wiki/1.1.-ICursor-%E7%B3%BB%E3%82%B3%E3%83%9E%E3%83%B3%E3%83%89%E3%81%AE%E4%BD%BF%E3%81%84%E6%96%B9)  
+[1.2 StringBuilderの使い方](https://github.com/RelaxTools/Hidennotare/wiki/1.2.-StringBuilder-%E3%81%AE%E4%BD%BF%E3%81%84%E6%96%B9)  
+[1.3 Messageクラスの使い方](https://github.com/RelaxTools/Hidennotare/wiki/1.3.-Message%E3%82%AF%E3%83%A9%E3%82%B9%E3%81%AE%E4%BD%BF%E3%81%84%E6%96%B9)  
+[1.4 Usingクラスの使い方](https://github.com/RelaxTools/Hidennotare/wiki/1.4.-Using%E3%82%AF%E3%83%A9%E3%82%B9%E3%81%AE%E4%BD%BF%E3%81%84%E6%96%B9)  
+[1.5 CSV Parser の使い方](https://github.com/RelaxTools/Hidennotare/wiki/1.5.-CSV-Parser-%E3%81%AE%E4%BD%BF%E3%81%84%E6%96%B9)  
+[1.6 ArrayListとDictionaryのシリアライズ化](https://github.com/RelaxTools/Hidennotare/wiki/1.6.-ArrayList%E3%81%A8Dictionary%E3%81%AE%E3%82%B7%E3%83%AA%E3%82%A2%E3%83%A9%E3%82%A4%E3%82%BA%E5%8C%96)  
+[1.7 ArrayListとDictionaryのデシリアライズ化](https://github.com/RelaxTools/Hidennotare/wiki/1.7.-ArrayList%E3%81%A8Dictionary%E3%81%AE%E3%83%87%E3%82%B7%E3%83%AA%E3%82%A2%E3%83%A9%E3%82%A4%E3%82%BA%E5%8C%96)  
+#### 2 リファレンス
+##### 2.1 インターフェイス
+[2.1.1 IConstructor](https://github.com/RelaxTools/Hidennotare/wiki/IConstructor)  
+[2.1.2 IList](https://github.com/RelaxTools/Hidennotare/wiki/IList)  
+[2.1.3 IDictionary](https://github.com/RelaxTools/Hidennotare/wiki/IDictionary)  
+[2.1.4 ICursor](https://github.com/RelaxTools/Hidennotare/wiki/ICursor)  
+[2.1.5 IIterator](https://github.com/RelaxTools/Hidennotare/wiki/IIterator)  
+[2.1.6 IDictionaryAccessor](https://github.com/RelaxTools/Hidennotare/wiki/IDictionaryAccessor)  
+[2.1.7 INewInstance](https://github.com/RelaxTools/Hidennotare/wiki/INewInstance)  
+[2.1.8 IReader](https://github.com/RelaxTools/Hidennotare/wiki/IReader)  
+[2.1.9 IWriter](https://github.com/RelaxTools/Hidennotare/wiki/IWriter)  
+[2.1.10 IComparer](https://github.com/RelaxTools/Hidennotare/wiki/IComparer)  
+[2.1.11 IUsing](https://github.com/RelaxTools/Hidennotare/wiki/IUsing)  
+##### 2.2 クラス
+[2.2.1 ArrayList](https://github.com/RelaxTools/Hidennotare/wiki/ArrayList)  
+[2.2.2 Dictionary](https://github.com/RelaxTools/Hidennotare/wiki/Dictionary)  
+[2.2.3 OrderedDictionary](https://github.com/RelaxTools/Hidennotare/wiki/OrderedDictionary)  
+[2.2.4 SortedDictionary](https://github.com/RelaxTools/Hidennotare/wiki/SortedDictionary)  
+[2.2.5 JSON](https://github.com/RelaxTools/Hidennotare/wiki/JSON)  
+[2.2.6 Clipboard](https://github.com/RelaxTools/Hidennotare/wiki/Clipboard)  
+[2.2.7 FileIO](https://github.com/RelaxTools/Hidennotare/wiki/FileIO)  
 
 #### 3. 機能一覧
 
