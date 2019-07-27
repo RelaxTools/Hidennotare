@@ -119,9 +119,39 @@ Function Test(ByVal strText As String, ByVal strExp As String, Optional ByVal bl
     End With
 
 End Function
-'--------------------------------------------------------------
-'  正規表現の置換
-'--------------------------------------------------------------
+'>---
+'>#### Replace(RegExp)
+'>
+'>**Syntax**
+'>
+'>```
+'>string = RegExp.Replace(strText, strExp, strReplace, [blnIgnoreCase = False])
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|strText|必須|String|検索ターゲットの文字列を指定|
+'>|strExp|必須|String|正規表現パターンを指定|
+'>|strReplace|必須|String|置換文字列を指定|
+'>|blnIgnoreCase|省略可|Boolean|大文字と小文字を区別しない場合はTrue、デフォルト値はFalse|
+'>
+'>**Return Value**
+'>
+'>置換後の文字列
+'>
+'>**Remarks**
+'>
+'>文字列の正規表現置換<br>
+'>指定された正規表現文字列を検索し、パターンに一致する文字列が指定文字列で置換<br>
+'>
+'>**Example**
+'>
+'>**See also**
+'>
+'>* StdSch.Replace
+'>
 Function Replace(ByVal strText As String, ByVal strExp As String, ByVal strReplace As String, Optional ByVal blnIgnoreCase As Boolean = False) As String
 
     strReplace = Convert.Escape(strReplace)
@@ -134,9 +164,51 @@ Function Replace(ByVal strText As String, ByVal strExp As String, ByVal strRepla
     End With
 
 End Function
-'--------------------------------------------------------------
-'  正規表現検索 Collectionを返却
-'--------------------------------------------------------------
+'>---
+'>#### Execute(RegExp)
+'>
+'>**Syntax**
+'>
+'>```
+'>Set object = RegExp.Execute(strText, strExp, [blnIgnoreCase = False])
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|strText|必須|String|検索ターゲットの文字列を指定|
+'>|strExp|必須|String|正規表現パターンを指定|
+'>|blnIgnoreCase|省略可|Boolean|大文字と小文字を区別しない場合はTrue、デフォルト値はFalse|
+'>
+'>**Return Value**
+'>
+'>Collection<MatchBean>を返却。
+'>
+'>**Remarks**
+'>
+'>文字列の正規表現検索<br>
+'>指定された正規表現文字列を検索し、パターンに一致する文字列が検索されたかどうかを示す<br>
+'>Collectionを返します。
+'>
+'>**Example**
+'>
+'>```
+'>Dim Col As Collection
+'>Dim m   As MatchBean
+'>Set Col = RegExp.Execute(strTarget, "[0-9]+")
+'>
+'>For Each m In Col
+'>    Debug.Print m.Value
+'>    Debug.Print m.Index
+'>    Debug.Print m.Length
+'>Next
+'>```
+'>
+'>**See also**
+'>
+'>* StdSch.Execute
+'>
 Function Execute(ByVal strText As String, ByVal strExp As String, Optional ByVal blnIgnoreCase As Boolean = False) As Collection
 
     Dim Col As Collection
@@ -166,10 +238,37 @@ Function Execute(ByVal strText As String, ByVal strExp As String, Optional ByVal
     Set Execute = Col
     
 End Function
-'--------------------------------------------------------------
-'  正規表現のチェック True:エラー/False:正常
-'  正規表現をユーザに入力させる場合に使用
-'--------------------------------------------------------------
+'>---
+'>#### Check(RegExp)
+'>
+'>**Syntax**
+'>
+'>```
+'>boolean = RegExp.Check(strExp)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|strExp|必須|String|検索パターンを指定|
+'>
+'>**Return Value**
+'>
+'>エラー:True/正常:False
+'>
+'>**Remarks**
+'>
+'>正規表現のチェック<br>
+'>正規表現をユーザに入力させる場合のチェックに使用<br>
+'>ブール (Boolean) 値を返します。
+'>
+'>**Example**
+'>
+'>**See also**
+'>
+'>* StdSch.Check
+'>
 Function Check(ByVal strExp As String)
 
     On Error GoTo e
@@ -189,9 +288,40 @@ Function Check(ByVal strExp As String)
 e:
 
 End Function
-''--------------------------------------------------------------
-'　ShapeのReplace(書式維持Ver)
-'--------------------------------------------------------------
+'>---
+'>#### ReplaceShape(RegExp)
+'>
+'>**Syntax**
+'>
+'>```
+'>RegExp.ReplaceShape sh, strText, strExp, strReplace, [blnIgnoreCase = False]
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|sh|必須|Shape|置換を行うShapeを指定|
+'>|strText|必須|String|検索ターゲットの文字列を指定|
+'>|strExp|必須|String|正規表現パターンを指定|
+'>|strReplace|必須|String|置換文字列を指定|
+'>|blnIgnoreCase|省略可|Boolean|大文字と小文字を区別しない場合はTrue、デフォルト値はFalse|
+'>
+'>**Return Value**
+'>
+'>なし
+'>
+'>**Remarks**
+'>
+'>ShapeのReplace(書式維持Ver)<br>
+'>指定された正規表現文字列を検索し、パターンに一致する文字列が指定文字列で置換<br>
+'>
+'>**Example**
+'>
+'>**See also**
+'>
+'>* StdSch.ReplaceShape
+'>
 Sub ReplaceShape(ByRef sh As Shape, ByVal strExp As String, ByVal strReplace As String, Optional ByVal blnIgnoreCase As Boolean = False)
 
     Dim Col As Collection
@@ -219,16 +349,47 @@ Sub ReplaceShape(ByRef sh As Shape, ByVal strExp As String, ByVal strReplace As 
     End With
 
 End Sub
-'--------------------------------------------------------------
-'　RangeのReplace(書式維持Ver)
-'--------------------------------------------------------------
-Sub ReplaceRange(ByRef r As Range, ByVal strExp As String, ByVal strReplace As String, Optional ByVal blnIgnoreCase As Boolean = False)
+'>---
+'>#### ReplaceRange(RegExp)
+'>
+'>**Syntax**
+'>
+'>```
+'>RegExp.ReplaceRange rng, strText, strExp, strReplace, [blnIgnoreCase = False]
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|rng|必須|Range|置換を行うRangeを指定|
+'>|strText|必須|String|検索ターゲットの文字列を指定|
+'>|strExp|必須|String|正規表現パターンを指定|
+'>|strReplace|必須|String|置換文字列を指定|
+'>|blnIgnoreCase|省略可|Boolean|大文字と小文字を区別しない場合はTrue、デフォルト値はFalse|
+'>
+'>**Return Value**
+'>
+'>なし
+'>
+'>**Remarks**
+'>
+'>RangeのReplace(書式維持Ver)<br>
+'>指定された正規表現文字列を検索し、パターンに一致する文字列が指定文字列で置換<br>
+'>
+'>**Example**
+'>
+'>**See also**
+'>
+'>* StdSch.ReplaceRange
+'>
+Sub ReplaceRange(ByRef rng As Range, ByVal strExp As String, ByVal strReplace As String, Optional ByVal blnIgnoreCase As Boolean = False)
 
     Dim Col As Collection
     Dim bean As MatchBean
     Dim i As Long
 
-    With r
+    With rng
 
         '検索
         Set Col = Me.Execute(.Value, strExp, blnIgnoreCase)
@@ -249,4 +410,3 @@ Sub ReplaceRange(ByRef r As Range, ByVal strExp As String, ByVal strReplace As S
     End With
 
 End Sub
-
