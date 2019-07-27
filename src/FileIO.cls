@@ -138,9 +138,11 @@ End Sub
 '>boolean = FileIO.FileExists(strFile)
 '>```
 '>
+'>**Parameters**
+'>
 '>|Name|Required/Optional|Data type|Description|
 '>---|---|---|---
-'>|strFile|必須|String|存在チェックを行うファイルをフルパスで指定してください。|
+'>|strFile|必須|String|存在チェックを行うファイルを指定|
 '>
 '>**Return Value**
 '>
@@ -175,9 +177,11 @@ End Function
 '>boolean = FileIO.FolderExists(strFolder)
 '>```
 '>
+'>**Parameters**
+'>
 '>|Name|Required/Optional|Data type|Description|
 '>---|---|---|---
-'>|strFolder|必須|String|存在チェックを行うフォルダを指定してください。|
+'>|strFolder|必須|String|存在チェックを行うフォルダを指定|
 '>
 '>**Return Value**
 '>
@@ -212,9 +216,11 @@ End Function
 '>Set Object = FileIO.GetFile(strFile)
 '>```
 '>
+'>**Parameters**
+'>
 '>|Name|Required/Optional|Data type|Description|
 '>---|---|---|---
-'>|strFile|必須|String|ファイルを指定してください。|
+'>|strFile|必須|String|ファイルを指定|
 '>
 '>**Return Value**
 '>
@@ -240,18 +246,19 @@ Public Function GetFile(ByVal strFile As String) As Object
 
 End Function
 '>---
-'>#### GetFile(FileIO)
+'>#### GetFolder(FileIO)
 '>
 '>**Syntax**
 '>
 '>```
-'>Set Object = FileIO.GetFile(strFolder)
+'>Set Object = FileIO.GetFolder(strFolder)
 '>```
+'>
+'>**Parameters**
 '>
 '>|Name|Required/Optional|Data type|Description|
 '>---|---|---|---
-'>|FileIO|必須。FileIOを指定してください。|
-'>|strFile|必須|String|ファイルを指定してください。|
+'>|strFolder|必須|String|フォルダを指定|
 '>
 '>**Return Value**
 '>
@@ -267,7 +274,7 @@ End Function
 '>
 '>**See also**
 '>
-'>* FileIO.GetFolder
+'>* FileIO.GetFile
 '>
 Public Function GetFolder(ByVal strFolder As String) As Object
  
@@ -276,9 +283,35 @@ Public Function GetFolder(ByVal strFolder As String) As Object
     End With
 
 End Function
-'--------------------------------------------------------------
-'　テンポラリフォルダ取得
-'--------------------------------------------------------------
+'>---
+'>#### TempFolder(FileIO)
+'>
+'>**Syntax**
+'>
+'>```
+'>folder = FileIO.TempFolder()
+'>```
+'>
+'>**Parameters**
+'>
+'>なし
+'>
+'>**Return Value**
+'>
+'>テンポラリフォルダのパス
+'>
+'>**Remarks**
+'>
+'>テンポラリフォルダ取得
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* None
+'>
 Public Property Get TempFolder() As String
 
     On Error Resume Next
@@ -302,9 +335,35 @@ Public Property Get TempFolder() As String
     
 
 End Property
-'--------------------------------------------------------------
-'　アプリケーションフォルダ取得
-'--------------------------------------------------------------
+'>---
+'>#### AppDataFolder(FileIO)
+'>
+'>**Syntax**
+'>
+'>```
+'>folder = FileIO.AppDataFolder()
+'>```
+'>
+'>**Parameters**
+'>
+'>なし
+'>
+'>**Return Value**
+'>
+'>アプリケーションフォルダのパス
+'>
+'>**Remarks**
+'>
+'>アプリケーションフォルダ取得
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* None
+'>
 Public Property Get AppDataFolder() As String
 
     On Error Resume Next

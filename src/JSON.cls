@@ -41,6 +41,7 @@ Attribute VB_Exposed = False
 '>**Remarks**
 '>
 '>JSON文字列からオブジェクトをパースするクラスです。<br>
+'>ArrayListやDictionaryからJSONに変換するには各クラスのToStringメソッドで。<br>
 '>**このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。**
 '>
 '>**Dependent**
