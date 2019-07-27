@@ -32,6 +32,8 @@
 [2.2.5 JSON](https://github.com/RelaxTools/Hidennotare/wiki/JSON)  
 [2.2.6 Clipboard](https://github.com/RelaxTools/Hidennotare/wiki/Clipboard)  
 [2.2.7 FileIO](https://github.com/RelaxTools/Hidennotare/wiki/FileIO)  
+[2.2.8 StdSch](https://github.com/RelaxTools/Hidennotare/wiki/StdSch)  
+[2.2.9 RegExp](https://github.com/RelaxTools/Hidennotare/wiki/RegExp)  
 
 #### 3. 機能一覧
 
