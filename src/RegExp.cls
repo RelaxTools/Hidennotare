@@ -36,12 +36,24 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-' このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。
-'-----------------------------------------------------------------------------------------------------
-' 依存モジュール
-'   MatchBean.cls
-'-----------------------------------------------------------------------------------------------------
-' 2018-12-16 Ver.1.0.0 CreateObjectしなくても使える正規表現
+'>### 2.2.9 RegExp クラス
+'>
+'>**Remarks**
+'>
+'>CreateObjectしなくても使える正規表現<br>
+'>VBScript.RegExpをラップしたクラスです。<br>
+'>**このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。**
+'>
+'>**Dependent**
+'>
+'>* MatchBean クラス
+'>
+'>**History**
+'>
+'>|Date|Version|Note|
+'>|---|---|---|
+'>|2018-12-16|Ver.1.0.0|新規作成|
+'>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 
@@ -56,9 +68,47 @@ End Sub
 Public Property Get GetInstance() As Object
     Set GetInstance = RE
 End Property
-'--------------------------------------------------------------
-'  正規表現の検索 True:マッチ/False:アンマッチ
-'--------------------------------------------------------------
+'>---
+'>#### Test(RegExp)
+'>
+'>**Syntax**
+'>
+'>```
+'>boolean = RegExp.Test(strText, strExp, [blnIgnoreCase = False])
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|strText|必須|String|検索ターゲットの文字列を指定|
+'>|strExp|必須|String|正規表現パターンを指定|
+'>|blnIgnoreCase|省略可|Boolean|大文字と小文字を区別しない場合はTrue、デフォルト値はFalse|
+'>
+'>**Return Value**
+'>
+'>マッチ:True / アンマッチ:False
+'>
+'>**Remarks**
+'>
+'>文字列の正規表現検索<br>
+'>指定された正規表現文字列を検索し、パターンに一致する文字列が検索されたかどうかを示す<br>
+'>ブール (Boolean) 値を返します。
+'>
+'>**Example**
+'>
+'>```
+'>If RegExp.Test(strTarget, "[0-9]+") Then
+'>    Debug.Print "Number"
+'>Else
+'>    Debug.Print "Other"
+'>End If
+'>```
+'>
+'>**See also**
+'>
+'>* StdSch.Test
+'>
 Function Test(ByVal strText As String, ByVal strExp As String, Optional ByVal blnIgnoreCase As Boolean = False) As Boolean
 
     With RE

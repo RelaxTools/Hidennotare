@@ -36,17 +36,60 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-' このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。
-'-----------------------------------------------------------------------------------------------------
-' 依存モジュール
-'   MatchBean.cls
-'-----------------------------------------------------------------------------------------------------
-' 2018-12-16 Ver.1.0.0 文字列検索
+'>### 2.2.8 StdSch クラス
+'>
+'>**Remarks**
+'>
+'>文字列検索<br>
+'>**このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。**
+'>
+'>**Dependent**
+'>
+'>* MatchBean クラス
+'>
+'>**History**
+'>
+'>|Date|Version|Note|
+'>|---|---|---|
+'>|2018-12-16|Ver.1.0.0|新規作成|
+'>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
-'--------------------------------------------------------------
-'  文字列の検索 True:マッチ/False:アンマッチ
-'--------------------------------------------------------------
+'>---
+'>#### Test(StdSch)
+'>
+'>**Syntax**
+'>
+'>```
+'>boolean = StdSch.Test(strText, strExp, [blnIgnoreCase = False, blnMatchByte = False, blnWhole = False])
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|strText|必須|String|検索ターゲットの文字列を指定|
+'>|strExp|必須|String|検索パターンを指定|
+'>|blnIgnoreCase|省略可|Boolean|大文字と小文字を区別しない場合はTrue、デフォルト値はFalse|
+'>|blnMatchByte|省略可|Boolean|全角と半角を区別しない場合はTrue、デフォルト値はFalse|
+'>|blnWhole|省略可|Boolean|完全一致の場合True、部分一致の場合はFalse、デフォルト値はFalse|
+'>
+'>**Return Value**
+'>
+'>マッチ:True / アンマッチ:False
+'>
+'>**Remarks**
+'>
+'>文字列の検索<br>
+'>指定された文字列を検索し、パターンに一致する文字列が検索されたかどうかを示す<br>
+'>ブール (Boolean) 値を返します。
+'>
+'>**Example**
+'>
+'>**See also**
+'>
+'>* RegExp.Test
+'>
 Function Test(ByVal strText As String, ByVal strExp As String, Optional ByVal blnIgnoreCase As Boolean = False, Optional ByVal blnMatchByte As Boolean = False, Optional ByVal blnWhole As Boolean = False) As Boolean
 
     Dim strCmp1 As String
