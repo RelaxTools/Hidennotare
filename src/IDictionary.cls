@@ -36,6 +36,40 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
+'>### 2.1.3 IDictionary インターフェイス
+'>
+'>**Remarks**
+'>
+'>Dictionary, OrderedDictionary, SortedDictionary等 Dictionary 系の動作を定義したインターフェイス
+'>
+'>**Definition**
+'>
+'>```
+'>Public Sub Add(Key As Variant, Item As Variant)
+'>Public Property Get Count() As Long
+'>Public Function ContainsKey(Key As Variant) As Boolean
+'>Public Property Let Item(Key As Variant, RHS As Variant)
+'>    'Attribute Item.VB_UserMemId = 0
+'>Public Property Get Item(Key As Variant) As Variant
+'>Public Property Set Item(Key As Variant, RHS As Variant)
+'>Public Property Let Key(Key As Variant, RHS As Variant)
+'>Public Function Keys() As Variant
+'>Public Sub Remove(Key As Variant)
+'>Public Sub Clear()
+'>Public Function ToString() As String
+'>Public Property Get GetCursor() As ICursor
+'>```
+'>
+'>**Sample**
+'>```
+'>Dim dic As IDictionary
+'>
+'>Set dic = New Dictionary
+'>
+'>dic.Add Key, Data
+'>```
+'>
+'-----------------------------------------------------------------------------------------------------
 Option Explicit
 
 Public Sub Add(Key As Variant, Item As Variant)

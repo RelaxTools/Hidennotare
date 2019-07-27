@@ -84,8 +84,8 @@ End Sub
 Private Sub IList_Add(obj As Variant)
     mCol.Add obj
 End Sub
-Private Sub IList_Insert(Idx As Long, v As Variant)
-    mCol.Insert Idx, v
+Private Sub IList_Insert(idx As Long, v As Variant)
+    mCol.Insert idx, v
 End Sub
 Private Function IList_NewEnum() As stdole.IUnknown
     Set IList_NewEnum = mCol.NewEnum
@@ -93,15 +93,15 @@ End Function
 Private Property Get IList_Count() As Long
     IList_Count = mCol.Count
 End Property
-Private Property Get IList_Item(Idx As Long) As Variant
-    If VBA.IsObject(mCol.Item(Idx)) Then
-        Set IList_Item = mCol.Item(Idx)
+Private Property Get IList_Item(idx As Long) As Variant
+    If VBA.IsObject(mCol.Item(idx)) Then
+        Set IList_Item = mCol.Item(idx)
     Else
-        IList_Item = mCol.Item(Idx)
+        IList_Item = mCol.Item(idx)
     End If
 End Property
-Private Sub IList_RemoveAt(Idx As Long)
-    mCol.RemoveAt Idx
+Private Sub IList_RemoveAt(idx As Long)
+    mCol.RemoveAt idx
 End Sub
 Private Sub IList_Sort(Optional ByVal CP As IComparer = Nothing)
     mCol.Sort CP

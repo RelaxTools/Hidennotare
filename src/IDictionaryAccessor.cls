@@ -36,7 +36,23 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-' クラスによりプロパティのアクセス方法ことなるのを統一するInterface
+'>### 2.1.6 IDictionaryAccessor インターフェイス
+'>
+'>**Remarks**
+'>
+'>プロパティのアクセス方法が異なるのを統一するインターフェイス
+'>
+'>**Definition**
+'>
+'>```
+'>Public Function GetProperty(prop As Variant) As Variant
+'>Public Sub SetProperty(prop As Variant, Val As Variant)
+'>```
+'>
+'>**Sample**
+'>
+'>* None
+'>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Public Sub SetProperty(prop As Variant, Val As Variant)

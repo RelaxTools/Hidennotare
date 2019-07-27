@@ -36,46 +36,84 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-' このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。
-' このクラスは厳密なJSONではなくVBAでオブジェクトのシリアライズ／デシリアライズに特化
-'-----------------------------------------------------------------------------------------------------
-' 依存モジュール
-'   なし
-'-----------------------------------------------------------------------------------------------------
-' 2018-12-16 Ver.1.0.0 新規作成
+'>### 2.2.5 JSON クラス
+'>
+'>**Remarks**
+'>
+'>JSON文字列からオブジェクトをパースするクラスです。<br>
+'>**このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。**
+'>
+'>**Dependent**
+'>
+'>* Message クラス
+'>* StringBuilder クラス
+'>* ArrayList クラス
+'>* Dictionary クラス
+'>* IList クラス
+'>* IDictionary クラス
+'>* INewInstance クラス
+'>* IDictionaryAccessor クラス
+'>* StringHelper クラス
+'>* Convert クラス
+'>* ICursor クラス
+'>* CharCursor クラス
+'>* IConstructor クラス
+'>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
-'---------------------------------------------------------------
-' JSONパース
-'
-' JSON文字列からDictionary(OrderedDictionary/SortedDictionary) または ArrayList を復元（デシリアライズ）する機能。
-' IDictionaryAccessor(I/F)とINewInstance(I/F)に対応すれば、通常のクラスにも復元可能。
-'
-' 逆（シリアライズ）を行う場合 Dictionary(OrderedDictionary/SortedDictionary) または ArrayListで、ToString する。
-' 通常のクラスでシリアライズする場合、Dictionaryを生成した後、ToString すると楽に作成できる。
-'
-' strJSON : JSON文字列
-' obj     : オブジェクト（省略可）省略した場合、Object = Dictionary, Array = ArrayList でパースされます。
-'           JSON文字列がネストおり、復元するオブジェクトを指定したい場合、Collection にインスタンスを
-'           設定したものを指定する。
-'
-'           ex. 複数指定する場合、Collectionに詰めて指定する
-'
-'                Dim col As Collection
-'                Set col = new Collection
-'
-'                col.Add New OrderdDictionary  'ネストの1レベル目に使用されるオブジェクト
-'                col.Add New ArrayList         'ネストの2レベル目に使用されるオブジェクト
-'                col.Add New CustomPerson      'ネストの3レベル目に使用されるオブジェクト
-'
-'                Set dic = JSON.ParseJSON(strJSON, col)
-'
-'
-'           ex. 単数指定する場合、Collection を用いず直接指定する
-'
-'                Set dic = JSON.ParseJSON(strJSON, New CustomPerson)
-'
-'---------------------------------------------------------------
+'>---
+'>#### ParseJSON(JSON)
+'>
+'>**Syntax**
+'>
+'>```
+'>Set object = JSON.ParseJSON(strJSON, [obj = Nothing])
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|strJSON|必須|String|JSON文字列を指定|
+'>|obj|省略可|object/Collection|オブジェクト（省略可）省略した場合、Object = Dictionary, Array = ArrayList でパースされます。<br>JSON文字列がネストされており、復元するオブジェクトを指定したい場合、Collection にインスタンスを設定したものを指定する。|
+'>
+'>**Return Value**
+'>
+'>変換後のオブジェクト
+'>
+'>**Remarks**
+'>
+'>JSON文字列からDictionary(OrderedDictionary/SortedDictionary) または ArrayList を復元する機能。<br>
+'>IDictionaryAccessor(I/F)とINewInstance(I/F)に対応すれば、通常のクラスにも復元可能。
+'>
+'>**Example**
+'>
+'>複数指定する場合、Collectionに詰めて指定する
+'>
+'>```
+'>    Dim col As Collection
+'>    Set col = new Collection
+'>
+'>    col.Add New OrderdDictionary  'ネストの1レベル目に使用されるオブジェクト
+'>    col.Add New ArrayList         'ネストの2レベル目に使用されるオブジェクト
+'>    col.Add New CustomPerson      'ネストの3レベル目に使用されるオブジェクト
+'>
+'>    Set dic = JSON.ParseJSON(strJSON, col)
+'>```
+'>
+'>単数指定する場合、Collection を用いず直接指定する
+'>
+'>```
+'>    Set dic = JSON.ParseJSON(strJSON, New CustomPerson)
+'>```
+'>
+'>**See also**
+'>
+'>* ArrayList クラス
+'>* Dictionary クラス
+'>* OrderdDictionary クラス
+'>* SortedDictionary クラス
+'>
 Public Function ParseJSON(ByVal strJSON As String, Optional ByRef obj As Object = Nothing) As Object
 
     Dim PL As PairLoggerInfo: Set PL = Constructor(New PairLoggerInfo, TypeName(Me) & ".ParseJSON")

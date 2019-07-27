@@ -130,7 +130,7 @@ Private Sub Class_Terminate()
     Set FSO = Nothing
 End Sub
 '>---
-'>#### ファイル存在チェック
+'>#### FileExists(FileIO)
 '>
 '>**Syntax**
 '>
@@ -138,20 +138,26 @@ End Sub
 '>boolean = FileIO.FileExists(strFile)
 '>```
 '>
-'>|Part|Description|
-'>----|----
-'>|FileIO|必須。FileIOを指定してください。|
-'>|strFile|必須。 存在チェックを行うファイルをフルパスで指定してください。|
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|strFile|必須|String|存在チェックを行うファイルをフルパスで指定してください。|
+'>
+'>**Return Value**
+'>
+'>存在する場合:True / 存在しない場合:False
 '>
 '>**Remarks**
 '>
-'>指定されたファイルの存在チェックを行い、存在する場合には True を存在しない場合には Falseを戻します。
+'>ファイル存在チェック<br>
+'>指定されたファイルの存在チェックを行う
 '>
 '>**Example**
 '>
+'>* None
+'>
 '>**See also**
 '>
-'>FileIO.FolderExists
+'>* FileIO.FolderExists
 '>
 Public Function FileExists(ByVal strFile As String) As Boolean
  
@@ -161,7 +167,7 @@ Public Function FileExists(ByVal strFile As String) As Boolean
 
 End Function
 '>---
-'>#### フォルダ存在チェック
+'>#### FolderExists(FileIO)
 '>
 '>**Syntax**
 '>
@@ -169,20 +175,26 @@ End Function
 '>boolean = FileIO.FolderExists(strFolder)
 '>```
 '>
-'>|Part|Description|
-'>----|----
-'>|FileIO   |必須。FileIOを指定してください。|
-'>|strFolder|必須。 存在チェックを行うフォルダを指定してください。|
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|strFolder|必須|String|存在チェックを行うフォルダを指定してください。|
+'>
+'>**Return Value**
+'>
+'>存在する場合:True / 存在しない場合:False
 '>
 '>**Remarks**
 '>
-'>指定されたフォルダの存在チェックを行い、存在する場合には True を存在しない場合には Falseを戻します。
+'>フォルダ存在チェック<br>
+'>指定されたフォルダルの存在チェックを行う
 '>
 '>**Example**
 '>
+'>* None
+'>
 '>**See also**
 '>
-'>FileIO.FileExists
+'>* FileIO.FileExists
 '>
 Public Function FolderExists(ByVal strFolder As String) As Boolean
  
@@ -192,7 +204,7 @@ Public Function FolderExists(ByVal strFolder As String) As Boolean
 
 End Function
 '>---
-'>#### ファイルオブジェクト取得
+'>#### GetFile(FileIO)
 '>
 '>**Syntax**
 '>
@@ -200,20 +212,25 @@ End Function
 '>Set Object = FileIO.GetFile(strFile)
 '>```
 '>
-'>|Part|Description|
-'>----|----
-'>|FileIO|必須。FileIOを指定してください。|
-'>|strFile|必須。 存在チェックを行うフォルダを指定してください。|
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|strFile|必須|String|ファイルを指定してください。|
+'>
+'>**Return Value**
+'>
+'>Scripting.FileSystemObject の FileObject 。
 '>
 '>**Remarks**
 '>
-'>Scripting.FileSystemObject の FileObject を返却します。
+'>ファイルオブジェクト取得
 '>
 '>**Example**
 '>
+'>* None
+'>
 '>**See also**
 '>
-'>FileIO.GetFolder
+'>* FileIO.GetFolder
 '>
 Public Function GetFile(ByVal strFile As String) As Object
  
@@ -222,9 +239,36 @@ Public Function GetFile(ByVal strFile As String) As Object
     End With
 
 End Function
-'--------------------------------------------------------------
-'　フォルダーオブジェクト取得
-'--------------------------------------------------------------
+'>---
+'>#### GetFile(FileIO)
+'>
+'>**Syntax**
+'>
+'>```
+'>Set Object = FileIO.GetFile(strFolder)
+'>```
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|FileIO|必須。FileIOを指定してください。|
+'>|strFile|必須|String|ファイルを指定してください。|
+'>
+'>**Return Value**
+'>
+'>Scripting.FileSystemObject の FolderObject
+'>
+'>**Remarks**
+'>
+'>フォルダーオブジェクト取得
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* FileIO.GetFolder
+'>
 Public Function GetFolder(ByVal strFolder As String) As Object
  
     With FSO

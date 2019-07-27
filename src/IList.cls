@@ -36,13 +36,47 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-'  IList クラス
+'>### 2.1.2 IList インターフェイス
+'>
+'>**Remarks**
+'>
+'>ArrayList等List系の動作を定義したインターフェイス
+'>
+'>**Definition**
+'>
+'>```
+'>Public Sub Clear()
+'>Public Sub Add(obj As Variant)
+'>Public Sub Insert(idx As Long, v As Variant)
+'>Public Function NewEnum() As stdole.IUnknown
+'>    'Attribute NewEnum.VB_UserMemId = -4
+'>Public Property Get Count() As Long
+'>Public Property Get Item(idx As Long) As Variant
+'>    'Attribute Item.VB_UserMemId = 0
+'>Public Sub RemoveAt(idx As Long)
+'>Public Sub Sort(Optional ByVal CP As IComparer = Nothing)
+'>Public Function ToArray() As Variant
+'>Public Function ToCollection() As Collection
+'>Public Function ToString() As String
+'>Public Property Get GetCursor() As ICursor
+'>```
+'>
+'>**Sample**
+'>```
+'>Dim lst As IList
+'>
+'>Set lst = New ArrayList
+'>
+'>lst.Add "Data"
+'>
+'>```
+'>
 '-----------------------------------------------------------------------------------------------------
 Public Sub Clear()
 End Sub
 Public Sub Add(obj As Variant)
 End Sub
-Public Sub Insert(Idx As Long, v As Variant)
+Public Sub Insert(idx As Long, v As Variant)
 End Sub
 Public Function NewEnum() As stdole.IUnknown
 Attribute NewEnum.VB_UserMemId = -4
@@ -50,11 +84,11 @@ Attribute NewEnum.VB_UserMemId = -4
 End Function
 Public Property Get Count() As Long
 End Property
-Public Property Get Item(Idx As Long) As Variant
+Public Property Get Item(idx As Long) As Variant
 Attribute Item.VB_UserMemId = 0
     'Attribute Item.VB_UserMemId = 0
 End Property
-Public Sub RemoveAt(Idx As Long)
+Public Sub RemoveAt(idx As Long)
 End Sub
 Public Sub Sort(Optional ByVal CP As IComparer = Nothing)
 End Sub

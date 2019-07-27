@@ -36,6 +36,37 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
+'>### 2.1.4 ICursor インターフェイス
+'>
+'>**Remarks**
+'>
+'>SheetCursor, TableCursor, CharCursor等 Cursor 系の動作を定義したインターフェイス
+'>
+'>**Definition**
+'>
+'>```
+'>Public Property Get Eof() As Boolean
+'>Public Sub MoveFirst()
+'>Public Sub MoveNext()
+'>Public Property Get Item(Optional ByVal opt As Variant) As Variant
+'>    'Attribute Item.VB_UserMemId = 0
+'>```
+'>
+'>**Sample**
+'>```
+'>Dim IC as ICursor
+'>
+'>Set IC = Constructor(New TableCursor, WS.ListObjects(1))
+'>
+'>Do Until IC.Eof
+'>
+'>    Debug.Print IC
+'>
+'>    IC.MoveNext
+'>Loop
+'>```
+'>
+'-----------------------------------------------------------------------------------------------------
 Option Explicit
 
 Public Property Get Eof() As Boolean: End Property

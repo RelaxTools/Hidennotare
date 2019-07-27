@@ -36,26 +36,47 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-' このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。配列関係のメソッドがあります。
-'-----------------------------------------------------------------------------------------------------
-' ArrayList クラス
-'-----------------------------------------------------------------------------------------------------
-' TODO : ArrayList クラス Collection をベースにしているが、添字は0からなので注意
-'
-' ArrayList.IsArray(var) (Static)
-'
-' Dim list As IList
-' Set list = New ArrayList
-'
-' Dim list As IList
-' Set list = Constructor(New ArrayList, コレクション)
-'
-' Dim list As IList
-' Set list = Constructor(New ArrayList, １次元配列)
-'
-'-----------------------------------------------------------------------------------------------------
-' NOTE : ToString で JSON Array を出力します。
-'        https://www.json.org/json-ja.html
+'>### 2.2.1 ArrayList クラス
+'>
+'>**Remarks**
+'>
+'>* このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。
+'>* Collection をベースに実装しているが、添字は0からなので注意
+'>* 通常使用するメソッドはほとんど IList インターフェイス側にあるので IList の変数に代入して使うことになります。
+'>
+'>**Collection と ArrayList との比較**
+'>
+'>|No.|Property/Method|Collection|ArrayList(本クラス)|
+'>|---|---|---|---|
+'>|1|Add|〇|AddとInsertに分割|
+'>|2|Item|〇|〇|
+'>|3|Remove|〇|RemoveAt|
+'>|4|Count|〇|〇|
+'>|5|Sort|×|〇|
+'>|6|ToArray|×|〇|
+'>|7|ToCollection|×|〇|
+'>|8|ToString|×|〇|
+'>
+'>**Implements**
+'>* IList
+'>* ICursor
+'>* IConstructor
+'>* INewInstance
+'>
+'>**Sample**
+'>```
+'> intUbound = ArrayList.TryUBound(aray)
+'>
+'> Dim list As IList
+'> Set list = New ArrayList
+'>
+'> Dim list As IList
+'> Set list = Constructor(New ArrayList, コレクション)
+'>
+'> Dim list As IList
+'> Set list = Constructor(New ArrayList, １次元配列)
+'>```
+'>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements IConstructor
@@ -78,15 +99,68 @@ End Sub
 Private Sub Class_Terminate()
     Set mCol = Nothing
 End Sub
-Public Function GetIList() As IList
-    Set GetIList = Me
-End Function
-'--------------------------------------------------------------
-' コンストラクタ
-'--------------------------------------------------------------
-' Arg1 - Collection  : 1D Only
-' Arg2 - Array       : 1D Only
-'--------------------------------------------------------------
+'>---
+'>#### コンストラクタ(1) Collection
+'>
+'>**Syntax**
+'>
+'>```
+'>Set list = Constructor(New ArrayList, コレクション)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|コレクション|必須|Collection|生成したコレクションをArrayListの初期値として設定|
+'>
+'>**Return Value**
+'>
+'>新しいインスタンス(ArrayList)
+'>
+'>**Remarks**
+'>
+'>コレクションから ArrayList を生成する場合
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* None
+'>
+'>---
+'>#### コンストラクタ(2) Array
+'>
+'>**Syntax**
+'>
+'>```
+'>Set list = Constructor(New ArrayList, Array)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|Array|必須|配列|配列を元にArrayListの初期値として設定|
+'>
+'>**Return Value**
+'>
+'>新しいインスタンス(ArrayList)
+'>
+'>**Remarks**
+'>
+'>配列から ArrayList を生成する場合
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* None
+'>
 Private Function IConstructor_Instancing(ByRef Args As Collection) As Object
 
     Dim v As Variant
@@ -128,14 +202,39 @@ Private Function IConstructor_Instancing(ByRef Args As Collection) As Object
     Set IConstructor_Instancing = Me
     
 End Function
-'--------------------------------------------------------------
-' Static メソッド
-'--------------------------------------------------------------
-' 空配列対応 IsArray
-'---------------------------------------------------------------------
-' Dim a() As Variant --> Error 9 インデックスが有効範囲にありません。
-' a = Array() --> Ubound が -1
-'---------------------------------------------------------------------
+'>---
+'>#### IsArray(ArrayList)
+'>
+'>**Syntax**
+'>
+'>```
+'>boolean = ArrayList.IsArray(v)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|v|必須|Variant|配列かどうかチェックしたい変数を指定|
+'>
+'>**Return Value**
+'>
+'>配列である:True / 配列ではないまたはエラー:False
+'>
+'>**Remarks**
+'>
+'>空配列対応 IsArray<br>
+'>配列の場合 True を配列じゃない場合またはエラーが発生した場合は Falseを戻します。<br>
+'>そもそもの話ですが、Dim v As Variant で v = Array() で初期値を指定すれば通常のIsArrayで事足ります。
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* None
+'>
 Public Function IsArray(v As Variant) As Boolean
 
     On Error GoTo e
@@ -152,16 +251,44 @@ e:
     Exit Function
 
 End Function
-'-------------------------------------------
-' Static メソッド
-'-------------------------------------------
-' エラー検知付き Ubound
-'-------------------------------------------
-Public Function TryUBound(ary As Variant, lngIdx As Long, Optional ByVal dimension As Long = 1) As Boolean
+'>---
+'>#### TryUbound(ArrayList)
+'>
+'>**Syntax**
+'>
+'>```
+'>boolean = ArrayList.TryUBound(ary, idx, [dimension = 1])
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|ary|必須|Variant|チェックをする配列を指定|
+'>|idx|必須|Long|配列の上限を返却する変数を指定|
+'>|dimension|省略可|Long|省略時１（次元）。テストする次元数を指定|
+'>
+'>**Return Value**
+'>
+'>正常:True / エラー:False
+'>
+'>**Remarks**
+'>
+'>エラー検知付きUBound<br>
+'>テストする配列が１次元の場合に２次元の上限を求めようとすると実行時エラーになる。<br>
+'>そのためエラー検知可能なUboundとして作成。エラーの場合には False が返却される。
+'>
+'>**Example**
+'>
+'>**See also**
+'>
+'>* ArrayList.TryLBound
+'>
+Public Function TryUBound(ary As Variant, idx As Long, Optional ByVal dimension As Long = 1) As Boolean
  
     On Error GoTo e
     
-    lngIdx = UBound(ary, dimension)
+    idx = UBound(ary, dimension)
 
     TryUBound = True
     
@@ -170,11 +297,39 @@ e:
     TryUBound = False
 
 End Function
-'-------------------------------------------
-' Static メソッド
-'-------------------------------------------
-' エラー検知付き Lbound
-'-------------------------------------------
+'>---
+'>#### TryLBound(ArrayList)
+'>
+'>**Syntax**
+'>
+'>```
+'>boolean = ArrayList.TryLBound(ary, idx, [dimension = 1])
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|ary|必須|Variant|チェックをする配列を指定|
+'>|idx|必須|Long|配列の下限を返却する変数を指定|
+'>|dimension|省略可|Long|省略時１（次元）。テストする次元数を指定|
+'>
+'>**Return Value**
+'>
+'>正常:True / エラー:False
+'>
+'>**Remarks**
+'>
+'>エラー検知付きUBound<br>
+'>テストする配列が１次元の場合に２次元の下限を求めようとすると実行時エラーになる。<br>
+'>そのためエラー検知可能なUboundとして作成。エラーの場合には False が返却される。
+'>
+'>**Example**
+'>
+'>**See also**
+'>
+'>* ArrayList.TryUBound
+'>
 Public Function TryLBound(ary As Variant, lngIdx As Long, Optional ByVal dimension As Long = 1) As Boolean
  
     On Error GoTo e
@@ -188,126 +343,50 @@ e:
     TryLBound = False
 
 End Function
-''-------------------------------------------
-'' １～２次元配列からArrayListに変換
-''-------------------------------------------
-'Public Function ParseArray(ary As Variant, Optional obj As Object = Nothing, Optional Fields As Variant) As Object
-'
-'    Dim lngVal As Long
-'    Dim lineStart As Long
-'    Dim lineStop As Long
-'    Dim fieldStart As Long
-'    Dim fieldStop As Long
-'
-'    '2次元フラグ
-'    Dim bln2d As Boolean
-'
-'    bln2d = True
-'
-'    '1次元目
-'    If TryLBound(ary, lngVal) Then
-'        lineStart = lngVal
-'        If TryUBound(ary, lngVal) Then
-'            lineStop = lngVal
-'        Else
-'            Message.Throw 1, Me, "ParseArray", "not array"
-'        End If
-'    Else
-'        Message.Throw 1, Me, "ParseArray", "not array"
-'    End If
-'
-'    '2次元目
-'    If TryLBound(ary, lngVal, 2) Then
-'        fieldStart = lngVal
-'        If TryUBound(ary, lngVal, 2) Then
-'            fieldStop = lngVal
-'        Else
-'            '2次元ではない
-'            bln2d = False
-'        End If
-'    Else
-'        '2次元ではない
-'        bln2d = False
-'    End If
-'
-'    Dim i As Long
-'    Dim j As Long
-'
-'    Dim obj1 As Object
-'    Dim obj2 As Object
-'
-'    '2次元配列の場合
-'    If bln2d Then
-'
-'        '引数によりインスタンス化するオブジェクトを判定
-'        Select Case True
-'            Case obj Is Nothing
-'                Set obj1 = GetNewInstance(New ArrayList)
-'            Case TypeOf obj Is Collection
-'                Set obj1 = GetNewInstance(obj(1))
-'            Case Else
-'                Set obj1 = GetNewInstance(obj)
-'        End Select
-'
-'        For i = lineStart To lineStop
-'
-'            '引数によりインスタンス化するオブジェクトを判定
-'            Select Case True
-'                Case obj Is Nothing
-'                    Set obj2 = GetNewInstance(New ArrayList)
-'                Case TypeOf obj Is Collection
-'                    Set obj2 = GetNewInstance(obj(2))
-'                Case Else
-'                    Set obj2 = GetNewInstance(obj)
-'            End Select
-'
-'            For j = fieldStart To fieldStop
-'
-'                If IsMissing(Fields) Then
-'                    ToIDictionaryAccessor(obj2).SetProperty "", ary(i, j)
-'                Else
-'                    ToIDictionaryAccessor(obj2).SetProperty Fields(j), ary(i, j)
-'                End If
-'
-'            Next
-'
-'            ToIDictionaryAccessor(obj1).SetProperty "", obj2
-'
-'        Next
-'
-'    '1次元配列の場合
-'    Else
-'
-'        '引数によりインスタンス化するオブジェクトを判定
-'        Select Case True
-'            Case obj Is Nothing
-'                Set obj1 = GetNewInstance(New ArrayList)
-'            Case TypeOf obj Is Collection
-'                Set obj1 = GetNewInstance(obj(1))
-'            Case Else
-'                Set obj1 = GetNewInstance(obj)
-'        End Select
-'
-'        For i = lineStart To lineStop
-'
-'            If IsMissing(Fields) Then
-'                ToIDictionaryAccessor(obj1).SetProperty "", ary(i)
-'            Else
-'                ToIDictionaryAccessor(obj1).SetProperty Fields(i), ary(i)
-'            End If
-'
-'        Next
-'
-'    End If
-'
-'    Set ParseArray = obj1
-'
-'End Function
-'-------------------------------------------
-' Listbox（Combobox）からArrayList変換
-' Tagにフィールド名（カンマ区切り）が必須。
-' Listbox.Tag = "No,Name,Address"
-'-------------------------------------------
+'>---
+'>#### ParseFromListbox(ArrayList)
+'>
+'>**Syntax**
+'>
+'>```
+'>Set IList = ArrayList.ParseFromListbox(objList,[obj = Nothing])
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|objList|必須|Object|Parseする ListBox or ComboBox を指定|
+'>|obj|省略可|Object|レコードに使用するオブジェクトを指定。省略時は Dictionary |
+'>
+'>**Return Value**
+'>
+'>ArrayList
+'>
+'>**Remarks**
+'>
+'>ListBox/ComboBox パース<br>
+'>ListBox/ComboBoxからArrayList(レコードはDictionary)を生成する。<br>
+'>Tagにレコードを生成するためのフィールド名リスト（カンマ区切り）が必須。<br>
+'>レコードに使用するオブジェクトは INewInstance と IDictionaryAccessor を Implements したクラスであること。
+'>
+'>**Example**
+'>
+'>```
+'>    lstFavorite.Tag = "No,Name,Address" 'これはコードではなくプロパティウィンドウで設定しても良い
+'>
+'>    Dim lst As IList
+'>    Set lst = ArrayList.ParseFromListbox(lstFavorite, New FavoriteBean)
+'>
+'>```
+'>
+'>**See also**
+'>
+'>* ArrayList.CopyToListbox
+'>* Dictionary クラス
+'>* INewInstance インターフェース
+'>* IDictionaryAccessor インターフェース
+'>
 Public Function ParseFromListbox(objList As Object, Optional obj As Object = Nothing) As IList
 
     Dim ary As IList
@@ -352,11 +431,48 @@ Public Function ParseFromListbox(objList As Object, Optional obj As Object = Not
     Set ParseFromListbox = ary
 
 End Function
-'-------------------------------------------
-' ArrayListの内容をListbox(Combobox)にコピーする。
-' Tagにフィールド情報（カンマ区切り）が必須。
-' Listbox.Tag = "No,Name,Address"
-'-------------------------------------------
+'>---
+'>#### CopyToListbox(ArrayList)
+'>
+'>**Syntax**
+'>
+'>```
+'>ArrayList.CopyToListbox objList
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|objList|必須|Object|copyする ListBox or ComboBox を指定|
+'>
+'>**Return Value**
+'>
+'>なし
+'>
+'>**Remarks**
+'>
+'>ListBox/ComboBox へコピー<br>
+'>ArrayListの内容をListBox/ComboBoxにコピーする。<br>
+'>ListBox/ComboBoxのTagにArrayListのレコードを対応づけるフィールド名リスト（カンマ区切り）が必須。<br>
+'>レコードに使用するオブジェクトは INewInstance と IDictionaryAccessor を Implements したクラスであること。
+'>
+'>**Example**
+'>
+'>```
+'>    lstFavorite.Tag = "No,Name,Address" 'これはコードではなくプロパティウィンドウで設定しても良い
+'>
+'>    ArrayList.CopyToListbox lstFavorite
+'>
+'>```
+'>
+'>**See also**
+'>
+'>* ArrayList.ParseFromListbox
+'>* Dictionary クラス
+'>* INewInstance インターフェース
+'>* IDictionaryAccessor インターフェース
+'>
 Public Sub CopyToListbox(objList As Object)
 
     Dim ary As IList
@@ -396,10 +512,71 @@ Public Sub CopyToListbox(objList As Object)
     Next
 
 End Sub
-'-------------------------------------------
-' ListObject（テーブル機能）からArrayList変換
-' テーブルの列ヘッダの情報が必須。
-'-------------------------------------------
+'>---
+'>#### ParseFromListObject(ArrayList)
+'>
+'>**Syntax**
+'>
+'>```
+'>Set IList = ArrayList.ParseFromListObject(objList,[obj = Nothing])
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|objList|必須|Listobject|Parseする Listobject を指定|
+'>|obj|省略可|Object|レコードに使用するオブジェクトを指定。省略時は Dictionary |
+'>
+'>**Return Value**
+'>
+'>ArrayList
+'>
+'>**Remarks**
+'>
+'>ListObject パース<br>
+'>ListobjectからArrayList(レコードはDictionary)を生成する。<br>
+'>ListObject(テーブル)の列ヘッダの情報が必須<br>
+'>レコードに使用するオブジェクトは INewInstance と IDictionaryAccessor を Implements したクラスであること。
+'>
+'>**Example**
+'>
+'>```
+'>Sub ArrayList_ParseFromListObject_Sample()
+'>
+'>    Dim lst As IList
+'>    Dim dic As IDictionary
+'>    Dim Key As Variant
+'>
+'>    Set lst = ArrayList.ParseFromListObject(ActiveSheet.ListObjects(1))
+'>
+'>    For Each dic In lst
+'>
+'>        For Each Key In dic.Keys
+'>
+'>            Debug.Print dic.Item(Key)
+'>
+'>        Next
+'>
+'>    Next
+'>
+'>    Dim a As ArrayList
+'>
+'>    Set a = lst
+'>
+'>    a.CopyToListObject ActiveSheet.ListObjects(2)
+'>
+'>End Sub
+'>
+'>```
+'>
+'>**See also**
+'>
+'>* ArrayList.CopyToListObject
+'>* Dictionary クラス
+'>* INewInstance インターフェース
+'>* IDictionaryAccessor インターフェース
+'>
 Public Function ParseFromListObject(LO As ListObject, Optional obj As Object = Nothing) As IList
 
     Dim lst As IList
@@ -432,10 +609,69 @@ Public Function ParseFromListObject(LO As ListObject, Optional obj As Object = N
     Set ParseFromListObject = lst
 
 End Function
-'-------------------------------------------
-' ArrayListの内容をListObject(テーブル機能)にコピーする。
-' テーブルの列ヘッダの情報が必須。
-'-------------------------------------------
+'>---
+'>#### CopyToListObject(ArrayList)
+'>
+'>**Syntax**
+'>
+'>```
+'>ArrayList.CopyToListObject objList
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|objList|必須|Object|copyする ListBox or ComboBox を指定|
+'>
+'>**Return Value**
+'>
+'>なし
+'>
+'>**Remarks**
+'>
+'>ListObject(テーブル機能)へコピー<br>
+'>ArrayListの内容をListobjectにコピーする。<br>
+'>ListobjectにArrayListのレコードを対応づける列名が必須。<br>
+'>レコードに使用するオブジェクトは INewInstance と IDictionaryAccessor を Implements したクラスであること。
+'>
+'>**Example**
+'>
+'>```
+'>Sub ArrayList_ParseFromListObject_Sample()
+'>
+'>    Dim lst As IList
+'>    Dim dic As IDictionary
+'>    Dim Key As Variant
+'>
+'>    Set lst = ArrayList.ParseFromListObject(ActiveSheet.ListObjects(1))
+'>
+'>    For Each dic In lst
+'>
+'>        For Each Key In dic.Keys
+'>
+'>            Debug.Print dic.Item(Key)
+'>
+'>        Next
+'>
+'>    Next
+'>
+'>    Dim a As ArrayList
+'>
+'>    Set a = lst
+'>
+'>    a.CopyToListObject ActiveSheet.ListObjects(2)
+'>
+'>End Sub
+'>```
+'>
+'>**See also**
+'>
+'>* ArrayList.ParseFromListbox
+'>* Dictionary クラス
+'>* INewInstance インターフェース
+'>* IDictionaryAccessor インターフェース
+'>
 Public Sub CopyToListObject(LO As ListObject)
 
     Dim lst As IList
@@ -468,9 +704,43 @@ Public Sub CopyToListObject(LO As ListObject)
     Next
 
 End Sub
-'-----------------------------------------------------
-' 指定されたRangeを起点にArrayListの内容を貼り付ける
-'-----------------------------------------------------
+'>---
+'>#### CopyToRange(ArrayList)
+'>
+'>**Syntax**
+'>
+'>```
+'>ArrayList.CopyToRange objct
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|object|必須|Range|copyするシートの範囲(Range)の左上を指定|
+'>
+'>**Return Value**
+'>
+'>なし
+'>
+'>**Remarks**
+'>
+'>ArrayListをシートへ貼り付ける<br>
+'>指定されたRangeを起点にArrayListの内容を貼り付ける<br>
+'>ListobjectにArrayListのレコードを対応づける列名が必須。<br>
+'>レコードに使用するオブジェクトは INewInstance と IDictionaryAccessor を Implements したクラスであること。
+'>
+'>**Example**
+'>
+'>なし
+'>
+'>**See also**
+'>
+'>* ArrayList.ParseFromListbox
+'>* Dictionary クラス
+'>* INewInstance インターフェース
+'>* IDictionaryAccessor インターフェース
+'>
 Public Sub CopyToRange(TopLeft As Range)
 
     Dim v As Variant
@@ -489,42 +759,169 @@ Public Sub CopyToRange(TopLeft As Range)
     TopLeft.resize(lngRow + 1, lngCol + 1).Value = v
 
 End Sub
-Function GetNewInstance(obj As INewInstance) As Object
+'>---
+'>#### GetIList(ArrayList)
+'>
+'>**Syntax**
+'>
+'>```
+'> Set obj = ArrayList.GetIList()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|object|必須|Object|ToIDictionaryAccessor I/F に対応するクラス|
+'>
+'>**Return Value**
+'>
+'>IList I/F
+'>
+'>**Remarks**
+'>
+'>IList I/F を取得する。
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* IList インターフェース
+'>
+Public Function GetIList() As IList
+    Set GetIList = Me
+End Function
+'--------------------------------------------------------------
+' INewInstance インターフェースに対応するインスタンスの生成
+'--------------------------------------------------------------
+Private Function GetNewInstance(obj As INewInstance) As Object
     Set GetNewInstance = obj.NewInstance
 End Function
-'-------------------------------------------------
-' ToIDictionaryAccessorへキャスト
-'-------------------------------------------------
+'--------------------------------------------------------------
+' IDictionaryAccessor I/F へキャスト
+'--------------------------------------------------------------
 Private Function ToIDictionaryAccessor(obj As Object) As IDictionaryAccessor
     Set ToIDictionaryAccessor = obj
 End Function
-'--------------------------------------------------------------
-' ArrayList から全ての項目を削除する。
-'--------------------------------------------------------------
+'>---
+'>#### Clear(IList I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>expression.Clear
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|Range|IList I/F|
+'>
+'>**Return Value**
+'>
+'>なし
+'>
+'>**Remarks**
+'>
+'>IList I/F のメソッドです。<br>
+'>ArrayListの全項目をクリアします。
+'>
+'>**Example**
+'>
+'>なし
+'>
+'>**See also**
+'>
+'>* IList インターフェース
+'>
 Private Sub IList_Clear()
 
     Set mCol = New Collection
     mIndex = 0
     
 End Sub
-'--------------------------------------------------------------
-' ArrayList に項目を追加する。
-'--------------------------------------------------------------
+'>---
+'>#### Add(IList I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>expression.Add(var)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|IList|IList I/F を指定します。|
+'>|var|必須|Variant|追加する変数を指定します。|
+'>
+'>**Return Value**
+'>
+'>なし
+'>
+'>**Remarks**
+'>
+'>IList I/F のメソッドです。<br>
+'>ArrayList に項目を追加する。
+'>
+'>**Example**
+'>
+'>なし
+'>
+'>**See also**
+'>
+'>* IList インターフェース
+'>
 Private Sub IList_Add(obj As Variant)
     
     mCol.Add obj
 
 End Sub
-'--------------------------------------------------------------
-' ArrayList の指定位置に項目を追加する。
-'--------------------------------------------------------------
-Private Sub IList_Insert(Idx As Long, v As Variant)
+'>---
+'>#### Insert(IList I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>expression.Insert(index, var)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|IList|IList I/F を指定します。|
+'>|index|必須|long|追加する位置を指定します。|
+'>|var|必須|Variant|追加する変数を指定します。|
+'>
+'>**Return Value**
+'>
+'>なし
+'>
+'>**Remarks**
+'>
+'>IList I/F のメソッドです。<br>
+'>ArrayList の指定位置に項目を追加する。
+'>
+'>**Example**
+'>
+'>なし
+'>
+'>**See also**
+'>
+'>* IList インターフェース
+'>
+Private Sub IList_Insert(idx As Long, v As Variant)
 
-    If Idx < 0 Or Idx >= mCol.Count Then
+    If idx < 0 Or idx >= mCol.Count Then
         Message.Throw 1, Me, "Insert", "IndexOutOfRangeException"
     End If
     
-    mCol.Add v, , Idx + 1
+    mCol.Add v, , idx + 1
 
 End Sub
 '--------------------------------------------------------------
@@ -533,42 +930,161 @@ End Sub
 Private Function IList_NewEnum() As stdole.IUnknown
     Set IList_NewEnum = mCol.[_NewEnum]
 End Function
-'--------------------------------------------------------------
-' ArrayList 要素数を返却
-'--------------------------------------------------------------
+'>---
+'>#### Count(IList I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>var = expression.Count
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|IList|IList I/F を指定します。|
+'>
+'>**Return Value**
+'>
+'>ArrayListの要素数を返却
+'>
+'>**Remarks**
+'>
+'>IList I/F のプロパティです。<br>
+'>ArrayList 要素数を返却
+'>
+'>**Example**
+'>
+'>なし
+'>
+'>**See also**
+'>
+'>* IList インターフェース
+'>
 Private Property Get IList_Count() As Long
     IList_Count = mCol.Count
 End Property
-'--------------------------------------------------------------
-' ArrayList の指定位置の項目を取得
-'--------------------------------------------------------------
-Private Property Get IList_Item(Idx As Long) As Variant
+'>---
+'>#### Item(IList I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>var = expression.Item(idx)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|IList|IList I/F を指定します。|
+'>|idx|必須|IList|Long|取得する項目の位置を指定します。|
+'>
+'>**Return Value**
+'>
+'>ArrayList の指定位置の項目
+'>
+'>**Remarks**
+'>
+'>IList I/F のプロパティです。<br>
+'>ArrayList の指定位置の項目を取得
+'>
+'>**Example**
+'>
+'>なし
+'>
+'>**See also**
+'>
+'>* IList インターフェース
+'>
+Private Property Get IList_Item(idx As Long) As Variant
     
-    If Idx < 0 Or Idx >= mCol.Count Then
+    If idx < 0 Or idx >= mCol.Count Then
         Message.Throw 1, Me, "Item", "IndexOutOfRangeException"
     End If
 
-    If VBA.IsObject(mCol.Item(Idx + 1)) Then
-        Set IList_Item = mCol.Item(Idx + 1)
+    If VBA.IsObject(mCol.Item(idx + 1)) Then
+        Set IList_Item = mCol.Item(idx + 1)
     Else
-        IList_Item = mCol.Item(Idx + 1)
+        IList_Item = mCol.Item(idx + 1)
     End If
     
 End Property
-'--------------------------------------------------------------
-' ArrayList の指定位置の項目を削除
-'--------------------------------------------------------------
-Private Sub IList_RemoveAt(Idx As Long)
+'>---
+'>#### RemoveAt(IList I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>var = expression.RemoveAt(idx)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|IList|IList I/F を指定します。|
+'>|idx|必須|IList|Long|削除する項目の位置を指定します。|
+'>
+'>**Return Value**
+'>
+'>ArrayList の指定位置の項目
+'>
+'>**Remarks**
+'>
+'>IList I/F のメソッドです。<br>
+'>ArrayList の指定位置の項目を削除
+'>
+'>**Example**
+'>
+'>なし
+'>
+'>**See also**
+'>
+'>* IList インターフェース
+'>
+Private Sub IList_RemoveAt(idx As Long)
     
-    If Idx < 0 Or Idx >= mCol.Count Then
+    If idx < 0 Or idx >= mCol.Count Then
         Message.Throw 1, Me, "RemoveAt", "IndexOutOfRangeException"
     End If
     
-    mCol.Remove Idx + 1
+    mCol.Remove idx + 1
 End Sub
-'--------------------------------------------------------------
-' ArrayList のソート
-'--------------------------------------------------------------
+'>---
+'>#### Sort(IList I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>var = expression.Sort([cp = Nothing])
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|IList|IList I/F を指定します。|
+'>|CP|省略可|IComparer|ソート条件を指定します。省略時はBinaryCompareです。|
+'>
+'>**Return Value**
+'>
+'>ArrayList の指定位置の項目
+'>
+'>**Remarks**
+'>
+'>IList I/F のメソッドです。<br>
+'>ArrayList の指定位置の項目を削除
+'>
+'>**Example**
+'>
+'>なし
+'>
+'>**See also**
+'>
+'>* IList インターフェース
+'>
 Private Sub IList_Sort(Optional ByVal CP As IComparer = Nothing)
 
     Dim i As Long
@@ -618,9 +1134,38 @@ Private Sub IList_Sort(Optional ByVal CP As IComparer = Nothing)
     Set col2 = Nothing
 
 End Sub
-'--------------------------------------------------------------
-' ArrayList を１～２次元配列に変換
-'--------------------------------------------------------------
+'>---
+'>#### ToArray(IList I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>var = expression.ToArray()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|IList|IList I/F を指定します。|
+'>
+'>**Return Value**
+'>
+'>配列を返却
+'>
+'>**Remarks**
+'>
+'>IList I/F のメソッドです。<br>
+'>ArrayList を１～２次元配列に変換
+'>
+'>**Example**
+'>
+'>なし
+'>
+'>**See also**
+'>
+'>* IList インターフェース
+'>
 Private Function IList_ToArray() As Variant
 
     Dim v As Variant
@@ -712,17 +1257,75 @@ Private Function IList_ToArray() As Variant
     End Select
     
 End Function
-'--------------------------------------------------------------
-' ArrayList をCollectionに変換
-'--------------------------------------------------------------
+'>---
+'>#### ToCollection(IList I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>var = expression.ToCollection()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|IList|IList I/F を指定します。|
+'>
+'>**Return Value**
+'>
+'>Collectionを返却
+'>
+'>**Remarks**
+'>
+'>IList I/F のメソッドです。<br>
+'>ArrayList をCollectionに変換
+'>
+'>**Example**
+'>
+'>なし
+'>
+'>**See also**
+'>
+'>* IList インターフェース
+'>
 Private Function IList_ToCollection() As Collection
     
     Set IList_ToCollection = mCol
 
 End Function
-'--------------------------------------------------------------
-' ArrayList をJSONに変換
-'--------------------------------------------------------------
+'>---
+'>#### ToString(IList I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>var = expression.ToString()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|IList|IList I/F を指定します。|
+'>
+'>**Return Value**
+'>
+'>JSON文字列を返却
+'>
+'>**Remarks**
+'>
+'>IList I/F のメソッドです。<br>
+'>ArrayList をJSONに変換
+'>
+'>**Example**
+'>
+'>なし
+'>
+'>**See also**
+'>
+'>* IList インターフェース
+'>
 Private Function IList_ToString() As String
 
     Dim v As Variant
@@ -788,21 +1391,109 @@ Private Function Unicode(ByVal strBuf As String) As Long
         Unicode = CLng(bytBuf(1)) * &H100 + bytBuf(0)
     End If
 End Function
-'--------------------------------------------------------------
-' ArrayList の ICursor インターフェースを取得
-'--------------------------------------------------------------
+'>---
+'>#### GetCursor(IList I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>Set var = expression.GetCursor()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|IList|IList I/F を指定します。|
+'>
+'>**Return Value**
+'>
+'>ICursor I/F を返却
+'>
+'>**Remarks**
+'>
+'>IList I/F のメソッドです。<br>
+'>ArrayList の ICursor インターフェースを取得
+'>
+'>**Example**
+'>
+'>なし
+'>
+'>**See also**
+'>
+'>* IList インターフェース
+'>* ICursor インターフェース
+'>
 Private Property Get IList_GetCursor() As ICursor
     Set IList_GetCursor = Me
 End Property
-'--------------------------------------------------------------
-' ICursor の Eof プロパティを取得
-'--------------------------------------------------------------
+'>---
+'>#### Eof(ICursor I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>Set var = expression.Eof()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|ICursor|ICursor I/F を指定します。|
+'>
+'>**Return Value**
+'>
+'>カーソルが終了:True / カーソルが終了していない:False
+'>
+'>**Remarks**
+'>
+'>ICursor I/F のプロパティです。<br>
+'>ICursor の Eof プロパティを取得。カーソルの終了を検出します。
+'>
+'>**Example**
+'>
+'>なし
+'>
+'>**See also**
+'>
+'>* ICursor インターフェース
+'>
 Private Property Get ICursor_Eof() As Boolean
     ICursor_Eof = mIndex >= mCol.Count
 End Property
-'--------------------------------------------------------------
-' ICursor の Item プロパティを取得
-'--------------------------------------------------------------
+'>---
+'>#### Item(ICursor I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>Set var = expression.Item()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|ICursor|ICursor I/F を指定します。|
+'>
+'>**Return Value**
+'>
+'>カーソル位置の内容を取得します。
+'>
+'>**Remarks**
+'>
+'>ICursor I/F のプロパティです。<br>
+'>ICursor の Item プロパティを取得。ArrayListの内容を取得します。
+'>
+'>**Example**
+'>
+'>なし
+'>
+'>**See also**
+'>
+'>* ICursor インターフェース
+'>
 Private Property Get ICursor_Item(Optional ByVal opt As Variant) As Variant
     
     If mIndex >= mCol.Count Then
@@ -820,15 +1511,73 @@ Private Property Get ICursor_Item(Optional ByVal opt As Variant) As Variant
     End If
     
 End Property
-'--------------------------------------------------------------
-' ICursor の カーソル位置を初期化
-'--------------------------------------------------------------
+'>---
+'>#### MoveFirst(ICursor I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>expression.MoveFirst()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|ICursor|ICursor I/F を指定します。|
+'>
+'>**Return Value**
+'>
+'>なし
+'>
+'>**Remarks**
+'>
+'>ICursor I/F のメソッドです。<br>
+'>カーソル位置の初期化を行います。
+'>
+'>**Example**
+'>
+'>なし
+'>
+'>**See also**
+'>
+'>* ICursor インターフェース
+'>
 Private Sub ICursor_MoveFirst()
     mIndex = 0
 End Sub
-'--------------------------------------------------------------
-' ICursor の カーソル位置を次に移動
-'--------------------------------------------------------------
+'>---
+'>#### MoveNext(ICursor I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>expression.MoveNext()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|ICursor|ICursor I/F を指定します。|
+'>
+'>**Return Value**
+'>
+'>なし
+'>
+'>**Remarks**
+'>
+'>ICursor I/F のメソッドです。<br>
+'>カーソル位置を次に移動します。
+'>
+'>**Example**
+'>
+'>なし
+'>
+'>**See also**
+'>
+'>* ICursor インターフェース
+'>
 Private Sub ICursor_MoveNext()
 
     mIndex = mIndex + 1
@@ -837,9 +1586,39 @@ Private Sub ICursor_MoveNext()
     End If
 
 End Sub
-'--------------------------------------------------------------
-' インスタンス生成 I/F
-'--------------------------------------------------------------
+'>---
+'>#### NewInstance(INewInstance I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>expression.NewInstance()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|ICursor|INewInstance I/F を指定します。|
+'>
+'>**Return Value**
+'>
+'>新しいArrayListのインスタンス(IList I/F)
+'>
+'>**Remarks**
+'>
+'>INewInstance I/F のメソッドです。<br>
+'>新しいインスタンス(IList I/F)を生成して返却します。
+'>
+'>**Example**
+'>
+'>なし
+'>
+'>**See also**
+'>
+'>* IList インターフェース
+'>* INewInstance インターフェース
+'>
 Private Function INewInstance_NewInstance() As Object
 
     Dim lst As IList
@@ -849,3 +1628,4 @@ Private Function INewInstance_NewInstance() As Object
     Set INewInstance_NewInstance = lst
 
 End Function
+

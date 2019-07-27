@@ -36,6 +36,24 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
+'>### 2.1.5 IIterator インターフェイス
+'>
+'>**Remarks**
+'>
+'>SheetIterator等 Iterator 系の動作を定義したインターフェイス
+'>
+'>**Definition**
+'>
+'>```
+'>Public Function NewEnum() As IEnumVARIANT
+'>    'Attribute NewEnum.VB_UserMemId = -4
+'>```
+'>
+'>**Sample**
+'>
+'>* None
+'>
+'-----------------------------------------------------------------------------------------------------
 Option Explicit
 
 Public Function NewEnum() As IEnumVARIANT

@@ -36,6 +36,23 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
+'>### 2.1.10 IComparer インターフェイス
+'>
+'>**Remarks**
+'>
+'>文字列の比較を置換するインターフェイス
+'>
+'>**Definition**
+'>
+'>```
+'>Public Function Compare(ByVal v1 As Variant, ByVal v2 As Variant) As Long
+'>```
+'>
+'>**Sample**
+'>
+'>* None
+'>
+'-----------------------------------------------------------------------------------------------------
 Option Explicit
 
 Public Function Compare(ByVal v1 As Variant, ByVal v2 As Variant) As Long

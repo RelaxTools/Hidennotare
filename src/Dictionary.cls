@@ -36,17 +36,51 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-' Dictionary ラッパークラス
-'-----------------------------------------------------------------------------------------------------
-' TODO : 本家と異なる点。For Each を使う場合には XX.Keys を省略できない。
-'        IDictionary I/F を使用する必要がある。
-'
-' Dim dic As IDictionary
-' Set dic = New Dictionary
-'
-'-----------------------------------------------------------------------------------------------------
-' ToString すると JSON Object を出力します。
-' https://www.json.org/json-ja.html
+'>### 2.2.2 Dictionary クラス
+'>
+'>**Remarks**
+'>
+'>Scripting.Dictionary のコンポジット（移譲）クラス。
+'>
+'>* IDictionary I/F を使用する必要がある。
+'>* 本家と異なる点。For Each を使う場合には XX.Keys を省略できません。
+'>
+'>**Scripting.Dictionaryとの比較**
+'>
+'>|No.|Property/Method|Scripting.Dictionary|Dictionary(本クラス)|
+'>|---|---|---|---|
+'>|1|Add|〇|〇|
+'>|2|Exists|〇|ContainsKey|
+'>|3|Items|〇|なし|
+'>|4|Keys|〇|〇|
+'>|5|Remove|〇|〇|
+'>|6|RemoveAll|〇|Clear|
+'>|7|CompareMode|〇|なし(BinaryCompare固定)|
+'>|8|Count|〇|〇|
+'>|9|Item|〇|〇|
+'>|10|Key|〇|〇|
+'>|11|ToString|×|〇|
+'>
+'>**Sample**
+'>
+'>```
+'>Dim dic As IDictionary
+'>Set dic = New Dictionary
+'>
+'>dic.Add Key, Value
+'>```
+'>
+'>**Dependent**
+'>
+'>* Message クラス
+'>* StringBuilder クラス
+'>* ArrayList クラス
+'>* IDictionary クラス
+'>* INewInstance クラス
+'>* IDictionaryAccessor クラス
+'>* Convert クラス
+'>* ICursor クラス
+'>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements ICursor

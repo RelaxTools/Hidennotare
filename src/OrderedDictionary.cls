@@ -36,24 +36,32 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-' OrderedDictionary クラス
-'-----------------------------------------------------------------------------------------------------
-' 委譲 : Dictionary
-'-----------------------------------------------------------------------------------------------------
-' TODO : Keyの追加順を保障するクラス。
-'        本家と異なる点。For Each を使う場合には XX.Keys を省略できない。
-'        IDictionary I/F を使用する必要がある。
-'        Orderd なので追加順を維持するため削除のパフォーマンスは悪いので注意すべし。
-'        Collectionを使用しない理由は、Collectionは大文字小文字を同一視するため。
-'
-'        Dim dic As IDictionary
-'        Set dic = New OrderedDictionary
-'
-'        dic.Add Key, Value
-'
-'-----------------------------------------------------------------------------------------------------
-' NOTE : ToString で JSON Object を出力します。
-'        https://www.json.org/json-ja.html
+'>### 2.2.3 OrderedDictionary クラス
+'>
+'>**Remarks**
+'>
+'>Dictionary クラスをコンポジット（移譲）したクラス。<br>
+'>Keyの値が追加順を保証します。
+'>
+'>* IDictionary I/F を使用する必要がある。
+'>* 本家と異なる点。For Each を使う場合には XX.Keys を省略できない。
+'>* Orderd なので追加順を維持するため削除のパフォーマンスは悪いので注意。
+'>
+'>**Implements**
+'>* ICursor
+'>* IDictionary
+'>* IDictionaryAccessor
+'>* INewInstance
+'>
+'>**Sample**
+'>
+'>```
+'>Dim dic As IDictionary
+'>Set dic = New OrderedDictionary
+'>
+'>dic.Add Key, Value
+'>```
+'>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements ICursor

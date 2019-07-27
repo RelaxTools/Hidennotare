@@ -36,22 +36,32 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-' SortedDictionary クラス
-'-----------------------------------------------------------------------------------------------------
-' 委譲 : Dictionary
-'-----------------------------------------------------------------------------------------------------
-' TODO : Keyの順番をソートできるDictionary
-'        本家と異なる点。For Each を使う場合には XX.Keys を省略できない。
-'        IDictionary I/F を使用する必要がある。
-'
-'        Dim dic As IDictionary
-'        Set dic = New SortedDictionary
-'
-'        dic.Add Key, Value
-'
-'-----------------------------------------------------------------------------------------------------
-' NOTE : ToString すると JSON Object を出力します。
-'        https://www.json.org/json-ja.html
+'>### 2.2.4 SortedDictionary クラス
+'>
+'>**Remarks**
+'>
+'>Dictionary クラスをコンポジット（移譲）したクラス。<br>
+'>Keyの順番をソートできるDictionary
+'>
+'>* IDictionary I/F を使用する必要がある。
+'>* 本家と異なる点。For Each を使う場合には XX.Keys を省略できない。
+'>
+'>**Implements**
+'>* ICursor
+'>* IConstructor
+'>* IDictionary
+'>* IDictionaryAccessor
+'>* INewInstance
+'>
+'>**Sample**
+'>
+'>```
+'>Dim dic As IDictionary
+'>Set dic = New SortedDictionary
+'>
+'>dic.Add Key, Value
+'>```
+'>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements ICursor

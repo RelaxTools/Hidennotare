@@ -36,18 +36,25 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-' このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。
-'-----------------------------------------------------------------------------------------------------
-' 依存モジュール
-'   Lang.cls
-'   Registry.cls
-'-----------------------------------------------------------------------------------------------------
-' 2018-12-16 Ver.1.0.0 新規作成
-' 2018-12-18 Ver.1.0.1 GetClipText 上限の 4096バイトを撤廃
-' 2018-12-19 Ver.1.0.2 GetClipText で CF_UNICODETEXT に変更
-'                      SetClipText  で CF_UNICODETEXT に変更
-'                      GetFileNameFromCliをUnicode対応
-'                      SetCopyClipTextをUnicode対応
+'>### 2.2.6 Clipboard クラス
+'>
+'>**Remarks**
+'>
+'>Clipboard に関するクラス<br>
+'>**このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。**
+'>
+'>**Dependent**
+'>
+'>* Registry クラス
+'>
+'>**History**
+'>
+'>|Date|Version|Note|
+'>|---|---|---|
+'>|2018-12-16|Ver.1.0.0|新規作成|
+'>|2018-12-18|Ver.1.0.1|GetClipText 上限の 4096バイトを撤廃|
+'>|2018-12-19|Ver.1.0.2|GetClipText CF_UNICODETEXT に変更<br>SetClipText CF_UNICODETEXT に変更<br>GetFileNameFromCliをUnicode対応<br>SetCopyClipTextをUnicode対応|
+'>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 
@@ -112,9 +119,36 @@ Private Const CC_SHOWHELP = &H8               'ヘルプボタンを表示
 
 Private Const IMAGE_BITMAP As Long = 0
 Private Const LR_COPYRETURNORG As Long = &H4
-'**
-' コピーアドレスの取得
-'**
+'>---
+'>#### getObjectLink(Clipboard)
+'>
+'>**Syntax**
+'>
+'>```
+'>String = Clipboard.getObjectLink()
+'>```
+'>
+'>**Parameters**
+'>
+'>なし
+'>
+'>**Return Value**
+'>
+'>Excelのコピー元アドレス
+'>
+'>**Remarks**
+'>
+'>コピー元アドレスの取得<br>
+'>Excelでコピーした時のちかちかする範囲を取得できる。<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* None
+'>
 Private Function getObjectLink() As String
 
     Dim p As LongPtr
@@ -163,9 +197,36 @@ Private Function getObjectLink() As String
     getObjectLink = MyString
 
 End Function
-'--------------------------------------------------------------
-'クリップボードをクリアする
-'--------------------------------------------------------------
+'>---
+'>#### ClearClipboard(Clipboard)
+'>
+'>**Syntax**
+'>
+'>```
+'>String = Clipboard.ClearClipboard()
+'>```
+'>
+'>**Parameters**
+'>
+'>なし
+'>
+'>**Return Value**
+'>
+'>なし
+'>
+'>**Remarks**
+'>
+'>クリップボードのクリア<br>
+'>クリップボードをクリアします。<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* None
+'>
 Public Sub ClearClipboard()
 
     If OpenClipboard(0&) <> 0 Then
@@ -174,9 +235,38 @@ Public Sub ClearClipboard()
     End If
 
 End Sub
-'----------------------------------------------------------------------
-' クリップボードのビットマップデータから Picture オブジェクトを作成
-'----------------------------------------------------------------------
+'>---
+'>#### CreatePictureFromClipboard(Clipboard)
+'>
+'>**Syntax**
+'>
+'>```
+'>Set StdPicture = Clipboard.CreatePictureFromClipboard(Object)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|Object|必須|Object|ピクチャ化したいシェイプを指定|
+'>
+'>**Return Value**
+'>
+'>StdPicture オブジェクト
+'>
+'>**Remarks**
+'>
+'>Picture オブジェクト生成<br>
+'>クリップボードのビットマップデータから Picture オブジェクトを作成する。<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* None
+'>
 Public Function CreatePictureFromClipboard(o As Object) As StdPicture
   
     Dim hImg      As LongPtr
@@ -243,9 +333,44 @@ e:
     End If
     
 End Function
-'--------------------------------------------------------------
-'　クリップボードからファイル名を取得
-'--------------------------------------------------------------
+'>---
+'>#### GetCopyClipText(Clipboard)
+'>
+'>**Syntax**
+'>
+'>```
+'>String = Clipboard.GetCopyClipText()
+'>```
+'>
+'>**Parameters**
+'>
+'>なし
+'>
+'>**Return Value**
+'>
+'>クリップボードの改行(vbCrLf)で区切られたファイル情報を返却
+'>
+'>**Remarks**
+'>
+'>エクスプローラコピー情報取得<br>
+'>エクスプローラからのコピー情報を<br>
+'>
+'>**Example**
+'>
+'>```
+'>Dim strBuf As String
+'>Dim v As Variant
+'>
+'>strBuf = Clipboard.GetCopyClipText()
+'>
+'>v = Split(strBuf, vbCrLf)
+'>
+'>```
+'>
+'>**See also**
+'>
+'>* None
+'>
 Public Function GetCopyClipText() As String
 
     Dim hData As LongPtr
@@ -287,7 +412,38 @@ Public Function GetCopyClipText() As String
     GetCopyClipText = SB.ToJoin(vbCrLf)
     
 End Function
-'クリップボードにテキストデータを書き込むプロシージャ
+'>---
+'>#### SetClipText(Clipboard)
+'>
+'>**Syntax**
+'>
+'>```
+'>Clipboard.SetClipText strData
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|strData|必須|String|改行で区切られたファイル情報|
+'>
+'>**Return Value**
+'>
+'>なし
+'>
+'>**Remarks**
+'>
+'>テキスト書き込み<br>
+'>クリップボードにテキストデータを書き込むプロシージャ<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* None
+'>
 Public Sub SetClipText(ByVal strData As String)
 
   Dim p As LongPtr
@@ -340,7 +496,36 @@ Public Sub SetClipText(ByVal strData As String)
   If blnErrflg Then Message.Error "クリップボードに情報が書き込めません"
 
 End Sub
-'クリップボードからテキストデータを取得するプロシージャ(Unicode対応)
+'>---
+'>#### GetClipText(Clipboard)
+'>
+'>**Syntax**
+'>
+'>```
+'>strBuf = Clipboard.GetClipText()
+'>```
+'>
+'>**Parameters**
+'>
+'>なし
+'>
+'>**Return Value**
+'>
+'>クリップボードのテキストデータを返却
+'>
+'>**Remarks**
+'>
+'>テキストデータ取得<br>
+'>クリップボードからテキストデータを取得するプロシージャ(Unicode対応)<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* None
+'>
 Public Function GetClipText() As String
 
     Dim p As LongPtr
@@ -385,8 +570,39 @@ Public Function GetClipText() As String
     GetClipText = MyString
 
 End Function
-
-'クリップボードにファイルコピー情報を書き込むプロシージャ
+'>---
+'>#### SetCopyClipText(Clipboard)
+'>
+'>**Syntax**
+'>
+'>```
+'>Clipboard.SetCopyClipText strBuf()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|strBuf()|必須|String配列|ファイル情報の配列|
+'>
+'>**Return Value**
+'>
+'>なし
+'>
+'>**Remarks**
+'>
+'>ファイル情報書き込み<br>
+'>クリップボードにファイル情報を書き込むプロシージャ<br>
+'>エクプローラのコピーやアウトルックの添付が可能<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* None
+'>
 Public Sub SetCopyClipText(strBuf() As String)
 
     Dim p As LongPtr

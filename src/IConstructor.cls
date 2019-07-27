@@ -36,6 +36,27 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
+'>### 2.1.1 IConstructor インターフェイス
+'>
+'>**Remarks**
+'>
+'>クラスにコンストラクタを追加するインターフェイス<br>
+'>標準モジュールの Core.Constructor 関数と併用する。<br>
+'>コンストラクタで渡される引数はCollectionとなる。
+'>
+'>**Definition**
+'>
+'>```
+'>Public Function Instancing(ByRef Args As Collection) As Object
+'>```
+'>
+'>**Sample**
+'>```
+'> Dim lst As IList
+'> Set lst = Constructor(New ArrayList, コレクション)
+'>```
+'>
+'-----------------------------------------------------------------------------------------------------
 Option Explicit
 
 ' コンストラクタ呼び出し
