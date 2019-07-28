@@ -28,7 +28,12 @@ Attribute VB_Name = "Document"
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-' ドキュメント生成モジュール(Hidennotareをgitやwikiで管理するためのモジュール)
+'>### Document 標準モジュール
+'>
+'>**Remarks**
+'>
+'>* ドキュメント生成モジュール(Hidennotareをgitやwikiで管理するためのモジュール)
+'>
 '-----------------------------------------------------------------------------------------------------
 Private Const TARGET_URL As String = "https://github.com/RelaxTools/Hidennotare/wiki/"
 Option Explicit
@@ -81,7 +86,6 @@ Sub OutputMarkDown()
     Dim strFile As String
     Dim SB As StringBuilder
     Dim strBuf As String
-    Dim No() As Long
     Dim strMark As String
     Dim i As Long
     Dim TC As IList
@@ -97,17 +101,44 @@ Sub OutputMarkDown()
     '目次を作成するレベル
     Const ContentsLevel As Long = 3
     
-    ReDim No(1 To Level)
+    Dim No1() As Long
+    Dim No2() As Long
+    Dim No3() As Long
+    ReDim No1(1 To Level)
+    ReDim No2(1 To Level)
+    ReDim No3(1 To Level)
     
-    For i = 1 To Level
-        No(i) = 0
-    Next
+     
+    '標準モジュールのスタート
+     No1(1) = 2
+     No1(2) = 1
+     No1(3) = 0
+     
+    'インターフェイスのスタート
+     No2(1) = 2
+     No2(2) = 2
+     No2(3) = 0
+     
+    'クラスのスタート
+     No3(1) = 2
+     No3(2) = 3
+     No3(3) = 0
     
     strFolder = ThisWorkbook.Path & ".wiki"
     FileIO.CreateFolder strFolder
     
-    For Each obj In ThisWorkbook.VBProject.VBComponents
+    Dim dic As IDictionary
+    Set dic = New SortedDictionary
     
+    For Each obj In ThisWorkbook.VBProject.VBComponents
+        dic.Add obj.Name, obj
+    Next
+    
+    Dim Key As Variant
+    For Each Key In dic.Keys
+        
+        Set obj = dic.Item(Key)
+        
         strFile = FileIO.BuildPath(strFolder, obj.Name & ".md")
         
         With obj.CodeModule
@@ -119,7 +150,14 @@ Sub OutputMarkDown()
                 strBuf = .Lines(i, 1)
                 If Left$(strBuf, 2) = "'>" Then
                     strMark = Mid$(strBuf, 3)
-                    SB.Append LevelNo(strMark, No(), Level, TC, ContentsLevel, obj.Name)
+                    Select Case True
+                        Case obj.Type = 1
+                           SB.Append LevelNo(strMark, No1(), Level, TC, ContentsLevel, obj.Name)
+                        Case RegExp.Test(obj.Name, "^I[A-Z]")
+                           SB.Append LevelNo(strMark, No2(), Level, TC, ContentsLevel, obj.Name)
+                        Case Else
+                           SB.Append LevelNo(strMark, No3(), Level, TC, ContentsLevel, obj.Name)
+                    End Select
                 End If
             Next i
         
@@ -157,10 +195,16 @@ Sub OutputMarkDown()
         
         '目次作成
         TC.Insert 0, "#### 2 リファレンス"
-        TC.Insert 1, "##### 2.1 インターフェイス"
+        TC.Insert 1, "##### 2.1 標準モジュール"
         For i = 0 To TC.Count
             If StringHelper.StartsWith(TC.Item(i), "[2.2") Then
-                TC.Insert i, "##### 2.2 クラス"
+                TC.Insert i, "##### 2.2 インターフェイス"
+                Exit For
+            End If
+        Next
+        For i = 0 To TC.Count
+            If StringHelper.StartsWith(TC.Item(i), "[2.3") Then
+                TC.Insert i, "##### 2.3 クラス"
                 Exit For
             End If
         Next
@@ -211,46 +255,33 @@ Private Function LevelNo(ByVal strBuf As String, No() As Long, ByVal lngLevel As
             Dim c As Collection
             
             Set c = RegExp.Execute(strRight, "^[0-9.]+")
-            
+        
             If c.Count > 0 Then
-            
-                Dim a As Variant
-                
-                a = Split(c(1).Value, ".")
-        
-                For i = 1 To lngLevel
-                    No(i) = 0
-                Next
-                
-                For i = LBound(a) To UBound(a)
-                    No(i + 1) = a(i)
-                Next
-            
-                LevelNo = strBuf
-            Else
-            
-                '初回上位レベルが0の場合1を設定
-                For i = 1 To lngLen - 1
-                    If No(i) = 0 Then
-                        No(i) = 1
-                    End If
-                Next
-            
-                No(lngLen) = No(lngLen) + 1
-                
-                Set SB = New StringBuilder
-                For i = 1 To lngLen
-                    SB.Append CStr(No(i))
-                Next
-            
-                For i = lngLen + 1 To lngLevel
-                    No(i) = 0
-                Next
-        
-                LevelNo = strLeft & SB.ToJoin(".") & " " & strRight
-                
-            
+
+                strRight = Mid$(strRight, c(1).Length + 2)
+
             End If
+
+            '初回上位レベルが0の場合1を設定
+            For i = 1 To lngLen - 1
+                If No(i) = 0 Then
+                    No(i) = 1
+                End If
+            Next
+
+            No(lngLen) = No(lngLen) + 1
+
+            Set SB = New StringBuilder
+            For i = 1 To lngLen
+                SB.Append CStr(No(i))
+            Next
+
+            For i = lngLen + 1 To lngLevel
+                No(i) = 0
+            Next
+
+            LevelNo = strLeft & SB.ToJoin(".") & " " & strRight
+        
         
             '目次作成レベル以上であれば目次作成
             If lngLen <= lngContentsLevel Then
@@ -259,8 +290,10 @@ Private Function LevelNo(ByVal strBuf As String, No() As Long, ByVal lngLevel As
                 
                 strContent = "[" & Mid$(LevelNo, InStr(LevelNo, " ") + 1) & "](" & TARGET_URL & Replace$(strName, " ", "-") & ")  "
                 
+                '目次のエリアが限られるので目次のみ種類は削除
                 strContent = Replace$(strContent, " クラス", "")
                 strContent = Replace$(strContent, " インターフェイス", "")
+                strContent = Replace$(strContent, " 標準モジュール", "")
             
                 TC.Add strContent
             End If

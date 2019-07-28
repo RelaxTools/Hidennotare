@@ -310,7 +310,7 @@ End Function
 '>
 '>**See also**
 '>
-'>* None
+'>* FileIO.AppDataFolder
 '>
 Public Property Get TempFolder() As String
 
@@ -362,7 +362,7 @@ End Property
 '>
 '>**See also**
 '>
-'>* None
+'>* FileIO.TempFolder
 '>
 Public Property Get AppDataFolder() As String
 
@@ -386,9 +386,44 @@ Public Property Get AppDataFolder() As String
     End With
 
 End Property
-'--------------------------------------------------------------
-'　ファイル検索
-'--------------------------------------------------------------
+'>---
+'>#### FileSearch(FileIO)
+'>
+'>**Syntax**
+'>
+'>```
+'>FileIO.FileSearch strPath, varPatterns, Col, [SubDir = True, NaturalSort = True]
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|strPath|必須|String|検索するフォルダを指定|
+'>|varPatterns|必須|Variant|ファイルのパターン|
+'>|Col|必須|Collection|検索したファイル一覧を返却する。|
+'>|SubDir|省略可|Boolean|Trueの場合サブフォルダを検索する。|
+'>|NaturalSort|省略可|NaturalSort|Trueの場合、自然数ソートを行う。省略時True|
+'>
+'>**Return Value**
+'>
+'>なし
+'>
+'>**Remarks**
+'>
+'>ファイル検索<br>
+'>FileSearchExの方が高速で多機能です。<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* FileIO.FileSearch
+'>* FileIO.FileSearchEx
+'>* FileIO.SearchTreeForFile
+'>
 Public Sub FileSearch(ByVal strPath As String, _
                       ByVal varPatterns As Variant, _
                       ByRef Col As Collection, _
@@ -424,14 +459,47 @@ Public Sub FileSearch(ByVal strPath As String, _
         End If
     End With
 End Sub
-'--------------------------------------------------------------------------------------------------------------------
-'　ファイル検索(フィルタ高速版)
-'
-'  FileSystemObject は便利だが、フィルタがかけられず、全部のファイルを列挙するためファイル検索が遅い問題がある。
-'  VBA.DIRは3桁以上の拡張子非対応、UNC非対応のため、Winddows API にて実装
-'  自然数ソートを追加。
-'  SubDir = True(-1):制限なし False(0):指定フォルダのみ 階数:指定階数まで検索
-'--------------------------------------------------------------------------------------------------------------------
+'>---
+'>#### FileSearch(FileIO)
+'>
+'>**Syntax**
+'>
+'>```
+'>FileIO.FileSearch strPath, varPatterns, Col, [SubDir = True, NaturalSort = True]
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|strPath|必須|String|検索するフォルダを指定|
+'>|varPatterns|必須|Variant|ファイルのパターンを指定。複数の場合には配列で指定。ワイルドカードが使用可能。|
+'>|Col|必須|Collection|検索したファイル一覧を返却する。|
+'>|SubDir|省略可|Boolean|True(-1):制限なし/False(0):指定フォルダのみ/階数:指定階数まで検索|
+'>|ReturnFind|省略可|NaturalSort|Trueの場合、自然数ソートを行う。省略時True|
+'>|NaturalSort|省略可|NaturalSort|Trueの場合、自然数ソートを行う。省略時True|
+'>|varExcludedFolder|省略可|除外フォルダを指定。|
+'>
+'>**Return Value**
+'>
+'>なし
+'>
+'>**Remarks**
+'>
+'>ファイル一覧取得(フィルタ高速版)<br>
+'>FileSystemObject は便利だが、フィルタがかけられず、全部のファイルを列挙するためファイル検索が遅い問題がある。<br>
+'>VBA.DIRは3桁以上の拡張子非対応、UNC非対応のため、Winddows API にて実装<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* FileIO.FileSearch
+'>* FileIO.FileSearchEx
+'>* FileIO.SearchTreeForFile
+'>
 Public Sub FileSearchEx(ByVal strPath As String, _
                         ByVal varPatterns As Variant, _
                         ByRef Col As Collection, _
@@ -582,11 +650,41 @@ Private Sub Append(ByRef Col As Collection, _
     End If
 
 End Sub
-
-'--------------------------------------------------------------
-'　ファイル検索(フィルタ高速版)
-'  指定のファイルがファイルが見つかったら即リターンします。
-'--------------------------------------------------------------
+'>---
+'>#### SearchTreeForFile(FileIO)
+'>
+'>**Syntax**
+'>
+'>```
+'>strfile = FileIO.SearchTreeForFile(strPath, strFile)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|strPath|必須|String|検索するフォルダを指定|
+'>|strFile|必須|String|ファイルのパターンを指定。ワイルドカードが使用可能。|
+'>
+'>**Return Value**
+'>
+'>検索したファイル名
+'>
+'>**Remarks**
+'>
+'>ファイル検索<br>
+'>指定のファイルがファイルが見つかったら即リターンします。<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* FileIO.FileSearch
+'>* FileIO.FileSearchEx
+'>* FileIO.SearchTreeForFile
+'>
 Public Function SearchTreeForFile(ByVal strPath As String, ByVal strFile As String) As String
 
     Dim strBuffer As String
@@ -600,9 +698,39 @@ Public Function SearchTreeForFile(ByVal strPath As String, ByVal strFile As Stri
     End If
 
 End Function
-'--------------------------------------------------------------
-'　ファイルパス結合
-'--------------------------------------------------------------
+'>---
+'>#### BuildPath(FileIO)
+'>
+'>**Syntax**
+'>
+'>```
+'>strfile = FileIO.BuildPath(strPath, strFile)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|strPath|必須|String|結合するフォルダを指定|
+'>|strFile|必須|String|結合ファイルを指定|
+'>
+'>**Return Value**
+'>
+'>結合したファイル名
+'>
+'>**Remarks**
+'>
+'>ファイルパス結合<br>
+'>指定のファイルがファイルが見つかったら即リターンします。<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* None
+'>
 Public Function BuildPath(ByVal strPath As String, ByVal strFile As String) As String
     
     With FSO
@@ -610,20 +738,38 @@ Public Function BuildPath(ByVal strPath As String, ByVal strFile As String) As S
     End With
 
 End Function
-'--------------------------------------------------------------
-'　フォルダ削除
-'  指定フォルダを以下を含む、フォルダ自体を削除
-'--------------------------------------------------------------
-Public Sub DeleteFolder(ByVal strPath As String)
-    
-    With FSO
-        .DeleteFolder strPath, True
-    End With
-
-End Sub
-'--------------------------------------------------------------
-'　ファイル削除
-'--------------------------------------------------------------
+'>---
+'>#### DeleteFile(FileIO)
+'>
+'>**Syntax**
+'>
+'>```
+'>FileIO.DeleteFile(strFile)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|strFile|必須|String|削除するファイルを指定|
+'>
+'>**Return Value**
+'>
+'>なし
+'>
+'>**Remarks**
+'>
+'>ファイル削除<br>
+'>指定ファイルを削除<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* FileIO.TruncateFile
+'>
 Public Sub DeleteFile(ByVal strPath As String)
     
     With FSO
@@ -631,11 +777,120 @@ Public Sub DeleteFile(ByVal strPath As String)
     End With
 
 End Sub
-'--------------------------------------------------------------
-'　指定フォルダ以下ファイル＆フォルダ削除
-'  指定フォルダは消さずにそれ以下を消すことに注意
-'  ワークフォルダのクリアに向く。
-'--------------------------------------------------------------
+'>---
+'>#### TruncateFile(FileIO)
+'>
+'>**Syntax**
+'>
+'>```
+'>FileIO.TruncateFile(strFile)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|strFile|必須|String|クリアするファイルを指定|
+'>
+'>**Return Value**
+'>
+'>なし
+'>
+'>**Remarks**
+'>
+'>ファイル内容のクリア<br>
+'>ファイルを削除するのではなく内容のクリア<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* FileIO.DeleteFile
+'>
+Sub TruncateFile(ByVal strFile As String)
+
+    Dim fp As Integer
+
+    '出力ファイルのクリア
+    fp = FreeFile()
+    Open strFile For Output As fp
+    Close fp
+
+End Sub
+'>---
+'>#### DeleteFolder(FileIO)
+'>
+'>**Syntax**
+'>
+'>```
+'>FileIO.DeleteFolder(strPath)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|strPath|必須|String|削除するフォルダを指定|
+'>
+'>**Return Value**
+'>
+'>なし
+'>
+'>**Remarks**
+'>
+'>フォルダ削除<br>
+'>指定フォルダを以下を含む、フォルダ自体を削除<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* FileIO.ClearFolder
+'>
+Public Sub DeleteFolder(ByVal strPath As String)
+    
+    With FSO
+        .DeleteFolder strPath, True
+    End With
+
+End Sub
+'>---
+'>#### ClearFolder(FileIO)
+'>
+'>**Syntax**
+'>
+'>```
+'>FileIO.ClearFolder(strPath)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|strPath|必須|String|クリアするフォルダを指定|
+'>
+'>**Return Value**
+'>
+'>なし
+'>
+'>**Remarks**
+'>
+'>指定フォルダ以下ファイル＆フォルダ削除<br>
+'>指定フォルダは消さずにそれ以下を消すことに注意<br>
+'>ワークフォルダのクリアに向く<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* FileIO.DeleteFolder
+'>
 Public Sub ClearFolder(ByVal strPath As String)
     
     Dim fld As Object
@@ -656,10 +911,87 @@ Public Sub ClearFolder(ByVal strPath As String)
     End With
 
 End Sub
+'>---
+'>#### CreateFolder(FileIO)
+'>
+'>**Syntax**
+'>
+'>```
+'>FileIO.CreateFolder(strPath)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|strPath|必須|String|作成するフォルダを指定|
+'>
+'>**Return Value**
+'>
+'>なし
+'>
+'>**Remarks**
+'>
+'>フォルダ作成<br>
+'>上位フォルダが無い場合、再帰で作成する。<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* None
+'>
+Public Sub CreateFolder(ByVal strPath As String)
 
-'--------------------------------------------------------------
-'　ファイル名取得
-'--------------------------------------------------------------
+    With FSO
+    
+        If .FolderExists(strPath) Then
+            Exit Sub
+        End If
+    
+        Call CreateFolder(.GetParentFolderName(strPath))
+        
+        .CreateFolder strPath
+    
+    End With
+
+End Sub
+'>---
+'>#### GetFileName(FileIO)
+'>
+'>**Syntax**
+'>
+'>```
+'>FileName = FileIO.GetFileName(strPath)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|strPath|必須|String|ファイルを含むフォルダを指定|
+'>
+'>**Return Value**
+'>
+'>ファイル名のみを返却
+'>
+'>**Remarks**
+'>
+'>ファイル名取得<br>
+'>パス情報からファイル名を取得<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* FileIO.GetExtensionName
+'>* FileIO.GetBaseName
+'>* FileIO.GetParentFolderName
+'>
 Public Function GetFileName(ByVal strFile As String) As String
 
     With FSO
@@ -692,9 +1024,40 @@ Public Function GetFileName(ByVal strFile As String) As String
 '    rlxGetFullpathFromFileName = strResult
 
 End Function
-'--------------------------------------------------------------
-'　拡張子取得
-'--------------------------------------------------------------
+'>---
+'>#### GetExtensionName(FileIO)
+'>
+'>**Syntax**
+'>
+'>```
+'>ExtensionName = FileIO.GetExtensionName(strPath)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|strPath|必須|String|ファイルを含むフォルダを指定|
+'>
+'>**Return Value**
+'>
+'>拡張子のみを返却
+'>
+'>**Remarks**
+'>
+'>拡張子取得<br>
+'>パス情報又はファイルから拡張子を取得<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* FileIO.GetFileName
+'>* FileIO.GetBaseName
+'>* FileIO.GetParentFolderName
+'>
 Public Function GetExtensionName(ByVal strFile As String) As String
 
     With FSO
@@ -725,9 +1088,40 @@ Public Function GetExtensionName(ByVal strFile As String) As String
 '    rlxGetFullpathFromExt = strResult
 
 End Function
-'--------------------------------------------------------------
-'　ファイル名取得(拡張子抜き)
-'--------------------------------------------------------------
+'>---
+'>#### GetBaseName(FileIO)
+'>
+'>**Syntax**
+'>
+'>```
+'>BaseName = FileIO.GetBaseName(strFile)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|strPath|必須|String|ファイルを含むフォルダを指定|
+'>
+'>**Return Value**
+'>
+'>拡張子を除いたファイル名のみを返却
+'>
+'>**Remarks**
+'>
+'>ファイル名取得（拡張子除く）<br>
+'>拡張子を除いたファイル名のみを取得<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* FileIO.GetFileName
+'>* FileIO.GetExtensionName
+'>* FileIO.GetParentFolderName
+'>
 Public Function GetBaseName(ByVal strFile As String) As String
 
     With FSO
@@ -735,9 +1129,40 @@ Public Function GetBaseName(ByVal strFile As String) As String
     End With
 
 End Function
-'--------------------------------------------------------------
-'　パス情報取得
-'--------------------------------------------------------------
+'>---
+'>#### GetParentFolderName(FileIO)
+'>
+'>**Syntax**
+'>
+'>```
+'>PathName = FileIO.GetParentFolderName(strFile)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|strPath|必須|String|ファイルを含むフォルダを指定|
+'>
+'>**Return Value**
+'>
+'>上位パスのみを返却
+'>
+'>**Remarks**
+'>
+'>パス情報取得<br>
+'>指定ファイルの上位パスを返却する。<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* FileIO.GetFileName
+'>* FileIO.GetExtensionName
+'>* FileIO.GetBaseName
+'>
 Public Function GetParentFolderName(ByVal strFile As String) As String
 
     With FSO
@@ -769,35 +1194,72 @@ Public Function GetParentFolderName(ByVal strFile As String) As String
 '    rlxGetFullpathFromPathName = strResult
 
 End Function
-'--------------------------------------------------------------
-'  フォルダの作成（再帰）
-'--------------------------------------------------------------
-Public Sub CreateFolder(ByVal strPath As String)
-
-    With FSO
-    
-        If .FolderExists(strPath) Then
-            Exit Sub
-        End If
-    
-        Call CreateFolder(.GetParentFolderName(strPath))
-        
-        .CreateFolder strPath
-    
-    End With
-
-End Sub
-'--------------------------------------------------------------
-'  マイドキュメントフォルダ移動
-'--------------------------------------------------------------
+'>---
+'>#### SetMyDocument(FileIO)
+'>
+'>**Syntax**
+'>
+'>```
+'>FileIO.SetMyDocument(strFile)
+'>```
+'>
+'>**Parameters**
+'>
+'>なし
+'>
+'>**Return Value**
+'>
+'>なし
+'>
+'>**Remarks**
+'>
+'>マイドキュメントフォルダ移動<br>
+'>カレントフォルダをマイドキュメントに移動する。<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* None
+'>
 Public Sub SetMyDocument()
     On Error Resume Next
     ChDir CreateObject("Wscript.Shell").SpecialFolders("MyDocuments")
 End Sub
-'--------------------------------------------------------------
-'　ドライブ名→UNC名変換
-'　ドライブ名(J:等)を指定。エラーの場合ドライブ名をそのまま返却
-'--------------------------------------------------------------
+'>---
+'>#### DriveToUNC(FileIO)
+'>
+'>**Syntax**
+'>
+'>```
+'>uncPath = FileIO.DriveToUNC(strFile)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|strFile|必須|String|ドライブを含むファイル／フォルダを指定|
+'>
+'>**Return Value**
+'>
+'>上位パスのみを返却
+'>
+'>**Remarks**
+'>
+'>ドライブ名→UNC名変換<br>
+'>ドライブ名(J:等)を指定。エラーの場合ドライブ名をそのまま返却<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* None
+'>
 Public Function DriveToUNC(ByVal strPath As String) As String
 
     Dim lStatus As Long
@@ -828,9 +1290,38 @@ Public Function DriveToUNC(ByVal strPath As String) As String
     End If
 
 End Function
-'--------------------------------------------------------------
-'  フォルダを開く
-'--------------------------------------------------------------
+'>---
+'>#### OpenFolder(FileIO)
+'>
+'>**Syntax**
+'>
+'>```
+'>FileIO.OpenFolder(strFile)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|strFolder|必須|String|開くフォルダを指定|
+'>
+'>**Return Value**
+'>
+'>なし
+'>
+'>**Remarks**
+'>
+'>フォルダを開く<br>
+'>指定フォルダをエクスプローラで開く<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* FileIO.OpenFileOnExplorer
+'>
 Public Sub OpenFolder(ByVal strFolder As String)
 
     With CreateObject("WScript.Shell")
@@ -838,13 +1329,40 @@ Public Sub OpenFolder(ByVal strFolder As String)
     End With
     
 End Sub
-'--------------------------------------------------------------
-'  ファイルをエクスプローラーで開いて選択
-'--------------------------------------------------------------
-'  初心者忘備録
-'  https://www.ka-net.org/blog/?p=9180
-'  指定したファイルをエクスプローラーで開いて選択するVBAマクロ
-'--------------------------------------------------------------
+'>---
+'>#### OpenFileOnExplorer(FileIO)
+'>
+'>**Syntax**
+'>
+'>```
+'>FileIO.OpenFileOnExplorer(strFile)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|strFile|必須|String|開くファイルを指定|
+'>
+'>**Return Value**
+'>
+'>なし
+'>
+'>**Remarks**
+'>
+'>ファイルをエクスプローラーで開いて選択<br>
+'>初心者忘備録<br>
+'>https://www.ka-net.org/blog/?p=9180<br>
+'>指定したファイルをエクスプローラーで開いて選択するVBAマクロ<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* FileIO.OpenFolder
+'>
 Public Sub OpenFileOnExplorer(ByVal strFile As String)
 
     '指定したファイルをエクスプローラーで開いて選択する
@@ -855,19 +1373,40 @@ Public Sub OpenFileOnExplorer(ByVal strFile As String)
     End With
 
 End Sub
-''--------------------------------------------------------------
-''  ファイルコピー
-''--------------------------------------------------------------
-'Public Sub CopyFile(ByVal source As String, ByVal destination As String)
-'
-'    With FileSystemObject
-'        .CopyFile source, destination, True
-'    End With
-'
-'End Sub
-'--------------------------------------------------------------
-'  ファイルコピー(タイムスタンプ維持＆読み取り専用の上書きコピー対応＆対象ファイル無でもエラーにならない)
-'--------------------------------------------------------------
+'>---
+'>#### CopyFile(FileIO)
+'>
+'>**Syntax**
+'>
+'>```
+'>FileIO.CopyFile(source, destination, [keepTimestamp = False])
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|source|必須|String|コピー元|
+'>|destination|必須|コピー先|
+'>|keepTimestamp|必須|True:タイムスタンプを維持する/False:維持しない。デフォルトFalse|
+'>
+'>**Return Value**
+'>
+'>なし
+'>
+'>**Remarks**
+'>
+'>ファイルコピー<br>
+'>タイムスタンプ維持＆読み取り専用の上書きコピー対応＆対象ファイル無でもエラーにならない<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* None
+'>
 Public Sub CopyFile(ByVal source As String, _
                     ByVal destination As String, _
            Optional ByVal keepTimestamp As Boolean = False)
@@ -968,9 +1507,39 @@ pass:
     End With
 
 End Sub
-'--------------------------------------------------------------
-'  ファイル／フォルダの作成日時設定
-'--------------------------------------------------------------
+'>---
+'>#### SetCreationTime(FileIO)
+'>
+'>**Syntax**
+'>
+'>```
+'>FileIO.SetCreationTime(stFilePath, dtCreateTime)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|stFilePath|必須|String|作成日付を設定するファイルを指定|
+'>|dtCreateTime|必須|作成日付を設定|
+'>
+'>**Return Value**
+'>
+'>なし
+'>
+'>**Remarks**
+'>
+'>ファイル／フォルダの作成日時設定<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* FileIO.SetLastWriteTime
+'>* FileIO.SetLastAccessTime
+'>
 Public Sub SetCreationTime(ByVal stFilePath As String, ByVal dtCreateTime As Date)
     
     Dim cFileHandle As LongPtr
@@ -985,9 +1554,39 @@ Public Sub SetCreationTime(ByVal stFilePath As String, ByVal dtCreateTime As Dat
     End If
     
 End Sub
-'--------------------------------------------------------------
-'  ファイル／フォルダの更新日時設定
-'--------------------------------------------------------------
+'>---
+'>#### SetLastWriteTime(FileIO)
+'>
+'>**Syntax**
+'>
+'>```
+'>FileIO.SetLastWriteTime(stFilePath, dtCreateTime)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|stFilePath|必須|String|更新日付を設定するファイルを指定|
+'>|dtCreateTime|必須|更新日付を設定|
+'>
+'>**Return Value**
+'>
+'>なし
+'>
+'>**Remarks**
+'>
+'>ファイル／フォルダの更新日時設定<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* FileIO.SetCreationTime
+'>* FileIO.SetLastAccessTime
+'>
 Public Sub SetLastWriteTime(ByVal stFilePath As String, ByVal dtUpdateTime As Date)
     
     Dim cFileHandle As LongPtr
@@ -1002,9 +1601,39 @@ Public Sub SetLastWriteTime(ByVal stFilePath As String, ByVal dtUpdateTime As Da
     End If
 
 End Sub
-'--------------------------------------------------------------
-'  ファイル／フォルダのアクセス日時設定
-'--------------------------------------------------------------
+'>---
+'>#### SetLastAccessTime(FileIO)
+'>
+'>**Syntax**
+'>
+'>```
+'>FileIO.SetLastAccessTime(stFilePath, dtCreateTime)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|stFilePath|必須|String|アクセス日付を設定するファイルを指定|
+'>|dtCreateTime|必須|アクセス日付を設定|
+'>
+'>**Return Value**
+'>
+'>なし
+'>
+'>**Remarks**
+'>
+'>ファイル／フォルダのアクセス日時設定<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* FileIO.SetCreationTime
+'>* FileIO.SetLastWriteTime
+'>
 Public Sub SetLastAccessTime(ByVal stFilePath As String, ByVal dtAccessTime As Date)
 
     Dim cFileHandle As LongPtr
@@ -1053,10 +1682,39 @@ Private Function GetFileHandle(ByVal stFilePath As String) As LongPtr
     GetFileHandle = CreateFileW(StrPtr(stFilePath), GENERIC_READ Or GENERIC_WRITE, FILE_SHARE_READ, 0, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS, 0)
 
 End Function
-
-'--------------------------------------------------------------
-' 元フォルダと同じ構成のフォルダを作成する。
-'--------------------------------------------------------------
+'>---
+'>#### CreateFolderImage(FileIO)
+'>
+'>**Syntax**
+'>
+'>```
+'>FileIO.CreateFolderImage(source, destination)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|source|必須|String|コピー元|
+'>|destination|必須|コピー先|
+'>
+'>**Return Value**
+'>
+'>なし
+'>
+'>**Remarks**
+'>
+'>フォルダイメージコピー<br>
+'>元フォルダと同じ構成のフォルダを作成する。<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* None
+'>
 Public Sub CreateFolderImage(ByVal strSource As String, ByVal strDest As String)
 
     Dim strFolder As String
@@ -1102,16 +1760,4 @@ End Sub
 Private Property Get Title() As String
     Title = ThisWorkbook.BuiltinDocumentProperties("Title").Value
 End Property
-'--------------------------------------------------------------
-'　ファイルを削除するのではなく内容のクリア
-'--------------------------------------------------------------
-Sub TruncateFile(ByVal strFile As String)
 
-    Dim fp As Integer
-
-    '出力ファイルのクリア
-    fp = FreeFile()
-    Open strFile For Output As fp
-    Close fp
-
-End Sub
