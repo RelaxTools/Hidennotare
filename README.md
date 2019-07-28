@@ -12,28 +12,31 @@
 [1.6 ArrayListとDictionaryのシリアライズ化](https://github.com/RelaxTools/Hidennotare/wiki/1.6.-ArrayList%E3%81%A8Dictionary%E3%81%AE%E3%82%B7%E3%83%AA%E3%82%A2%E3%83%A9%E3%82%A4%E3%82%BA%E5%8C%96)  
 [1.7 ArrayListとDictionaryのデシリアライズ化](https://github.com/RelaxTools/Hidennotare/wiki/1.7.-ArrayList%E3%81%A8Dictionary%E3%81%AE%E3%83%87%E3%82%B7%E3%83%AA%E3%82%A2%E3%83%A9%E3%82%A4%E3%82%BA%E5%8C%96)  
 #### 2 リファレンス
-##### 2.1 インターフェイス
-[2.1.1 IConstructor](https://github.com/RelaxTools/Hidennotare/wiki/IConstructor)  
-[2.1.2 IList](https://github.com/RelaxTools/Hidennotare/wiki/IList)  
-[2.1.3 IDictionary](https://github.com/RelaxTools/Hidennotare/wiki/IDictionary)  
-[2.1.4 ICursor](https://github.com/RelaxTools/Hidennotare/wiki/ICursor)  
-[2.1.5 IIterator](https://github.com/RelaxTools/Hidennotare/wiki/IIterator)  
-[2.1.6 IDictionaryAccessor](https://github.com/RelaxTools/Hidennotare/wiki/IDictionaryAccessor)  
-[2.1.7 INewInstance](https://github.com/RelaxTools/Hidennotare/wiki/INewInstance)  
-[2.1.8 IReader](https://github.com/RelaxTools/Hidennotare/wiki/IReader)  
-[2.1.9 IWriter](https://github.com/RelaxTools/Hidennotare/wiki/IWriter)  
-[2.1.10 IComparer](https://github.com/RelaxTools/Hidennotare/wiki/IComparer)  
-[2.1.11 IUsing](https://github.com/RelaxTools/Hidennotare/wiki/IUsing)  
-##### 2.2 クラス
-[2.2.1 ArrayList](https://github.com/RelaxTools/Hidennotare/wiki/ArrayList)  
-[2.2.2 Dictionary](https://github.com/RelaxTools/Hidennotare/wiki/Dictionary)  
-[2.2.3 OrderedDictionary](https://github.com/RelaxTools/Hidennotare/wiki/OrderedDictionary)  
-[2.2.4 SortedDictionary](https://github.com/RelaxTools/Hidennotare/wiki/SortedDictionary)  
-[2.2.5 JSON](https://github.com/RelaxTools/Hidennotare/wiki/JSON)  
-[2.2.6 Clipboard](https://github.com/RelaxTools/Hidennotare/wiki/Clipboard)  
-[2.2.7 FileIO](https://github.com/RelaxTools/Hidennotare/wiki/FileIO)  
-[2.2.8 StdSch](https://github.com/RelaxTools/Hidennotare/wiki/StdSch)  
-[2.2.9 RegExp](https://github.com/RelaxTools/Hidennotare/wiki/RegExp)  
+##### 2.1 標準モジュール
+[2.1.1 Core](https://github.com/RelaxTools/Hidennotare/wiki/Core)  
+[2.1.2 Document](https://github.com/RelaxTools/Hidennotare/wiki/Document)  
+##### 2.2 インターフェイス
+[2.2.1 IComparer](https://github.com/RelaxTools/Hidennotare/wiki/IComparer)  
+[2.2.2 IConstructor](https://github.com/RelaxTools/Hidennotare/wiki/IConstructor)  
+[2.2.3 ICursor](https://github.com/RelaxTools/Hidennotare/wiki/ICursor)  
+[2.2.4 IDictionary](https://github.com/RelaxTools/Hidennotare/wiki/IDictionary)  
+[2.2.5 IDictionaryAccessor](https://github.com/RelaxTools/Hidennotare/wiki/IDictionaryAccessor)  
+[2.2.6 IIterator](https://github.com/RelaxTools/Hidennotare/wiki/IIterator)  
+[2.2.7 IList](https://github.com/RelaxTools/Hidennotare/wiki/IList)  
+[2.2.8 INewInstance](https://github.com/RelaxTools/Hidennotare/wiki/INewInstance)  
+[2.2.9 IReader](https://github.com/RelaxTools/Hidennotare/wiki/IReader)  
+[2.2.10 IUsing](https://github.com/RelaxTools/Hidennotare/wiki/IUsing)  
+[2.2.11 IWriter](https://github.com/RelaxTools/Hidennotare/wiki/IWriter)  
+##### 2.3 クラス
+[2.3.1 ArrayList](https://github.com/RelaxTools/Hidennotare/wiki/ArrayList)  
+[2.3.2 Clipboard](https://github.com/RelaxTools/Hidennotare/wiki/Clipboard)  
+[2.3.3 Dictionary](https://github.com/RelaxTools/Hidennotare/wiki/Dictionary)  
+[2.3.4 FileIO](https://github.com/RelaxTools/Hidennotare/wiki/FileIO)  
+[2.3.5 JSON](https://github.com/RelaxTools/Hidennotare/wiki/JSON)  
+[2.3.6 OrderedDictionary](https://github.com/RelaxTools/Hidennotare/wiki/OrderedDictionary)  
+[2.3.7 RegExp](https://github.com/RelaxTools/Hidennotare/wiki/RegExp)  
+[2.3.8 SortedDictionary](https://github.com/RelaxTools/Hidennotare/wiki/SortedDictionary)  
+[2.3.9 StdSch](https://github.com/RelaxTools/Hidennotare/wiki/StdSch)  
 
 #### 3. 機能一覧
 
