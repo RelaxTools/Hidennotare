@@ -36,14 +36,32 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-' Range読み込みクラス
-'-----------------------------------------------------------------------------------------------------
-' Dim IC As ICursor
-' Set IC = Constructor(New RangeCursor, Renge範囲)
-' Do Until IC.Eof
-'     Debug.Print IC(1).Value '範囲の１列目
-'     IC.MoveNext
-' Loop
+'>### RangeCursor クラス
+'>
+'>**Remarks**
+'>
+'>Range読み込みクラス<br>
+'>指定されたRangeから１アイテムずつ処理を行う。<br>
+'>
+'>**Implements**
+'>
+'>* IConstructor
+'>* ICursor
+'>
+'>**Sample**
+'>
+'>```
+'>Dim IC As ICursor
+'>Set IC = Constructor(New RangeCursor, Selection)
+'>
+'>Do Until IC.Eof
+'>
+'>    Debug.Print IC.Item
+'>
+'>    IC.MoveNext
+'>Loop
+'>```
+'>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements IConstructor

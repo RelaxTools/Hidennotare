@@ -36,17 +36,46 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-' カーソル風コレクション読み込みクラス
-'-----------------------------------------------------------------------------------------------------
-' Dim IC As ICursor
-' Set IC = Constructor(New CollectionCursor, コレクション)
-'
-' Do Until IC.Eof
-'
-'     Debug.Print IC.Item 'コレクションの要素
-'
-'     IC.MoveNext
-' Loop
+'>### CollectionCursor クラス
+'>
+'>**Remarks**
+'>
+'>カーソル風コレクション読み込みクラス<br>
+'>指定されたコレクションから１アイテムずつ処理を行う。<br>
+'>
+'>**Implements**
+'>
+'>* IConstructor
+'>* ICursor
+'>
+'>**Sample**
+'>
+'>```
+'>Dim Col As Collection
+'>Set Col = New Collection
+'>
+'>Col.Add "1"
+'>Col.Add "2"
+'>Col.Add "3"
+'>
+'>Dim IC As ICursor
+'>Set IC = Constructor(New CollectionCursor, Col)
+'>
+'>Do Until IC.Eof
+'>
+'>    Debug.Print IC.Item 'コレクションの要素
+'>
+'>    IC.MoveNext
+'>Loop
+'>```
+'>
+'>**Immediate**
+'>```
+'>1
+'>2
+'>3
+'>```
+'>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements IConstructor

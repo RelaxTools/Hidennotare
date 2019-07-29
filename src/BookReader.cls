@@ -36,14 +36,31 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-'  ブック参照／編集クラス
-'-----------------------------------------------------------------------------------------------------
-'
-' With で使用しブックのオープン。End With でクローズ。
-' 別プロセスのExcelで使用する場合はApplicationオブジェクトを渡す。
-'
-'   With Constructor(New BookReader, ファイル名, 読み取り専用, Applicationオブジェクト)
-'
+'>### BookReader クラス
+'>
+'>**Remarks**
+'>
+'>ブック参照／編集クラス<br>
+'>With で使用しブックのオープン。End With でクローズ。<br>
+'>別プロセスのExcelで使用する場合はApplicationオブジェクトを渡す。<br>
+'>With Constructor(New BookReader, ファイル名, 読み取り専用, Applicationオブジェクト)<br>
+'>
+'>**Sample**
+'>
+'>```
+'>Dim WS As Worksheet
+'>
+'>With Constructor(New BookReader, ファイル名, 読み取り専用, Applicationオブジェクト)
+'>
+'>    Set WS = .VisibleSheets(1)
+'>
+'>End With
+'>```
+'>
+'>**Dependent**
+'>
+'>* IConstructor クラス
+'>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements IConstructor
@@ -65,13 +82,55 @@ End Sub
 Private Sub Class_Terminate()
     CloseFile
 End Sub
-'--------------------------------------------------------------
-' コンストラクタ
-'--------------------------------------------------------------
-' Arg1 - BookName
-' Arg2 - ReadOnly    : True/False(Default True)
-' Arg3 - Application : Excel Application(Default Application)
-'--------------------------------------------------------------
+'>---
+'>#### コンストラクタ
+'>
+'>**Syntax**
+'>
+'>```
+'>Constructor(New BookReader, FileName, [Readonly = True, Application = Excel.Application])
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|FileName|必須|String|ファイル名を設定|
+'>|Readonly|省略可|Boolean|読み取り専用の設定。デフォルトTrue|
+'>|Application|省略可|Object|Applicationオブジェクト。デフォルトApplication|
+'>
+'>**Return Value**
+'>
+'>新しいインスタンス(BookReader)
+'>
+'>**Remarks**
+'>
+'>コンストラクタ<br>
+'>With で生成した場合、End With でブックの Close をします。<br>
+'>
+'>**Example**
+'>
+'>```
+'>Dim strFile As String
+'>Dim WS As Worksheet
+'>
+'>strFile = "C:\Test.xlsx"
+'>
+'>With Constructor(New BookReader, strFile)
+'>
+'>    For Each WS In .VisibleSheets
+'>
+'>        Debug.Print WS.Name
+'>
+'>    Next
+'>
+'>End With
+'>```
+'>
+'>**See also**
+'>
+'>* None
+'>
 Private Function IConstructor_Instancing(ByRef Args As Collection) As Object
 
     Dim strBook As String
@@ -104,9 +163,36 @@ Private Function IConstructor_Instancing(ByRef Args As Collection) As Object
     Set IConstructor_Instancing = Me
 
 End Function
-'-------------------------------------------------
-' 表示されているシートのコレクションを返す。
-'-------------------------------------------------
+'>---
+'>#### VisibleSheets
+'>
+'>**Syntax**
+'>
+'>```
+'>Set collection = object.VisibleSheets()
+'>```
+'>
+'>**Parameters**
+'>
+'>なし
+'>
+'>**Return Value**
+'>
+'>表示シートのコレクションを返却
+'>
+'>**Remarks**
+'>
+'>表示シートCollection<br>
+'>表示シートのみのコレクションを返却する。<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* None
+'>
 Public Property Get VisibleSheets() As Collection
 
     Dim WS As Worksheet
@@ -160,9 +246,38 @@ Private Sub CloseFile()
     End If
 
 End Sub
-'--------------------------------------------------------------
-'　保存
-'--------------------------------------------------------------
+'>---
+'>#### Save
+'>
+'>**Syntax**
+'>
+'>```
+'>object.Save([opt = BookReaderConstants.None])
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|opt|必須|String|カーソルをA1:BookReaderConstants.SetA1に設定<br>なし:BookReaderConstants.None<br>デフォルト:なし|
+'>
+'>**Return Value**
+'>
+'>表示シートのコレクションを返却
+'>
+'>**Remarks**
+'>
+'>表示シートCollection<br>
+'>表示シートのみのコレクションを返却する。<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* None
+'>
 Public Sub Save(Optional ByVal opt As BookReaderConstants = BookReaderConstants.None)
     
     If Not WB.ReadOnly Then

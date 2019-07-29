@@ -36,17 +36,42 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-' カーソル風配列読み込みクラス
-'-----------------------------------------------------------------------------------------------------
-' Dim IC As ICursor
-' Set IC = Constructor(New LineCursor, 配列)
-'
-' Do Until IC.Eof
-'
-'     Debug.Print IC.Item '配列の要素
-'
-'     IC.MoveNext
-' Loop
+'>### LineCursor クラス
+'>
+'>**Remarks**
+'>
+'>カーソル風配列読み込みクラス<br>
+'>指定された配列から１アイテムずつ処理を行う。<br>
+'>
+'>**Implements**
+'>
+'>* IConstructor
+'>* ICursor
+'>
+'>**Sample**
+'>
+'>```
+'>Dim arr As Valiant
+'>arr = Array("1","2","3")
+'>
+'>Dim IC As ICursor
+'>Set IC = Constructor(New LineCursor, arr)
+'>
+'>Do Until IC.Eof
+'>
+'>    Debug.Print IC.Item 'コレクションの要素
+'>
+'>    IC.MoveNext
+'>Loop
+'>```
+'>
+'>**Immediate**
+'>```
+'>1
+'>2
+'>3
+'>```
+'>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements IConstructor

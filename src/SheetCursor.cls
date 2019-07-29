@@ -36,18 +36,30 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-' シート読み込みクラス(Cursor)
-'-----------------------------------------------------------------------------------------------------
-' Dim IC Ad ICursor
-'
-' Set IC = Core.Constructor(New SheetCursor, ActiveSheet, 10, "B")
-'
-' Do Until IC.Eof
-'
-'     IC("C").Value = "XXX" 'Range
-'
-'     IC.MoveNext
-' Loop
+'>### LineCursor クラス
+'>
+'>**Remarks**
+'>
+'>シート読み込みクラス
+'>
+'>**Implements**
+'>
+'>* IConstructor
+'>* ICursor
+'>
+'>**Sample**
+'>
+'>```
+'>Set IC = Core.Constructor(New SheetCursor, ActiveSheet, 10, "B")
+'>
+'>Do Until IC.Eof
+'>
+'>    IC("C").Value = "XXX" 'Range
+'>
+'>    IC.MoveNext
+'>Loop
+'>```
+'>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements IConstructor

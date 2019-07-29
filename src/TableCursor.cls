@@ -36,18 +36,32 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-' テーブル(ListObject)読み込みクラス
-'-----------------------------------------------------------------------------------------------------
-' Dim IC Ad ICursor
+'>### TableCursor クラス
+'>
+'>**Remarks**
+'>
+'>テーブル(ListObject)読み込みクラス
+'>
+'>**Implements**
+'>
+'>* IConstructor
+'>* ICursor
+'>
+'>**Sample**
+'>
+'>```
+'>Dim IC Ad ICursor
 '
-' Set IC = Core.Constructor(New TableCursor, WS.ListObjects(1))
+'>Set IC = Constructor(New TableCursor, WS.ListObjects(1))
 '
-' Do Until IC.Eof
+'>Do Until IC.Eof
 '
-'     IC("Item").Value = "XXX" '列ヘッダ名が使える
+'>    IC("Item").Value = "XXX" '列ヘッダ名が使える
 '
-'     IC.MoveNext
-' Loop
+'>    IC.MoveNext
+'>Loop
+'>```
+'>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements IConstructor

@@ -36,18 +36,32 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-' シート読み込みクラス(Iterator)
-'-----------------------------------------------------------------------------------------------------
-' Dim IT As IIterator
-' Dim r As Range
-'
-' Set IT = Core.Constructor(New SheetIterator, ActiveSheet, 7, "D")
-'
-' For Each r In IT
-'
-'     r("E").Value = "XXX"
-'
-' Next
+'>### SheetIterator クラス
+'>
+'>**Remarks**
+'>
+'>シート読み込みクラス(Iterator)
+'>
+'>**Implements**
+'>
+'>* IConstructor
+'>* ICursor
+'>
+'>**Sample**
+'>
+'>```
+'> Dim IT As IIterator
+'> Dim r As Range
+'>
+'> Set IT = Constructor(New SheetIterator, ActiveSheet, 7, "D")
+'>
+'> For Each r In IT
+'>
+'>     r("E").Value = "XXX"
+'>
+'> Next
+'>```
+'>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements IConstructor

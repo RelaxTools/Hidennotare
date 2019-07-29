@@ -36,7 +36,7 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-'>### 2.2.3 OrderedDictionary クラス
+'>### OrderedDictionary クラス
 '>
 '>**Remarks**
 '>

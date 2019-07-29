@@ -47,6 +47,8 @@ Sub Export()
     Dim obj As Object
     Dim strTo As String
     
+    On Error GoTo e
+    
     strFile = FileIO.BuildPath(FileIO.GetParentFolderName(ThisWorkbook.FullName), "src")
     FileIO.CreateFolder strFile
     
@@ -72,7 +74,17 @@ Sub Export()
 pass:
     Next
     
-    MsgBox "Complete!", vbInformation, "Export"
+    MsgBox "生成しました！", vbInformation, "Markdown"
+    
+    Exit Sub
+e:
+    If Err.Number = 70 Then
+        If Message.Question("他のプログラムで開いています。再試行しますか？") Then
+            Message.Critical "処理を中断しました。"
+        Else
+            Resume
+        End If
+    End If
     
 End Sub
 '-----------------------------------------------------------------------------------------------------
@@ -92,6 +104,8 @@ Sub OutputMarkDown()
     Dim fp As Integer
     Dim bytBuf() As Byte
     
+    On Error GoTo e
+    
     '目次作成用
     Set TC = New ArrayList
     
@@ -104,29 +118,32 @@ Sub OutputMarkDown()
     Dim No1() As Long
     Dim No2() As Long
     Dim No3() As Long
+
     ReDim No1(1 To Level)
     ReDim No2(1 To Level)
     ReDim No3(1 To Level)
-    
-     
+
     '標準モジュールのスタート
      No1(1) = 2
      No1(2) = 1
      No1(3) = 0
-     
+
     'インターフェイスのスタート
      No2(1) = 2
      No2(2) = 2
      No2(3) = 0
-     
+
     'クラスのスタート
      No3(1) = 2
      No3(2) = 3
      No3(3) = 0
     
+    'Hidennotare.wiki フォルダを作成
     strFolder = ThisWorkbook.Path & ".wiki"
     FileIO.CreateFolder strFolder
     
+    
+    'VBComponents の取得順が アルファベット順ではないので、SortedDictionary を使用。
     Dim dic As IDictionary
     Set dic = New SortedDictionary
     
@@ -139,6 +156,7 @@ Sub OutputMarkDown()
         
         Set obj = dic.Item(Key)
         
+        'モジュール名.md を作成する。
         strFile = FileIO.BuildPath(strFolder, obj.Name & ".md")
         
         With obj.CodeModule
@@ -146,17 +164,30 @@ Sub OutputMarkDown()
             Set SB = New StringBuilder
             
             For i = 1 To .CountOfLines
+                
                 '指定位置から１行取得
                 strBuf = .Lines(i, 1)
+                
                 If Left$(strBuf, 2) = "'>" Then
+                    
+                    '------------------------------------------
+                    ' 章番号の生成
+                    '------------------------------------------
                     strMark = Mid$(strBuf, 3)
                     Select Case True
+                        
+                        '標準モジュール
                         Case obj.Type = 1
                            SB.Append LevelNo(strMark, No1(), Level, TC, ContentsLevel, obj.Name)
+                        
+                        '1文字目が"I"、2文字目が大文字の場合、インターフェース
                         Case RegExp.Test(obj.Name, "^I[A-Z]")
                            SB.Append LevelNo(strMark, No2(), Level, TC, ContentsLevel, obj.Name)
+                        
+                        'その他クラス
                         Case Else
                            SB.Append LevelNo(strMark, No3(), Level, TC, ContentsLevel, obj.Name)
+                    
                     End Select
                 End If
             Next i
@@ -164,8 +195,10 @@ Sub OutputMarkDown()
             '対象があれば出力する
             If SB.Length > 0 Then
                 
+                'ファイルを空にする。
                 FileIO.TruncateFile strFile
                 
+                'UTF8 & LF で保存
                 fp = FreeFile()
                 Open strFile For Binary As fp
                 
@@ -176,6 +209,7 @@ Sub OutputMarkDown()
             End If
             
             Set SB = Nothing
+        
         End With
     
     Next
@@ -185,9 +219,12 @@ Sub OutputMarkDown()
     
         Dim strStatic As String
         
+        'Wikiの目次ファイル名
         strFile = FileIO.BuildPath(strFolder, "_Sidebar.md")
         
-        '目次の静的コンテンツ部分を取得
+        '------------------------------------------
+        ' 目次の静的コンテンツ部分を取得
+        '------------------------------------------
         strStatic = GetStaticContents(strFile)
         
         'ソート
@@ -209,8 +246,10 @@ Sub OutputMarkDown()
             End If
         Next
         
+        '元ファイルをクリア
         FileIO.TruncateFile strFile
         
+        '静的コンテンツと生成した目次をUTF8 & LF にて出力。
         fp = FreeFile()
         Open strFile For Binary As fp
         
@@ -222,10 +261,20 @@ Sub OutputMarkDown()
         
         Put #fp, , bytBuf
         Close fp
+    
     End If
     
-    MsgBox "Complete!", vbInformation, "Markdown"
-
+    MsgBox "生成しました！", vbInformation, "Markdown"
+    
+    Exit Sub
+e:
+    If Err.Number = 70 Then
+        If Message.Question("他のプログラムで開いています。再試行しますか？") Then
+            Message.Critical "処理を中断しました。"
+        Else
+            Resume
+        End If
+    End If
 End Sub
 '---------------------------------------------------
 ' 章番号生成
@@ -237,6 +286,7 @@ Private Function LevelNo(ByVal strBuf As String, No() As Long, ByVal lngLevel As
     Dim lngLen As Long
     Dim i As Long
     
+    '章番号(###～)の場合
     Set Col = RegExp.Execute(strBuf, "^#+ ")
 
     If Col.Count > 0 Then
@@ -247,40 +297,26 @@ Private Function LevelNo(ByVal strBuf As String, No() As Long, ByVal lngLevel As
         Dim strRight As String
         
         strLeft = Col(1).Value
-        strRight = Mid$(strBuf, Col(1).Length + 1)
+        strRight = Mid$(strBuf, Col(1).Length)
         
+        '章番号生成レベル以上であれば、章番号作成
         If lngLen <= lngLevel Then
-        
-            '初期値があるか？
-            Dim c As Collection
-            
-            Set c = RegExp.Execute(strRight, "^[0-9.]+")
-        
-            If c.Count > 0 Then
 
-                strRight = Mid$(strRight, c(1).Length + 2)
-
-            End If
-
-            '初回上位レベルが0の場合1を設定
-            For i = 1 To lngLen - 1
-                If No(i) = 0 Then
-                    No(i) = 1
-                End If
-            Next
-
+            '章番号をカウントアップ
             No(lngLen) = No(lngLen) + 1
 
-            Set SB = New StringBuilder
-            For i = 1 To lngLen
-                SB.Append CStr(No(i))
-            Next
-
+            '現レベル以下の番号をクリア
             For i = lngLen + 1 To lngLevel
                 No(i) = 0
             Next
 
-            LevelNo = strLeft & SB.ToJoin(".") & " " & strRight
+            '章番号の生成
+            Set SB = New StringBuilder
+            For i = 1 To lngLen
+                SB.Append CStr(No(i))
+            Next
+            
+            LevelNo = strLeft & SB.ToJoin(".") & strRight
         
         
             '目次作成レベル以上であれば目次作成
@@ -288,14 +324,16 @@ Private Function LevelNo(ByVal strBuf As String, No() As Long, ByVal lngLevel As
             
                 Dim strContent As String
                 
+                'Markdown のリンク見出しとリンク作成
                 strContent = "[" & Mid$(LevelNo, InStr(LevelNo, " ") + 1) & "](" & TARGET_URL & Replace$(strName, " ", "-") & ")  "
                 
-                '目次のエリアが限られるので目次のみ種類は削除
+                '目次のエリアが限られるので種類は削除
                 strContent = Replace$(strContent, " クラス", "")
                 strContent = Replace$(strContent, " インターフェイス", "")
                 strContent = Replace$(strContent, " 標準モジュール", "")
             
                 TC.Add strContent
+            
             End If
         
         Else
@@ -305,10 +343,6 @@ Private Function LevelNo(ByVal strBuf As String, No() As Long, ByVal lngLevel As
         LevelNo = strBuf
     End If
 
-End Function
-'URLエンコード
-Private Function EncodeURLFnc(ByVal sWord As String) As String
-    EncodeURLFnc = Application.WorksheetFunction.EncodeURL(sWord)
 End Function
 '---------------------------------------------------
 '目次から静的コンテンツ部分を抜き出す

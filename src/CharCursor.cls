@@ -36,17 +36,43 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-' カーソル風文字列読み込みクラス
-'-----------------------------------------------------------------------------------------------------
-' Dim IC As ICursor
-' Set IC = Constructor(New CharCursor, 文字列)
-'
-' Do Until IC.Eof
-'
-'     Debug.Print IC.Item '1文字
-'
-'     IC.MoveNext
-' Loop
+'>### CharCursor クラス
+'>
+'>**Remarks**
+'>
+'>カーソル風文字列読み込みクラス<br>
+'>指定された文字列から１文字ずつ処理を行う。<br>
+'>
+'>**Implements**
+'>
+'>* IConstructor
+'>* ICursor
+'>
+'>**Sample**
+'>
+'>```
+'>Dim strBuf As String
+'>strBuf ="123"
+'>
+'>Dim IC As ICursor
+'>Set IC = Constructor(New CharCursor, strBuf)
+'>
+'>Do Until IC.Eof
+'>
+'>    Debug.Print IC.Item '1文字
+'>
+'>    IC.MoveNext
+'>
+'>Loop
+'>```
+'>
+'>**Immediate**
+'>```
+'>1
+'>2
+'>3
+'>```
+'>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements IConstructor

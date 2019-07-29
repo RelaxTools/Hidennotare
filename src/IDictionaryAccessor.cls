@@ -36,7 +36,7 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-'>### 2.1.6 IDictionaryAccessor インターフェイス
+'>### IDictionaryAccessor インターフェイス
 '>
 '>**Remarks**
 '>
