@@ -259,16 +259,15 @@ End Sub
 '>
 '>|Name|Required/Optional|Data type|Description|
 '>---|---|---|---
-'>|opt|必須|String|カーソルをA1:BookReaderConstants.SetA1に設定<br>なし:BookReaderConstants.None<br>デフォルト:なし|
+'>|opt|必須|String|保存時にカーソルをA1にする。:BookReaderConstants.SetA1に設定<br>なし:BookReaderConstants.None<br>デフォルト:なし|
 '>
 '>**Return Value**
 '>
-'>表示シートのコレクションを返却
+'>なし
 '>
 '>**Remarks**
 '>
-'>表示シートCollection<br>
-'>表示シートのみのコレクションを返却する。<br>
+'>現在のブックを保存する。<br>
 '>
 '>**Example**
 '>

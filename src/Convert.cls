@@ -37,16 +37,55 @@ Option Explicit
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-' 変換クラス
+'>### Convert クラス
+'>
+'>**Remarks**
+'>
+'>変換クラス<br>
+'>**このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。**
+'>
+'>**Dependent**
+'>
+'>* StringBuilder
+'>* Message
+'>
 '-----------------------------------------------------------------------------------------------------
 Private Declare PtrSafe Function MultiByteToWideChar Lib "kernel32" (ByVal CodePage As Long, ByVal dwFlags As Long, ByVal lpMultiByteStr As LongPtr, ByVal cchMultiByte As Long, ByVal lpWideCharStr As LongPtr, ByVal cchWideChar As Long) As Long
 Private Declare PtrSafe Function WideCharToMultiByte Lib "kernel32" (ByVal CodePage As Long, ByVal dwFlags As Long, ByVal lpWideCharStr As LongPtr, ByVal cchWideChar As Long, ByVal lpMultiByteStr As LongPtr, ByVal cchMultiByte As Long, ByVal lpDefaultChar As LongPtr, ByVal lpUsedDefaultChar As Long) As Long
 
 Private Const CP_UTF8 As Long = 65001
 Private Const MB_PRECOMPOSED As Long = &H1
-'------------------------------------------------------------------------------------------------------------------------
-' UTF-8 → UTF-16(LE)
-'------------------------------------------------------------------------------------------------------------------------
+'>---
+'>#### FromUTF8(Convert)
+'>
+'>**Syntax**
+'>
+'>```
+'>string = Convert.FromUTF8(bytBuf())
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|bytBuf()|必須|byte()|UTF8からString型に変換|
+'>
+'>**Return Value**
+'>
+'>String型(UTF16LE)
+'>
+'>**Remarks**
+'>
+'>Byte型配列(UTF8)からString型(UTF16LE)に変換<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* Convert.ToUTF8
+'>
 Function FromUTF8(ByRef bytBuf() As Byte) As String
     
     Dim strBuf As String
@@ -68,9 +107,37 @@ Function FromUTF8(ByRef bytBuf() As Byte) As String
     FromUTF8 = strBuf
 
 End Function
-'------------------------------------------------------------------------------------------------------------------------
-' UTF-16(LE) → UTF-8
-'------------------------------------------------------------------------------------------------------------------------
+'>---
+'>#### ToUTF8(Convert)
+'>
+'>**Syntax**
+'>
+'>```
+'>byte() = Convert.ToUTF8(strBuf)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>strBuf|必須|String|UTF8からString型に変換|
+'>
+'>**Return Value**
+'>
+'>byte配列(UTF8)
+'>
+'>**Remarks**
+'>
+'>String型(UTF16LE)をByte型配列(UTF8)に変換<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* Convert.FromUTF8
+'>
 Function ToUTF8(ByVal strBuf As String) As Byte()
     
     If Len(strBuf) = 0 Then
@@ -90,9 +157,37 @@ Function ToUTF8(ByVal strBuf As String) As Byte()
     ToUTF8 = bytBuf
 
 End Function
-'----------------------------------------------------------------------------------
-'　文字列のエスケープ
-'----------------------------------------------------------------------------------
+'>---
+'>#### Escape(Convert)
+'>
+'>**Syntax**
+'>
+'>```
+'>string = Convert.Escape(strBuf)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>strBuf|必須|String|制御文字をエスケープする文字列を指定|
+'>
+'>**Return Value**
+'>
+'>エスケープ後の文字列
+'>
+'>**Remarks**
+'>
+'>文字列のエスケープ<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* Convert.UnEscape
+'>
 Public Function Escape(ByVal v As String) As String
 
     Dim strChr As String
@@ -133,11 +228,38 @@ Public Function Escape(ByVal v As String) As String
     Escape = SB.ToString
 
 End Function
-'---------------------------------------------------------------------
-'　文字列のアンエスケープ
-'---------------------------------------------------------------------
+'>---
+'>#### UnEscape(Convert)
+'>
+'>**Syntax**
+'>
+'>```
+'>string = Convert.UnEscape(strBuf)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>strBuf|必須|String|アンエスケープする文字列を指定|
+'>
+'>**Return Value**
+'>
+'>アンエスケープ後の文字列
+'>
+'>**Remarks**
+'>
+'>文字列のアンエスケープ<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* Convert.Escape
+'>
 Public Function UnEscape(ByVal v As String) As String
-    Const PROC_NAME As String = ".EscDecode"
 
     Dim strChr As String
     Dim strBuf As String
@@ -193,57 +315,37 @@ Public Function UnEscape(ByVal v As String) As String
     UnEscape = SB.ToString
 
 End Function
-'--------------------------------------------------------------
-'  UNICODE対応ひらがな→カタカナ変換
-'--------------------------------------------------------------
-Public Function ToKatakana(ByVal strBuf As String, Optional ByVal flag As Boolean = False) As String
-
-    Dim bytBuf() As Byte
-    Dim retBuf() As Byte
-    Dim lngBuf As Long
-    Dim i As Long
-    Dim lngLen As Long
-    Dim lngConv As Long
-    Dim lngOpt As Long
-    
-    lngLen = 0
-    
-    If Len(strBuf) = 0 Then
-        ToKatakana = ""
-        Exit Function
-    End If
-    
-    bytBuf = strBuf
-    retBuf = strBuf
-    
-    If flag Then
-        lngOpt = &H3096&
-    Else
-        lngOpt = &H3094&
-    End If
-    
-    For i = LBound(bytBuf) To UBound(bytBuf) Step 2
-    
-        lngBuf = Math.LShift(bytBuf(i + 1), 8) + bytBuf(i)
-    
-        Select Case lngBuf
-            'ひらがな
-            Case &H3041& To lngOpt, &H309D&, &H309E&
-            
-                lngConv = lngBuf + &H60&
-                retBuf(i) = Math.LByte(lngConv)
-                retBuf(i + 1) = Math.UByte(lngConv)
-            
-        End Select
-    
-    Next
-    
-    ToKatakana = retBuf()
-
-End Function
-'--------------------------------------------------------------
-'  UNICODE対応カタカナ→ひらがな変換
-'--------------------------------------------------------------
+'>---
+'>#### ToHiragana(Convert)
+'>
+'>**Syntax**
+'>
+'>```
+'>string = Convert.ToHiragana(strBuf, [flag = False])
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>strBuf|必須|カタカナからひらがなに変換|
+'>
+'>**Return Value**
+'>
+'>ひらがなに変換された文字列
+'>
+'>**Remarks**
+'>
+'>UNICODE対応ひらがな→カタカナ変換<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* Convert.ToKatakana
+'>
 Public Function ToHiragana(ByVal strBuf As String, Optional ByVal flag As Boolean = False) As String
 
     Dim bytBuf() As Byte
@@ -287,6 +389,82 @@ Public Function ToHiragana(ByVal strBuf As String, Optional ByVal flag As Boolea
     Next
     
     ToHiragana = retBuf()
+
+End Function
+'>---
+'>#### ToKatakana(Convert)
+'>
+'>**Syntax**
+'>
+'>```
+'>string = Convert.ToKatakana(strBuf, [flag = False])
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>strBuf|必須|ひらがなからカタカナに変換|
+'>
+'>**Return Value**
+'>
+'>カタカナに変換された文字列
+'>
+'>**Remarks**
+'>
+'>UNICODE対応ひらがな→カタカナ変換換<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* Convert.ToHiragana
+'>
+Public Function ToKatakana(ByVal strBuf As String, Optional ByVal flag As Boolean = False) As String
+
+    Dim bytBuf() As Byte
+    Dim retBuf() As Byte
+    Dim lngBuf As Long
+    Dim i As Long
+    Dim lngLen As Long
+    Dim lngConv As Long
+    Dim lngOpt As Long
+    
+    lngLen = 0
+    
+    If Len(strBuf) = 0 Then
+        ToKatakana = ""
+        Exit Function
+    End If
+    
+    bytBuf = strBuf
+    retBuf = strBuf
+    
+    If flag Then
+        lngOpt = &H3096&
+    Else
+        lngOpt = &H3094&
+    End If
+    
+    For i = LBound(bytBuf) To UBound(bytBuf) Step 2
+    
+        lngBuf = Math.LShift(bytBuf(i + 1), 8) + bytBuf(i)
+    
+        Select Case lngBuf
+            'ひらがな
+            Case &H3041& To lngOpt, &H309D&, &H309E&
+            
+                lngConv = lngBuf + &H60&
+                retBuf(i) = Math.LByte(lngConv)
+                retBuf(i + 1) = Math.UByte(lngConv)
+            
+        End Select
+    
+    Next
+    
+    ToKatakana = retBuf()
 
 End Function
 '--------------------------------------------------------------
