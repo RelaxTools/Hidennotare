@@ -272,3 +272,40 @@ Sub IsDictionary_Sample()
 
 
 End Sub
+Sub web()
+
+    'http://weather.livedoor.com/weather_hacks/webservice
+    Dim strBuf As String
+    Dim v As IDictionary
+    
+    strBuf = Application.WorksheetFunction.WebService("http://weather.livedoor.com/forecast/webservice/json/v1?city=120010")
+
+    
+    Dim dic As IDictionary
+    
+    Set dic = JSON.ParseJSON(strBuf)
+'    Debug.Print strBuf
+
+    Dim lst As IList
+    Set lst = dic.Item("forecasts")
+
+    For Each v In lst
+    
+        Debug.Print v.Item("date")
+        Debug.Print v.Item("dateLabel")
+        Debug.Print v.Item("telop")
+        If IsEmpty(v.Item("temperature").Item("max")) Then
+            Debug.Print ""
+        Else
+           Debug.Print v.Item("temperature").Item("max").Item("celsius")
+        End If
+        If IsEmpty(v.Item("temperature").Item("min")) Then
+            Debug.Print ""
+        Else
+           Debug.Print v.Item("temperature").Item("min").Item("celsius")
+        End If
+    
+    Next
+
+
+End Sub

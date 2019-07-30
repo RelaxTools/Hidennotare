@@ -434,7 +434,7 @@ Private Function ParseString(strJSON As String) As String
     strJSON = Mid$(strJSON, 2, Len(strJSON) - 2)
     
     '•¶Žš—ñ‚ÌUnEscape
-    ParseString = Convert.UnEscape(strJSON)
+    ParseString = Convert.Unescape(strJSON)
 
 End Function
 '---------------------------------------------------------------------

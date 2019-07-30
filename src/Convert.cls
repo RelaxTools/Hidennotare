@@ -186,7 +186,7 @@ End Function
 '>
 '>**See also**
 '>
-'>* Convert.UnEscape
+'>* Convert.Unescape
 '>
 Public Function Escape(ByVal v As String) As String
 
@@ -229,12 +229,12 @@ Public Function Escape(ByVal v As String) As String
 
 End Function
 '>---
-'>#### UnEscape(Convert)
+'>#### Unescape(Convert)
 '>
 '>**Syntax**
 '>
 '>```
-'>string = Convert.UnEscape(strBuf)
+'>string = Convert.Unescape(strBuf)
 '>```
 '>
 '>**Parameters**
@@ -259,7 +259,7 @@ End Function
 '>
 '>* Convert.Escape
 '>
-Public Function UnEscape(ByVal v As String) As String
+Public Function Unescape(ByVal v As String) As String
 
     Dim strChr As String
     Dim strBuf As String
@@ -275,8 +275,8 @@ Public Function UnEscape(ByVal v As String) As String
         Select Case strChr
             Case "\u"
             
-                If i + 6 > Len(v) Then
-                    Message.Throw 1, Me, "UnEscape", "format error"
+                If i + 6 - 1 > Len(v) Then
+                    Message.Throw 1, Me, "Unescape", "format error"
                 End If
             
                 SB.Append ChrW$(Val("&H" & Mid$(v, i + 2, 4)))
@@ -312,7 +312,7 @@ Public Function UnEscape(ByVal v As String) As String
 
     Loop
 
-    UnEscape = SB.ToString
+    Unescape = SB.ToString
 
 End Function
 '>---

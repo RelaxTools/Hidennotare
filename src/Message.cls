@@ -104,7 +104,7 @@ Private Function PrivatePlaceHolder(ByVal strMsg As String, ByVal p As Variant) 
     If Not mLang Is Nothing Then
         strMsg = mLang.Trunslate(strMsg)
     Else
-        strMsg = Convert.UnEscape(strMsg)
+        strMsg = Convert.Unescape(strMsg)
     End If
     
     If UBound(p) >= 0 Then
