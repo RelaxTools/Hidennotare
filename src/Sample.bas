@@ -1,4 +1,5 @@
 Attribute VB_Name = "Sample"
+Option Private Module
 Option Explicit
 
 Sub ICursor_Sample()
@@ -49,7 +50,7 @@ Sub StringBuilder_Sample()
     S2.Append "blue", True
 
     '文字列の連結（カンマ区切り）
-    Debug.Print "[" & S2.ToJoin(",") & "]"
+    Debug.Print S2.ToString(",", "[", "]")
 
 
 End Sub
@@ -58,20 +59,20 @@ Sub Message_Sample()
 
 
     'Information メッセージ
-    Message.Information "サンプルです。"
+    message.Information "サンプルです。"
 
     '改行する場合
-    Message.Information "サンプルです。\n改行も簡単に使えます。"
+    message.Information "サンプルです。\n改行も簡単に使えます。"
 
     'リプレースホルダを使用する場合
-    Message.Information "サンプルです。{0}のだけでなく{1}もある", "金", "名誉"
+    message.Information "サンプルです。{0}のだけでなく{1}もある", "金", "名誉"
     
     'ステータスバー
-    Message.StatusBar "サンプルです。{0}のだけでなく{1}もある", "金", "名誉"
+    message.StatusBar "サンプルです。{0}のだけでなく{1}もある", "金", "名誉"
 
     
     'リプレースホルダの文字列を返却
-    Debug.Print Message.PlaceHolder("サンプルです。{0}のだけでなく{1}もある", "金", "名誉")
+    Debug.Print message.PlaceHolder("サンプルです。{0}のだけでなく{1}もある", "金", "名誉")
 
 
 End Sub
@@ -272,7 +273,7 @@ Sub IsDictionary_Sample()
 
 
 End Sub
-Sub web()
+Sub Web()
 
     'http://weather.livedoor.com/weather_hacks/webservice
     Dim strBuf As String

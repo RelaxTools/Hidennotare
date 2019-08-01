@@ -88,7 +88,7 @@ End Sub
 '>**Syntax**
 '>
 '>```
-'>Constructor(New BookReader, FileName, [Readonly = True, Application = Excel.Application])
+'>Set ret Constructor(New BookReader, FileName, [Readonly = True, Application = Excel.Application])
 '>```
 '>
 '>**Parameters**
@@ -101,7 +101,9 @@ End Sub
 '>
 '>**Return Value**
 '>
-'>新しいインスタンス(BookReader)
+'>|Name|Data type|Description|
+'>---|---|---
+'>|ret|BookReader|新しいインスタンス(BookReader)|
 '>
 '>**Remarks**
 '>
@@ -169,7 +171,7 @@ End Function
 '>**Syntax**
 '>
 '>```
-'>Set collection = object.VisibleSheets()
+'>Set col = object.VisibleSheets()
 '>```
 '>
 '>**Parameters**
@@ -178,7 +180,9 @@ End Function
 '>
 '>**Return Value**
 '>
-'>表示シートのコレクションを返却
+'>|Name|Data type|Description|
+'>---|---|---
+'>|col|Collection|表示シートのコレクションを返却|
 '>
 '>**Remarks**
 '>
@@ -214,13 +218,13 @@ End Property
 Private Sub OpenFile(ByVal strBook As String, ByVal blnReadOnly As Boolean)
 
     If Not FileIO.FileExists(strBook) Then
-        Message.Throw 1, Me, "OpenFile", "Excelファイルが見つかりません。({0})", FileIO.GetFileName(strBook)
+        Err.Raise 512 + 1, TypeName(Me) & ".OpenFile", "not exists file. (" & strBook & ")"
     End If
 
     Dim objWB As Workbook
     For Each objWB In XL.Workbooks
         If LCase(objWB.FullName) = LCase(strBook) Then
-            Message.Throw 2, Me, "OpenFile", "すでにExcelファイルが開かれています。({0})", FileIO.GetFileName(strBook)
+            Err.Raise 512 + 1, TypeName(Me) & ".OpenFile", "already opened excel file. (" & strBook & ")"
         End If
     Next
     

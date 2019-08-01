@@ -132,7 +132,7 @@ Private Sub IWriter_Append(ByVal Args As Variant)
             SB.Append AddQuot(c)
         Next
         'TextWriter‚ÉˆÏ÷‚·‚éB
-        IR.Append SB.ToJoin(mDelimiter)
+        IR.Append SB.ToString(mDelimiter)
     Else
         'TextWriter‚ÉˆÏ÷‚·‚éB
         IR.Append AddQuot(Args)

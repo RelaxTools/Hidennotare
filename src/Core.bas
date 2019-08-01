@@ -35,11 +35,8 @@ Attribute VB_Name = "Core"
 '>* コンストラクタ生成を仲介するヘルパ関数等。
 '>
 '-----------------------------------------------------------------------------------------------------
+Option Private Module
 Option Explicit
-
-'Callback用
-Private mCallback As IDictionary
-
 '-----------------------------------------------------------------------------------------------------
 ' コンストラクタ生成
 '-----------------------------------------------------------------------------------------------------
@@ -77,7 +74,7 @@ Public Function Constructor(ByRef obj As Object, ParamArray Args() As Variant) A
     
     'オブジェクトが返却されなかった場合エラー
     If Constructor Is Nothing Then
-        Message.Throw 1, "ClassHelper", "Constructor", "Argument Error"
+        Error.Raise 512 + 1, "Core.Constructor", "Argument Error"
     End If
 
 End Function
@@ -100,49 +97,6 @@ Public Property Let SetVar(outVariable As Variant, inExpression As Variant)
     End Select
 
 End Property
-'---------------------------------------------------------------------------------------------------
-'　Callbackの際のInstallメソッド
-'---------------------------------------------------------------------------------------------------
-Public Function InstallCallback(MH As Callback) As String
-
-    Dim Key As String
-
-    If mCallback Is Nothing Then
-        Set mCallback = New Dictionary
-    End If
-    
-    Key = CStr(ObjPtr(MH))
-    
-    mCallback.Add Key, MH
-    
-    InstallCallback = Key
-    
-End Function
-'---------------------------------------------------------------------------------------------------
-'　Callbackの際のUnInstallメソッド
-'---------------------------------------------------------------------------------------------------
-Public Sub UninstallCallback(ByVal Key As String)
-
-    If mCallback.ContainsKey(Key) Then
-        mCallback.Remove Key
-    End If
-    
-End Sub
-'---------------------------------------------------------------------------------------------------
-'　Callbackの際に呼び出されるメソッド
-'---------------------------------------------------------------------------------------------------
-Public Function OnActionCallback(ByVal Key As String, ByVal lngEvent As Long, ByVal opt As String)
-
-    Dim MH As Callback
-    
-    If mCallback.ContainsKey(Key) Then
-        
-        Set MH = mCallback(Key)
-        Call MH.OnActionCallback(lngEvent, opt)
-        
-    End If
-
-End Function
 '---------------------------------------------------------------------------------------------------
 ' Dictionary判定
 '---------------------------------------------------------------------------------------------------
@@ -173,4 +127,68 @@ Public Function IsList(v As Variant) As Boolean
             IsList = False
     End Select
 
+End Function
+'>---
+'>#### CastICompatibleProperty
+'>
+'>**Syntax**
+'>
+'>```
+'>Set obj = Convert.CastICompatibleProperty(inObj)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>inObj|必須|ICompatiblePropertyに対応したオブジェクト|
+'>
+'>**Return Value**
+'>
+'>ICompatiblePropertyにキャストされたオブジェクト
+'>
+'>**Remarks**
+'>
+'>ICompatibleProperty変換<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* ICompatibleProperty
+'>
+Public Function CastICompatibleProperty(ByRef obj As Object) As ICompatibleProperty
+    Set CastICompatibleProperty = obj
+End Function
+'-------------------------------------------------
+' NewInstance
+'-------------------------------------------------
+Public Function GetNewInstance(obj As INewInstance) As Object
+    Set GetNewInstance = obj.NewInstance
+End Function
+'------------------------------------------------------------------------------------------------------------------------
+' 上位バイト取得
+'------------------------------------------------------------------------------------------------------------------------
+Public Function UByte(ByVal lngValue As Long) As Long
+    UByte = RShift((lngValue And &HFF00&), 8)
+End Function
+'------------------------------------------------------------------------------------------------------------------------
+' 下位バイト取得
+'------------------------------------------------------------------------------------------------------------------------
+Public Function LByte(ByVal lngValue As Long) As Long
+    LByte = lngValue And &HFF&
+End Function
+'------------------------------------------------------------------------------------------------------------------------
+' 左シフト
+'------------------------------------------------------------------------------------------------------------------------
+Public Function LShift(ByVal lngValue As Long, ByVal lngKeta As Long) As Long
+    LShift = lngValue * (2 ^ lngKeta)
+End Function
+'------------------------------------------------------------------------------------------------------------------------
+' 右シフト
+'------------------------------------------------------------------------------------------------------------------------
+Public Function RShift(ByVal lngValue As Long, ByVal lngKeta As Long) As Long
+    RShift = lngValue \ (2 ^ lngKeta)
 End Function

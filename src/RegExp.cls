@@ -87,7 +87,9 @@ End Property
 '>
 '>**Return Value**
 '>
-'>マッチ:True / アンマッチ:False
+'>|Name|Data type|Description|
+'>---|---|---
+'>|flg|Boolean|マッチ:True / アンマッチ:False|
 '>
 '>**Remarks**
 '>
@@ -125,7 +127,7 @@ End Function
 '>**Syntax**
 '>
 '>```
-'>string = RegExp.Replace(strText, strExp, strReplace, [blnIgnoreCase = False])
+'>ret = RegExp.Replace(strText, strExp, strReplace, [blnIgnoreCase = False])
 '>```
 '>
 '>**Parameters**
@@ -139,7 +141,9 @@ End Function
 '>
 '>**Return Value**
 '>
-'>置換後の文字列
+'>|Name|Data type|Description|
+'>---|---|---
+'>|ret|String|置換後の文字列|
 '>
 '>**Remarks**
 '>
@@ -170,7 +174,7 @@ End Function
 '>**Syntax**
 '>
 '>```
-'>Set object = RegExp.Execute(strText, strExp, [blnIgnoreCase = False])
+'>Set ret = RegExp.Execute(strText, strExp, [blnIgnoreCase = False])
 '>```
 '>
 '>**Parameters**
@@ -183,7 +187,9 @@ End Function
 '>
 '>**Return Value**
 '>
-'>Collection<MatchBean>を返却。
+'>|Name|Data type|Description|
+'>---|---|---
+'>|ret|Collection<MatchBean>|Collection<MatchBean>を返却|
 '>
 '>**Remarks**
 '>
@@ -244,7 +250,7 @@ End Function
 '>**Syntax**
 '>
 '>```
-'>boolean = RegExp.Check(strExp)
+'>flg = RegExp.Check(strExp)
 '>```
 '>
 '>**Parameters**
@@ -255,7 +261,9 @@ End Function
 '>
 '>**Return Value**
 '>
-'>エラー:True/正常:False
+'>|Name|Data type|Description|
+'>---|---|---
+'>|flg|Boolean|エラー:True/正常:False|
 '>
 '>**Remarks**
 '>

@@ -62,7 +62,7 @@ Option Explicit
 '>**Syntax**
 '>
 '>```
-'>boolean = StdSch.Test(strText, strExp, [blnIgnoreCase = False, blnMatchByte = False, blnWhole = False])
+'>flg = StdSch.Test(strText, strExp, [blnIgnoreCase = False, blnMatchByte = False, blnWhole = False])
 '>```
 '>
 '>**Parameters**
@@ -77,7 +77,9 @@ Option Explicit
 '>
 '>**Return Value**
 '>
-'>マッチ:True / アンマッチ:False
+'>|Name|Data type|Description|
+'>---|---|---
+'>|flg|Boolean|マッチ:True / アンマッチ:False|
 '>
 '>**Remarks**
 '>
@@ -122,7 +124,7 @@ End Function
 '>**Syntax**
 '>
 '>```
-'>string = StdSch.Replace(strText, strExp, strReplace, [blnIgnoreCase = False, blnMatchByte = False, blnWhole = False])
+'>ret = StdSch.Replace(strText, strExp, strReplace, [blnIgnoreCase = False, blnMatchByte = False, blnWhole = False])
 '>```
 '>
 '>**Parameters**
@@ -138,7 +140,9 @@ End Function
 '>
 '>**Return Value**
 '>
-'>置換後の文字列
+'>|Name|Data type|Description|
+'>---|---|---
+'>|ret|String|置換後の文字列|
 '>
 '>**Remarks**
 '>
@@ -185,7 +189,7 @@ End Function
 '>**Syntax**
 '>
 '>```
-'>Set object = StdSch.Execute(strText, strExp, [blnIgnoreCase = False, blnMatchByte = False, blnWhole = False])
+'>Set ret = StdSch.Execute(strText, strExp, [blnIgnoreCase = False, blnMatchByte = False, blnWhole = False])
 '>```
 '>
 '>**Parameters**
@@ -200,7 +204,9 @@ End Function
 '>
 '>**Return Value**
 '>
-'>Collection<MatchBean>を返却。
+'>|Name|Data type|Description|
+'>---|---|---
+'>|ret|Collection<MatchBean>|Collection<MatchBean>を返却|
 '>
 '>**Remarks**
 '>
@@ -276,7 +282,7 @@ End Function
 '>**Syntax**
 '>
 '>```
-'>boolean = StdSch.Check(strExp)
+'>flg = StdSch.Check(strExp)
 '>```
 '>
 '>**Parameters**
@@ -287,7 +293,9 @@ End Function
 '>
 '>**Return Value**
 '>
-'>常にTrueを返却
+'>|Name|Data type|Description|
+'>---|---|---
+'>|flg|Boolean|常にTrueを返却|
 '>
 '>**Remarks**
 '>

@@ -158,11 +158,11 @@ Public Sub Export()
     Set Service = Nothing
     Set Locator = Nothing
     
-    Message.Information "登録ファイルを保存しました。\n移行先で登録ファイルを実行するとレジストリに反映されます。"
+    message.Information "登録ファイルを保存しました。\n移行先で登録ファイルを実行するとレジストリに反映されます。"
     Exit Sub
 
 err_Handle:
-    Message.Information "登録ファイルの保存に失敗しました。"
+    message.Information "登録ファイルの保存に失敗しました。"
 End Sub
 '--------------------------------------------------------------
 'アプリケーション名取得

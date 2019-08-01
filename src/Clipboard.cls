@@ -125,7 +125,7 @@ Private Const LR_COPYRETURNORG As Long = &H4
 '>**Syntax**
 '>
 '>```
-'>String = Clipboard.getObjectLink()
+'>ret = Clipboard.getObjectLink()
 '>```
 '>
 '>**Parameters**
@@ -134,12 +134,14 @@ Private Const LR_COPYRETURNORG As Long = &H4
 '>
 '>**Return Value**
 '>
-'>Excelのコピー元アドレス
+'>|Name|Data type|Description|
+'>---|---|---
+'>|ret|String|Excelのコピー元アドレス|
 '>
 '>**Remarks**
 '>
 '>コピー元アドレスの取得<br>
-'>Excelでコピーした時のちかちかする範囲を取得できる。<br>
+'>Excelでコピーした時のハイライトの範囲を取得できる。<br>
 '>
 '>**Example**
 '>
@@ -241,7 +243,7 @@ End Sub
 '>**Syntax**
 '>
 '>```
-'>Set StdPicture = Clipboard.CreatePictureFromClipboard(Object)
+'>Set ret = Clipboard.CreatePictureFromClipboard(Object)
 '>```
 '>
 '>**Parameters**
@@ -252,7 +254,9 @@ End Sub
 '>
 '>**Return Value**
 '>
-'>StdPicture オブジェクト
+'>|Name|Data type|Description|
+'>---|---|---
+'>|ret|StdPicture|StdPicture オブジェクト|
 '>
 '>**Remarks**
 '>
@@ -339,7 +343,7 @@ End Function
 '>**Syntax**
 '>
 '>```
-'>String = Clipboard.GetCopyClipText()
+'>ret = Clipboard.GetCopyClipText()
 '>```
 '>
 '>**Parameters**
@@ -348,7 +352,9 @@ End Function
 '>
 '>**Return Value**
 '>
-'>クリップボードの改行(vbCrLf)で区切られたファイル情報を返却
+'>|Name|Data type|Description|
+'>---|---|---
+'>|ret|String|クリップボードの改行(vbCrLf)で区切られたファイル情報を返却|
 '>
 '>**Remarks**
 '>
@@ -409,7 +415,7 @@ Public Function GetCopyClipText() As String
     
     End If
     
-    GetCopyClipText = SB.ToJoin(vbCrLf)
+    GetCopyClipText = SB.ToString(vbCrLf)
     
 End Function
 '>---
@@ -493,7 +499,7 @@ Public Sub SetClipText(ByVal strData As String)
     Call CloseClipboard
   End If
 
-  If blnErrflg Then Message.Error "クリップボードに情報が書き込めません"
+  If blnErrflg Then Err.Raise 520, TypeName(Me) & ".SetClipText", "not write clipboard."
 
 End Sub
 '>---
@@ -502,7 +508,7 @@ End Sub
 '>**Syntax**
 '>
 '>```
-'>strBuf = Clipboard.GetClipText()
+'>ret = Clipboard.GetClipText()
 '>```
 '>
 '>**Parameters**
@@ -511,7 +517,10 @@ End Sub
 '>
 '>**Return Value**
 '>
-'>クリップボードのテキストデータを返却
+'>|Name|Data type|Description|
+'>---|---|---
+'>|ret|String|クリップボードのテキストデータを返却|
+'>
 '>
 '>**Remarks**
 '>
@@ -701,7 +710,7 @@ Public Sub SetCopyClipText(strBuf() As String)
         Call CloseClipboard
     End If
     
-    If blnErrflg Then Message.Error "クリップボードに情報が書き込めません"
+    If blnErrflg Then Err.Raise 520, TypeName(Me) & ".SetCopyClipText", "not write clipboard."
 
 End Sub
 '------------------------------------------------------------------------------------------------------------------------

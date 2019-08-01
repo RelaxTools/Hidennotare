@@ -44,7 +44,7 @@ Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 
-Private mLang As Object
+Private mLang As ITrunslate
 '---------------------------------------
 ' 言語サポート
 '---------------------------------------
@@ -117,26 +117,26 @@ Private Function PrivatePlaceHolder(ByVal strMsg As String, ByVal p As Variant) 
     PrivatePlaceHolder = strMsg
 
 End Function
-'---------------------------------------
-' エラー処理
-'---------------------------------------
-Public Sub Throw(ByVal lngNo As Long, ByVal Module As Variant, ByVal strSrc As String, ByVal strMsg As String, ParamArray p())
-
-    Dim strMessage As String
-    Dim strSource As String
-    
-    If IsObject(Module) Then
-        strSource = TypeName(Module) & "." & strSrc
-    Else
-        strSource = CStr(Module) & "." & strSrc
-    End If
-
-    'プレースホルダ変換
-    strMessage = PrivatePlaceHolder(strMsg, p)
-    
-    Err.Raise 512 + lngNo, strSource, strMessage
-
-End Sub
+''---------------------------------------
+'' エラー処理
+''---------------------------------------
+'Public Sub Throw(ByVal lngNo As Long, ByVal Module As Variant, ByVal strSrc As String, ByVal strMsg As String, ParamArray p())
+'
+'    Dim strMessage As String
+'    Dim strSource As String
+'
+'    If IsObject(Module) Then
+'        strSource = TypeName(Module) & "." & strSrc
+'    Else
+'        strSource = CStr(Module) & "." & strSrc
+'    End If
+'
+'    'プレースホルダ変換
+'    strMessage = PrivatePlaceHolder(strMsg, p)
+'
+'    Err.Raise 512 + lngNo, strSource, strMessage
+'
+'End Sub
 ' アプリケーション名取得
 Private Property Get Title() As String
     Title = ThisWorkbook.BuiltinDocumentProperties("Title").Value

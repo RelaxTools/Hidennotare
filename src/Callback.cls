@@ -45,17 +45,18 @@ Option Explicit
 
 'メインイベント
 Public Event OnAction(ByVal Action As Long, ByVal opt As String)
+
 Public Tag As String
 Private mKey As String
 Public Function CreateOnAction(ByVal Action As Long, Optional ByVal opt As String = "") As String
-    CreateOnAction = ExcelHelper.BuildOnAction("'Core.OnActionCallback """ & mKey & """, """ & Action & """, """ & opt & """ '")
+    CreateOnAction = ExcelHelper.BuildOnAction("'CallbackHelper.OnActionCallback """ & mKey & """, """ & Action & """, """ & opt & """ '")
 End Function
 Public Sub OnActionCallback(ByVal Action As Long, ByVal opt As String)
     RaiseEvent OnAction(Action, opt)
 End Sub
 Private Sub Class_Initialize()
-    mKey = Core.InstallCallback(Me)
+    mKey = CallbackHelper.InstallCallback(Me)
 End Sub
 Private Sub Class_Terminate()
-    Core.UninstallCallback mKey
+    CallbackHelper.UninstallCallback mKey
 End Sub

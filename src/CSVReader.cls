@@ -280,7 +280,7 @@ Public Sub Paste(ByRef TopLeft As Range, ByRef Fields As IDictionary, Optional B
     
     '設定したフィールドの個数が一致しない場合エラー
     If lngCol <> Fields.Count Then
-        Message.Throw 1, Me, "Paste", "fields count does not match"
+        Err.Raise 512 + 1, TypeName(Me) & ".Paste", "not match fields count. "
     End If
     
     Dim var() As Variant

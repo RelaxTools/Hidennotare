@@ -77,7 +77,7 @@ Attribute VB_Exposed = False
 '>* ArrayList クラス
 '>* IDictionary クラス
 '>* INewInstance クラス
-'>* IDictionaryAccessor クラス
+'>* ICompatibleProperty クラス
 '>* Convert クラス
 '>* ICursor クラス
 '>
@@ -86,7 +86,7 @@ Option Explicit
 Implements ICursor
 Implements IDictionary
 Implements INewInstance
-Implements IDictionaryAccessor
+Implements ICompatibleProperty
 
 Private mDic As Object
 Private mIndex As Long
@@ -126,7 +126,7 @@ Public Function ParseFromListbox(objList As Object, KeyName As String, Optional 
     
     'Tagにフィールド情報が無い場合
     If objList.Tag = "" Then
-        Message.Throw 1, Me, "ParseFromListbox", "Item name is not set in tag"
+        Err.Raise 512 + 1, TypeName(Me) & ".ParseFromListbox", "Item name is not set in tag"
     End If
     
     '配列に変換
@@ -140,16 +140,16 @@ Public Function ParseFromListbox(objList As Object, KeyName As String, Optional 
         '引数によりインスタンス化するオブジェクトを判定
         Select Case True
             Case obj Is Nothing
-                Set objRec = GetNewInstance(New Dictionary)
+                Set objRec = Core.GetNewInstance(New Dictionary)
             Case Else
-                Set objRec = GetNewInstance(obj)
+                Set objRec = Core.GetNewInstance(obj)
         End Select
         
         For j = 0 To objList.ColumnCount - 1
         
             '設定されているフィールドのみコピーする。
             If Fields(j) <> "" Then
-                ToIDictionaryAccessor(objRec).SetProperty Fields(j), objList.List(i, j)
+                Core.CastICompatibleProperty(objRec).SetProperty Fields(j), objList.List(i, j)
                 
                 If KeyName = Fields(j) Then
                     Key = objList.List(i, j)
@@ -180,7 +180,7 @@ Public Sub CopyToListbox(objList As Object)
 
     'Tagにフィールド情報が無い場合
     If objList.Tag = "" Then
-        Message.Throw 1, Me, "CopyToListbox", "Item name is not set in tag"
+        Err.Raise 512 + 1, TypeName(Me) & ".CopyToListbox", "Item name is not set in tag"
     End If
 
     '配列に変換
@@ -205,7 +205,7 @@ Public Sub CopyToListbox(objList As Object)
 
             '設定されているフィールドのみコピーする。
             If v <> "" Then
-                objList.List(i, j) = ToIDictionaryAccessor(objRec).GetProperty(v)
+                objList.List(i, j) = Core.CastICompatibleProperty(objRec).GetProperty(v)
             End If
             j = j + 1
         Next
@@ -234,13 +234,13 @@ Public Function ParseFromListObject(LO As ListObject, KeyField As String, Option
         '引数によりインスタンス化するオブジェクトを判定
         Select Case True
             Case obj Is Nothing
-                Set objRec = GetNewInstance(New Dictionary)
+                Set objRec = Core.GetNewInstance(New Dictionary)
             Case Else
-                Set objRec = GetNewInstance(obj)
+                Set objRec = Core.GetNewInstance(obj)
         End Select
         
         For j = 1 To LO.HeaderRowRange.columns.Count
-            ToIDictionaryAccessor(objRec).SetProperty LO.HeaderRowRange(, j).Value, LO.DataBodyRange.Cells(i, j).Value
+            Core.CastICompatibleProperty(objRec).SetProperty LO.HeaderRowRange(, j).Value, LO.DataBodyRange.Cells(i, j).Value
         Next
     
         'Keyフィールド取得
@@ -248,7 +248,7 @@ Public Function ParseFromListObject(LO As ListObject, KeyField As String, Option
         Key = LO.DataBodyRange.Cells(i, j).Value
         
         If lst.ContainsKey(Key) Then
-            Message.Throw 1, Me, "ParseFromListObject", "Duplicate Key"
+            Err.Raise 512 + 1, TypeName(Me) & ".ParseFromListObject", "Duplicate Key"
         End If
         
         lst.Add Key, objRec
@@ -289,25 +289,13 @@ Public Sub CopyToListObject(LO As ListObject)
         LO.ListRows.Add
         For j = 1 To LO.HeaderRowRange.columns.Count
 
-            LO.DataBodyRange.Cells(i, j).Value = ToIDictionaryAccessor(obj).GetProperty(LO.HeaderRowRange(, j).Value)
+            LO.DataBodyRange.Cells(i, j).Value = Core.CastICompatibleProperty(obj).GetProperty(LO.HeaderRowRange(, j).Value)
         
         Next
         i = i + 1
     Next
 
 End Sub
-'-------------------------------------------------
-' NewInstance
-'-------------------------------------------------
-Private Function GetNewInstance(obj As INewInstance) As Object
-    Set GetNewInstance = obj.NewInstance
-End Function
-'-------------------------------------------------
-' ToIDictionaryAccessorへキャスト
-'-------------------------------------------------
-Private Function ToIDictionaryAccessor(obj As Object) As IDictionaryAccessor
-    Set ToIDictionaryAccessor = obj
-End Function
 '--------------------------------------------------------------
 '  項目の追加
 '--------------------------------------------------------------
@@ -431,7 +419,7 @@ Private Function ToString() As String
                     Case Else
         
                         'エラー
-                        Message.Throw 1, Me, "ToString", "not cast type ""{0}""", TypeName(v)
+                        Err.Raise 512 + 1, TypeName(Me) & ".ToString", "not cast type (" & TypeName(v) & ")"
         
                 End Select
 
@@ -439,24 +427,14 @@ Private Function ToString() As String
     
     Next
 
-    ToString = "{" & SB.ToJoin(", ") & "}"
+    ToString = SB.ToString(", ", "{", "}")
 
 End Function
-
 ' 制御文字変換
 Private Function Escape(ByVal v As String) As String
 
     Escape = """" & Convert.Escape(v) & """"
 
-End Function
-'Unicode
-Private Function Unicode(ByVal strBuf As String) As Long
-    Dim bytBuf() As Byte
-    
-    If Len(strBuf) <> 0 Then
-        bytBuf = strBuf
-        Unicode = CLng(bytBuf(1)) * &H100 + bytBuf(0)
-    End If
 End Function
 '--------------------------------------------------------------
 '  ICursor の ICursor インターフェースを取得
@@ -503,7 +481,7 @@ Private Sub ICursor_MoveNext()
 
 End Sub
 '--------------------------------------------------------------
-' インスタンス生成 I/F
+' INewInstance I/F
 '--------------------------------------------------------------
 Private Function INewInstance_NewInstance() As Object
     
@@ -514,9 +492,9 @@ Private Function INewInstance_NewInstance() As Object
 
 End Function
 '--------------------------------------------------------------
-' IDictionaryAccessor I/F
+' ICompatibleProperty I/F SetProperty
 '--------------------------------------------------------------
-Private Sub IDictionaryAccessor_SetProperty(prop As Variant, Val As Variant)
+Private Sub ICompatibleProperty_SetProperty(prop As Variant, Val As Variant)
     
     Dim dic As IDictionary
     
@@ -533,10 +511,13 @@ Private Sub IDictionaryAccessor_SetProperty(prop As Variant, Val As Variant)
     End If
     
 End Sub
-Private Function IDictionaryAccessor_GetProperty(prop As Variant) As Variant
+'--------------------------------------------------------------
+' ICompatibleProperty I/F GetProperty
+'--------------------------------------------------------------
+Private Function ICompatibleProperty_GetProperty(prop As Variant) As Variant
     If IsObject(Me.GetIDictionary.Item(prop)) Then
-        Set IDictionaryAccessor_GetProperty = Me.GetIDictionary.Item(prop)
+        Set ICompatibleProperty_GetProperty = Me.GetIDictionary.Item(prop)
     Else
-        Let IDictionaryAccessor_GetProperty = Me.GetIDictionary.Item(prop)
+        Let ICompatibleProperty_GetProperty = Me.GetIDictionary.Item(prop)
     End If
 End Function

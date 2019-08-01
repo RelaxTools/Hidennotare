@@ -2,7 +2,7 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "IDictionaryAccessor"
+Attribute VB_Name = "ICompatibleProperty"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
@@ -36,7 +36,7 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-'>### IDictionaryAccessor インターフェイス
+'>### ICompatibleProperty インターフェイス
 '>
 '>**Remarks**
 '>
@@ -55,9 +55,9 @@ Attribute VB_Exposed = False
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
-Public Sub SetProperty(prop As Variant, Val As Variant)
-
-End Sub
 Public Function GetProperty(prop As Variant) As Variant
 
 End Function
+Public Sub SetProperty(prop As Variant, Val As Variant)
+
+End Sub

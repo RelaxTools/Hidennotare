@@ -50,7 +50,7 @@ Attribute VB_Exposed = False
 '>**Implements**
 '>* ICursor
 '>* IDictionary
-'>* IDictionaryAccessor
+'>* ICompatibleProperty
 '>* INewInstance
 '>
 '>**Sample**
@@ -67,7 +67,7 @@ Option Explicit
 Implements ICursor
 Implements IDictionary
 Implements INewInstance
-Implements IDictionaryAccessor
+Implements ICompatibleProperty
 
 'VBAでは「継承」ができないため「委譲」する。
 Private mDic As IDictionary
@@ -227,15 +227,15 @@ Private Function INewInstance_NewInstance() As Object
 
 End Function
 '--------------------------------------------------------------
-' IDictionaryAccessor I/F
+' ICompatibleProperty I/F
 '--------------------------------------------------------------
-Private Sub IDictionaryAccessor_SetProperty(prop As Variant, Val As Variant)
+Private Sub ICompatibleProperty_SetProperty(prop As Variant, Val As Variant)
     Me.GetIDictionary.Add prop, Val
 End Sub
-Private Function IDictionaryAccessor_GetProperty(prop As Variant) As Variant
+Private Function ICompatibleProperty_GetProperty(prop As Variant) As Variant
     If IsObject(Me.GetIDictionary.Item(prop)) Then
-        Set IDictionaryAccessor_GetProperty = Me.GetIDictionary.Item(prop)
+        Set ICompatibleProperty_GetProperty = Me.GetIDictionary.Item(prop)
     Else
-        Let IDictionaryAccessor_GetProperty = Me.GetIDictionary.Item(prop)
+        Let ICompatibleProperty_GetProperty = Me.GetIDictionary.Item(prop)
     End If
 End Function

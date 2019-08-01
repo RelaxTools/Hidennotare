@@ -135,7 +135,7 @@ End Sub
 '>**Syntax**
 '>
 '>```
-'>boolean = FileIO.FileExists(strFile)
+'>flg = FileIO.FileExists(strFile)
 '>```
 '>
 '>**Parameters**
@@ -146,7 +146,10 @@ End Sub
 '>
 '>**Return Value**
 '>
-'>存在する場合:True / 存在しない場合:False
+'>|Name|Data type|Description|
+'>---|---|---
+'>|flg|Boolean|存在する場合:True / 存在しない場合:False|
+'>
 '>
 '>**Remarks**
 '>
@@ -185,7 +188,9 @@ End Function
 '>
 '>**Return Value**
 '>
-'>存在する場合:True / 存在しない場合:False
+'>|Name|Data type|Description|
+'>---|---|---
+'>|flg|Boolean|存在する場合:True / 存在しない場合:False|
 '>
 '>**Remarks**
 '>
@@ -213,7 +218,7 @@ End Function
 '>**Syntax**
 '>
 '>```
-'>Set Object = FileIO.GetFile(strFile)
+'>Set ret = FileIO.GetFile(strFile)
 '>```
 '>
 '>**Parameters**
@@ -228,7 +233,9 @@ End Function
 '>
 '>**Remarks**
 '>
-'>ファイルオブジェクト取得
+'>|Name|Data type|Description|
+'>---|---|---
+'>|ret|Object|ファイルオブジェクト取得|
 '>
 '>**Example**
 '>
@@ -251,7 +258,7 @@ End Function
 '>**Syntax**
 '>
 '>```
-'>Set Object = FileIO.GetFolder(strFolder)
+'>Set ret = FileIO.GetFolder(strFolder)
 '>```
 '>
 '>**Parameters**
@@ -266,7 +273,9 @@ End Function
 '>
 '>**Remarks**
 '>
-'>フォルダーオブジェクト取得
+'>|Name|Data type|Description|
+'>---|---|---
+'>|ret|Object|フォルダーオブジェクト取得|
 '>
 '>**Example**
 '>
@@ -289,7 +298,7 @@ End Function
 '>**Syntax**
 '>
 '>```
-'>folder = FileIO.TempFolder()
+'>ret = FileIO.TempFolder()
 '>```
 '>
 '>**Parameters**
@@ -298,7 +307,9 @@ End Function
 '>
 '>**Return Value**
 '>
-'>テンポラリフォルダのパス
+'>|Name|Data type|Description|
+'>---|---|---
+'>|ret|String|テンポラリフォルダのパス|
 '>
 '>**Remarks**
 '>
@@ -354,7 +365,9 @@ End Property
 '>
 '>**Remarks**
 '>
-'>アプリケーションフォルダ取得
+'>|Name|Data type|Description|
+'>---|---|---
+'>|ret|String|アプリケーションフォルダ取得|
 '>
 '>**Example**
 '>
@@ -460,12 +473,12 @@ Public Sub FileSearch(ByVal strPath As String, _
     End With
 End Sub
 '>---
-'>#### FileSearch(FileIO)
+'>#### FileSearchEx(FileIO)
 '>
 '>**Syntax**
 '>
 '>```
-'>FileIO.FileSearch strPath, varPatterns, Col, [SubDir = True, NaturalSort = True]
+'>FileIO.FileSearchEx strPath, varPatterns, Col, [SubDir = True, ReturnFind = False, NaturalSort = True, varExcludedFolder = ""]
 '>```
 '>
 '>**Parameters**
@@ -478,7 +491,7 @@ End Sub
 '>|SubDir|省略可|Boolean|True(-1):制限なし/False(0):指定フォルダのみ/階数:指定階数まで検索|
 '>|ReturnFind|省略可|NaturalSort|Trueの場合、自然数ソートを行う。省略時True|
 '>|NaturalSort|省略可|NaturalSort|Trueの場合、自然数ソートを行う。省略時True|
-'>|varExcludedFolder|省略可|除外フォルダを指定。|
+'>|varExcludedFolder|省略可|除外フォルダを指定。複数の場合には配列で指定。|
 '>
 '>**Return Value**
 '>
@@ -497,7 +510,6 @@ End Sub
 '>**See also**
 '>
 '>* FileIO.FileSearch
-'>* FileIO.FileSearchEx
 '>* FileIO.SearchTreeForFile
 '>
 Public Sub FileSearchEx(ByVal strPath As String, _
@@ -656,7 +668,7 @@ End Sub
 '>**Syntax**
 '>
 '>```
-'>strfile = FileIO.SearchTreeForFile(strPath, strFile)
+'>ret = FileIO.SearchTreeForFile(strPath, strFile)
 '>```
 '>
 '>**Parameters**
@@ -668,7 +680,9 @@ End Sub
 '>
 '>**Return Value**
 '>
-'>検索したファイル名
+'>|Name|Data type|Description|
+'>---|---|---
+'>|ret|String|検索したファイル名|
 '>
 '>**Remarks**
 '>
@@ -704,7 +718,7 @@ End Function
 '>**Syntax**
 '>
 '>```
-'>strfile = FileIO.BuildPath(strPath, strFile)
+'>ret = FileIO.BuildPath(strPath, strFile)
 '>```
 '>
 '>**Parameters**
@@ -716,7 +730,9 @@ End Function
 '>
 '>**Return Value**
 '>
-'>結合したファイル名
+'>|Name|Data type|Description|
+'>---|---|---
+'>|ret|String|結合したファイル名|
 '>
 '>**Remarks**
 '>
@@ -964,7 +980,7 @@ End Sub
 '>**Syntax**
 '>
 '>```
-'>FileName = FileIO.GetFileName(strPath)
+'>ret = FileIO.GetFileName(strPath)
 '>```
 '>
 '>**Parameters**
@@ -975,7 +991,9 @@ End Sub
 '>
 '>**Return Value**
 '>
-'>ファイル名のみを返却
+'>|Name|Data type|Description|
+'>---|---|---
+'>|ret|String|ファイル名のみを返却|
 '>
 '>**Remarks**
 '>
@@ -1030,7 +1048,7 @@ End Function
 '>**Syntax**
 '>
 '>```
-'>ExtensionName = FileIO.GetExtensionName(strPath)
+'>ret = FileIO.GetExtensionName(strPath)
 '>```
 '>
 '>**Parameters**
@@ -1041,7 +1059,9 @@ End Function
 '>
 '>**Return Value**
 '>
-'>拡張子のみを返却
+'>|Name|Data type|Description|
+'>---|---|---
+'>|ret|String|拡張子のみを返却|
 '>
 '>**Remarks**
 '>
@@ -1094,7 +1114,7 @@ End Function
 '>**Syntax**
 '>
 '>```
-'>BaseName = FileIO.GetBaseName(strFile)
+'>ret = FileIO.GetBaseName(strFile)
 '>```
 '>
 '>**Parameters**
@@ -1105,7 +1125,10 @@ End Function
 '>
 '>**Return Value**
 '>
-'>拡張子を除いたファイル名のみを返却
+'>|Name|Data type|Description|
+'>---|---|---
+'>|ret|String|拡張子を除いたファイル名のみを返却|
+'>
 '>
 '>**Remarks**
 '>
@@ -1135,7 +1158,7 @@ End Function
 '>**Syntax**
 '>
 '>```
-'>PathName = FileIO.GetParentFolderName(strFile)
+'>ret = FileIO.GetParentFolderName(strFile)
 '>```
 '>
 '>**Parameters**
@@ -1146,7 +1169,9 @@ End Function
 '>
 '>**Return Value**
 '>
-'>上位パスのみを返却
+'>|Name|Data type|Description|
+'>---|---|---
+'>|ret|String|上位パスのみを返却|
 '>
 '>**Remarks**
 '>
@@ -1234,7 +1259,7 @@ End Sub
 '>**Syntax**
 '>
 '>```
-'>uncPath = FileIO.DriveToUNC(strFile)
+'>ret = FileIO.DriveToUNC(strFile)
 '>```
 '>
 '>**Parameters**
@@ -1245,7 +1270,9 @@ End Sub
 '>
 '>**Return Value**
 '>
-'>上位パスのみを返却
+'>|Name|Data type|Description|
+'>---|---|---
+'>|ret|String|UNCパスを返却|
 '>
 '>**Remarks**
 '>

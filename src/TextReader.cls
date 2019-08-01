@@ -36,10 +36,24 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-' 依存モジュール
-'   IReader.cls
-'-----------------------------------------------------------------------------------------------------
-' 2018-12-06 Ver.1.0.0 新規作成 テキストReadクラス
+'>### TextReader クラス
+'>
+'>**Remarks**
+'>
+'>TextReaderクラス<br>
+'>
+'>**Dependent**
+'>
+'>* IConstructor クラス
+'>* IReader クラス
+'>* ICursor クラス
+'>
+'>**History**
+'>
+'>|Date|Version|Note|
+'>|---|---|---|
+'>|2018-12-06|Ver.1.0.0|新規作成|
+'>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements IConstructor
@@ -56,13 +70,68 @@ Private mEncode As EncodeConstants
 
 Private mBuf As Variant
 Private mIndex As Long
-'--------------------------------------------------------------
-' コンストラクタ
-'--------------------------------------------------------------
-' Arg1 - FileName
-' Arg2 - NewLineCode : NewLineCodeConstants.CRLF/LF
-' Arg3 - Encode      : EncodeConstants.CP932/UTF8/UTF16LE
-'--------------------------------------------------------------
+'>---
+'>#### コンストラクタ
+'>
+'>**Syntax**
+'>
+'>```
+'>Set IC = Constructor(New TextReader, FileName, [NewLineCode = NewLineCodeConstants.CRLF, Encode = EncodeConstants.CP932])
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|FileName|必須|String|ファイル名を設定|
+'>|NewLineCode|省略可|NewLineCodeConstants|読み取り専用の設定。デフォルトCRLF|
+'>|Encode|省略可|EncodeConstants|Applicationオブジェクト。デフォルトCP932|
+'>
+'>**Return Value**
+'>
+'>新しいインスタンス(TextReader)
+'>
+'>**Remarks**
+'>
+'>コンストラクタ<br>
+'>With で生成した場合、End With でブックの Close をします。<br>
+'>
+'>**Example**
+'>
+'>1行ずつ読む場合(ICursorインターフェイス)
+'>
+'>```
+'>Dim strFile As String
+'>Dim IC As ICursor
+'>
+'>strFile = "C:\Test.xlsx"
+'>
+'>Set IC = Constructor(New TextReader, strFile)
+'>
+'>Do Until IC.Eof
+'>
+'>    Debug.Print IC.Item
+'>    IC.MoveNext
+'>Loop
+'>```
+'>
+'>一気に読む場合(IReaderインターフェイス)
+'>
+'>```
+'>Dim strFile As String
+'>Dim IR As IReader
+'>
+'>strFile = "C:\Test.xlsx"
+'>
+'>Set IR = Constructor(New TextReader, strFile)
+'>
+'>Debug.Print IR.ReadAll '改行を指定した場合は配列、指定しなかった場合は文字列
+'>```
+'>
+'>**See also**
+'>
+'>* None
+'>
 Private Function IConstructor_Instancing(Args As Collection) As Object
 
     If Args.Count = 0 Then
@@ -90,7 +159,7 @@ Private Function IConstructor_Instancing(Args As Collection) As Object
 
     
     If Not FileIO.FileExists(mFileName) Then
-        Message.Throw 1, Me, "IConstructor_Instancing", "ファイル({0})が存在しません。", mFileName
+        Err.Raise 512 + 1, TypeName(Me) & ".IConstructor_Instancing", "file not found(" & mFileName & ")"
     End If
 
     'テキストファイルの一括読み込み
@@ -196,9 +265,38 @@ Private Function StartWith(bytBuf, ParamArray Args() As Variant) As Boolean
     StartWith = True
 
 End Function
-'--------------------------------------------------------------
-' 一括読み込みメソッド
-'--------------------------------------------------------------
+'>---
+'>#### 一括読み込み
+'>
+'>**Syntax**
+'>
+'>```
+'>data = obj.ReadAll
+'>```
+'>
+'>**Parameters**
+'>
+'>なし
+'>
+'>**Return Value**
+'>
+'>読み込んだデータを返却。<br>
+'>NewLineCodeで改行を指定した場合、改行コードで分割された配列を返却。
+'>NewLineCodeで改行を指定しなかった場合、文字列を返却。
+'>
+'>**Remarks**
+'>
+'>一括読み込み<br>
+'>ファイルを一度に読み込みます。<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* None
+'>
 Private Function IReader_ReadAll() As Variant
 
     IReader_ReadAll = mBuf

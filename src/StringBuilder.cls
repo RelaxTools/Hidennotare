@@ -36,7 +36,29 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-' 文字列連結クラス
+'>### StringBuilder クラス
+'>
+'>**Remarks**
+'>
+'>文字列連結クラス
+'>
+'>**Implements**
+'>
+'>* IConstructor
+'>
+'>**Sample**
+'>
+'>```
+'>Dim SB As StringBuilder
+'>Set SB = New StringBuilder
+'>
+'>SB.Append "A"
+'>SB.Append "B"
+'>SB.Append "C"
+'>
+'>Debug.Print SB.ToString
+'>```
+'>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements IConstructor
@@ -47,21 +69,62 @@ Private mlngLength As Long
 Private Const C_INIT_COUNT As Long = 25
 Private mlngInitCount As Long
 '------------------------------------------------------
-' 初期化
+' Initialize
 '------------------------------------------------------
 Private Sub Class_Initialize()
     mlngInitCount = C_INIT_COUNT
     Me.Clear
 End Sub
 '------------------------------------------------------
-' 終了
+' Terminate
 '------------------------------------------------------
 Private Sub Class_Terminate()
     Erase mstrBuf
 End Sub
-'------------------------------------------------------
-' コンストラクタ　初期配列サイズの変更
-'------------------------------------------------------
+'>---
+'>#### コンストラクタ
+'>
+'>**Syntax**
+'>
+'>```
+'>Set IC = Constructor(New StringBuilder, Number)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|Number|必須|Long|初期配列サイズを指定。デフォルト25|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|IC|Object|新しいインスタンス(StringBuilder)|
+'>
+'>**Remarks**
+'>
+'>コンストラクタ<br>
+'>初期の配列数を指定。大量データの場合に事前に指定すると効率が良い<br>
+'>
+'>**Example**
+'>
+'>```
+'>Dim SB As StringBuilder
+'>
+'>Set SB = Constructor(New StringBuilder, 3000)
+'>
+'>For i = 1 To 3000
+'>
+'>    SB.Append i
+'>
+'>Next
+'>```
+'>
+'>**See also**
+'>
+'>* None
+'>
 Private Function IConstructor_Instancing(ByRef Args As Collection) As Object
 
     If Args.Count = 1 Then
@@ -72,9 +135,38 @@ Private Function IConstructor_Instancing(ByRef Args As Collection) As Object
     Set IConstructor_Instancing = Me
     
 End Function
-'------------------------------------------------------
-' クリア
-'------------------------------------------------------
+'>---
+'>#### Clear(StringBuilder)
+'>
+'>**Syntax**
+'>
+'>```
+'>expression.Clear()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|StringBulder|StringBuilderオブジェクトを指定します。|
+'>
+'>**Return Value**
+'>
+'>なし
+'>
+'>**Remarks**
+'>
+'>クリアメソッド<br>
+'>文字列バッファをクリアします。<br>
+'>
+'>**Example**
+'>
+'>なし
+'>
+'>**See also**
+'>
+'>なし
+'>
 Public Sub Clear()
     
     Erase mstrBuf
@@ -84,9 +176,60 @@ Public Sub Clear()
     mlngLength = 0
 
 End Sub
-'------------------------------------------------------
-' 追加
-'------------------------------------------------------
+'>---
+'>#### Append(StringBuilder)
+'>
+'>**Syntax**
+'>
+'>```
+'>expression.Append(strBuf, [quotation = False])
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|StringBulder|StringBuilderオブジェクトを指定します。|
+'>|strBuf|必須|String|連結を行う文字列を指定します。|
+'>|quotation|省略可|Boolean|Trueの場合、ダブルコーテーションを付加する。デフォルトFalse|
+'>
+'>**Return Value**
+'>
+'>なし
+'>
+'>**Remarks**
+'>
+'>文字列を追加するメソッドです。<br>
+'>第２引数をTrueにするとダブルコーテーションで囲みます。
+'>
+'>**Example**
+'>
+'>半角0～9以外の文字列だったらダブルコーテーションで囲みます。
+'>
+'>```
+'>Dim SB As StringBuilder
+'>Dim strBuf As String
+'>
+'>Set SB = New StringBuilder
+'>
+'>strBuf = "A"
+'>
+'>SB.Append strBuf, Not RegExp.Test(strBuf, "[0-9]+")
+'>Debug.Print SB.ToString
+'>
+'>```
+'>
+'>結果
+'>
+'>```
+'>"A"
+'>
+'>```
+'>
+'>**See also**
+'>
+'>なし
+'>
 Function Append(ByVal s As String, Optional ByVal quotation As Boolean = False)
 
     '配列にセット
@@ -107,33 +250,252 @@ Function Append(ByVal s As String, Optional ByVal quotation As Boolean = False)
     mlngCount = mlngCount + 1
 
 End Function
-'------------------------------------------------------
-' 文字列変換
-'------------------------------------------------------
-Function ToString()
+'>---
+'>#### ToString(StringBuilder)
+'>
+'>**Syntax**
+'>
+'>```
+'>var = expression.ToString([Delimiter = "", Header = "", Footer= ""])
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|StringBulder|StringBuilderオブジェクトを指定します。|
+'>|Delimiter|省略可|String|連結を行う際のデリミタを指定しますデフォルト""|
+'>|Header|省略可|String|最初に連結する文字列を指定しますデフォルト""|
+'>|Footer|省略可|String|連最後に連結する文字列を指定しますデフォルト""|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|var|String|連結後の文字列|
+'>
+'>**Remarks**
+'>
+'>文字列変換メソッドです。<br>
+'>デリミタ、ヘッダ、フッタを指定可能です。<br>
+'>
+'>**Example**
+'>
+'>```
+'>Dim SB As StringBuilder
+'>Set SB = New StringBuilder
+'>
+'>SB.Append "A"
+'>SB.Append "B"
+'>SB.Append "C"
+'>
+'>Debug.Print SB.ToString
+'>
+'>```
+'>
+'>結果
+'>
+'>```
+'>ABC
+'>
+'>```
+'>
+'>```
+'>Dim SB As StringBuilder
+'>Set SB = New StringBuilder
+'>
+'>SB.Append "A"
+'>SB.Append "B"
+'>SB.Append "C"
+'>
+'>Debug.Print SB.ToString(",","[","]")
+'>
+'>```
+'>
+'>結果
+'>
+'>```
+'>[A,B,C]
+'>
+'>```
+'>
+'>**See also**
+'>
+'>なし
+'>
+Function ToString(Optional ByVal Delimiter As String = "", Optional ByVal Header As String = "", Optional ByVal Footer As String = "")
 
     Call resize
-    ToString = Join(mstrBuf, "")
+    ToString = Header & Join(mstrBuf, Delimiter) & Footer
 
 End Function
-'------------------------------------------------------
-' 文字列変換(JOIN)
-'------------------------------------------------------
-Function ToJoin(ByVal strDelimiter As String)
-    
-    Call resize
-    ToJoin = Join(mstrBuf, strDelimiter)
-
-End Function
-'------------------------------------------------------
-' 配列戻し
-'------------------------------------------------------
+'>---
+'>#### ToArray(StringBuilder)
+'>
+'>**Syntax**
+'>
+'>```
+'>var = expression.ToArray()
+'>```
+'>
+'>**Parameters**
+'>
+'>なし
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|expression|必須|StringBulder|StringBuilderオブジェクトを指定します。|
+'>|var|String|変換後の配列|
+'>
+'>**Remarks**
+'>
+'>配列変換メソッド<br>
+'>
+'>**Example**
+'>
+'>```
+'>Dim SB As StringBuilder
+'>Set SB = New StringBuilder
+'>
+'>SB.Append "A"
+'>SB.Append "B"
+'>SB.Append "C"
+'>
+'>Debug.Print SB.ToArray(1)
+'>
+'>```
+'>
+'>結果
+'>
+'>```
+'>B
+'>
+'>```
+'>
+'>**See also**
+'>
+'>なし
+'>
 Function ToArray() As String()
     
     Call resize
     ToArray = mstrBuf()
 
 End Function
+'>---
+'>#### Length(StringBuilder)
+'>
+'>**Syntax**
+'>
+'>```
+'>var = expression.Length()
+'>```
+'>
+'>**Parameters**
+'>
+'>なし
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|expression|必須|StringBulder|StringBuilderオブジェクトを指定します。|
+'>|var|Long|文字数を返却|
+'>
+'>**Remarks**
+'>
+'>文字数取得プロパティ<br>
+'>
+'>**Example**
+'>
+'>```
+'>Dim SB As StringBuilder
+'>Set SB = New StringBuilder
+'>
+'>SB.Append "A"
+'>SB.Append "B"
+'>SB.Append "C"
+'>
+'>Debug.Print SB.Length
+'>
+'>```
+'>
+'>結果
+'>
+'>```
+'>3
+'>
+'>```
+'>
+'>**See also**
+'>
+'>なし
+'>
+Public Property Get Length() As Long
+    Length = mlngLength
+End Property
+'>---
+'>#### Replace(StringBuilder)
+'>
+'>**Syntax**
+'>
+'>```
+'>expression.Replace(strFind, strReplace)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|StringBulder|StringBuilderオブジェクトを指定します。|
+'>|strFind|必須|String|置換前の文字列|
+'>|strReplace|必須|String|置換後の文字列|
+'>
+'>**Return Value**
+'>
+'>なし
+'>
+'>**Remarks**
+'>
+'>置換メソッド<br>
+'>
+'>**Example**
+'>
+'>```
+'>Dim SB As StringBuilder
+'>Set SB = New StringBuilder
+'>
+'>SB.Append "A"
+'>SB.Append "B"
+'>SB.Replace "B", "C"
+'>
+'>Debug.Print SB.ToString
+'>
+'>```
+'>
+'>結果
+'>
+'>```
+'>AC
+'>
+'>```
+'>
+'>**See also**
+'>
+'>なし
+'>
+Public Sub Replace(ByVal strFind As String, ByVal strReplace As String)
+
+    Dim i As Long
+    If mlngCount > 0 Then
+        For i = 0 To mlngCount - 1
+            mstrBuf(i) = VBA.Replace(mstrBuf(i), strFind, strReplace)
+        Next
+    End If
+    
+End Sub
 '------------------------------------------------------
 ' 文字列変換前のリサイズ
 '------------------------------------------------------
@@ -146,24 +508,5 @@ Private Sub resize()
             ReDim Preserve mstrBuf(0 To mlngCount - 1)
     End Select
 
-End Sub
-'------------------------------------------------------
-' 文字数
-'------------------------------------------------------
-Public Property Get Length() As Long
-    Length = mlngLength
-End Property
-'------------------------------------------------------
-' 置換
-'------------------------------------------------------
-Public Sub Replace(ByVal strFind As String, ByVal strReplace As String)
-
-    Dim i As Long
-    If mlngCount > 0 Then
-        For i = 0 To mlngCount - 1
-            mstrBuf(i) = VBA.Replace(mstrBuf(i), strFind, strReplace)
-        Next
-    End If
-    
 End Sub
 

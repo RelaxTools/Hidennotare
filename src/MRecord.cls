@@ -133,7 +133,7 @@ Private Function IDictionary_ToString() As String
     
     Next
 
-    IDictionary_ToString = "[" & SB.ToJoin(", ") & "]"
+    IDictionary_ToString = SB.ToString(", ", "[", "]")
 
 End Function
 Private Property Get IDictionary_GetCursor() As ICursor

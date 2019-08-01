@@ -97,15 +97,15 @@ End Sub
 '--------------------------------------------------------------
 ' 同一ブックOpenチェック
 '--------------------------------------------------------------
-Function IsOpenSameBook(ByVal strBook As String) As Boolean
+Function IsOpenedBook(ByVal strBook As String) As Boolean
     
     Dim v As Workbook
     
-    IsOpenSameBook = False
+    IsOpenedBook = False
     
     For Each v In Workbooks
         If LCase(strBook) = LCase(v.Name) Then
-            IsOpenSameBook = True
+            IsOpenedBook = True
             Exit For
         End If
     Next

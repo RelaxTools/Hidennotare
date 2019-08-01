@@ -53,7 +53,7 @@ Attribute VB_Exposed = False
 '>* IList クラス
 '>* IDictionary クラス
 '>* INewInstance クラス
-'>* IDictionaryAccessor クラス
+'>* ICompatibleProperty クラス
 '>* StringHelper クラス
 '>* Convert クラス
 '>* ICursor クラス
@@ -68,7 +68,7 @@ Option Explicit
 '>**Syntax**
 '>
 '>```
-'>Set object = JSON.ParseJSON(strJSON, [obj = Nothing])
+'>Set ret = JSON.ParseJSON(strJSON, [obj = Nothing])
 '>```
 '>
 '>**Parameters**
@@ -80,12 +80,14 @@ Option Explicit
 '>
 '>**Return Value**
 '>
-'>変換後のオブジェクト
+'>|Name|Data type|Description|
+'>---|---|---
+'>|ret|Object|変換後のオブジェクト|
 '>
 '>**Remarks**
 '>
 '>JSON文字列からDictionary(OrderedDictionary/SortedDictionary) または ArrayList を復元する機能。<br>
-'>IDictionaryAccessor(I/F)とINewInstance(I/F)に対応すれば、通常のクラスにも復元可能。
+'>ICompatibleProperty(I/F)とINewInstance(I/F)に対応すれば、通常のクラスにも復元可能。
 '>
 '>**Example**
 '>
@@ -145,7 +147,7 @@ Private Function ParseObject(ByVal strJSON As String, obj As Object, ByVal Level
     Dim SB As StringBuilder
     
     If Not StringHelper.StartsWith(strJSON, "{") Or Not StringHelper.EndsWith(strJSON, "}") Then
-        Message.Throw 1, Me, "ParseObject", "JSONFormatError"
+        Err.Raise 512 + 1, TypeName(Me) & ".ParseObject", "JSONFormatError"
     End If
     
     'JSONのネストレベル
@@ -155,15 +157,15 @@ Private Function ParseObject(ByVal strJSON As String, obj As Object, ByVal Level
         
         'Default
         Case obj Is Nothing
-            Set objJObj = GetNewInstance(New Dictionary)
+            Set objJObj = Core.GetNewInstance(New Dictionary)
         
         'ネストレベル指定
         Case TypeOf obj Is Collection
-            Set objJObj = GetNewInstance(obj(Level))
+            Set objJObj = Core.GetNewInstance(obj(Level))
         
         '直接指定
         Case Else
-            Set objJObj = GetNewInstance(obj)
+            Set objJObj = Core.GetNewInstance(obj)
     
     End Select
     
@@ -186,7 +188,7 @@ Private Function ParseObject(ByVal strJSON As String, obj As Object, ByVal Level
                     
                     If Len(propertyName) > 0 Then
                         
-                        ToIDictionaryAccessor(objJObj).SetProperty propertyName, ParseString(StringExtraction(IC))
+                        CastICompatibleProperty(objJObj).SetProperty propertyName, ParseString(StringExtraction(IC))
                         propertyName = ""
                     
                     Else
@@ -196,20 +198,20 @@ Private Function ParseObject(ByVal strJSON As String, obj As Object, ByVal Level
                 Case ":"
                     
                     If Len(propertyName) = 0 Then
-                        Message.Throw 2, Me, "ParseObject", "JSONFormatError"
+                        Err.Raise 512 + 2, TypeName(Me) & ".ParseObject", "JSONFormatError"
                         Exit Function
                     End If
                     
                 Case "["
                     
                     '下位レベルのパース（Array)
-                    ToIDictionaryAccessor(objJObj).SetProperty propertyName, ParseArray(ElementExtraction(IC), obj, Level)
+                    CastICompatibleProperty(objJObj).SetProperty propertyName, ParseArray(ElementExtraction(IC), obj, Level)
                     propertyName = ""
                     
                 Case "{"
                     
                     '下位レベルのパース（Object)
-                    ToIDictionaryAccessor(objJObj).SetProperty propertyName, ParseObject(ElementExtraction(IC), obj, Level)
+                    CastICompatibleProperty(objJObj).SetProperty propertyName, ParseObject(ElementExtraction(IC), obj, Level)
                     propertyName = ""
                 
                 Case " ", vbTab, vbCr, vbLf, vbCrLf
@@ -229,11 +231,11 @@ Private Function ParseObject(ByVal strJSON As String, obj As Object, ByVal Level
         If SB.Length > 0 Then
             
             If Len(propertyName) = 0 Then
-                Message.Throw 3, Me, "ParseObject", "JSONFormatError"
+                Err.Raise 512 + 3, TypeName(Me) & ".ParseObject", "JSONFormatError"
                 Exit Function
             End If
             
-            ToIDictionaryAccessor(objJObj).SetProperty propertyName, ParseValue(SB.ToString)
+            CastICompatibleProperty(objJObj).SetProperty propertyName, ParseValue(SB.ToString)
             
         End If
     
@@ -241,18 +243,6 @@ Private Function ParseObject(ByVal strJSON As String, obj As Object, ByVal Level
     
     Set ParseObject = objJObj
 
-End Function
-'-------------------------------------------------
-' IDictionaryAccessorへキャスト
-'-------------------------------------------------
-Private Function ToIDictionaryAccessor(obj As Object) As IDictionaryAccessor
-    Set ToIDictionaryAccessor = obj
-End Function
-'-------------------------------------------------
-' インスタンス生成
-'-------------------------------------------------
-Private Function GetNewInstance(obj As INewInstance) As Object
-    Set GetNewInstance = obj.NewInstance
 End Function
 '-------------------------------------------------
 ' Arrayのパース
@@ -264,7 +254,7 @@ Private Function ParseArray(strJSON As String, obj As Object, ByVal Level As Lon
     Dim SB As StringBuilder
     
     If Not StringHelper.StartsWith(strJSON, "[") Or Not StringHelper.EndsWith(strJSON, "]") Then
-        Message.Throw 1, Me, "ParseArray", "JSONFormatError"
+        Err.Raise 512 + 1, TypeName(Me) & ".ParseArray", "JSONFormatError"
         Exit Function
     End If
     
@@ -273,13 +263,13 @@ Private Function ParseArray(strJSON As String, obj As Object, ByVal Level As Lon
     Select Case True
         
         Case obj Is Nothing
-            Set objAry = GetNewInstance(New ArrayList)
+            Set objAry = Core.GetNewInstance(New ArrayList)
         
         Case TypeOf obj Is Collection
-            Set objAry = GetNewInstance(obj(Level))
+            Set objAry = Core.GetNewInstance(obj(Level))
         
         Case Else
-            Set objAry = GetNewInstance(obj)
+            Set objAry = Core.GetNewInstance(obj)
     
     End Select
     
@@ -367,7 +357,7 @@ Private Function StringExtraction(ByRef IC As ICursor) As String
         Exit Function
     End If
         
-    Message.Throw 1, Me, "StringExtraction", "JSONFormatError"
+    Err.raie 512 + 1, TypeName(Me) & "StringExtraction", "JSONFormatError"
 End Function
 '-------------------------------------------------
 ' 角カッコまたは波カッコの範囲取得
@@ -418,7 +408,7 @@ Private Function ElementExtraction(ByRef IC As ICursor) As String
         IC.MoveNext
     Loop
     
-    Message.Throw 1, Me, "ElementExtraction", "JSONFormatError"
+    Err.Raise 512 + 1, TypeName(Me) & ".ElementExtraction", "JSONFormatError"
 End Function
 '---------------------------------------------------------------------
 ' 文字列のパース
@@ -426,7 +416,7 @@ End Function
 Private Function ParseString(strJSON As String) As String
     
     If Not StringHelper.StartsWith(strJSON, """") Or Not StringHelper.EndsWith(strJSON, """") Then
-        Message.Throw 1, Me, "ParseString", "JSONFormatError"
+        Err.Raise 512 + 1, TypeName(Me) & ".ParseString", "JSONFormatError"
         Exit Function
     End If
     

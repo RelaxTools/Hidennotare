@@ -35,8 +35,11 @@ Attribute VB_Name = "Document"
 '>* ドキュメント生成モジュール(Hidennotareをgitやwikiで管理するためのモジュール)
 '>
 '-----------------------------------------------------------------------------------------------------
-Private Const TARGET_URL As String = "https://github.com/RelaxTools/Hidennotare/wiki/"
+Option Private Module
 Option Explicit
+
+'Wiki URL
+Private Const TARGET_URL As String = "https://github.com/RelaxTools/Hidennotare/wiki/"
 '-----------------------------------------------------------------------------------------------------
 ' ソースのエクスポート
 '-----------------------------------------------------------------------------------------------------
@@ -79,8 +82,8 @@ pass:
     Exit Sub
 e:
     If Err.Number = 70 Then
-        If Message.Question("他のプログラムで開いています。再試行しますか？") Then
-            Message.Critical "処理を中断しました。"
+        If message.Question("他のプログラムで開いています。再試行しますか？") Then
+            message.Critical "処理を中断しました。"
         Else
             Resume
         End If
@@ -202,7 +205,7 @@ Sub OutputMarkDown()
                 fp = FreeFile()
                 Open strFile For Binary As fp
                 
-                bytBuf = Convert.ToUTF8(SB.ToJoin(vbLf))
+                bytBuf = Convert.ToUTF8(SB.ToString(vbLf))
                 
                 Put #fp, , bytBuf
                 Close fp
@@ -269,8 +272,8 @@ Sub OutputMarkDown()
     Exit Sub
 e:
     If Err.Number = 70 Then
-        If Message.Question("他のプログラムで開いています。再試行しますか？") Then
-            Message.Critical "処理を中断しました。"
+        If message.Question("他のプログラムで開いています。再試行しますか？") Then
+            message.Critical "処理を中断しました。"
         Else
             Resume
         End If
@@ -316,7 +319,7 @@ Private Function LevelNo(ByVal strBuf As String, No() As Long, ByVal lngLevel As
                 SB.Append CStr(No(i))
             Next
             
-            LevelNo = strLeft & SB.ToJoin(".") & strRight
+            LevelNo = SB.ToString(".", strLeft, strRight)
         
         
             '目次作成レベル以上であれば目次作成
@@ -387,7 +390,7 @@ Private Function GetStaticContents(ByVal strFile As String) As String
     Loop
 
     If SB.Length > 0 Then
-        GetStaticContents = SB.ToJoin(vbLf) & vbLf
+        GetStaticContents = SB.ToString(vbLf, "", vbLf)
     End If
     
 End Function

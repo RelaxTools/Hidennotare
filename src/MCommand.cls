@@ -102,7 +102,7 @@ End Property
 '---------------------------------------
 Public Function ToString()
 
-    ToString = "let " & vbCrLf & mSb.ToJoin(", " & vbCrLf) & " " & vbCrLf & "in " & mLast.Name
+    ToString = "let " & vbCrLf & mSb.ToString(", " & vbCrLf) & " " & vbCrLf & "in " & mLast.Name
 
 End Function
 

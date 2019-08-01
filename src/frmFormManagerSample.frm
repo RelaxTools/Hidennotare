@@ -64,7 +64,7 @@ Private Sub cmdOk_Click()
         Exit Sub
     End If
 
-    If Message.Question("実行します。よろしいですか？") Then
+    If message.Question("実行します。よろしいですか？") Then
         Exit Sub
     End If
 
@@ -103,9 +103,9 @@ Private Sub cmdOk_Click()
     
     'キャンセルか？
     If FM.IsCancel Then
-        Message.Error "処理は中断されました。"
+        message.Error "処理は中断されました。"
     Else
-        Message.Information "完了しました。"
+        message.Information "完了しました。"
     End If
 
 End Sub

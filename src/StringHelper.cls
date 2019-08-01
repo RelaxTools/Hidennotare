@@ -67,7 +67,7 @@ Public Function LenEx(ByVal strBuf As String) As Long
     
     For i = LBound(bytBuf) To UBound(bytBuf) Step 2
     
-        lngBuf = Math.LShift(bytBuf(i + 1), 8) + bytBuf(i)
+        lngBuf = Core.LShift(bytBuf(i + 1), 8) + bytBuf(i)
     
         Select Case lngBuf
             '上位サロゲート
@@ -153,7 +153,7 @@ Public Function AscLeft(ByVal var As Variant, ByVal lngSize As Long) As String
 
     For i = 1 To lngLen
     
-        strChr = Mid(var, i, 1)
+        strChr = Mid$(var, i, 1)
         If AscLen(strResult & strChr) > lngSize Then
             Exit For
         End If
@@ -353,7 +353,7 @@ Public Function CsvParser(ByVal strBuf As String, Optional ByVal Quatation As Bo
     
     'ダブルコーテーションが偶数ではない場合
     If lngQuot Mod 2 <> 0 Then
-        Message.Throw 1, Me, "CsvParser", "Invalid Format(Quotation)"
+        Err.Raise 512 + 1, TypeName(Me) & ".CsvParser", "Invalid Format(Quotation)"
     End If
     
     Set CsvParser = Row

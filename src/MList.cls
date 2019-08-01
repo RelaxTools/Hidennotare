@@ -136,7 +136,7 @@ Private Function IList_ToString() As String
     
     Next
 
-    IList_ToString = "{" & SB.ToJoin(", ") & "}"
+    IList_ToString = SB.ToString(", ", "{", "}")
 
 End Function
 Private Property Get IList_GetCursor() As ICursor

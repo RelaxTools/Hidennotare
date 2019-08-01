@@ -82,7 +82,7 @@ Private mLevel As LogLevel
 Private mLogType As Long
 Private mlngHistory As Long
 Private mLevelStr As Variant
-Private mLang As Object
+Private mLang As ITrunslate
 Private mFSO As Object
 
 '言語サポート
@@ -126,25 +126,25 @@ End Sub
 '--------------------------------------------------------------
 '　トレースログ
 '--------------------------------------------------------------
-Public Sub LogTrace(Message As String, ParamArray p())
-    ReportLog LogLevel.Trace, PlaceHolder(Message, p)
+Public Sub LogTrace(message As String, ParamArray p())
+    ReportLog LogLevel.Trace, PlaceHolder(message, p)
 End Sub
 '--------------------------------------------------------------
 '　情報ログ
 '--------------------------------------------------------------
-Public Sub LogInfo(Message As String, ParamArray p())
-    ReportLog LogLevel.Info, PlaceHolder(Message, p)
+Public Sub LogInfo(message As String, ParamArray p())
+    ReportLog LogLevel.Info, PlaceHolder(message, p)
 End Sub
 '--------------------------------------------------------------
 '　ワーニングログ
 '--------------------------------------------------------------
-Public Sub LogWarn(Message As String, ParamArray p())
-    ReportLog LogLevel.Warn, PlaceHolder(Message, p)
+Public Sub LogWarn(message As String, ParamArray p())
+    ReportLog LogLevel.Warn, PlaceHolder(message, p)
 End Sub
 '--------------------------------------------------------------
 '　エラーログ
 '--------------------------------------------------------------
-Public Sub LogFatal(Message As String, ParamArray p())
+Public Sub LogFatal(message As String, ParamArray p())
 
     Dim lngErr As Long
     Dim strDesc As String
@@ -152,7 +152,7 @@ Public Sub LogFatal(Message As String, ParamArray p())
     lngErr = Err.Number
     strDesc = Err.Description
     
-    ReportLog LogLevel.Fatal, "Fatal Error (" & PlaceHolder(Message, p) & ")"
+    ReportLog LogLevel.Fatal, "Fatal Error (" & PlaceHolder(message, p) & ")"
     Me.LogFlash
     
     Err.Number = lngErr
@@ -162,13 +162,13 @@ End Sub
 '--------------------------------------------------------------
 '　開始ログ
 '--------------------------------------------------------------
-Public Sub LogBegin(lvl As LogLevel, Message As String, ParamArray p())
+Public Sub LogBegin(lvl As LogLevel, message As String, ParamArray p())
     
     If colStack Is Nothing Then
         Set colStack = New Collection
     End If
     
-    ReportLog lvl, "[" & colStack.Count + 1 & "]" & PlaceHolder(Message, p) & ",BEGIN"
+    ReportLog lvl, "[" & colStack.Count + 1 & "]" & PlaceHolder(message, p) & ",BEGIN"
 
     colStack.Add GetTickCount
 
@@ -176,7 +176,7 @@ End Sub
 '--------------------------------------------------------------
 '　終了ログ
 '--------------------------------------------------------------
-Public Sub LogFinish(lvl As LogLevel, Message As String, ParamArray p())
+Public Sub LogFinish(lvl As LogLevel, message As String, ParamArray p())
     
     Dim t As LongPtr
 
@@ -192,10 +192,10 @@ Public Sub LogFinish(lvl As LogLevel, Message As String, ParamArray p())
     End If
     
     If t = 0 Then
-        ReportLog lvl, PlaceHolder(Message, p) & ",FINISH,[?]ms"
+        ReportLog lvl, PlaceHolder(message, p) & ",FINISH,[?]ms"
     Else
         t = GetTickCount - t
-        ReportLog lvl, "[" & colStack.Count + 1 & "]" & PlaceHolder(Message, p) & ",FINISH,[" & t & "]ms"
+        ReportLog lvl, "[" & colStack.Count + 1 & "]" & PlaceHolder(message, p) & ",FINISH,[" & t & "]ms"
     End If
     Me.LogFlash
     
@@ -361,7 +361,7 @@ Private Function PlaceHolder(ByVal strMsg As String, ByVal p As Variant) As Stri
     If Not mLang Is Nothing Then
         strMsg = mLang.Trunslate(strMsg)
     Else
-        strMsg = Escape(strMsg)
+        strMsg = Convert.Unescape(strMsg)
     End If
 
     If UBound(p) >= 0 Then
@@ -378,16 +378,3 @@ End Function
 Private Property Get Title() As String
     Title = ThisWorkbook.BuiltinDocumentProperties("Title").Value
 End Property
-'　文字列のエスケープ
-Private Function Escape(ByVal v As String) As String
-
-    v = Replace(v, "\\", "\")
-    v = Replace(v, "\n", vbLf)
-    v = Replace(v, "\r", vbCr)
-    v = Replace(v, "\t", vbTab)
-    
-    Escape = v
-    
-End Function
-
-

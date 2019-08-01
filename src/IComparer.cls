@@ -40,7 +40,7 @@ Attribute VB_Exposed = False
 '>
 '>**Remarks**
 '>
-'>文字列の比較を置換するインターフェイス
+'>文字列の比較方法を交換するインターフェイス
 '>
 '>**Definition**
 '>

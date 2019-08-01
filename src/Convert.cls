@@ -61,7 +61,7 @@ Private Const MB_PRECOMPOSED As Long = &H1
 '>**Syntax**
 '>
 '>```
-'>string = Convert.FromUTF8(bytBuf())
+'>ret = Convert.FromUTF8(bytBuf())
 '>```
 '>
 '>**Parameters**
@@ -72,7 +72,10 @@ Private Const MB_PRECOMPOSED As Long = &H1
 '>
 '>**Return Value**
 '>
-'>String型(UTF16LE)
+'>|Name|Data type|Description|
+'>---|---|---
+'>|ret|String|String型(UTF16LE)|
+'>
 '>
 '>**Remarks**
 '>
@@ -113,7 +116,7 @@ End Function
 '>**Syntax**
 '>
 '>```
-'>byte() = Convert.ToUTF8(strBuf)
+'>ret() = Convert.ToUTF8(strBuf)
 '>```
 '>
 '>**Parameters**
@@ -124,7 +127,9 @@ End Function
 '>
 '>**Return Value**
 '>
-'>byte配列(UTF8)
+'>|Name|Data type|Description|
+'>---|---|---
+'>|ret|Byte()|byte配列(UTF8)|
 '>
 '>**Remarks**
 '>
@@ -163,7 +168,7 @@ End Function
 '>**Syntax**
 '>
 '>```
-'>string = Convert.Escape(strBuf)
+'>ret = Convert.Escape(strBuf)
 '>```
 '>
 '>**Parameters**
@@ -174,11 +179,13 @@ End Function
 '>
 '>**Return Value**
 '>
-'>エスケープ後の文字列
+'>|Name|Data type|Description|
+'>---|---|---
+'>|ret|String|エスケープ後の文字列|
 '>
 '>**Remarks**
 '>
-'>文字列のエスケープ<br>
+'>文字列のエスケープ（正規表現）<br>
 '>
 '>**Example**
 '>
@@ -200,9 +207,9 @@ Public Function Escape(ByVal v As String) As String
         
         strChr = Mid$(v, i, 1)
         
-        Select Case Unicode(strChr)
+        Select Case AscW(strChr)
             Case &H0 To &H7, &HB, &HE To &H1F, &H7F
-                SB.Append "\u" & Hex$(Unicode(strChr))
+                SB.Append "\u" & Hex$(AscW(strChr))
             Case &H8
                 SB.Append "\b"
             Case &H9
@@ -234,7 +241,7 @@ End Function
 '>**Syntax**
 '>
 '>```
-'>string = Convert.Unescape(strBuf)
+'>ret = Convert.Unescape(strBuf)
 '>```
 '>
 '>**Parameters**
@@ -245,11 +252,13 @@ End Function
 '>
 '>**Return Value**
 '>
-'>アンエスケープ後の文字列
+'>|Name|Data type|Description|
+'>---|---|---
+'>|ret|String|アンエスケープ後の文字列|
 '>
 '>**Remarks**
 '>
-'>文字列のアンエスケープ<br>
+'>文字列のアンエスケープ（正規表現）<br>
 '>
 '>**Example**
 '>
@@ -276,7 +285,7 @@ Public Function Unescape(ByVal v As String) As String
             Case "\u"
             
                 If i + 6 - 1 > Len(v) Then
-                    Message.Throw 1, Me, "Unescape", "format error"
+                    Err.Raise 512 + 1, TypeName(Me) & ".Unescape", "format error"
                 End If
             
                 SB.Append ChrW$(Val("&H" & Mid$(v, i + 2, 4)))
@@ -306,7 +315,7 @@ Public Function Unescape(ByVal v As String) As String
                 SB.Append "\"
                 i = i + 2
             Case Else
-                SB.Append Left(strChr, 1)
+                SB.Append Left$(strChr, 1)
                 i = i + 1
         End Select
 
@@ -321,7 +330,7 @@ End Function
 '>**Syntax**
 '>
 '>```
-'>string = Convert.ToHiragana(strBuf, [flag = False])
+'>ret = Convert.ToHiragana(strBuf, [flag = False])
 '>```
 '>
 '>**Parameters**
@@ -332,7 +341,9 @@ End Function
 '>
 '>**Return Value**
 '>
-'>ひらがなに変換された文字列
+'>|Name|Data type|Description|
+'>---|---|---
+'>|ret|String|ひらがなに変換された文字列|
 '>
 '>**Remarks**
 '>
@@ -374,15 +385,15 @@ Public Function ToHiragana(ByVal strBuf As String, Optional ByVal flag As Boolea
     
     For i = LBound(bytBuf) To UBound(bytBuf) Step 2
     
-        lngBuf = Math.LShift(bytBuf(i + 1), 8) + bytBuf(i)
+        lngBuf = Core.LShift(bytBuf(i + 1), 8) + bytBuf(i)
     
         Select Case lngBuf
             'カタカナ
             Case &H30A1& To lngOpt, &H30FD&, &H30FE&
             
                 lngConv = lngBuf - &H60&
-                retBuf(i) = Math.LByte(lngConv)
-                retBuf(i + 1) = Math.UByte(lngConv)
+                retBuf(i) = Core.LByte(lngConv)
+                retBuf(i + 1) = Core.UByte(lngConv)
             
         End Select
     
@@ -408,11 +419,13 @@ End Function
 '>
 '>**Return Value**
 '>
-'>カタカナに変換された文字列
+'>|Name|Data type|Description|
+'>---|---|---
+'>|ret|String|カタカナに変換された文字列|
 '>
 '>**Remarks**
 '>
-'>UNICODE対応ひらがな→カタカナ変換換<br>
+'>UNICODE対応ひらがな→カタカナ変換<br>
 '>
 '>**Example**
 '>
@@ -450,15 +463,15 @@ Public Function ToKatakana(ByVal strBuf As String, Optional ByVal flag As Boolea
     
     For i = LBound(bytBuf) To UBound(bytBuf) Step 2
     
-        lngBuf = Math.LShift(bytBuf(i + 1), 8) + bytBuf(i)
+        lngBuf = Core.LShift(bytBuf(i + 1), 8) + bytBuf(i)
     
         Select Case lngBuf
             'ひらがな
             Case &H3041& To lngOpt, &H309D&, &H309E&
             
                 lngConv = lngBuf + &H60&
-                retBuf(i) = Math.LByte(lngConv)
-                retBuf(i + 1) = Math.UByte(lngConv)
+                retBuf(i) = Core.LByte(lngConv)
+                retBuf(i + 1) = Core.UByte(lngConv)
             
         End Select
     
@@ -601,7 +614,7 @@ Public Function StrConvU(ByVal strSource As String, Conv As VbStrConv) As String
                     strBuf = ""
                 Else
                     'う”
-                    If Unicode(c) = &H3094 Then
+                    If AscW(c) = &H3094 Then
                         If Conv = vbKatakana Then
                             strRet = strRet & VBA.StrConv(strBuf, Conv) & "ヴ"
                             strBuf = ""
@@ -627,70 +640,63 @@ Public Function StrConvU(ByVal strSource As String, Conv As VbStrConv) As String
     StrConvU = strRet
 
 End Function
-Private Function Unicode(ByVal strBuf As String) As Long
-    Dim bytBuf() As Byte
-    
-    If Len(strBuf) <> 0 Then
-        bytBuf = strBuf
-        Unicode = CLng(bytBuf(1)) * &H100 + bytBuf(0)
-    End If
-End Function
 
-'----------------------------------------------------------------------------------
-'　ローマ数字変換
-'----------------------------------------------------------------------------------
-Function ToRoman(ByVal lngNum As Long) As String
 
-    Dim lng1000 As Long
-    Dim lng500 As Long
-    Dim lng100 As Long
-    Dim lng50 As Long
-    Dim lng10 As Long
-    Dim lng5 As Long
-    
-    Dim strAns As String
-
-    'M
-    lng1000 = lngNum \ 1000
-    lngNum = lngNum - 1000 * lng1000
-    
-    'D
-    lng500 = lngNum \ 500
-    lngNum = lngNum - 500 * lng500
-    
-    'C
-    lng100 = lngNum \ 100
-    lngNum = lngNum - 100 * lng100
-    
-    'L
-    lng50 = lngNum \ 50
-    lngNum = lngNum - 50 * lng50
-    
-    'X
-    lng10 = lngNum \ 10
-    lngNum = lngNum - 10 * lng10
-    
-    'V
-    lng5 = lngNum \ 5
-    lngNum = lngNum - 5 * lng5
-    
-    strAns = strAns & String(lng1000, "M")
-    strAns = strAns & String(lng500, "D")
-    strAns = strAns & String(lng100, "C")
-    strAns = strAns & String(lng50, "L")
-    strAns = strAns & String(lng10, "X")
-    strAns = strAns & String(lng5, "V")
-    strAns = strAns & String(lngNum, "I")
-    
-    '例外
-    strAns = Replace(strAns, "DCCCC", "CM")
-    strAns = Replace(strAns, "LXXXX", "XC")
-    strAns = Replace(strAns, "VIIII", "IX")
-    strAns = Replace(strAns, "CCCC", "CD")
-    strAns = Replace(strAns, "XXXX", "XL")
-    strAns = Replace(strAns, "IIII", "IV")
-    
-    ToRoman = strAns
-
-End Function
-
+''----------------------------------------------------------------------------------
+''　ローマ数字変換
+''----------------------------------------------------------------------------------
+'Function ToRoman(ByVal lngNum As Long) As String
+'
+'    Dim lng1000 As Long
+'    Dim lng500 As Long
+'    Dim lng100 As Long
+'    Dim lng50 As Long
+'    Dim lng10 As Long
+'    Dim lng5 As Long
+'
+'    Dim strAns As String
+'
+'    'M
+'    lng1000 = lngNum \ 1000
+'    lngNum = lngNum - 1000 * lng1000
+'
+'    'D
+'    lng500 = lngNum \ 500
+'    lngNum = lngNum - 500 * lng500
+'
+'    'C
+'    lng100 = lngNum \ 100
+'    lngNum = lngNum - 100 * lng100
+'
+'    'L
+'    lng50 = lngNum \ 50
+'    lngNum = lngNum - 50 * lng50
+'
+'    'X
+'    lng10 = lngNum \ 10
+'    lngNum = lngNum - 10 * lng10
+'
+'    'V
+'    lng5 = lngNum \ 5
+'    lngNum = lngNum - 5 * lng5
+'
+'    strAns = strAns & String(lng1000, "M")
+'    strAns = strAns & String(lng500, "D")
+'    strAns = strAns & String(lng100, "C")
+'    strAns = strAns & String(lng50, "L")
+'    strAns = strAns & String(lng10, "X")
+'    strAns = strAns & String(lng5, "V")
+'    strAns = strAns & String(lngNum, "I")
+'
+'    '例外
+'    strAns = Replace(strAns, "DCCCC", "CM")
+'    strAns = Replace(strAns, "LXXXX", "XC")
+'    strAns = Replace(strAns, "VIIII", "IX")
+'    strAns = Replace(strAns, "CCCC", "CD")
+'    strAns = Replace(strAns, "XXXX", "XL")
+'    strAns = Replace(strAns, "IIII", "IV")
+'
+'    ToRoman = strAns
+'
+'End Function
+'

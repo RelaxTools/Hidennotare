@@ -106,7 +106,7 @@ Private Function IConstructor_Instancing(Args As Collection) As Object
     strFolder = FileIO.GetParentFolderName(mFileName)
     
     If Not FileIO.FolderExists(strFolder) Then
-        Message.Throw 1, Me, "IConstructor_Instancing", "フォルダ({0})が存在しません。", strFolder
+        Err.Raise 512 + 1, TypeName(Me) & ".IConstructor_Instancing", "not exists folder. (" & strFolder & ")"
     End If
 
     Call fileOpen
