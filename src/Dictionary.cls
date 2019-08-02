@@ -72,14 +72,14 @@ Attribute VB_Exposed = False
 '>
 '>**Dependent**
 '>
-'>* Message クラス
-'>* StringBuilder クラス
-'>* ArrayList クラス
-'>* IDictionary クラス
-'>* INewInstance クラス
-'>* ICompatibleProperty クラス
-'>* Convert クラス
-'>* ICursor クラス
+'>* Message
+'>* StringBuilder
+'>* ArrayList
+'>* IDictionary
+'>* INewInstance
+'>* ICompatibleProperty
+'>* Convert
+'>* ICursor
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
@@ -436,21 +436,115 @@ Private Function Escape(ByVal v As String) As String
     Escape = """" & Convert.Escape(v) & """"
 
 End Function
-'--------------------------------------------------------------
-'  ICursor の ICursor インターフェースを取得
-'--------------------------------------------------------------
+'>---
+'>#### GetCursor(IDictionary I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>Set var = expression.GetCursor()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|IDictionary|IDictionary I/F を指定します。|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|var|ICursor|ICursor I/F を返却|
+'>
+'>**Remarks**
+'>
+'>IList I/F のメソッドです。<br>
+'>ICursor インターフェースを取得
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* IDictionary
+'>* ICursor
+'>
 Private Property Get IDictionary_GetCursor() As ICursor
     Set IDictionary_GetCursor = Me
 End Property
-'--------------------------------------------------------------
-'  ICursor の Eof プロパティを取得
-'--------------------------------------------------------------
+'>---
+'>#### Eof(ICursor I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>var = expression.Eof()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|ICursor|ICursor I/F を指定します。|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|var|Boolean|カーソルが終了:True / カーソルが終了していない:False|
+'>
+'>**Remarks**
+'>
+'>ICursor I/F のプロパティです。<br>
+'>ICursor の Eof プロパティを取得。カーソルの終了を検出します。
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* ICursor
+'>
 Private Property Get ICursor_Eof() As Boolean
     ICursor_Eof = mIndex > mDic.Count - 1
 End Property
-'--------------------------------------------------------------
-'  ICursor の Item プロパティを取得
-'--------------------------------------------------------------
+'>---
+'>#### Item(ICursor I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>var = expression.Item()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|ICursor|ICursor I/F を指定します。|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|var|Variant|カーソル位置の内容を取得します。|
+'>
+'>**Remarks**
+'>
+'>ICursor I/F のプロパティです。<br>
+'>ICursor の Item プロパティを取得。現在行の内容を取得します。
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* ICursor
+'>
 Private Property Get ICursor_Item(Optional ByVal opt As Variant) As Variant
     Dim v As Variant
     
@@ -463,15 +557,73 @@ Private Property Get ICursor_Item(Optional ByVal opt As Variant) As Variant
     End If
 
 End Property
-'--------------------------------------------------------------
-'  ICursor の カーソル位置を初期化
-'--------------------------------------------------------------
+'>---
+'>#### MoveFirst(ICursor I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>expression.MoveFirst()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|ICursor|ICursor I/F を指定します。|
+'>
+'>**Return Value**
+'>
+'>* None
+'>
+'>**Remarks**
+'>
+'>ICursor I/F のメソッドです。<br>
+'>カーソル位置の初期化を行います。
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* ICursor
+'>
 Private Sub ICursor_MoveFirst()
     mIndex = 0
 End Sub
-'--------------------------------------------------------------
-'  ICursor の カーソル位置を次に移動
-'--------------------------------------------------------------
+'>---
+'>#### MoveNext(ICursor I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>expression.MoveNext()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|ICursor|ICursor I/F を指定します。|
+'>
+'>**Return Value**
+'>
+'>* None
+'>
+'>**Remarks**
+'>
+'>ICursor I/F のメソッドです。<br>
+'>カーソル位置を次に移動します。
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* ICursor
+'>
 Private Sub ICursor_MoveNext()
 
     mIndex = mIndex + 1

@@ -74,11 +74,39 @@ Private mRange As Range
 Private mStartRow As Long
 Private mEofCol As Variant
 Private mRow As Long
-'--------------------------------------------------------------
-' コンストラクタ
-'--------------------------------------------------------------
-' Arg1 - Range   : UsedRange/ActiveSheet.Range(ActiveSheet.PrintArea) etc...
-'--------------------------------------------------------------
+'>---
+'>#### コンストラクタ
+'>
+'>**Syntax**
+'>
+'>```
+'>Set return = Constructor(New RangeCursor, range)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|range|必須|Range|Rangeオブジェクトを指定(UsedRange/Selection等を想定)|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|return|Object|新しいインスタンス(RangeCursor)|
+'>
+'>**Remarks**
+'>
+'>** このクラスはコンストラクタを使用しないと実行できません。**
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* None
+'>
 Private Function IConstructor_Instancing(ByRef Args As Collection) As Object
 
     Const RANGE_AREA As Long = 1  '引数１　RANGE オブジェクト
@@ -113,34 +141,184 @@ Private Sub SkipHiddenRow()
         mRow = mRow + 1
     Loop
 End Sub
-'--------------------------------------------------------------
-' ICursor インターフェースを取得
-'--------------------------------------------------------------
+'>---
+'>#### GetCursor(RangeCursor)
+'>
+'>**Syntax**
+'>
+'>```
+'>Set var = expression.GetCursor()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|RangeCursor|RangeCursorインスタンスを指定します。|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|var|ICursor|ICursor I/F を返却|
+'>
+'>**Remarks**
+'>
+'>ICursor インターフェースを取得
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* ICursor
+'>
 Public Property Get GetCursor() As ICursor
     Set GetCursor = Me
 End Property
-'------------------------------------------------------
-' 終了判定
-'------------------------------------------------------
+'>---
+'>#### Eof(ICursor I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>var = expression.Eof()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|ICursor|ICursor I/F を指定します。|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|var|Boolean|カーソルが終了:True / カーソルが終了していない:False|
+'>
+'>**Remarks**
+'>
+'>ICursor I/F のプロパティです。<br>
+'>ICursor の Eof プロパティを取得。カーソルの終了を検出します。
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* ICursor
+'>
 Private Property Get ICursor_Eof() As Boolean
     ICursor_Eof = (mRange.Rows.Count < mRow)
 End Property
-'------------------------------------------------------
-' セル取得（規定のプロパティなので省略表記可）
-'------------------------------------------------------
+'>---
+'>#### Item(ICursor I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>var = expression.Item()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|ICursor|ICursor I/F を指定します。|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|var|Variant|カーソル位置の内容を取得します。|
+'>
+'>**Remarks**
+'>
+'>ICursor I/F のプロパティです。<br>
+'>ICursor の Item プロパティを取得。現在行の内容を取得します。
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* ICursor
+'>
 Private Property Get ICursor_Item(Optional ByVal opt As Variant) As Variant
     Set ICursor_Item = mRange.Cells(mRow, opt)
 End Property
-'------------------------------------------------------
-' 最初の行に移動
-'------------------------------------------------------
+'>---
+'>#### MoveNext(ICursor I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>expression.MoveNext()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|ICursor|ICursor I/F を指定します。|
+'>
+'>**Return Value**
+'>
+'>* None
+'>
+'>**Remarks**
+'>
+'>ICursor I/F のメソッドです。<br>
+'>カーソル位置を次に移動します。
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* ICursor
+'>
 Private Sub ICursor_MoveFirst()
     mRow = mStartRow
     SkipHiddenRow
 End Sub
-'------------------------------------------------------
-' 次行取得
-'------------------------------------------------------
+'>---
+'>#### MoveFirst(ICursor I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>expression.MoveFirst()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|ICursor|ICursor I/F を指定します。|
+'>
+'>**Return Value**
+'>
+'>* None
+'>
+'>**Remarks**
+'>
+'>ICursor I/F のメソッドです。<br>
+'>カーソル位置の初期化を行います。
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* ICursor
+'>
 Private Sub ICursor_MoveNext()
     mRow = mRow + 1
     SkipHiddenRow

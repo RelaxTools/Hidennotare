@@ -152,7 +152,7 @@ End Function
 '>
 '>**Return Value**
 '>
-'>‚È‚µ
+'>* None
 '>
 '>**Remarks**
 '>
@@ -161,11 +161,11 @@ End Function
 '>
 '>**Example**
 '>
-'>‚È‚µ
+'>* None
 '>
 '>**See also**
 '>
-'>‚È‚µ
+'>* None
 '>
 Public Sub Clear()
     
@@ -195,7 +195,7 @@ End Sub
 '>
 '>**Return Value**
 '>
-'>‚È‚µ
+'>* None
 '>
 '>**Remarks**
 '>
@@ -228,7 +228,7 @@ End Sub
 '>
 '>**See also**
 '>
-'>‚È‚µ
+'>* None
 '>
 Function Append(ByVal s As String, Optional ByVal quotation As Boolean = False)
 
@@ -321,7 +321,7 @@ End Function
 '>
 '>**See also**
 '>
-'>‚È‚µ
+'>* None
 '>
 Function ToString(Optional ByVal Delimiter As String = "", Optional ByVal Header As String = "", Optional ByVal Footer As String = "")
 
@@ -340,7 +340,7 @@ End Function
 '>
 '>**Parameters**
 '>
-'>‚È‚µ
+'>* None
 '>
 '>**Return Value**
 '>
@@ -376,7 +376,7 @@ End Function
 '>
 '>**See also**
 '>
-'>‚È‚µ
+'>* None
 '>
 Function ToArray() As String()
     
@@ -395,7 +395,7 @@ End Function
 '>
 '>**Parameters**
 '>
-'>‚È‚µ
+'>* None
 '>
 '>**Return Value**
 '>
@@ -431,7 +431,7 @@ End Function
 '>
 '>**See also**
 '>
-'>‚È‚µ
+'>* None
 '>
 Public Property Get Length() As Long
     Length = mlngLength
@@ -455,7 +455,7 @@ End Property
 '>
 '>**Return Value**
 '>
-'>‚È‚µ
+'>* None
 '>
 '>**Remarks**
 '>
@@ -484,7 +484,7 @@ End Property
 '>
 '>**See also**
 '>
-'>‚È‚µ
+'>* None
 '>
 Public Sub Replace(ByVal strFind As String, ByVal strReplace As String)
 

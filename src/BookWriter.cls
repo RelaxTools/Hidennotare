@@ -36,6 +36,25 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
+'>### BookWriter クラス
+'>
+'>**Remarks**
+'>
+'>ブック出力クラス<br>
+'>BookReaderと対に作成したがあまり使用されない<br>
+'>
+'>**Dependent**
+'>
+'>* IConstructor
+'>* IWriter
+'>
+'>**History**
+'>
+'>|Date|Version|Note|
+'>|---|---|---|
+'>|2019-01-01|Ver.1.0.0|新規作成|
+'>
+'-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements IWriter
 Implements IConstructor

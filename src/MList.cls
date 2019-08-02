@@ -36,20 +36,40 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-' Power Query M Language List Class(Collection Wrapper)
-'-----------------------------------------------------------------------------------------------------
-' 委譲 : ArrayList
-'-----------------------------------------------------------------------------------------------------
-' TODO : M 言語の List が作成できるクラス
-'        IList I/F を使用する必要がある。
-'
-'        Dim lst As IList
-'        Set lst = New MList
-'
-'        lst.Add Value
-'
-'-----------------------------------------------------------------------------------------------------
-' NOTE : ToString すると M Language List を出力します。
+'>### MList クラス
+'>
+'>**Remarks**
+'>
+'>MList<br>
+'>Power Query M Language List Class<br>
+'>M言語をVBAで組み立てる際に便利なクラス<br>
+'>
+'* M 言語の List が作成できるクラス
+'* IList I/F を使用する必要がある。
+'* ToString すると M Language List を出力する。
+'>
+'>**Example**
+'>
+'>```
+'>Dim lst As IList
+'>Set lst = New MList
+'>
+'>lst.Add Value
+'>```
+'>
+'>**Dependent**
+'>
+'>* IList
+'>* ArrayList
+'>* ICursor
+'>* IConstructor
+'>
+'>**History**
+'>
+'>|Date|Version|Note|
+'>|---|---|---|
+'>|2019-01-01|Ver.1.0.0|新規作成|
+'>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements IConstructor

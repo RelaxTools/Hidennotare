@@ -36,7 +36,7 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-'>### LineCursor クラス
+'>### SheetCursor クラス
 '>
 '>**Remarks**
 '>
@@ -50,7 +50,7 @@ Attribute VB_Exposed = False
 '>**Sample**
 '>
 '>```
-'>Set IC = Core.Constructor(New SheetCursor, ActiveSheet, 10, "B")
+'>Set IC = Constructor(New SheetCursor, ActiveSheet, 10, "B")
 '>
 '>Do Until IC.Eof
 '>
@@ -87,15 +87,48 @@ Enum SheetCursorConstants
     DirectionRight = 1          '右方向カーソル
 End Enum
 Private mDirection As SheetCursorConstants
-'--------------------------------------------------------------
-' コンストラクタ
-'--------------------------------------------------------------
-' Arg1 - Worksheet
-' Arg2 - StartRow/Column : Start Row or Column
-' Arg3 - EOF Row/Column  : Eof Row or Column
-' Arg4 - Direction       : SheetCursorConstants.DirectionDown/DirectionRight
-' Arg5 - EOF String      : Default ""
-'--------------------------------------------------------------
+'>---
+'>#### コンストラクタ
+'>
+'>**Syntax**
+'>
+'>```
+'>Set return = Constructor(New SheetCursor,
+'>                         worksheet,
+'>                         StartRow/Column,
+'>                         EOF Row/Column,
+'>                         [Direction = DirectionDown],
+'>                         [EOF String = ""])
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|worksheet|必須|Worksheet|処理対象のワークシートを指定)|
+'>|StartRow/Column|必須|Variant|処理対象データが最初の行または列を指定(列の場合にはアルファベットで指定可能)|
+'>|EOF Row/Column|必須|Variant|処理対象の終了を判定する列または行を指定(列の場合にはアルファベットで指定可能)|
+'>|Direction|省略可|SheetCursorConstants|処理を行う方向。下向き:DirectionDown/右向き:DirectionRightデフォルト:DirectionDown|
+'>|EOF String|省略可|String|終了判定する文字列。デフォルト""|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|return|Object|新しいインスタンス(SheetCursor)|
+'>
+'>**Remarks**
+'>
+'>** このクラスはコンストラクタを使用しないと実行できません。**
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* None
+'>
 Private Function IConstructor_Instancing(ByRef Args As Collection) As Object
 
     Const WORK_SHEET As Long = 1  '引数１　Worksheet オブジェクト
@@ -184,15 +217,77 @@ Private Sub SkipHiddenCol()
         mCol = mCol + 1
     Loop
 End Sub
-'--------------------------------------------------------------
-' ICursor インターフェースを取得
-'--------------------------------------------------------------
+'>---
+'>#### GetCursor(SheetCursor)
+'>
+'>**Syntax**
+'>
+'>```
+'>Set var = expression.GetCursor()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|SheetCursor|SheetCursorインスタンスを指定します。|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|var|ICursor|ICursor I/F を返却|
+'>
+'>**Remarks**
+'>
+'>SheetCursorのメソッドです。<br>
+'>ICursor インターフェースを取得
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* ICursor
+'>
 Public Property Get GetCursor() As ICursor
     Set GetCursor = Me
 End Property
-'------------------------------------------------------
-' 終了判定
-'------------------------------------------------------
+'>---
+'>#### Eof(ICursor I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>var = expression.Eof()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|ICursor|ICursor I/F を指定します。|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|var|Boolean|カーソルが終了:True / カーソルが終了していない:False|
+'>
+'>**Remarks**
+'>
+'>ICursor I/F のプロパティです。<br>
+'>ICursor の Eof プロパティを取得。カーソルの終了を検出します。
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* ICursor
+'>
 Private Property Get ICursor_Eof() As Boolean
     If mDirection = DirectionDown Then
         ICursor_Eof = (mWS.Cells(mRow, mEofCol).Value = mEofStr)
@@ -200,9 +295,40 @@ Private Property Get ICursor_Eof() As Boolean
         ICursor_Eof = (mWS.Cells(mEofRow, mCol).Value = mEofStr)
     End If
 End Property
-'------------------------------------------------------
-' セル取得（規定のプロパティなので省略表記可）
-'------------------------------------------------------
+'>---
+'>#### Item(ICursor I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>var = expression.Item()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|ICursor|ICursor I/F を指定します。|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|var|Variant|カーソル位置の内容を取得します。|
+'>
+'>**Remarks**
+'>
+'>ICursor I/F のプロパティです。<br>
+'>ICursor の Item プロパティを取得。現在行の内容を取得します。
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* ICursor
+'>
 Private Property Get ICursor_Item(Optional ByVal opt As Variant) As Variant
     If mDirection = DirectionDown Then
         Set ICursor_Item = mWS.Cells(mRow, opt)
@@ -210,9 +336,38 @@ Private Property Get ICursor_Item(Optional ByVal opt As Variant) As Variant
         Set ICursor_Item = mWS.Cells(opt, mCol)
     End If
 End Property
-'------------------------------------------------------
-' 最初の行に移動
-'------------------------------------------------------
+'>---
+'>#### MoveFirst(ICursor I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>expression.MoveFirst()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|ICursor|ICursor I/F を指定します。|
+'>
+'>**Return Value**
+'>
+'>* None
+'>
+'>**Remarks**
+'>
+'>ICursor I/F のメソッドです。<br>
+'>カーソル位置の初期化を行います。
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* ICursor
+'>
 Private Sub ICursor_MoveFirst()
     If mDirection = DirectionDown Then
         mRow = mStartRow
@@ -222,9 +377,38 @@ Private Sub ICursor_MoveFirst()
         SkipHiddenCol
     End If
 End Sub
-'------------------------------------------------------
-' 次行取得
-'------------------------------------------------------
+'>---
+'>#### MoveNext(ICursor I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>expression.MoveNext()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|ICursor|ICursor I/F を指定します。|
+'>
+'>**Return Value**
+'>
+'>* None
+'>
+'>**Remarks**
+'>
+'>ICursor I/F のメソッドです。<br>
+'>カーソル位置を次に移動します。
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* ICursor
+'>
 Private Sub ICursor_MoveNext()
     If mDirection = DirectionDown Then
         mRow = mRow + 1

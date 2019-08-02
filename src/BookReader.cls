@@ -59,7 +59,13 @@ Attribute VB_Exposed = False
 '>
 '>**Dependent**
 '>
-'>* IConstructor ƒNƒ‰ƒX
+'>* IConstructor
+'>
+'>**History**
+'>
+'>|Date|Version|Note|
+'>|---|---|---|
+'>|2019-01-01|Ver.1.0.0|V‹Kì¬|
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
@@ -176,7 +182,7 @@ End Function
 '>
 '>**Parameters**
 '>
-'>‚È‚µ
+'>* None
 '>
 '>**Return Value**
 '>
@@ -267,7 +273,7 @@ End Sub
 '>
 '>**Return Value**
 '>
-'>‚È‚µ
+'>* None
 '>
 '>**Remarks**
 '>

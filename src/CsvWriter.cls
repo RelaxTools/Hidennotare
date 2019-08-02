@@ -36,19 +36,31 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-' 依存モジュール
-'   IWriter.cls
-'   TextWriter.cls
-'   StringBuilder.cls
+'>### CsvWriter クラス
+'>
+'>**Remarks**
+'>
+'>CSV書込みクラス<br>
+'>RFC4180準拠<br>
+'>http://www.kasai.fm/wiki/rfc4180jp
+'>
+'>**Dependent**
+'>
+'>* IConstructor
+'>* StringBuilder
+'>* IWriter
+'>* TextWriter
+'>
+'>**History**
+'>
+'>|Date|Version|Note|
+'>|---|---|---|
+'>|2018-12-06|Ver.1.0.0|新規作成|
+'>
 '-----------------------------------------------------------------------------------------------------
-' 2018-12-06 Ver.1.0.0 新規作成 CSV出力クラス RFC4180準拠
-' http://www.kasai.fm/wiki/rfc4180jp
-'-----------------------------------------------------------------------------------------------------
-
 Option Explicit
 Implements IConstructor
 Implements IWriter
-
 
 Private IR As IWriter
 
@@ -60,15 +72,62 @@ Private mBom As Boolean
 
 Private mDelimiter As String
 Private mQuotation As Boolean
-'--------------------------------------------------------------
-' コンストラクタ
-'--------------------------------------------------------------
-' Arg1 - FileName
-' Arg2 - NewLineCode : NewLineCodeConstants.CRLF/LF(Default CRLF)
-' Arg3 - Encode      : EncodeConstants.CP932/UTF8/UTF16LE(Default CP932)
-' Arg4 - Mode        : OpenModeConstants.Output/Append(Default Output)
-' Arg5 - Bom         : True/False
-' Arg6 - Delimiter   : ","/vbTab etc...
+'>---
+'>#### コンストラクタ
+'>
+'>**Syntax**
+'>
+'>```
+'>Set ret = Constructor(New CsvWriter,
+'>                      FileName,
+'>                      [NewLineCode = NewLineCodeConstants.CRLF],
+'>                      [Encode = EncodeConstants.CP932],
+'>                      [Mode = OpenModeConstants.デフォルトOutput],
+'>                      [Bom = False],
+'>                      [Delimiter = ","])
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|FileName|必須|String|ファイル名を指定|
+'>|NewLineCode|省略可|String|改行コードを指定。<br>デフォルト(CRLF)|
+'>|Encode|省略可|String|文字コードを指定。CP932/UTF8/UTF16LE<br>デフォルトCP932(SJIS)|
+'>|Mode|省略可|OpenModeConstants|Output:上書きモード/Append:追加モード<br>デフォルトOutput|
+'>|Bom|省略可|String|True:付ける/False:付けない<br>デフォルトFalse|
+'>|Delimiter|省略可|String|区切り文字を指定。<br>デフォルト","|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|ret|Object|新しいインスタンス(CsvWriter)|
+'>
+'>**Remarks**
+'>
+'>** このクラスはコンストラクタを使用しないと実行できません。**
+'>
+'>**Example**
+'>
+'>
+'>```
+'>Dim strFile As String
+'>Dim IW As IWriter
+'>
+'>strFile = "C:\Test.csv"
+'>
+'>Set IW = Constructor(New CsvWriter, strFile)
+'>
+'>IW.Append Array("a", "b", "c")
+'>IW.Flash
+'>
+'>```
+'>
+'>**See also**
+'>
+'>* None
+'>
 '--------------------------------------------------------------
 Private Function IConstructor_Instancing(Args As Collection) As Object
     
@@ -121,6 +180,40 @@ End Function
 Private Sub Class_Terminate()
     Set IR = Nothing
 End Sub
+'>---
+'>#### 行追加
+'>
+'>**Syntax**
+'>
+'>```
+'>expression.Append(Args)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|StringBulder|CsvWriterオブジェクトを指定します。|
+'>|Args|必須|Variant|行イメージの配列を指定|
+'>
+'>**Return Value**
+'>
+'>* None
+'>
+'>**Remarks**
+'>
+'>行追加<br>
+'>行イメージの配列をCSVとして出力します。<br>
+'>明示的に保存する際にはFlushメソッドを呼び出すかインスタンスを終了(Set xxx = Nothing)する必要があります。<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* CsvWriter.Flush
+'>
 Private Sub IWriter_Append(ByVal Args As Variant)
     
     Dim c As Variant
@@ -139,7 +232,40 @@ Private Sub IWriter_Append(ByVal Args As Variant)
     End If
 
 End Sub
-
+'>---
+'>#### 強制保存
+'>
+'>**Syntax**
+'>
+'>```
+'>expression.Flush(Args)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|StringBulder|CsvWriterオブジェクトを指定します。|
+'>
+'>**Return Value**
+'>
+'>* None
+'>
+'>**Remarks**
+'>
+'>強制保存<br>
+'>今までAppendで出力されたデータを強制的に保存します。<br>
+'>インスタンスをモジュールレベルにするなど、長い間Appendしなしなかった場合に確実に保存される保証がありません。<br>
+'>長い間Openしたままにする場合には、定期的にFlushしてください。<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* None
+'>
 Private Sub IWriter_Flush()
     'TextWriterに委譲する。
     IR.Flush

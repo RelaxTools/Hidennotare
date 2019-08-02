@@ -36,21 +36,40 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-' Power Query M Language Record Class(Dictionary Wrapper)
-'-----------------------------------------------------------------------------------------------------
-' 委譲 : Dictionary
-'-----------------------------------------------------------------------------------------------------
-' TODO : M言語のRecordが作成できるクラス
-'        本家と異なる点。For Each を使う場合には XX.Keys を省略できない。
-'        IDictionary I/F を使用する必要がある。
-'
-'        Dim dic As IDictionary
-'        Set dic = New MRecord
-'
-'        dic.Add Key, Value
-'
-'-----------------------------------------------------------------------------------------------------
-' NOTE : ToString すると M Language Record を出力します。
+'>### MRecord クラス
+'>
+'>**Remarks**
+'>
+'>MRecord<br>
+'>Power Query M Language Record Class<br>
+'>M言語をVBAで組み立てる際に便利なクラス<br>
+'>
+'* M 言語の Record が作成できるクラス
+'* IDictionary I/F を使用する必要がある。
+'* 本家Dictionaryと異なる点。For Each を使う場合には XX.Keys を省略できない。
+'* ToString すると M Language Record を出力する。
+'>
+'>**Example**
+'>
+'>```
+'>Dim dic As IDictionary
+'>Set dic = New MRecord
+'>
+'>dic.Add Key, Value
+'>```
+'>
+'>**Dependent**
+'>
+'>* Dictionary
+'>* IDictionary
+'>* ICursor
+'>
+'>**History**
+'>
+'>|Date|Version|Note|
+'>|---|---|---|
+'>|2019-01-01|Ver.1.0.0|新規作成|
+'>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements ICursor

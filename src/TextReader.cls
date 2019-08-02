@@ -41,6 +41,7 @@ Attribute VB_Exposed = False
 '>**Remarks**
 '>
 '>TextReaderクラス<br>
+'>一度にメモリに読み込むため、巨大なファイルを読むには向かないファイルサイズ10MB以上非推奨。
 '>
 '>**Dependent**
 '>
@@ -76,7 +77,10 @@ Private mIndex As Long
 '>**Syntax**
 '>
 '>```
-'>Set IC = Constructor(New TextReader, FileName, [NewLineCode = NewLineCodeConstants.CRLF, Encode = EncodeConstants.CP932])
+'>Set IC = Constructor(New TextReader,
+'>                     FileName,
+'>                     [NewLineCode = NewLineCodeConstants.CRLF],
+'>                     [Encode = EncodeConstants.CP932])
 '>```
 '>
 '>**Parameters**
@@ -84,12 +88,14 @@ Private mIndex As Long
 '>|Name|Required/Optional|Data type|Description|
 '>---|---|---|---
 '>|FileName|必須|String|ファイル名を設定|
-'>|NewLineCode|省略可|NewLineCodeConstants|読み取り専用の設定。デフォルトCRLF|
-'>|Encode|省略可|EncodeConstants|Applicationオブジェクト。デフォルトCP932|
+'>|NewLineCode|省略可|NewLineCodeConstants|読み取り専用の設定。<br>デフォルトCRLF|
+'>|Encode|省略可|EncodeConstants|Applicationオブジェクト。<br>デフォルトCP932|
 '>
 '>**Return Value**
 '>
-'>新しいインスタンス(TextReader)
+'>|Name|Data type|Description|
+'>---|---|---
+'>|IC|Object|新しいインスタンス(TextReader)|
 '>
 '>**Remarks**
 '>
@@ -104,7 +110,7 @@ Private mIndex As Long
 '>Dim strFile As String
 '>Dim IC As ICursor
 '>
-'>strFile = "C:\Test.xlsx"
+'>strFile = "C:\Test.txt"
 '>
 '>Set IC = Constructor(New TextReader, strFile)
 '>
@@ -121,7 +127,7 @@ Private mIndex As Long
 '>Dim strFile As String
 '>Dim IR As IReader
 '>
-'>strFile = "C:\Test.xlsx"
+'>strFile = "C:\Test.txt"
 '>
 '>Set IR = Constructor(New TextReader, strFile)
 '>
@@ -276,7 +282,7 @@ End Function
 '>
 '>**Parameters**
 '>
-'>なし
+'>* None
 '>
 '>**Return Value**
 '>
@@ -312,15 +318,77 @@ Private Sub Class_Terminate()
     End If
 
 End Sub
-'--------------------------------------------------------------
-' ICursor インターフェースを取得
-'--------------------------------------------------------------
+'>---
+'>#### GetCursor(TextReader)
+'>
+'>**Syntax**
+'>
+'>```
+'>Set var = expression.GetCursor()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|TextReader|TextReaderインスタンスを指定します。|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|var|ICursor|ICursor I/F を返却|
+'>
+'>**Remarks**
+'>
+'>TextReaderのメソッドです。<br>
+'>ICursor インターフェースを取得
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* ICursor
+'>
 Public Property Get GetCursor() As ICursor
     Set GetCursor = Me
 End Property
-'------------------------------------------------------
-' 終了判定
-'------------------------------------------------------
+'>---
+'>#### Eof(ICursor I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>var = expression.Eof()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|ICursor|ICursor I/F を指定します。|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|var|Boolean|カーソルが終了:True / カーソルが終了していない:False|
+'>
+'>**Remarks**
+'>
+'>ICursor I/F のプロパティです。<br>
+'>ICursor の Eof プロパティを取得。カーソルの終了を検出します。
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* ICursor
+'>
 Private Property Get ICursor_Eof() As Boolean
     If IsEmpty(mBuf) Then
         ICursor_Eof = True
@@ -328,9 +396,40 @@ Private Property Get ICursor_Eof() As Boolean
         ICursor_Eof = UBound(mBuf) < mIndex
     End If
 End Property
-'------------------------------------------------------
-' 現在の行取得
-'------------------------------------------------------
+'>---
+'>#### Item(ICursor I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>var = expression.Item()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|ICursor|ICursor I/F を指定します。|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|var|Variant|カーソル位置の内容を取得します。|
+'>
+'>**Remarks**
+'>
+'>ICursor I/F のプロパティです。<br>
+'>ICursor の Item プロパティを取得。現在行の内容を取得します。
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* ICursor
+'>
 Private Property Get ICursor_Item(Optional ByVal opt As Variant) As Variant
     If ICursor_Eof Then
         ICursor_Item = mBuf(UBound(mBuf))
@@ -338,9 +437,38 @@ Private Property Get ICursor_Item(Optional ByVal opt As Variant) As Variant
         ICursor_Item = mBuf(mIndex)
     End If
 End Property
-'------------------------------------------------------
-' 最初の行に移動
-'------------------------------------------------------
+'>---
+'>#### MoveFirst(ICursor I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>expression.MoveFirst()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|ICursor|ICursor I/F を指定します。|
+'>
+'>**Return Value**
+'>
+'>* None
+'>
+'>**Remarks**
+'>
+'>ICursor I/F のメソッドです。<br>
+'>カーソル位置の初期化を行います。
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* ICursor
+'>
 Private Sub ICursor_MoveFirst()
     If IsEmpty(mBuf) Then
         mIndex = 0
@@ -348,9 +476,38 @@ Private Sub ICursor_MoveFirst()
         mIndex = LBound(mBuf)
     End If
 End Sub
-'------------------------------------------------------
-' 次行取得
-'------------------------------------------------------
+'>---
+'>#### MoveNext(ICursor I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>expression.MoveNext()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|ICursor|ICursor I/F を指定します。|
+'>
+'>**Return Value**
+'>
+'>* None
+'>
+'>**Remarks**
+'>
+'>ICursor I/F のメソッドです。<br>
+'>カーソル位置を次に移動します。
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* ICursor
+'>
 Private Sub ICursor_MoveNext()
     mIndex = mIndex + 1
 End Sub

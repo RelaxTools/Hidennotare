@@ -47,7 +47,12 @@ Option Explicit
 '>**Dependent**
 '>
 '>* StringBuilder
-'>* Message
+'>
+'>**History**
+'>
+'>|Date|Version|Note|
+'>|---|---|---|
+'>|2019-01-01|Ver.1.0.0|新規作成|
 '>
 '-----------------------------------------------------------------------------------------------------
 Private Declare PtrSafe Function MultiByteToWideChar Lib "kernel32" (ByVal CodePage As Long, ByVal dwFlags As Long, ByVal lpMultiByteStr As LongPtr, ByVal cchMultiByte As Long, ByVal lpWideCharStr As LongPtr, ByVal cchWideChar As Long) As Long
@@ -640,63 +645,3 @@ Public Function StrConvU(ByVal strSource As String, Conv As VbStrConv) As String
     StrConvU = strRet
 
 End Function
-
-
-''----------------------------------------------------------------------------------
-''　ローマ数字変換
-''----------------------------------------------------------------------------------
-'Function ToRoman(ByVal lngNum As Long) As String
-'
-'    Dim lng1000 As Long
-'    Dim lng500 As Long
-'    Dim lng100 As Long
-'    Dim lng50 As Long
-'    Dim lng10 As Long
-'    Dim lng5 As Long
-'
-'    Dim strAns As String
-'
-'    'M
-'    lng1000 = lngNum \ 1000
-'    lngNum = lngNum - 1000 * lng1000
-'
-'    'D
-'    lng500 = lngNum \ 500
-'    lngNum = lngNum - 500 * lng500
-'
-'    'C
-'    lng100 = lngNum \ 100
-'    lngNum = lngNum - 100 * lng100
-'
-'    'L
-'    lng50 = lngNum \ 50
-'    lngNum = lngNum - 50 * lng50
-'
-'    'X
-'    lng10 = lngNum \ 10
-'    lngNum = lngNum - 10 * lng10
-'
-'    'V
-'    lng5 = lngNum \ 5
-'    lngNum = lngNum - 5 * lng5
-'
-'    strAns = strAns & String(lng1000, "M")
-'    strAns = strAns & String(lng500, "D")
-'    strAns = strAns & String(lng100, "C")
-'    strAns = strAns & String(lng50, "L")
-'    strAns = strAns & String(lng10, "X")
-'    strAns = strAns & String(lng5, "V")
-'    strAns = strAns & String(lngNum, "I")
-'
-'    '例外
-'    strAns = Replace(strAns, "DCCCC", "CM")
-'    strAns = Replace(strAns, "LXXXX", "XC")
-'    strAns = Replace(strAns, "VIIII", "IX")
-'    strAns = Replace(strAns, "CCCC", "CD")
-'    strAns = Replace(strAns, "XXXX", "XL")
-'    strAns = Replace(strAns, "IIII", "IV")
-'
-'    ToRoman = strAns
-'
-'End Function
-'

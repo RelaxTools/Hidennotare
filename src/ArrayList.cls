@@ -76,6 +76,18 @@ Attribute VB_Exposed = False
 '> Dim list As IList
 '> Set list = Constructor(New ArrayList, １次元配列)
 '>```
+'>**Dependent**
+'>
+'>* IConstructor
+'>* ICursor
+'>* IList
+'>* INewInstance
+'>
+'>**History**
+'>
+'>|Date|Version|Note|
+'>|---|---|---|
+'>|2019-01-01|Ver.1.0.0|新規作成|
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
@@ -396,9 +408,9 @@ End Function
 '>**See also**
 '>
 '>* ArrayList.CopyToListbox
-'>* Dictionary クラス
-'>* INewInstance インターフェース
-'>* ICompatibleProperty インターフェース
+'>* Dictionary
+'>* INewInstance
+'>* ICompatibleProperty
 '>
 Public Function ParseFromListbox(objList As Object, Optional obj As Object = Nothing) As IList
 
@@ -461,7 +473,7 @@ End Function
 '>
 '>**Return Value**
 '>
-'>なし
+'>* None
 '>
 '>**Remarks**
 '>
@@ -482,9 +494,9 @@ End Function
 '>**See also**
 '>
 '>* ArrayList.ParseFromListbox
-'>* Dictionary クラス
-'>* INewInstance インターフェース
-'>* ICompatibleProperty インターフェース
+'>* Dictionary
+'>* INewInstance
+'>* ICompatibleProperty
 '>
 Public Sub CopyToListbox(objList As Object)
 
@@ -588,9 +600,9 @@ End Sub
 '>**See also**
 '>
 '>* ArrayList.CopyToListObject
-'>* Dictionary クラス
-'>* INewInstance インターフェース
-'>* ICompatibleProperty インターフェース
+'>* Dictionary
+'>* INewInstance
+'>* ICompatibleProperty
 '>
 Public Function ParseFromListObject(LO As ListObject, Optional obj As Object = Nothing) As IList
 
@@ -641,7 +653,7 @@ End Function
 '>
 '>**Return Value**
 '>
-'>なし
+'>* None
 '>
 '>**Remarks**
 '>
@@ -683,9 +695,9 @@ End Function
 '>**See also**
 '>
 '>* ArrayList.ParseFromListbox
-'>* Dictionary クラス
-'>* INewInstance インターフェース
-'>* ICompatibleProperty インターフェース
+'>* Dictionary
+'>* INewInstance
+'>* ICompatibleProperty
 '>
 Public Sub CopyToListObject(LO As ListObject)
 
@@ -736,7 +748,7 @@ End Sub
 '>
 '>**Return Value**
 '>
-'>なし
+'>* None
 '>
 '>**Remarks**
 '>
@@ -747,14 +759,14 @@ End Sub
 '>
 '>**Example**
 '>
-'>なし
+'>* None
 '>
 '>**See also**
 '>
 '>* ArrayList.ParseFromListbox
-'>* Dictionary クラス
-'>* INewInstance インターフェース
-'>* ICompatibleProperty インターフェース
+'>* Dictionary
+'>* INewInstance
+'>* ICompatibleProperty
 '>
 Public Sub CopyToRange(TopLeft As Range)
 
@@ -805,7 +817,7 @@ End Sub
 '>
 '>**See also**
 '>
-'>* IList インターフェース
+'>* IList
 '>
 Public Function GetIList() As IList
     Set GetIList = Me
@@ -827,7 +839,7 @@ End Function
 '>
 '>**Return Value**
 '>
-'>なし
+'>* None
 '>
 '>**Remarks**
 '>
@@ -836,11 +848,11 @@ End Function
 '>
 '>**Example**
 '>
-'>なし
+'>* None
 '>
 '>**See also**
 '>
-'>* IList インターフェース
+'>* IList
 '>
 Private Sub IList_Clear()
 
@@ -866,7 +878,7 @@ End Sub
 '>
 '>**Return Value**
 '>
-'>なし
+'>* None
 '>
 '>**Remarks**
 '>
@@ -875,11 +887,11 @@ End Sub
 '>
 '>**Example**
 '>
-'>なし
+'>* None
 '>
 '>**See also**
 '>
-'>* IList インターフェース
+'>* IList
 '>
 Private Sub IList_Add(obj As Variant)
     
@@ -905,7 +917,7 @@ End Sub
 '>
 '>**Return Value**
 '>
-'>なし
+'>* None
 '>
 '>**Remarks**
 '>
@@ -914,11 +926,11 @@ End Sub
 '>
 '>**Example**
 '>
-'>なし
+'>* None
 '>
 '>**See also**
 '>
-'>* IList インターフェース
+'>* IList
 '>
 Private Sub IList_Insert(idx As Long, v As Variant)
 
@@ -963,11 +975,11 @@ End Function
 '>
 '>**Example**
 '>
-'>なし
+'>* None
 '>
 '>**See also**
 '>
-'>* IList インターフェース
+'>* IList
 '>
 Private Property Get IList_Count() As Long
     IList_Count = mCol.Count
@@ -1001,11 +1013,11 @@ End Property
 '>
 '>**Example**
 '>
-'>なし
+'>* None
 '>
 '>**See also**
 '>
-'>* IList インターフェース
+'>* IList
 '>
 Private Property Get IList_Item(idx As Long) As Variant
     
@@ -1038,7 +1050,7 @@ End Property
 '>
 '>**Return Value**
 '>
-'>なし
+'>* None
 '>
 '>**Remarks**
 '>
@@ -1047,11 +1059,11 @@ End Property
 '>
 '>**Example**
 '>
-'>なし
+'>* None
 '>
 '>**See also**
 '>
-'>* IList インターフェース
+'>* IList
 '>
 Private Sub IList_RemoveAt(idx As Long)
     
@@ -1079,7 +1091,7 @@ End Sub
 '>
 '>**Return Value**
 '>
-'>なし
+'>* None
 '>
 '>**Remarks**
 '>
@@ -1088,11 +1100,11 @@ End Sub
 '>
 '>**Example**
 '>
-'>なし
+'>* None
 '>
 '>**See also**
 '>
-'>* IList インターフェース
+'>* IList
 '>
 Private Sub IList_Sort(Optional ByVal CP As IComparer = Nothing)
 
@@ -1171,11 +1183,11 @@ End Sub
 '>
 '>**Example**
 '>
-'>なし
+'>* None
 '>
 '>**See also**
 '>
-'>* IList インターフェース
+'>* IList
 '>
 Private Function IList_ToArray() As Variant
 
@@ -1296,11 +1308,11 @@ End Function
 '>
 '>**Example**
 '>
-'>なし
+'>* None
 '>
 '>**See also**
 '>
-'>* IList インターフェース
+'>* IList
 '>
 Private Function IList_ToCollection() As Collection
     
@@ -1335,11 +1347,11 @@ End Function
 '>
 '>**Example**
 '>
-'>なし
+'>* None
 '>
 '>**See also**
 '>
-'>* IList インターフェース
+'>* IList
 '>
 Private Function IList_ToString() As String
 
@@ -1421,16 +1433,16 @@ End Function
 '>**Remarks**
 '>
 '>IList I/F のメソッドです。<br>
-'>ArrayList の ICursor インターフェースを取得
+'>ICursor インターフェースを取得
 '>
 '>**Example**
 '>
-'>なし
+'>* None
 '>
 '>**See also**
 '>
-'>* IList インターフェース
-'>* ICursor インターフェース
+'>* IList
+'>* ICursor
 '>
 Private Property Get IList_GetCursor() As ICursor
     Set IList_GetCursor = Me
@@ -1463,11 +1475,11 @@ End Property
 '>
 '>**Example**
 '>
-'>なし
+'>* None
 '>
 '>**See also**
 '>
-'>* ICursor インターフェース
+'>* ICursor
 '>
 Private Property Get ICursor_Eof() As Boolean
     ICursor_Eof = mIndex >= mCol.Count
@@ -1496,15 +1508,15 @@ End Property
 '>**Remarks**
 '>
 '>ICursor I/F のプロパティです。<br>
-'>ICursor の Item プロパティを取得。ArrayListの内容を取得します。
+'>ICursor の Item プロパティを取得。現在行の内容を取得します。
 '>
 '>**Example**
 '>
-'>なし
+'>* None
 '>
 '>**See also**
 '>
-'>* ICursor インターフェース
+'>* ICursor
 '>
 Private Property Get ICursor_Item(Optional ByVal opt As Variant) As Variant
     
@@ -1540,7 +1552,7 @@ End Property
 '>
 '>**Return Value**
 '>
-'>なし
+'>* None
 '>
 '>**Remarks**
 '>
@@ -1549,11 +1561,11 @@ End Property
 '>
 '>**Example**
 '>
-'>なし
+'>* None
 '>
 '>**See also**
 '>
-'>* ICursor インターフェース
+'>* ICursor
 '>
 Private Sub ICursor_MoveFirst()
     mIndex = 0
@@ -1575,7 +1587,7 @@ End Sub
 '>
 '>**Return Value**
 '>
-'>なし
+'>* None
 '>
 '>**Remarks**
 '>
@@ -1584,11 +1596,11 @@ End Sub
 '>
 '>**Example**
 '>
-'>なし
+'>* None
 '>
 '>**See also**
 '>
-'>* ICursor インターフェース
+'>* ICursor
 '>
 Private Sub ICursor_MoveNext()
 
@@ -1626,12 +1638,12 @@ End Sub
 '>
 '>**Example**
 '>
-'>なし
+'>* None
 '>
 '>**See also**
 '>
-'>* IList インターフェース
-'>* INewInstance インターフェース
+'>* IList
+'>* INewInstance
 '>
 Private Function INewInstance_NewInstance() As Object
 

@@ -36,11 +36,32 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-' 関数の開始／終了のメッセージを１行で出力するためのクラス(Info版)
-'-----------------------------------------------------------------------------------------------------
-' 呼び出し例
-'
-' Dim PL As PairLoggerInfo: Set PL = Constructor(New PairLoggerInfo, TypeName(Me) & ".FileSearchEx")
+'>### PairLoggerInfo クラス
+'>
+'>**Remarks**
+'>
+'>開始終了ログ出力(Info)<br>
+'>関数の開始／終了のメッセージを１行で出力するためのクラス<br>
+'>Infoレベルで出力する。
+'>
+'>
+'>**Example**
+'>
+'>```
+'>Dim PL As PairLoggerInfo: Set PL = Constructor(New PairLoggerInfo, TypeName(Me) & ".FileSearchEx")
+'>```
+'>
+'>**Dependent**
+'>
+'>* IConstructor
+'>* Logger
+'>
+'>**History**
+'>
+'>|Date|Version|Note|
+'>|---|---|---|
+'>|2019-05-22|Ver.1.0.0|新規作成|
+'>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements IConstructor

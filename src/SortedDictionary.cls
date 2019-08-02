@@ -40,8 +40,12 @@ Attribute VB_Exposed = False
 '>
 '>**Remarks**
 '>
+'>DictionaryのKeyのソート順を保証します。<br>
 '>Dictionary クラスをコンポジット（移譲）したクラス。<br>
-'>Keyの順番をソートできるDictionary
+'>使用方法についてはDictionaryを参照。<br>
+'>
+'>ソート順を変更(BinaryCompare以外)する場合、コンストラクタで<br>
+'>IComparer I/F に対応したクラスのインスタンスを渡してください。
 '>
 '>* IDictionary I/F を使用する必要がある。
 '>* 本家と異なる点。For Each を使う場合には XX.Keys を省略できない。

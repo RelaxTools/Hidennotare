@@ -36,7 +36,26 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-' Power Query M Language Table Class
+'>### MTable クラス
+'>
+'>**Remarks**
+'>
+'>MTable<br>
+'>Power Query M Language Table Class<br>
+'>M言語をVBAで組み立てる際に便利なクラス<br>
+'>
+'* M 言語の Table が作成できるクラス
+'>
+'>**Dependent**
+'>
+'>* IConstructor
+'>
+'>**History**
+'>
+'>|Date|Version|Note|
+'>|---|---|---|
+'>|2019-01-01|Ver.1.0.0|新規作成|
+'>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements IConstructor

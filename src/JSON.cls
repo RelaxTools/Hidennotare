@@ -46,19 +46,19 @@ Attribute VB_Exposed = False
 '>
 '>**Dependent**
 '>
-'>* Message クラス
-'>* StringBuilder クラス
-'>* ArrayList クラス
-'>* Dictionary クラス
-'>* IList クラス
-'>* IDictionary クラス
-'>* INewInstance クラス
-'>* ICompatibleProperty クラス
-'>* StringHelper クラス
-'>* Convert クラス
-'>* ICursor クラス
-'>* CharCursor クラス
-'>* IConstructor クラス
+'>* Message
+'>* StringBuilder
+'>* ArrayList
+'>* Dictionary
+'>* IList
+'>* IDictionary
+'>* INewInstance
+'>* ICompatibleProperty
+'>* StringHelper
+'>* Convert
+'>* ICursor
+'>* CharCursor
+'>* IConstructor
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
@@ -112,10 +112,10 @@ Option Explicit
 '>
 '>**See also**
 '>
-'>* ArrayList クラス
-'>* Dictionary クラス
-'>* OrderdDictionary クラス
-'>* SortedDictionary クラス
+'>* ArrayList
+'>* Dictionary
+'>* OrderdDictionary
+'>* SortedDictionary
 '>
 Public Function ParseJSON(ByVal strJSON As String, Optional ByRef obj As Object = Nothing) As Object
 

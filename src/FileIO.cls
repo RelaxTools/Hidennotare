@@ -45,7 +45,15 @@ Attribute VB_Exposed = False
 '>
 '>**Dependent**
 '>
+'>* None
 '>
+'>**History**
+'>
+'>|Date|Version|Note|
+'>|---|---|---|
+'>|2019-01-01|Ver.1.0.0|V‹Kì¬|
+'>
+'-----------------------------------------------------------------------------------------------------
 Option Explicit
 
 Private Declare PtrSafe Function FindFirstFileExW Lib "kernel32" (ByVal lpFileName As LongPtr, ByVal fInfoLevelId As Long, ByRef lpFindFileData As WIN32_FIND_DATA, ByVal fSearchOp As Long, ByVal lpSearchFilter As LongPtr, ByVal dwAdditionalFlags As Long) As LongPtr
@@ -303,7 +311,7 @@ End Function
 '>
 '>**Parameters**
 '>
-'>‚È‚µ
+'>* None
 '>
 '>**Return Value**
 '>
@@ -357,7 +365,7 @@ End Property
 '>
 '>**Parameters**
 '>
-'>‚È‚µ
+'>* None
 '>
 '>**Return Value**
 '>
@@ -420,7 +428,7 @@ End Property
 '>
 '>**Return Value**
 '>
-'>‚È‚µ
+'>* None
 '>
 '>**Remarks**
 '>
@@ -495,7 +503,7 @@ End Sub
 '>
 '>**Return Value**
 '>
-'>‚È‚µ
+'>* None
 '>
 '>**Remarks**
 '>
@@ -771,7 +779,7 @@ End Function
 '>
 '>**Return Value**
 '>
-'>‚È‚µ
+'>* None
 '>
 '>**Remarks**
 '>
@@ -810,7 +818,7 @@ End Sub
 '>
 '>**Return Value**
 '>
-'>‚È‚µ
+'>* None
 '>
 '>**Remarks**
 '>
@@ -852,7 +860,7 @@ End Sub
 '>
 '>**Return Value**
 '>
-'>‚È‚µ
+'>* None
 '>
 '>**Remarks**
 '>
@@ -891,7 +899,7 @@ End Sub
 '>
 '>**Return Value**
 '>
-'>‚È‚µ
+'>* None
 '>
 '>**Remarks**
 '>
@@ -944,7 +952,7 @@ End Sub
 '>
 '>**Return Value**
 '>
-'>‚È‚µ
+'>* None
 '>
 '>**Remarks**
 '>
@@ -1230,11 +1238,11 @@ End Function
 '>
 '>**Parameters**
 '>
-'>‚È‚µ
+'>* None
 '>
 '>**Return Value**
 '>
-'>‚È‚µ
+'>* None
 '>
 '>**Remarks**
 '>
@@ -1334,7 +1342,7 @@ End Function
 '>
 '>**Return Value**
 '>
-'>‚È‚µ
+'>* None
 '>
 '>**Remarks**
 '>
@@ -1373,7 +1381,7 @@ End Sub
 '>
 '>**Return Value**
 '>
-'>‚È‚µ
+'>* None
 '>
 '>**Remarks**
 '>
@@ -1419,7 +1427,7 @@ End Sub
 '>
 '>**Return Value**
 '>
-'>‚È‚µ
+'>* None
 '>
 '>**Remarks**
 '>
@@ -1552,7 +1560,7 @@ End Sub
 '>
 '>**Return Value**
 '>
-'>‚È‚µ
+'>* None
 '>
 '>**Remarks**
 '>
@@ -1599,7 +1607,7 @@ End Sub
 '>
 '>**Return Value**
 '>
-'>‚È‚µ
+'>* None
 '>
 '>**Remarks**
 '>
@@ -1646,7 +1654,7 @@ End Sub
 '>
 '>**Return Value**
 '>
-'>‚È‚µ
+'>* None
 '>
 '>**Remarks**
 '>
@@ -1727,7 +1735,7 @@ End Function
 '>
 '>**Return Value**
 '>
-'>‚È‚µ
+'>* None
 '>
 '>**Remarks**
 '>

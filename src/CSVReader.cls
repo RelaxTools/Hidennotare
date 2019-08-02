@@ -36,32 +36,27 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-' 依存モジュール
-'   IConstructor.cls
-'   ICursor.cls
-'   IReader.cls
-'   TextReader.cls
-'-----------------------------------------------------------------------------------------------------
-' 2018-12-06 Ver.1.0.0 新規作成 CSV入力クラス RFC4180準拠
-' http://www.kasai.fm/wiki/rfc4180jp
-'-----------------------------------------------------------------------------------------------------
-' Dim IR As IReader
-' Set IR = Constructor(new CsvReader, ファイル名, 改行コード, エンコード, デリミタ, コーテーション有無
-'
-' IR.ReadAll
-'-----------------------------------------------------------------------------------------------------
-' Dim IC As ICursor
-' Set IC = Constructor(new CsvReader, ファイル名, 改行コード, エンコード, デリミタ, コーテーション有無
-'
-' Do Until IC.Eof
-'     Debug.Print IC(1) '列
-'     IC.MoveNext
-' Loop
-'-----------------------------------------------------------------------------------------------------
-' Dim CR As CsvReader
-' Set CR = Constructor(new CsvReader, ファイル名, 改行コード, エンコード, デリミタ, コーテーション有無
-'
-' CR.Paste 張り付けセルの左上, フィールド情報, ヘッダ設定
+'>### CsvReader クラス
+'>
+'>**Remarks**
+'>
+'>CSV読込クラス<br>
+'>RFC4180準拠<br>
+'>http://www.kasai.fm/wiki/rfc4180jp
+'>
+'>**Dependent**
+'>
+'>* IConstructor
+'>* ICursor
+'>* IReader
+'>* TextReader
+'>
+'>**History**
+'>
+'>|Date|Version|Note|
+'>|---|---|---|
+'>|2018-12-06|Ver.1.0.0|新規作成|
+'>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements IConstructor
@@ -84,15 +79,76 @@ Public Enum CsvReaderHeaderConstants
     AddHedder
     None
 End Enum
-'--------------------------------------------------------------
-' コンストラクタ
-'--------------------------------------------------------------
-' Arg1 - FileName
-' Arg2 - NewLineCode : NewLineCodeConstants.CRLF/LF(Default CRLF)
-' Arg3 - Encode      : EncodeConstants.CP932/UTF8/UTF16LE(Default CP932)
-' Arg4 - Delimiter   : ","/vbTab etc...
-' Arg5 - Quotation   : True/False
-'--------------------------------------------------------------
+'>---
+'>#### コンストラクタ
+'>
+'>**Syntax**
+'>
+'>```
+'>Set ret = Constructor(New CsvReader,
+'>                      FileName,
+'>                      [NewLineCode = NewLineCodeConstants.CRLF],
+'>                      [Encode = EncodeConstants.CP932],
+'>                      [Delimiter = ","],
+'>                      [Quotation = False])
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|FileName|必須|String|ファイル名を指定|
+'>|NewLineCode|省略可|String|改行コードを指定。<br>デフォルト(CRLF)|
+'>|Encode|省略可|String|文字コードを指定。<br>デフォルトCP932(SJIS)|
+'>|Delimiter|省略可|String|区切り文字を指定。<br>デフォルト","|
+'>|Quotation|省略可|String|コーテーションの有無を指定。<br>デフォルトFalse|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|ret|Object|新しいインスタンス(CsvReader)|
+'>
+'>**Remarks**
+'>
+'>** このクラスはコンストラクタを使用しないと実行できません。**
+'>
+'>**Example**
+'>
+'>1行ずつ読む場合(ICursorインターフェイス)
+'>
+'>```
+'>Dim strFile As String
+'>Dim IC As ICursor
+'>
+'>strFile = "C:\Test.csv"
+'>
+'>Set IC = Constructor(New CsvReader, strFile)
+'>
+'>Do Until IC.Eof
+'>
+'>    Debug.Print IC.Item(1) '1列目
+'>    IC.MoveNext
+'>Loop
+'>```
+'>
+'>一気に読む場合(IReaderインターフェイス)
+'>
+'>```
+'>Dim strFile As String
+'>Dim IR As IReader
+'>
+'>strFile = "C:\Test.csv"
+'>
+'>Set IR = Constructor(New CsvReader, strFile)
+'>
+'>Debug.Print IR.ReadAll '改行を指定した場合は配列、指定しなかった場合は文字列
+'>```
+'>
+'>**See also**
+'>
+'>* None
+'>
 Private Function IConstructor_Instancing(Args As Collection) As Object
     
     If Args.Count = 0 Then
@@ -139,126 +195,77 @@ End Function
 Private Sub Class_Terminate()
     Set IR = Nothing
 End Sub
-''--------------------------------------------------------------
-''　CSVパーサー
-''--------------------------------------------------------------
-'Private Function CsvParser(ByVal strBuf As String) As Collection
-'
-'    Const C_QUAT As String = """"
-'    Dim IC As ICursor
-'    Dim sw As Boolean
-'    Dim blnLineBreak As Boolean
-'    Dim blnItemBreak As Boolean
-'    Dim col As Collection
-'    Dim row As Collection
-'    Dim lngQuot As Long
-'
-'    lngQuot = 0
-'
-'    sw = False
-'
-'    Set row = New Collection
-'
-'    Set IC = Constructor(New CharCursor, strBuf)
-'    Do Until IC.Eof
-'
-'        '初期化
-'        Set col = New Collection
-'        blnLineBreak = False
-'
-'        Do Until IC.Eof Or blnLineBreak
-'
-'            '初期化
-'            Dim SB As StringBuilder
-'            Set SB = New StringBuilder
-'            blnItemBreak = False
-'
-'            Do Until IC.Eof Or blnLineBreak Or blnItemBreak
-'
-'                Select Case IC.Item
-'                    Case C_QUAT
-'
-'                        'コーテーションありの場合
-'                        If mQuotation Then
-'
-'                            lngQuot = lngQuot + 1
-'
-'                            If sw Then
-'
-'                                '次の文字がQuatation
-'                                If IC.Item(1) = C_QUAT Then
-'                                    lngQuot = lngQuot + 1
-'                                    SB.Append C_QUAT
-'                                    IC.MoveNext
-'                                Else
-'                                    sw = False
-'                                End If
-'
-'                            Else
-'                                sw = True
-'                            End If
-'                        End If
-'
-'                    Case vbCr
-'
-'                        If sw Then
-'                            SB.Append IC.Item
-'                        End If
-'
-'                    Case vbLf
-'
-'                        If sw Then
-'                            SB.Append IC.Item
-'                        Else
-'                            blnLineBreak = True
-'                        End If
-'
-'                    Case mDelimiter
-'
-'                        If sw Then
-'                            SB.Append IC.Item
-'                        Else
-'                            blnItemBreak = True
-'                        End If
-'
-'                    Case Else
-'
-'                        SB.Append IC.Item
-'
-'                End Select
-'
-'                IC.MoveNext
-'            Loop
-'
-'            '列追加処理
-'            col.Add SB.ToString
-'
-'        Loop
-'
-'        '行追加処理
-'        row.Add col
-'
-'    Loop
-'
-'    'ダブルコーテーションが偶数ではない場合
-'    If lngQuot Mod 2 <> 0 Then
-'        Message.Throw 1, Me, "CsvParser", "Invalid Format(Quotation)"
-'    End If
-'
-'    Set CsvParser = row
-'
-'End Function
-'--------------------------------------------------------------
-'　配列読み込み
-'--------------------------------------------------------------
+'>---
+'>#### 一括読み込み
+'>
+'>**Syntax**
+'>
+'>```
+'>set ret = obj.ReadAll
+'>```
+'>
+'>**Parameters**
+'>
+'>* None
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|ret|Collection|読み込んだデータを返却|
+'>
+'>**Remarks**
+'>
+'>一括読み込み<br>
+'>ファイルを一度に読み込みます。<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* None
+'>
 Private Function IReader_ReadAll() As Variant
 
     Set IReader_ReadAll = mCol
 
 End Function
-'--------------------------------------------------------------
-'　シート貼り付け
-'--------------------------------------------------------------
+'>---
+'>#### シート貼り付け
+'>
+'>**Syntax**
+'>
+'>```
+'>Paste(TopLeft, Fields , [Header = None])
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|TopLeft|必須|Range|基準となる左上のセルを指定|
+'>|Fields|必須|IDictionary|フィールド名を設定したIDictionary I/F に対応したクラスを指定|
+'>|Header|省略可|CsvReaderHeaderConstants|AddHedder:ヘッダを追加/UseFirstRow:1行目をヘッダにする/None:ヘッダ無し<br>デフォルトNone|
+'>
+'>**Return Value**
+'>
+'>* None
+'>
+'>**Remarks**
+'>
+'>シート貼り付け<br>
+'>読み込んだCSVをシートに貼り付けます。<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* None
+'>
 Public Sub Paste(ByRef TopLeft As Range, ByRef Fields As IDictionary, Optional ByVal Header As CsvReaderHeaderConstants = CsvReaderHeaderConstants.None)
 
     Dim lngCol As Long
@@ -357,15 +364,77 @@ Public Sub Paste(ByRef TopLeft As Range, ByRef Fields As IDictionary, Optional B
     r.Value = var
     
 End Sub
-'--------------------------------------------------------------
-' ICursor インターフェースを取得
-'--------------------------------------------------------------
+'>---
+'>#### GetCursor(CsvReader)
+'>
+'>**Syntax**
+'>
+'>```
+'>Set var = expression.GetCursor()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|CsvReader|CsvReaderを指定します。|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|var|ICursor|ICursor I/F を返却|
+'>
+'>**Remarks**
+'>
+'>CsvReaderのメソッドです。<br>
+'>ICursor インターフェースを取得
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* ICursor
+'>
 Public Property Get GetCursor() As ICursor
     Set GetCursor = Me
 End Property
-'------------------------------------------------------
-' 終了判定
-'------------------------------------------------------
+'>---
+'>#### Eof(ICursor I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>var = expression.Eof()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|ICursor|ICursor I/F を指定します。|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|var|Boolean|カーソルが終了:True / カーソルが終了していない:False|
+'>
+'>**Remarks**
+'>
+'>ICursor I/F のプロパティです。<br>
+'>ICursor の Eof プロパティを取得。カーソルの終了を検出します。
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* ICursor
+'>
 Private Property Get ICursor_Eof() As Boolean
     
     If mCol Is Nothing Then
@@ -376,9 +445,40 @@ Private Property Get ICursor_Eof() As Boolean
     ICursor_Eof = mCol.Count < mIndex
 
 End Property
-'------------------------------------------------------
-' 項目取得
-'------------------------------------------------------
+'>---
+'>#### Item(ICursor I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>var = expression.Item()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|ICursor|ICursor I/F を指定します。|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|var|Variant|カーソル位置の内容を取得します。|
+'>
+'>**Remarks**
+'>
+'>ICursor I/F のプロパティです。<br>
+'>ICursor の Item プロパティを取得。現在行の内容を取得します。
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* ICursor
+'>
 Private Property Get ICursor_Item(Optional ByVal opt As Variant) As Variant
 
     If ICursor_Eof Then
@@ -397,16 +497,73 @@ Private Property Get ICursor_Item(Optional ByVal opt As Variant) As Variant
     End If
 
 End Property
-'------------------------------------------------------
-' 最初の行に移動
-'------------------------------------------------------
+'>---
+'>#### MoveFirst(ICursor I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>expression.MoveFirst()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|ICursor|ICursor I/F を指定します。|
+'>
+'>**Return Value**
+'>
+'>* None
+'>
+'>**Remarks**
+'>
+'>ICursor I/F のメソッドです。<br>
+'>カーソル位置の初期化を行います。
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* ICursor
+'>
 Private Sub ICursor_MoveFirst()
     mIndex = 1
 End Sub
-
-'------------------------------------------------------
-' 次行取得
-'------------------------------------------------------
+'>---
+'>#### MoveNext(ICursor I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>expression.MoveNext()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|ICursor|ICursor I/F を指定します。|
+'>
+'>**Return Value**
+'>
+'>* None
+'>
+'>**Remarks**
+'>
+'>ICursor I/F のメソッドです。<br>
+'>カーソル位置を次に移動します。
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* ICursor
+'>
 Private Sub ICursor_MoveNext()
     mIndex = mIndex + 1
 End Sub

@@ -45,7 +45,7 @@ Attribute VB_Exposed = False
 '>
 '>**Dependent**
 '>
-'>* Registry ƒNƒ‰ƒX
+'>* Registry
 '>
 '>**History**
 '>
@@ -130,7 +130,7 @@ Private Const LR_COPYRETURNORG As Long = &H4
 '>
 '>**Parameters**
 '>
-'>‚È‚µ
+'>* None
 '>
 '>**Return Value**
 '>
@@ -210,11 +210,11 @@ End Function
 '>
 '>**Parameters**
 '>
-'>‚È‚µ
+'>* None
 '>
 '>**Return Value**
 '>
-'>‚È‚µ
+'>* None
 '>
 '>**Remarks**
 '>
@@ -348,7 +348,7 @@ End Function
 '>
 '>**Parameters**
 '>
-'>‚È‚µ
+'>* None
 '>
 '>**Return Value**
 '>
@@ -435,7 +435,7 @@ End Function
 '>
 '>**Return Value**
 '>
-'>‚È‚µ
+'>* None
 '>
 '>**Remarks**
 '>
@@ -513,7 +513,7 @@ End Sub
 '>
 '>**Parameters**
 '>
-'>‚È‚µ
+'>* None
 '>
 '>**Return Value**
 '>
@@ -596,7 +596,7 @@ End Function
 '>
 '>**Return Value**
 '>
-'>‚È‚µ
+'>* None
 '>
 '>**Remarks**
 '>

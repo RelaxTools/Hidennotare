@@ -216,7 +216,7 @@ End Function
 '>
 '>**Example**
 '>
-'>‚È‚µ
+'>* None
 '>
 '>**See also**
 '>
@@ -335,7 +335,7 @@ End Function
 '>
 '>**Return Value**
 '>
-'>‚È‚µ
+'>* None
 '>
 '>**Remarks**
 '>
@@ -398,7 +398,7 @@ End Sub
 '>
 '>**Return Value**
 '>
-'>‚È‚µ
+'>* None
 '>
 '>**Remarks**
 '>

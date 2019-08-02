@@ -36,7 +36,23 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-' このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。
+'>### CheckDigit クラス
+'>
+'>**Remarks**
+'>
+'>チェックディジットクラス<br>
+'>**このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。**
+'>
+'>**Dependent**
+'>
+'>* RegExp
+'>
+'>**History**
+'>
+'>|Date|Version|Note|
+'>|---|---|---|
+'>|2019-01-01|Ver.1.0.0|新規作成|
+'>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 '--------------------------------------------------------------
@@ -64,7 +80,7 @@ Function IsLuhn(ByVal strNo As String) As Boolean
         Exit Function
     End If
     
-    If RegExp.Test(strNo, "[0-9]*") Then
+    If RegExp.Test(strNo, "^[0-9]{16}$") Then
     Else
         IsLuhn = False
         Exit Function
@@ -108,14 +124,10 @@ Function IsMyNumber(ByVal strNo As String) As Boolean
     
     IsMyNumber = False
     
-    If RegExp.Test(strNo, "[0-9]{12}") Then
+    If RegExp.Test(strNo, "^[0-9]{12}$") Then
     Else
         Exit Function
     End If
-    
-'    If Len(strNo) <> 12 Then
-'        Exit Function
-'    End If
     
     sum = 0
 
@@ -161,14 +173,10 @@ Function IsCorpNumber(ByVal strNo As String) As Boolean
     
     IsCorpNumber = False
     
-    If RegExp.Test(strNo, "[0-9]{13}") Then
+    If RegExp.Test(strNo, "^[0-9]{13}$") Then
     Else
         Exit Function
     End If
-    
-'    If Len(strNo) <> 13 Then
-'        Exit Function
-'    End If
     
     sum = 0
 

@@ -36,10 +36,23 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-' 依存モジュール
-'   IWriter.cls
-'-----------------------------------------------------------------------------------------------------
-' 2018-12-06 Ver.1.0.0 新規作成 テキストWriteクラス
+'>### TextWriter クラス
+'>
+'>**Remarks**
+'>
+'>Textファイル書込みクラス<br>
+'>
+'>**Dependent**
+'>
+'>* IConstructor
+'>* IWriter
+'>
+'>**History**
+'>
+'>|Date|Version|Note|
+'>|---|---|---|
+'>|2018-12-06|Ver.1.0.0|新規作成|
+'>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements IConstructor
@@ -56,15 +69,60 @@ Private mMode As OpenModeConstants
 Private mBom As Boolean
 
 Private mFirst As Boolean
-'--------------------------------------------------------------
-' コンストラクタ
-'--------------------------------------------------------------
-' Arg1 - FileName
-' Arg2 - NewLineCode : NewLineCodeConstants.CRLF/LF
-' Arg3 - Encode      : EncodeConstants.CP932/UTF8/UTF16LE
-' Arg4 - Mode        : OpenModeConstants.Output/Append
-' Arg5 - Bom         : True/False
-'--------------------------------------------------------------
+'>---
+'>#### コンストラクタ
+'>
+'>**Syntax**
+'>
+'>```
+'>Set ret = Constructor(New TextWriter,
+'>                      FileName,
+'>                      [NewLineCode = NewLineCodeConstants.CRLF],
+'>                      [Encode = EncodeConstants.CP932],
+'>                      [Mode = OpenModeConstants.デフォルトOutput],
+'>                      [Bom = False])
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|FileName|必須|String|ファイル名を指定|
+'>|NewLineCode|省略可|String|改行コードを指定。<br>デフォルト(CRLF)|
+'>|Encode|省略可|String|文字コードを指定。CP932/UTF8/UTF16LE<br>デフォルトCP932(SJIS)|
+'>|Mode|省略可|OpenModeConstants|Output:上書きモード/Append:追加モード<br>デフォルトOutput|
+'>|Bom|省略可|String|True:付ける/False:付けない<br>デフォルトFalse|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|ret|Object|新しいインスタンス(TextWriter)|
+'>
+'>**Remarks**
+'>
+'>** このクラスはコンストラクタを使用しないと実行できません。**
+'>
+'>**Example**
+'>
+'>
+'>```
+'>Dim strFile As String
+'>Dim IW As IWriter
+'>
+'>strFile = "C:\Test.txt"
+'>
+'>Set IW = Constructor(New TextWriter, strFile)
+'>
+'>IW.Append "Hello World!"
+'>IW.Flash
+'>
+'>```
+'>
+'>**See also**
+'>
+'>* None
+'>
 Private Function IConstructor_Instancing(Args As Collection) As Object
 
     If Args.Count = 0 Then
@@ -114,7 +172,40 @@ Private Function IConstructor_Instancing(Args As Collection) As Object
     mFirst = True
 
 End Function
-
+'>---
+'>#### テキストの追加
+'>
+'>**Syntax**
+'>
+'>```
+'>expression.Append(Args)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|TextWriter|TextWriterオブジェクトを指定します。|
+'>|Args|必須|Variant|テキストを指定|
+'>
+'>**Return Value**
+'>
+'>* None
+'>
+'>**Remarks**
+'>
+'>テキストの追加<br>
+'>指定データをテキストとして出力します。<br>
+'>明示的に保存する際にはFlushメソッドを呼び出すかインスタンスを終了(Set xxx = Nothing)する必要があります。<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* TextWriter.Flush
+'>
 Private Sub IWriter_Append(ByVal Args As Variant)
     
     Dim strLine As String
@@ -171,7 +262,40 @@ Private Sub IWriter_Append(ByVal Args As Variant)
     Put #fp, , bytBuf
 
 End Sub
-
+'>---
+'>#### 強制保存
+'>
+'>**Syntax**
+'>
+'>```
+'>expression.Flush(Args)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|TextWriter|TextWriterオブジェクトを指定します。|
+'>
+'>**Return Value**
+'>
+'>* None
+'>
+'>**Remarks**
+'>
+'>強制保存<br>
+'>今までAppendで出力されたデータを強制的に保存します。<br>
+'>インスタンスをモジュールレベルにするなど、長い間Appendしなしなかった場合に確実に保存される保証がありません。<br>
+'>長い間Openしたままにする場合には、定期的にFlushしてください。<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* None
+'>
 Private Sub IWriter_Flush()
     
     If mOpen = False Then Exit Sub

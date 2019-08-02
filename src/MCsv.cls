@@ -36,7 +36,25 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-' Power Query M Language Csv Class
+'>### MCsv クラス
+'>
+'>**Remarks**
+'>
+'>MCsv<br>
+'>Power Query M Language Csv Class<br>
+'>M言語をVBAで組み立てる際に便利なクラス<br>
+'>
+'>**Dependent**
+'>
+'>* StringBuilder
+'>* MTable
+'>
+'>**History**
+'>
+'>|Date|Version|Note|
+'>|---|---|---|
+'>|2019-01-01|Ver.1.0.0|新規作成|
+'>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 '---------------------------------------
