@@ -13,14 +13,15 @@
 [1.7 ArrayListとDictionaryのデシリアライズ化](https://github.com/RelaxTools/Hidennotare/wiki/1.7.-ArrayList%E3%81%A8Dictionary%E3%81%AE%E3%83%87%E3%82%B7%E3%83%AA%E3%82%A2%E3%83%A9%E3%82%A4%E3%82%BA%E5%8C%96)  
 #### 2 リファレンス
 ##### 2.1 標準モジュール
-[2.1.1 Core](https://github.com/RelaxTools/Hidennotare/wiki/Core)  
-[2.1.2 Document](https://github.com/RelaxTools/Hidennotare/wiki/Document)  
+[2.1.1 CallbackHelper](https://github.com/RelaxTools/Hidennotare/wiki/CallbackHelper)  
+[2.1.2 Core](https://github.com/RelaxTools/Hidennotare/wiki/Core)  
+[2.1.3 Document](https://github.com/RelaxTools/Hidennotare/wiki/Document)  
 ##### 2.2 インターフェイス
 [2.2.1 IComparer](https://github.com/RelaxTools/Hidennotare/wiki/IComparer)  
-[2.2.2 IConstructor](https://github.com/RelaxTools/Hidennotare/wiki/IConstructor)  
-[2.2.3 ICursor](https://github.com/RelaxTools/Hidennotare/wiki/ICursor)  
-[2.2.4 IDictionary](https://github.com/RelaxTools/Hidennotare/wiki/IDictionary)  
-[2.2.5 IDictionaryAccessor](https://github.com/RelaxTools/Hidennotare/wiki/IDictionaryAccessor)  
+[2.2.2 ICompatibleProperty](https://github.com/RelaxTools/Hidennotare/wiki/ICompatibleProperty)  
+[2.2.3 IConstructor](https://github.com/RelaxTools/Hidennotare/wiki/IConstructor)  
+[2.2.4 ICursor](https://github.com/RelaxTools/Hidennotare/wiki/ICursor)  
+[2.2.5 IDictionary](https://github.com/RelaxTools/Hidennotare/wiki/IDictionary)  
 [2.2.6 IIterator](https://github.com/RelaxTools/Hidennotare/wiki/IIterator)  
 [2.2.7 IList](https://github.com/RelaxTools/Hidennotare/wiki/IList)  
 [2.2.8 INewInstance](https://github.com/RelaxTools/Hidennotare/wiki/INewInstance)  
@@ -45,7 +46,9 @@
 [2.3.15 SheetIterator](https://github.com/RelaxTools/Hidennotare/wiki/SheetIterator)  
 [2.3.16 SortedDictionary](https://github.com/RelaxTools/Hidennotare/wiki/SortedDictionary)  
 [2.3.17 StdSch](https://github.com/RelaxTools/Hidennotare/wiki/StdSch)  
-[2.3.18 TableCursor](https://github.com/RelaxTools/Hidennotare/wiki/TableCursor)  
+[2.3.18 StringBuilder](https://github.com/RelaxTools/Hidennotare/wiki/StringBuilder)  
+[2.3.19 TableCursor](https://github.com/RelaxTools/Hidennotare/wiki/TableCursor)  
+[2.3.20 TextReader](https://github.com/RelaxTools/Hidennotare/wiki/TextReader)  
 
 #### 3. 機能一覧
 
