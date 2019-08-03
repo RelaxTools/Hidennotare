@@ -107,6 +107,7 @@ Sub OutputMarkDown()
     Dim TC As IList
     Dim fp As Integer
     Dim bytBuf() As Byte
+    Dim IW As IWriter
     
     On Error GoTo e
     
@@ -194,9 +195,6 @@ Sub OutputMarkDown()
                     
                     End Select
                     
-                    
-                    
-                    
                 End If
             Next i
         
@@ -207,13 +205,17 @@ Sub OutputMarkDown()
                 FileIO.TruncateFile strFile
                 
                 'UTF8 & LF で保存
-                fp = FreeFile()
-                Open strFile For Binary As fp
+                Set IW = Constructor(New TextWriter, _
+                                     strFile, _
+                                     NewLineCodeConstants.None, _
+                                     EncodeConstants.UTF8, _
+                                     OpenModeConstants.Output, _
+                                     False)
+        
+                IW.Append SB.ToString(vbLf)
                 
-                bytBuf = Convert.ToUTF8(SB.ToString(vbLf))
-                
-                Put #fp, , bytBuf
-                Close fp
+                Set IW = Nothing
+            
             End If
             
             Set SB = Nothing
@@ -258,17 +260,17 @@ Sub OutputMarkDown()
         FileIO.TruncateFile strFile
         
         '静的コンテンツと生成した目次をUTF8 & LF にて出力。
-        fp = FreeFile()
-        Open strFile For Binary As fp
+        Set IW = Constructor(New TextWriter, _
+                             strFile, _
+                             NewLineCodeConstants.None, _
+                             EncodeConstants.UTF8, _
+                             OpenModeConstants.Output, _
+                             False)
+
+        IW.Append strStatic
+        IW.Append Join(TC.ToArray(), vbLf)
         
-        bytBuf = Convert.ToUTF8(strStatic)
-        
-        Put #fp, , bytBuf
-        
-        bytBuf = Convert.ToUTF8(Join(TC.ToArray(), vbLf))
-        
-        Put #fp, , bytBuf
-        Close fp
+        Set IW = Nothing
     
     End If
     
@@ -288,7 +290,12 @@ End Sub
 '---------------------------------------------------
 ' 章番号生成
 '---------------------------------------------------
-Private Function LevelNo(ByVal strBuf As String, No() As Long, ByVal lngLevel As Long, TC As IList, ByVal lngContentsLevel As Long, ByVal strName As String) As String
+Private Function LevelNo(ByVal strBuf As String, _
+                         No() As Long, _
+                         ByVal lngLevel As Long, _
+                         TC As IList, _
+                         ByVal lngContentsLevel As Long, _
+                         ByVal strName As String) As String
 
     Dim Col As Collection
     Dim SB As StringBuilder
@@ -333,7 +340,8 @@ Private Function LevelNo(ByVal strBuf As String, No() As Long, ByVal lngLevel As
                 Dim strContent As String
                 
                 'Markdown のリンク見出しとリンク作成
-                strContent = "[" & Mid$(LevelNo, InStr(LevelNo, " ") + 1) & "](" & TARGET_URL & Replace$(strName, " ", "-") & ")  "
+                strContent = "[" & Mid$(LevelNo, InStr(LevelNo, " ") + 1) & "](" & _
+                             TARGET_URL & Replace$(strName, " ", "-") & ")  "
                 
                 '目次のエリアが限られるので種類は削除
                 strContent = Replace$(strContent, " クラス", "")
@@ -383,32 +391,18 @@ End Function
 '---------------------------------------------------
 Private Function GetStaticContents(ByVal strFile As String) As String
 
-    Dim fp As Integer
-    Dim bytBuf() As Byte
-    Dim strBuf As String
+    Dim SB As StringBuilder
+    Dim IC As ICursor
     
     GetStaticContents = ""
     
-    fp = FreeFile
-    
-    Open strFile For Binary As fp
-    
-    ReDim bytBuf(0 To LOF(fp) - 1)
-    
-    Get #fp, , bytBuf
-
-    Close fp
-    
-    strBuf = Convert.FromUTF8(bytBuf)
-
-    Dim SB As StringBuilder
-    
     Set SB = New StringBuilder
+    
+    Set IC = Constructor(New TextReader, _
+                         strFile, _
+                         NewLineCodeConstants.LF, _
+                         EncodeConstants.UTF8)
 
-    Dim IC As ICursor
-    
-    Set IC = Constructor(New LineCursor, Split(strBuf, vbLf))
-    
     Do Until IC.Eof
     
         If StringHelper.StartsWith(IC, "#### 2") Then
