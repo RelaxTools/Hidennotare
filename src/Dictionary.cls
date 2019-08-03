@@ -239,7 +239,7 @@ Public Function ParseFromListObject(LO As ListObject, KeyField As String, Option
                 Set objRec = Core.GetNewInstance(obj)
         End Select
         
-        For j = 1 To LO.HeaderRowRange.columns.Count
+        For j = 1 To LO.HeaderRowRange.Columns.Count
             Core.CastICompatibleProperty(objRec).SetProperty LO.HeaderRowRange(, j).Value, LO.DataBodyRange.Cells(i, j).Value
         Next
     
@@ -287,7 +287,7 @@ Public Sub CopyToListObject(LO As ListObject)
         Set obj = lst.Item(Key)
         
         LO.ListRows.Add
-        For j = 1 To LO.HeaderRowRange.columns.Count
+        For j = 1 To LO.HeaderRowRange.Columns.Count
 
             LO.DataBodyRange.Cells(i, j).Value = Core.CastICompatibleProperty(obj).GetProperty(LO.HeaderRowRange(, j).Value)
         
