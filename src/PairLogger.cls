@@ -48,7 +48,9 @@ Attribute VB_Exposed = False
 '>**Example**
 '>
 '>```
-'>Dim PL As PairLogger: Set PL = Constructor(New PairLogger, TypeName(Me) & ".FileSearchEx")
+'>Dim PL As PairLogger
+'>Set PL = Constructor(New PairLogger,
+'>                     TypeName(Me) & ".FileSearchEx")
 '>```
 '>
 '>**Dependent**

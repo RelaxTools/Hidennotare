@@ -46,7 +46,7 @@ Attribute VB_Exposed = False
 '>
 '>**Dependent**
 '>
-'>* MatchBean ƒNƒ‰ƒX
+'>* MatchBean
 '>
 '>**History**
 '>
@@ -62,7 +62,11 @@ Option Explicit
 '>**Syntax**
 '>
 '>```
-'>flg = StdSch.Test(strText, strExp, [blnIgnoreCase = False, blnMatchByte = False, blnWhole = False])
+'>flg = StdSch.Test(strText,
+'>                  strExp,
+'>                  [blnIgnoreCase = False],
+'>                  [blnMatchByte = False],
+'>                  [blnWhole = False])
 '>```
 '>
 '>**Parameters**
@@ -124,7 +128,12 @@ End Function
 '>**Syntax**
 '>
 '>```
-'>ret = StdSch.Replace(strText, strExp, strReplace, [blnIgnoreCase = False, blnMatchByte = False, blnWhole = False])
+'>ret = StdSch.Replace(strText,
+'>                     strExp,
+'>                     strReplace,
+'>                     [blnIgnoreCase = False],
+'>                     [blnMatchByte = False],
+'>                     [blnWhole = False])
 '>```
 '>
 '>**Parameters**
@@ -189,7 +198,11 @@ End Function
 '>**Syntax**
 '>
 '>```
-'>Set ret = StdSch.Execute(strText, strExp, [blnIgnoreCase = False, blnMatchByte = False, blnWhole = False])
+'>Set ret = StdSch.Execute(strText,
+'>                         strExp,
+'>                         [blnIgnoreCase = False],
+'>                         [blnMatchByte = False],
+'>                         [blnWhole = False])
 '>```
 '>
 '>**Parameters**
@@ -318,7 +331,13 @@ End Function
 '>**Syntax**
 '>
 '>```
-'>StdSch.ReplaceShape sh, strText, strExp, strReplace, [blnIgnoreCase = False, blnMatchByte = False, blnWhole = False]
+'>StdSch.ReplaceShape sh,
+'>                    strText,
+'>                    strExp,
+'>                    strReplace,
+'>                    [blnIgnoreCase = False],
+'>                    [blnMatchByte = False],
+'>                    [blnWhole = False]
 '>```
 '>
 '>**Parameters**
@@ -381,7 +400,13 @@ End Sub
 '>**Syntax**
 '>
 '>```
-'>StdSch.ReplaceRange rng, strText, strExp, strReplace, [blnIgnoreCase = False, blnMatchByte = False, blnWhole = False]
+'>StdSch.ReplaceRange rng,
+'>                    strText,
+'>                    strExp,
+'>                    strReplace,
+'>                    [blnIgnoreCase = False],
+'>                    [blnMatchByte = False],
+'>                    [blnWhole = False]
 '>```
 '>
 '>**Parameters**

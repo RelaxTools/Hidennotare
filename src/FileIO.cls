@@ -237,13 +237,13 @@ End Function
 '>
 '>**Return Value**
 '>
-'>Scripting.FileSystemObject の FileObject 。
+'>|Name|Data type|Description|
+'>---|---|---
+'>|ret|Object|Scripting.FileSystemObject の FileObject|
 '>
 '>**Remarks**
 '>
-'>|Name|Data type|Description|
-'>---|---|---
-'>|ret|Object|ファイルオブジェクト取得|
+'>ファイルオブジェクト取得
 '>
 '>**Example**
 '>
@@ -413,7 +413,11 @@ End Property
 '>**Syntax**
 '>
 '>```
-'>FileIO.FileSearch strPath, varPatterns, Col, [SubDir = True, NaturalSort = True]
+'>FileIO.FileSearch strPath,
+'>                  varPatterns,
+'>                  Col,
+'>                  [SubDir = True],
+'>                  [NaturalSort = True]
 '>```
 '>
 '>**Parameters**
@@ -486,7 +490,13 @@ End Sub
 '>**Syntax**
 '>
 '>```
-'>FileIO.FileSearchEx strPath, varPatterns, Col, [SubDir = True, ReturnFind = False, NaturalSort = True, varExcludedFolder = ""]
+'>FileIO.FileSearchEx strPath,
+'>                    varPatterns,
+'>                    Col,
+'>                    [SubDir = True],
+'>                    [ReturnFind = False],
+'>                    [NaturalSort = True],
+'>                    [varExcludedFolder = ""]
 '>```
 '>
 '>**Parameters**
@@ -1414,7 +1424,9 @@ End Sub
 '>**Syntax**
 '>
 '>```
-'>FileIO.CopyFile(source, destination, [keepTimestamp = False])
+'>FileIO.CopyFile(source,
+'>                destination,
+'>                [keepTimestamp = False])
 '>```
 '>
 '>**Parameters**

@@ -173,7 +173,7 @@ Private Function IConstructor_Instancing(Args As Collection) As Object
 
 End Function
 '>---
-'>#### テキストの追加
+'>#### Append(IWriter I/F)
 '>
 '>**Syntax**
 '>
@@ -263,7 +263,7 @@ Private Sub IWriter_Append(ByVal Args As Variant)
 
 End Sub
 '>---
-'>#### 強制保存
+'>#### Flush(IWriter I/F)
 '>
 '>**Syntax**
 '>

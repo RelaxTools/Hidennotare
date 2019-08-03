@@ -41,7 +41,6 @@ Attribute VB_Exposed = False
 '>**Remarks**
 '>
 '>マクロ高速化<br>
-'>起動時ではなく最初の参照時にWordを起動するため注意。<br>
 '>マクロの高速化に寄与するプロパティを設定する｡
 '>
 '>t-hom’s diary<br>

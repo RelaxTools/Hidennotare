@@ -45,18 +45,6 @@ Attribute VB_Exposed = False
 '>別プロセスのExcelで使用する場合はApplicationオブジェクトを渡す。<br>
 '>With Constructor(New BookReader, ファイル名, 読み取り専用, Applicationオブジェクト)<br>
 '>
-'>**Sample**
-'>
-'>```
-'>Dim WS As Worksheet
-'>
-'>With Constructor(New BookReader, ファイル名, 読み取り専用, Applicationオブジェクト)
-'>
-'>    Set WS = .VisibleSheets(1)
-'>
-'>End With
-'>```
-'>
 '>**Dependent**
 '>
 '>* IConstructor
@@ -94,7 +82,10 @@ End Sub
 '>**Syntax**
 '>
 '>```
-'>Set ret Constructor(New BookReader, FileName, [Readonly = True, Application = Excel.Application])
+'>Set ret Constructor(New BookReader,
+'>                    FileName,
+'>                    [Readonly = True],
+'>                    [Application = Excel.Application])
 '>```
 '>
 '>**Parameters**

@@ -45,9 +45,9 @@ Attribute VB_Exposed = False
 '>
 '>**Dependent**
 '>
-'>* IConstructor クラス
-'>* IReader クラス
-'>* ICursor クラス
+'>- IConstructor クラス
+'>- IReader クラス
+'>- ICursor クラス
 '>
 '>**History**
 '>

@@ -203,15 +203,15 @@ End Function
 '--------------------------------------------------------------
 'Å@A1å`éÆÇÃóÒIDÇî‘çÜÇ…ïœä∑Ç∑ÇÈÅB
 '--------------------------------------------------------------
-Function ConvertToNumber(ByVal strId As String) As Long
+Function ConvertToNumber(ByVal strID As String) As Long
 
     Dim lngColumn As Long
     Dim strChr As String
     Dim i As Long
 
-    For i = 1 To Len(strId)
+    For i = 1 To Len(strID)
         
-        strChr = UCase(Mid$(strId, Len(strId) - i + 1, 1))
+        strChr = UCase(Mid$(strID, Len(strID) - i + 1, 1))
         
         Select Case i
             Case 1

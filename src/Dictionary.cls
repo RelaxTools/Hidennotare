@@ -42,8 +42,8 @@ Attribute VB_Exposed = False
 '>
 '>Scripting.Dictionary のコンポジット（移譲）クラス。
 '>
-'>* IDictionary I/F を使用する必要がある。
-'>* 本家と異なる点。For Each を使う場合には XX.Keys を省略できません。
+'>- IDictionary I/F を使用する必要がある。
+'>- 本家と異なる点。For Each を使う場合には XX.Keys を省略できません。
 '>
 '>**Scripting.Dictionaryとの比較**
 '>

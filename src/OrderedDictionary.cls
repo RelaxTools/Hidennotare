@@ -44,9 +44,9 @@ Attribute VB_Exposed = False
 '>Dictionary クラスをコンポジット（移譲）したクラス。<br>
 '>使用方法についてはDictionaryを参照。
 '>
-'>* IDictionary I/F を使用する必要がある。
-'>* 本家と異なる点。For Each を使う場合には XX.Keys を省略できない。
-'>* Orderd なので追加順を維持するため削除のパフォーマンスは悪いので注意。
+'>- IDictionary I/F を使用する必要がある。
+'>- 本家と異なる点。For Each を使う場合には XX.Keys を省略できない。
+'>- Orderd なので追加順を維持するため削除のパフォーマンスは悪いので注意。
 '>
 '>**Implements**
 '>* ICursor

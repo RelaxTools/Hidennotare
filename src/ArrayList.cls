@@ -40,9 +40,9 @@ Attribute VB_Exposed = False
 '>
 '>**Remarks**
 '>
-'>* このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。
-'>* Collection をベースに実装しているが、添字は0からなので注意
-'>* 通常使用するメソッドはほとんど IList インターフェイス側にあるので IList の変数に代入して使うことになります。
+'>- このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。
+'>- Collection をベースに実装しているが、添字は0からなので注意
+'>- 通常使用するメソッドはほとんど IList インターフェイス側にあるので IList の変数に代入して使うことになります。
 '>
 '>**Collection と ArrayList との比較**
 '>
@@ -117,14 +117,14 @@ End Sub
 '>**Syntax**
 '>
 '>```
-'>Set ret = Constructor(New ArrayList, コレクション)
+'>Set ret = Constructor(New ArrayList, collection)
 '>```
 '>
 '>**Parameters**
 '>
 '>|Name|Required/Optional|Data type|Description|
 '>---|---|---|---
-'>|コレクション|必須|Collection|生成したコレクションをArrayListの初期値として設定|
+'>|collection|必須|Collection|生成したコレクションをArrayListの初期値として設定|
 '>
 '>**Return Value**
 '>
@@ -398,7 +398,8 @@ End Function
 '>**Example**
 '>
 '>```
-'>    lstFavorite.Tag = "No,Name,Address" 'これはコードではなくプロパティウィンドウで設定しても良い
+'>    'これはコードではなくプロパティウィンドウで設定しても良い
+'>    lstFavorite.Tag = "No,Name,Address"
 '>
 '>    Dim lst As IList
 '>    Set lst = ArrayList.ParseFromListbox(lstFavorite, New FavoriteBean)
@@ -485,7 +486,8 @@ End Function
 '>**Example**
 '>
 '>```
-'>    lstFavorite.Tag = "No,Name,Address" 'これはコードではなくプロパティウィンドウで設定しても良い
+'>    'これはコードではなくプロパティウィンドウで設定しても良い
+'>    lstFavorite.Tag = "No,Name,Address"
 '>
 '>    ArrayList.CopyToListbox lstFavorite
 '>

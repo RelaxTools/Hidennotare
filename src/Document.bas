@@ -32,7 +32,7 @@ Attribute VB_Name = "Document"
 '>
 '>**Remarks**
 '>
-'>* ドキュメント生成モジュール(Hidennotareをgitやwikiで管理するためのモジュール)
+'>- ドキュメント生成モジュール(Hidennotareをgitやwikiで管理するためのモジュール)
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Private Module
@@ -88,6 +88,7 @@ e:
             Resume
         End If
     End If
+    message.Critical "予期しないエラーが発生しました。{0},{1}", Err.Number, Err.Description
     
 End Sub
 '-----------------------------------------------------------------------------------------------------
@@ -192,6 +193,10 @@ Sub OutputMarkDown()
                            SB.Append LevelNo(strMark, No3(), Level, TC, ContentsLevel, obj.Name)
                     
                     End Select
+                    
+                    
+                    
+                    
                 End If
             Next i
         
@@ -236,13 +241,13 @@ Sub OutputMarkDown()
         '目次作成
         TC.Insert 0, "#### 2 リファレンス"
         TC.Insert 1, "##### 2.1 標準モジュール"
-        For i = 0 To TC.Count
+        For i = 0 To TC.Count - 1
             If StringHelper.StartsWith(TC.Item(i), "[2.2") Then
                 TC.Insert i, "##### 2.2 インターフェイス"
                 Exit For
             End If
         Next
-        For i = 0 To TC.Count
+        For i = 0 To TC.Count - 1
             If StringHelper.StartsWith(TC.Item(i), "[2.3") Then
                 TC.Insert i, "##### 2.3 クラス"
                 Exit For
@@ -278,6 +283,7 @@ e:
             Resume
         End If
     End If
+    message.Critical "予期しないエラーが発生しました。{0},{1}", Err.Number, Err.Description
 End Sub
 '---------------------------------------------------
 ' 章番号生成
@@ -288,10 +294,10 @@ Private Function LevelNo(ByVal strBuf As String, No() As Long, ByVal lngLevel As
     Dim SB As StringBuilder
     Dim lngLen As Long
     Dim i As Long
+    Dim strID As String
     
     '章番号(###～)の場合
     Set Col = RegExp.Execute(strBuf, "^#+ ")
-
     If Col.Count > 0 Then
     
         lngLen = Len(Col(1).Value) - 1
@@ -321,7 +327,6 @@ Private Function LevelNo(ByVal strBuf As String, No() As Long, ByVal lngLevel As
             
             LevelNo = SB.ToString(".", strLeft, strRight)
         
-        
             '目次作成レベル以上であれば目次作成
             If lngLen <= lngContentsLevel Then
             
@@ -342,9 +347,35 @@ Private Function LevelNo(ByVal strBuf As String, No() As Long, ByVal lngLevel As
         Else
             LevelNo = strBuf
         End If
-    Else
-        LevelNo = strBuf
+        
+        'クラス及びメソッドのアンカー作成
+        Dim lngPos As Long
+        lngPos = InStr(strRight, "(")
+
+        If lngPos > 0 Then
+            strID = Trim$(Mid$(strRight, 1, lngPos - 1))
+        Else
+            strID = Trim$(strRight)
+        End If
+
+        LevelNo = "<a name=""" & strID & """></a>" & vbLf & LevelNo
+        
+        Exit Function
     End If
+
+    'See also のリンクを生成
+    If RegExp.Test(strBuf, "^\* [A-Za-z0-9.]+") Then
+    
+        strID = Mid$(strBuf, 3)
+        If UCase(strID) <> "NONE" Then
+            LevelNo = "* [" & strID & "](" & TARGET_URL & Replace$(strID, ".", "#") & ")"
+        Else
+            LevelNo = strBuf
+        End If
+        Exit Function
+    End If
+
+    LevelNo = strBuf
 
 End Function
 '---------------------------------------------------

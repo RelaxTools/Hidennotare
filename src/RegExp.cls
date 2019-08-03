@@ -46,7 +46,7 @@ Attribute VB_Exposed = False
 '>
 '>**Dependent**
 '>
-'>* MatchBean ƒNƒ‰ƒX
+'>* MatchBean
 '>
 '>**History**
 '>
