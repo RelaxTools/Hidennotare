@@ -57,9 +57,37 @@ Attribute VB_Exposed = False
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
-'---------------------------------------
-' Document
-'---------------------------------------
+'>---
+'>#### Document(MCsv)
+'>
+'>**Syntax**
+'>
+'>```
+'>Set var = expression.Document(source, [opt])
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|MCsv|MCsvインスタンスを指定|
+'>|source|必須|String|データソースを指定|
+'>|opt|必須|String|オプション文字列を指定|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|var|MTable|テーブルオブジェクト|
+'>
+'>**Remarks**
+'>
+'>Documentメソッド<br>
+'>
+'>**See also**
+'>
+'>* None
+'>
 Public Function Document(f As String, Optional m As Variant) As MTable
 
     Dim strMFunc As String

@@ -56,9 +56,36 @@ Attribute VB_Exposed = False
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
-'---------------------------------------
-' Contents
-'---------------------------------------
+'>---
+'>#### Contents(MFile)
+'>
+'>**Syntax**
+'>
+'>```
+'>var = expression.Contents(path)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|MFile|MFileインスタンスを指定|
+'>|path|必須|String|ファイルのパスを指定|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|var|String|Contents文字列|
+'>
+'>**Remarks**
+'>
+'>Contentsメソッド<br>
+'>
+'>**See also**
+'>
+'>* None
+'>
 Public Function Contents(v As String) As String
 
     Contents = GetClassName & "Contents(""" & v & """)"

@@ -85,15 +85,71 @@ End Sub
 Private Sub Class_Terminate()
     Set mSb = Nothing
 End Sub
-'---------------------------------------
-' テーブルの別名
-'---------------------------------------
+'>---
+'>#### AliasName(MCommand)
+'>
+'>**Syntax**
+'>
+'>```
+'>expression.AliasName() = value
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|MCommand|MCommandインスタンスを指定|
+'>|value|String|テーブルの別名|
+'>
+'>**Return Value**
+'>
+'>* None
+'>
+'>**Remarks**
+'>
+'>テーブルの別名<br>
+'>
+'>**See also**
+'>
+'>* None
+'>
 Public Property Let AliasName(v As String)
     mAliasName = v
 End Property
-'---------------------------------------
-' テーブルの追加
-'---------------------------------------
+'>---
+'>#### Append(MCommand)
+'>
+'>**Syntax**
+'>
+'>```
+'>expression.Append(table, [aliasName = ""])
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|MCommand|MCommandインスタンスを指定|
+'>|table|必須|MTable|追加するテーブルを指定|
+'>|aliasName|省略可|String|テーブルの別名を指定可能。デフォルト""|
+'>
+'>**Return Value**
+'>
+'>* None
+'>
+'>**Remarks**
+'>
+'>テーブル追加メソッド<br>
+'>デリミタ、ヘッダ、フッタを指定可能です。<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* None
+'>
 Public Sub Append(m As MTable, Optional ByVal optName As String = "")
 
     If optName = "" Then
@@ -109,15 +165,69 @@ Public Sub Append(m As MTable, Optional ByVal optName As String = "")
     Set mLast = m
 
 End Sub
-'---------------------------------------
-' 最後に追加したテーブル
-'---------------------------------------
+'>---
+'>#### Table(MCommand)
+'>
+'>**Syntax**
+'>
+'>```
+'>var = expression.Table()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|MCommand|MCommandインスタンスを指定|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|var|String|テーブルの別名|
+'>
+'>**Remarks**
+'>
+'>テーブル別名取得プロパティ<br>
+'>最後に追加したテーブルを取得<br>
+'>
+'>**See also**
+'>
+'>* None
+'>
 Public Property Get Table() As MTable
     Set Table = mLast
 End Property
-'---------------------------------------
-' Ｍ言語生成
-'---------------------------------------
+'>---
+'>#### ToString(MCommand)
+'>
+'>**Syntax**
+'>
+'>```
+'>var = expression.ToString()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|MCommand|MCommandインスタンスを指定|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|var|String|MCommandに追加されたテーブルをM言語を生成|
+'>
+'>**Remarks**
+'>
+'>M言語変換メソッド<br>
+'>追加されたテーブルの順に別名で連結、M言語を生成する<br>
+'>
+'>**See also**
+'>
+'>* None
+'>
 Public Function ToString()
 
     ToString = "let " & vbCrLf & mSb.ToString(", " & vbCrLf) & " " & vbCrLf & "in " & mLast.Name

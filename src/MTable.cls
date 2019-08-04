@@ -81,9 +81,37 @@ Private Function IConstructor_Instancing(Args As Collection) As Object
     Set IConstructor_Instancing = Me
 
 End Function
-'---------------------------------------
-' PromoteHeaders
-'---------------------------------------
+'>---
+'>#### PromoteHeaders(MFile)
+'>
+'>**Syntax**
+'>
+'>```
+'>set ret = expression.PromoteHeaders(table, [option])
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|MTable|MTableインスタンスを指定|
+'>|table|必須|MTable|対象のテーブルを指定|
+'>|option|省略可|String|オプションを指定|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|ret|MTable|テーブルを返却|
+'>
+'>**Remarks**
+'>
+'>Contentsメソッド<br>
+'>
+'>**See also**
+'>
+'>* None
+'>
 Public Function PromoteHeaders(t As MTable, Optional m As Variant) As MTable
 
     Dim strName As String
@@ -108,9 +136,38 @@ Public Function PromoteHeaders(t As MTable, Optional m As Variant) As MTable
     Set PromoteHeaders = Constructor(New MTable, GetClassName & "PromoteHeaders(" & strName & strMFunc & ")", t)
 
 End Function
-'---------------------------------------
-' InsertRows
-'---------------------------------------
+'>---
+'>#### InsertRows(MTable)
+'>
+'>**Syntax**
+'>
+'>```
+'>set ret = expression.InsertRows(table, offset, list)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|MTable|MTableインスタンスを指定|
+'>|table|必須|MTable|対象のテーブルを指定|
+'>|offset|必須|Long|行追加を行う位置を指定|
+'>|list|必須|Mlist|リストを指定|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|ret|MTable|テーブルを返却|
+'>
+'>**Remarks**
+'>
+'>InsertRowsメソッド<br>
+'>
+'>**See also**
+'>
+'>* None
+'>
 Public Function InsertRows(t As MTable, offset As Long, lst As Variant) As MTable
 
     Dim strName As String
@@ -131,9 +188,37 @@ Public Function InsertRows(t As MTable, offset As Long, lst As Variant) As MTabl
     Set InsertRows = Constructor(New MTable, GetClassName & "InsertRows(" & strName & ", " & offset & ", " & strMFunc & ")", t)
 
 End Function
-'---------------------------------------
-' TransformColumnTypes
-'---------------------------------------
+'>---
+'>#### TransformColumnTypes(MTable)
+'>
+'>**Syntax**
+'>
+'>```
+'>set ret = expression.TransformColumnTypes(table, list)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|MTable|MTableインスタンスを指定|
+'>|table|必須|MTable|対象のテーブルを指定|
+'>|list|必須|Mlist|リストを指定|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|ret|MTable|テーブルを返却|
+'>
+'>**Remarks**
+'>
+'>TransformColumnTypesメソッド<br>
+'>
+'>**See also**
+'>
+'>* None
+'>
 Public Function TransformColumnTypes(t As MTable, lst As Variant) As MTable
 
     Dim strName As String
@@ -154,9 +239,36 @@ Public Function TransformColumnTypes(t As MTable, lst As Variant) As MTable
     Set TransformColumnTypes = Constructor(New MTable, GetClassName & "TransformColumnTypes(" & strName & ", " & strMFunc & ")", t)
 
 End Function
-'---------------------------------------
-' Skip
-'---------------------------------------
+'>---
+'>#### Skip(MTable)
+'>
+'>**Syntax**
+'>
+'>```
+'>set ret = expression.Skip(table, list)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|MTable|MTableインスタンスを指定|
+'>|countOrCondition|必須|Long|スキップする行数を指定|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|ret|MTable|テーブルを返却|
+'>
+'>**Remarks**
+'>
+'>Skipメソッド<br>
+'>
+'>**See also**
+'>
+'>* None
+'>
 Public Function Skip(t As MTable, countOrCondition As Long) As MTable
     
     Dim strBuf As String
@@ -170,9 +282,36 @@ Public Function Skip(t As MTable, countOrCondition As Long) As MTable
     Set Skip = Constructor(New MTable, GetClassName & "Skip(" & strBuf & ", " & countOrCondition & ")", t)
     
 End Function
-'---------------------------------------
-' Ｍ言語生成
-'---------------------------------------
+'>---
+'>#### ToString(MTable)
+'>
+'>**Syntax**
+'>
+'>```
+'>var = expression.ToString()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|MTable|MTableインスタンスを指定|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|var|String|MTableに追加されたテーブルをM言語を生成|
+'>
+'>**Remarks**
+'>
+'>M言語変換メソッド<br>
+'>追加されたテーブルのM言語を生成する<br>
+'>
+'>**See also**
+'>
+'>* None
+'>
 Public Function ToString() As String
     ToString = mValue
 End Function

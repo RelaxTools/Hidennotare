@@ -104,17 +104,89 @@ End Sub
 Private Sub Class_Terminate()
     Set mDic = Nothing
 End Sub
-'--------------------------------------------------------------
-'  IDictionary I/F 取得
-'--------------------------------------------------------------
+'>---
+'>#### GetIDictionary(Dictionary)
+'>
+'>**Syntax**
+'>
+'>```
+'> Set obj = Dictionary.GetIDictionary()
+'>```
+'>
+'>**Parameters**
+'>
+'>* None
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|obj|IDictionary|現在のインスタンス(IDictionary I/F)|
+'>
+'>**Remarks**
+'>
+'>IDictionary I/F を取得する。
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* IDictionary
+'>
 Public Function GetIDictionary() As IDictionary
     Set GetIDictionary = Me
 End Function
-'-------------------------------------------
-' Listbox（Combobox）からDictionary変換
-' Tagにフィールド名（カンマ区切り）が必須。
-' Listbox.Tag = "No,Name,Address"
-'-------------------------------------------
+'>---
+'>#### ParseFromListbox(Dictionary)
+'>
+'>**Syntax**
+'>
+'>```
+'>Set ret = Dictionary.ParseFromListbox(objList, Key, [obj = Nothing])
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|objList|必須|Object|Parseする ListBox or ComboBox を指定|
+'>|Key|必須|String|行全体のキーとなる項目名を指定(DBMSの主キーに相当)|
+'>|obj|省略可|Object|レコードに使用するオブジェクトを指定。省略時は Dictionary |
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|ret|Dictionary|新しいインスタンス(Dictionary)|
+'>
+'>
+'>**Remarks**
+'>
+'>ListBox/ComboBox パース<br>
+'>ListBox/ComboBoxからDictionary(レコードはDictionary)を生成する。<br>
+'>Tagにレコードを生成するためのフィールド名リスト（カンマ区切り）が必須。<br>
+'>レコードに使用するオブジェクトは INewInstance と ICompatibleProperty を Implements したクラスであること。
+'>
+'>**Example**
+'>
+'>```
+'>    'これはコードではなくプロパティウィンドウで設定しても良い
+'>    lstFavorite.Tag = "No,Name,Address"
+'>
+'>    Dim dic As IDictionary
+'>    Set dic = Dictionary.ParseFromListbox(lstFavorite, "Key", New FavoriteBean)
+'>
+'>```
+'>
+'>**See also**
+'>
+'>* Dictionary.CopyToListbox
+'>* Dictionary
+'>* INewInstance
+'>* ICompatibleProperty
+'>
 Public Function ParseFromListbox(objList As Object, KeyName As String, Optional obj As Object = Nothing) As IDictionary
 
     Dim ary As IDictionary
@@ -165,11 +237,49 @@ Public Function ParseFromListbox(objList As Object, KeyName As String, Optional 
     Set ParseFromListbox = ary
 
 End Function
-'-------------------------------------------
-' Dictionaryの内容をListbox(Combobox)にコピーする。
-' Tagにフィールド名（カンマ区切り）が必須。
-' Listbox.Tag = "No,Name,Address"
-'-------------------------------------------
+'>---
+'>#### CopyToListbox(Dictionary)
+'>
+'>**Syntax**
+'>
+'>```
+'>Dictionary.CopyToListbox objList
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|objList|必須|Object|copyする ListBox or ComboBox を指定|
+'>
+'>**Return Value**
+'>
+'>* None
+'>
+'>**Remarks**
+'>
+'>ListBox/ComboBox へコピー<br>
+'>ArrayListの内容をListBox/ComboBoxにコピーする。<br>
+'>ListBox/ComboBoxのTagにDictionaryのレコードを対応づけるフィールド名リスト（カンマ区切り）が必須。<br>
+'>レコードに使用するオブジェクトは INewInstance と ICompatibleProperty を Implements したクラスであること。
+'>
+'>**Example**
+'>
+'>```
+'>    'これはコードではなくプロパティウィンドウで設定しても良い
+'>    lstFavorite.Tag = "No,Name,Address"
+'>
+'>    Dictionary.CopyToListbox lstFavorite
+'>
+'>```
+'>
+'>**See also**
+'>
+'>* Dictionary.ParseFromListbox
+'>* Dictionary
+'>* INewInstance
+'>* ICompatibleProperty
+'>
 Public Sub CopyToListbox(objList As Object)
 
     Dim ary As IDictionary
@@ -213,10 +323,74 @@ Public Sub CopyToListbox(objList As Object)
     Next
 
 End Sub
-'-------------------------------------------
-' ListObject（テーブル機能）からDictionary変換
-' テーブルの列ヘッダの情報が必須。
-'-------------------------------------------
+'>---
+'>#### ParseFromListObject(Dictionary)
+'>
+'>**Syntax**
+'>
+'>```
+'>Set ret = Dictionary.ParseFromListObject(objList, KeyField, [obj = Nothing])
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|objList|必須|Listobject|Parseする Listobject を指定|
+'>|KeyField|必須|String|行全体のキーとなる項目名を指定(DBMSの主キーに相当)|
+'>|obj|省略可|Object|レコードに使用するオブジェクトを指定。省略時は Dictionary |
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|ret|Dictionary|新しいインスタンス(Dictionary)|
+'>
+'>**Remarks**
+'>
+'>ListObject パース<br>
+'>ListobjectからDictionary(レコードはDictionary)を生成する。<br>
+'>ListObject(テーブル)の列ヘッダの情報が必須<br>
+'>レコードに使用するオブジェクトは INewInstance と ICompatibleProperty を Implements したクラスであること。
+'>
+'>**Example**
+'>
+'>```
+'>Sub Dictionary_ParseFromListObject_Sample()
+'>
+'>    Dim lst As IDictionary
+'>    Dim dic As IDictionary
+'>    Dim Key As Variant
+'>
+'>    Set lst = Dictionary.ParseFromListObject(ActiveSheet.ListObjects(1), "Key")
+'>
+'>    For Each dic In lst
+'>
+'>        For Each Key In dic.Keys
+'>
+'>            Debug.Print dic.Item(Key)
+'>
+'>        Next
+'>
+'>    Next
+'>
+'>    Dim a As ArrayList
+'>
+'>    Set a = lst
+'>
+'>    a.CopyToListObject ActiveSheet.ListObjects(2)
+'>
+'>End Sub
+'>
+'>```
+'>
+'>**See also**
+'>
+'>* Dictionary.CopyToListObject
+'>* Dictionary
+'>* INewInstance
+'>* ICompatibleProperty
+'>
 Public Function ParseFromListObject(LO As ListObject, KeyField As String, Optional obj As Object = Nothing) As IDictionary
 
     Dim lst As IDictionary
@@ -258,10 +432,69 @@ Public Function ParseFromListObject(LO As ListObject, KeyField As String, Option
     Set ParseFromListObject = lst
 
 End Function
-'-------------------------------------------
-' Dictionaryの内容をListObject(テーブル機能)にコピーする。
-' テーブルの列ヘッダの情報が必須。
-'-------------------------------------------
+'>---
+'>#### CopyToListObject(Dictionary)
+'>
+'>**Syntax**
+'>
+'>```
+'>Dictionary.CopyToListObject objList
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|objList|必須|Object|copyする ListBox or ComboBox を指定|
+'>
+'>**Return Value**
+'>
+'>* None
+'>
+'>**Remarks**
+'>
+'>ListObject(テーブル機能)へコピー<br>
+'>ArrayListの内容をListobjectにコピーする。<br>
+'>ListobjectにDictionaryのレコードを対応づける列名が必須。<br>
+'>レコードに使用するオブジェクトは INewInstance と ICompatibleProperty を Implements したクラスであること。
+'>
+'>**Example**
+'>
+'>```
+'>Sub Dictionary_ParseFromListObject_Sample()
+'>
+'>    Dim lst As IDictionary
+'>    Dim dic As IDictionary
+'>    Dim Key As Variant
+'>
+'>    Set lst = Dictionary.ParseFromListObject(ActiveSheet.ListObjects(1))
+'>
+'>    For Each dic In lst
+'>
+'>        For Each Key In dic.Keys
+'>
+'>            Debug.Print dic.Item(Key)
+'>
+'>        Next
+'>
+'>    Next
+'>
+'>    Dim a As ArrayList
+'>
+'>    Set a = lst
+'>
+'>    a.CopyToListObject ActiveSheet.ListObjects(2)
+'>
+'>End Sub
+'>```
+'>
+'>**See also**
+'>
+'>* Dictionary.ParseFromListbox
+'>* Dictionary
+'>* INewInstance
+'>* ICompatibleProperty
+'>
 Public Sub CopyToListObject(LO As ListObject)
 
     Dim lst As IDictionary
@@ -296,33 +529,190 @@ Public Sub CopyToListObject(LO As ListObject)
     Next
 
 End Sub
-'--------------------------------------------------------------
-'  項目の追加
-'--------------------------------------------------------------
+'>---
+'>#### Add(IDictionary I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>expression.Add(Key, obj)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|IDictionary|IDictionary I/F のインスタンス|
+'>|Key|必須|Variant|キーを指定|
+'>|obj|必須|Variant|追加するオブジェクトを指定|
+'>
+'>**Return Value**
+'>
+'>* None
+'>
+'>**Remarks**
+'>
+'>IDictionary I/F のメソッドです。<br>
+'>Dictionary に項目を追加する。
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* IDictionary
+'>
 Private Sub IDictionary_Add(KeyValue As Variant, obj As Variant)
     mDic.Add KeyValue, obj
 End Sub
-'--------------------------------------------------------------
-'  項目の存在チェック
-'--------------------------------------------------------------
+'>---
+'>#### ContainsKey(IDictionary I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>bool = expression.ContainsKey(Key)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|IDictionary|IDictionary I/F のインスタンス|
+'>|Key|必須|Variant|キー項目|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|bool|Boolean|キーが存在する場合:True/キーが存在しない場合:False|
+'>
+'>**Remarks**
+'>
+'>IDictionary I/F のメソッドです。<br>
+'>Dictionary のキーの存在チェック
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* IDictionary
+'>
 Private Function IDictionary_ContainsKey(KeyValue As Variant) As Boolean
     IDictionary_ContainsKey = mDic.Exists(KeyValue)
 End Function
-'--------------------------------------------------------------
-'  キーリスト取得
-'--------------------------------------------------------------
+'>---
+'>#### Keys(IDictionary I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>var = expression.Keys()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|IDictionary|IDictionary I/F のインスタンス|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|var|Variant|キー配列を返却|
+'>
+'>**Remarks**
+'>
+'>IDictionary I/F のメソッドです。<br>
+'>Dictionary のキー情報を返却
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* IDictionary
+'>
 Private Function IDictionary_Keys() As Variant
     IDictionary_Keys = mDic.Keys
 End Function
-'--------------------------------------------------------------
-'  値リスト取得
-'--------------------------------------------------------------
+'>---
+'>#### Count(IDictionary I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>var = expression.Count
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|IDictionary|IDictionary I/F のインスタンス|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|var|Long|Dictionaryの要素数を返却|
+'>
+'>**Remarks**
+'>
+'>IDictionary I/F のプロパティです。<br>
+'>Dictionary 要素数を返却
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* IDictionary
+'>
 Private Property Get IDictionary_Count() As Long
     IDictionary_Count = mDic.Count
 End Property
-'--------------------------------------------------------------
-'  値取得
-'--------------------------------------------------------------
+'>---
+'>#### Item(IDictionary I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>var = expression.Item(idx)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|IDictionary|IDictionary I/F のインスタンス|
+'>|Key|必須|Variant|取得する項目のキーを指定します。|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|var|Variant|Dictionary の指定位置の項目|
+'>
+'>**Remarks**
+'>
+'>IDictionary I/F のGetプロパティです。<br>
+'>Dictionary の指定位置の項目を取得
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* IDictionary
+'>
 Private Property Get IDictionary_Item(KeyValue As Variant) As Variant
     If VBA.IsObject(mDic.Item(KeyValue)) Then
         Set IDictionary_Item = mDic.Item(KeyValue)
@@ -330,15 +720,79 @@ Private Property Get IDictionary_Item(KeyValue As Variant) As Variant
         IDictionary_Item = mDic.Item(KeyValue)
     End If
 End Property
-'--------------------------------------------------------------
-'  値設定
-'--------------------------------------------------------------
+'>---
+'>#### Item(IDictionary I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>Let expression.Item(Key) = value
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|IDictionary|IDictionary I/F のインスタンス|
+'>|Key|必須|Variant|取得する項目のキーを指定します。|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|value|Variant|新しい設定項目|
+'>
+'>**Remarks**
+'>
+'>IDictionary I/F のLetプロパティです。<br>
+'>Dictionary の指定キーの項目を設定
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* IDictionary
+'>
 Private Property Let IDictionary_Item(KeyValue As Variant, NewItem As Variant)
     mDic.Item(KeyValue) = NewItem
 End Property
-'--------------------------------------------------------------
-'  値設定(オブジェクト)
-'--------------------------------------------------------------
+'>---
+'>#### Item(IDictionary I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>Set expression.Item(Key) = value
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|IDictionary|IDictionary I/F のインスタンス|
+'>|Key|必須|Variant|取得する項目のキーを指定します。|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|value|Variant|新しい設定項目|
+'>
+'>**Remarks**
+'>
+'>IDictionary I/F のSetプロパティです。<br>
+'>Dictionary の指定キーの項目を設定
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* IDictionary
+'>
 Private Property Set IDictionary_Item(KeyValue As Variant, NewItem As Variant)
     Set mDic.Item(KeyValue) = NewItem
 End Property
@@ -348,28 +802,115 @@ End Property
 Private Property Let IDictionary_Key(OldKey As Variant, NewKey As Variant)
     mDic.Key(OldKey) = NewKey
 End Property
-'--------------------------------------------------------------
-'  削除
-'--------------------------------------------------------------
+'>---
+'>#### Remove(IDictionary I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>expression.Remove(Key)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|IDictionary|IDictionary I/F のインスタンス|
+'>|Key|必須|Variant|削除する項目のキーを指定します。|
+'>
+'>**Return Value**
+'>
+'>* None
+'>
+'>**Remarks**
+'>
+'>IDictionary I/F のメソッドです。<br>
+'>Dictionary の指定位置の項目を削除
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* IDictionary
+'>
 Private Sub IDictionary_Remove(KeyValue As Variant)
     mDic.Remove KeyValue
 End Sub
-'--------------------------------------------------------------
-'  全アイテム削除
-'--------------------------------------------------------------
+'>---
+'>#### Clear(IDictionary I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>expression.Clear()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|IDictionary|IDictionary I/F のインスタンス|
+'>
+'>**Return Value**
+'>
+'>* None
+'>
+'>**Remarks**
+'>
+'>IDictionary I/F のメソッドです。<br>
+'>Dictionary の項目を全削除
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* IDictionary
+'>
 Private Sub IDictionary_Clear()
     mDic.RemoveAll
     mIndex = 0
 End Sub
-'--------------------------------------------------------------
-'  シリアライズ化(JSON)
-'--------------------------------------------------------------
+'>---
+'>#### ToString(IDictionary I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>var = expression.ToString()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|IDictionary|IDictionary I/F のインスタンス|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|var|String|JSON文字列を返却|
+'>
+'>**Remarks**
+'>
+'>IDictionary I/F のメソッドです。<br>
+'>Dictionary をJSONに変換
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* IDictionary
+'>
 Private Function IDictionary_ToString() As String
     IDictionary_ToString = ToString()
 End Function
-'--------------------------------------------------------------
-'  シリアライズ化(JSON)
-'--------------------------------------------------------------
 Private Function ToString() As String
 
     Dim Item  As Variant
@@ -632,9 +1173,41 @@ Private Sub ICursor_MoveNext()
     End If
 
 End Sub
-'--------------------------------------------------------------
-' INewInstance I/F
-'--------------------------------------------------------------
+'>---
+'>#### NewInstance(INewInstance I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>Set var = expression.NewInstance()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|ICursor|INewInstance I/F を指定します。|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|var|Object|新しいDictionaryのインスタンス(IDictionary I/F)|
+'>
+'>**Remarks**
+'>
+'>INewInstance I/F のメソッドです。<br>
+'>新しいインスタンス(IDictionary I/F)を生成して返却します。
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* IDictionary
+'>* INewInstance
+'>
 Private Function INewInstance_NewInstance() As Object
     
     Dim d As IDictionary
@@ -643,9 +1216,43 @@ Private Function INewInstance_NewInstance() As Object
     Set INewInstance_NewInstance = d
 
 End Function
-'--------------------------------------------------------------
-' ICompatibleProperty I/F SetProperty
-'--------------------------------------------------------------
+'>---
+'>#### SetProperty(ICompatibleProperty I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>expression.SetProperty(property, value)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|ICompatibleProperty|ICompatibleProperty I/F を指定します。|
+'>|property|必須|Variant|プロパティ名を指定|
+'>|value|必須|Variant|値を設定|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|var|Object|新しいDictionaryのインスタンス(IDictionary I/F)|
+'>
+'>**Remarks**
+'>
+'>SetProperty I/F のメソッドです。<br>
+'>指定プロパティキーに値を設定する。
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* IDictionary
+'>* ICompatibleProperty
+'>
 Private Sub ICompatibleProperty_SetProperty(prop As Variant, Val As Variant)
     
     Dim dic As IDictionary
@@ -663,9 +1270,41 @@ Private Sub ICompatibleProperty_SetProperty(prop As Variant, Val As Variant)
     End If
     
 End Sub
-'--------------------------------------------------------------
-' ICompatibleProperty I/F GetProperty
-'--------------------------------------------------------------
+'>---
+'>#### GetProperty(ICompatibleProperty I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>Set var = expression.GetProperty()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|ICompatibleProperty|ICompatibleProperty I/F を指定します。|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|var|Object|新しいDictionaryのインスタンス(IDictionary I/F)|
+'>
+'>**Remarks**
+'>
+'>GetProperty I/F のメソッドです。<br>
+'>指定プロパティキーの値を取得する。
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* IDictionary
+'>* ICompatibleProperty
+'>
 Private Function ICompatibleProperty_GetProperty(prop As Variant) As Variant
     If IsObject(Me.GetIDictionary.Item(prop)) Then
         Set ICompatibleProperty_GetProperty = Me.GetIDictionary.Item(prop)
