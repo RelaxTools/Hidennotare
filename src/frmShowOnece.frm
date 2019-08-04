@@ -62,6 +62,3 @@ Private Sub chkShowOnece_Change()
     Registry.SaveSetting "ShowOnce", mKey, chkShowOnece.Value
 End Sub
 
-Private Sub UserForm_Click()
-
-End Sub

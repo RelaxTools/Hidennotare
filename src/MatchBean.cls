@@ -60,7 +60,45 @@ Implements IConstructor
 Private m_index As Long
 Private m_Length As Long
 Private m_Value As String
-'コンストラクタ
+'>---
+'>#### コンストラクタ
+'>
+'>**Syntax**
+'>
+'>```
+'>Set ret = Constructor(New MatchBean,
+'>                      index,
+'>                      length,
+'>                      value)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|index|必須|Long|開始場所を指定|
+'>|length|必須|Long|文字数を指定|
+'>|value|必須|String|検索結果を指定|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|ret|Object|新しいインスタンス(MatchBean)|
+'>
+'>**Remarks**
+'>
+'>** このクラスはコンストラクタを使用しないと実行できません。**
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* None
+'>
+'>
 Private Function IConstructor_Instancing(ByRef Args As Collection) As Object
 
     If Args.Count = 3 Then

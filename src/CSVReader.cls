@@ -201,12 +201,14 @@ End Sub
 '>**Syntax**
 '>
 '>```
-'>set ret = obj.ReadAll
+'>set ret = expression.ReadAll
 '>```
 '>
 '>**Parameters**
 '>
-'>* None
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|CsvReader|CsvReaderのインスタンスを指定|
 '>
 '>**Return Value**
 '>
@@ -238,13 +240,14 @@ End Function
 '>**Syntax**
 '>
 '>```
-'>Paste(TopLeft, Fields , [Header = None])
+'>expression.Paste(TopLeft, Fields , [Header = None])
 '>```
 '>
 '>**Parameters**
 '>
 '>|Name|Required/Optional|Data type|Description|
 '>---|---|---|---
+'>|expression|必須|CsvReader|CsvReaderのインスタンスを指定|
 '>|TopLeft|必須|Range|基準となる左上のセルを指定|
 '>|Fields|必須|IDictionary|フィールド名を設定したIDictionary I/F に対応したクラスを指定|
 '>|Header|省略可|CsvReaderHeaderConstants|AddHedder:ヘッダを追加/UseFirstRow:1行目をヘッダにする/None:ヘッダ無し<br>デフォルトNone|

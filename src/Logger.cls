@@ -129,27 +129,127 @@ Private Sub Class_Terminate()
     Close fp
     Set mFSO = Nothing
 End Sub
-'--------------------------------------------------------------
-'　トレースログ
-'--------------------------------------------------------------
+'>---
+'>#### LogTrace(Logger)
+'>
+'>**Syntax**
+'>
+'>```
+'>Logger.LogTrace(message, [param])
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|message|必須|String|ログに出力するメッセージを指定|
+'>|param|必須|ParamArray|パラメータ文字列を指定|
+'>
+'>**Return Value**
+'>
+'>* None
+'>
+'>**Remarks**
+'>
+'>トレースログ出力<br>
+'>
+'>**See also**
+'>
+'>* None
+'>
 Public Sub LogTrace(message As String, ParamArray p())
     ReportLog LogLevel.Trace, PlaceHolder(message, p)
 End Sub
-'--------------------------------------------------------------
-'　情報ログ
-'--------------------------------------------------------------
+'>---
+'>#### LogInfo(Logger)
+'>
+'>**Syntax**
+'>
+'>```
+'>Logger.LogInfo(message, [param])
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|message|必須|String|ログに出力するメッセージを指定|
+'>|param|必須|ParamArray|パラメータ文字列を指定|
+'>
+'>**Return Value**
+'>
+'>* None
+'>
+'>**Remarks**
+'>
+'>情報ログ出力<br>
+'>
+'>**See also**
+'>
+'>* None
+'>
 Public Sub LogInfo(message As String, ParamArray p())
     ReportLog LogLevel.Info, PlaceHolder(message, p)
 End Sub
-'--------------------------------------------------------------
-'　ワーニングログ
-'--------------------------------------------------------------
+'>---
+'>#### LogWarn(Logger)
+'>
+'>**Syntax**
+'>
+'>```
+'>Logger.LogWarn(message, [param])
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|message|必須|String|ログに出力するメッセージを指定|
+'>|param|必須|ParamArray|パラメータ文字列を指定|
+'>
+'>**Return Value**
+'>
+'>* None
+'>
+'>**Remarks**
+'>
+'>ワーニングログ出力<br>
+'>
+'>**See also**
+'>
+'>* None
+'>
 Public Sub LogWarn(message As String, ParamArray p())
     ReportLog LogLevel.Warn, PlaceHolder(message, p)
 End Sub
-'--------------------------------------------------------------
-'　エラーログ
-'--------------------------------------------------------------
+'>---
+'>#### LogFatal(Logger)
+'>
+'>**Syntax**
+'>
+'>```
+'>Logger.LogFatal(message, [param])
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|message|必須|String|ログに出力するメッセージを指定|
+'>|param|必須|ParamArray|パラメータ文字列を指定|
+'>
+'>**Return Value**
+'>
+'>* None
+'>
+'>**Remarks**
+'>
+'>エラーログ出力<br>
+'>
+'>**See also**
+'>
+'>* None
+'>
 Public Sub LogFatal(message As String, ParamArray p())
 
     Dim lngErr As Long
@@ -165,9 +265,35 @@ Public Sub LogFatal(message As String, ParamArray p())
     Err.Description = strDesc
     
 End Sub
-'--------------------------------------------------------------
-'　開始ログ
-'--------------------------------------------------------------
+'>---
+'>#### LogBegin(Logger)
+'>
+'>**Syntax**
+'>
+'>```
+'>Logger.LogBegin(level, message, [param])
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|level|必須|LogLevel|出力するログレベルを指定|
+'>|message|必須|String|ログに出力するメッセージを指定|
+'>|param|必須|ParamArray|パラメータ文字列を指定|
+'>
+'>**Return Value**
+'>
+'>* None
+'>
+'>**Remarks**
+'>
+'>開始ログ出力<br>
+'>
+'>**See also**
+'>
+'>* None
+'>
 Public Sub LogBegin(lvl As LogLevel, message As String, ParamArray p())
     
     If colStack Is Nothing Then
@@ -179,9 +305,35 @@ Public Sub LogBegin(lvl As LogLevel, message As String, ParamArray p())
     colStack.Add GetTickCount
 
 End Sub
-'--------------------------------------------------------------
-'　終了ログ
-'--------------------------------------------------------------
+'>---
+'>#### LogFinish(Logger)
+'>
+'>**Syntax**
+'>
+'>```
+'>Logger.LogFinish(level, message, [param])
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|level|必須|LogLevel|出力するログレベルを指定|
+'>|message|必須|String|ログに出力するメッセージを指定|
+'>|param|必須|ParamArray|パラメータ文字列を指定|
+'>
+'>**Return Value**
+'>
+'>* None
+'>
+'>**Remarks**
+'>
+'>終了ログ出力<br>
+'>
+'>**See also**
+'>
+'>* None
+'>
 Public Sub LogFinish(lvl As LogLevel, message As String, ParamArray p())
     
     Dim t As LongPtr
@@ -206,15 +358,61 @@ Public Sub LogFinish(lvl As LogLevel, message As String, ParamArray p())
     Me.LogFlash
     
 End Sub
-'--------------------------------------------------------------
-'　ログのフラッシュ
-'--------------------------------------------------------------
+'>---
+'>#### LogFlash(Logger)
+'>
+'>**Syntax**
+'>
+'>```
+'>Logger.LogFlash()
+'>```
+'>
+'>**Parameters**
+'>
+'>* None
+'>
+'>**Return Value**
+'>
+'>* None
+'>
+'>**Remarks**
+'>
+'>終了ログ出力<br>
+'>
+'>**See also**
+'>
+'>* None
+'>
 Public Sub LogFlash()
     Call OpenLog
 End Sub
-'--------------------------------------------------------------
-'　ログレベルの設定
-'--------------------------------------------------------------
+'>---
+'>#### Level(Logger)
+'>
+'>**Syntax**
+'>
+'>```
+'>Logger.Level = value
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|value|必須|LogLevel|出力するログレベルを指定|
+'>
+'>**Return Value**
+'>
+'>* None
+'>
+'>**Remarks**
+'>
+'>ログレベルの設定<br>
+'>
+'>**See also**
+'>
+'>* None
+'>
 Public Property Let Level(ByVal l As LogLevel)
     mLevel = l
 End Property

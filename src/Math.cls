@@ -56,12 +56,6 @@ Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 '--------------------------------------------------------------
-'カウンタをインクリメント
-'--------------------------------------------------------------
-Public Sub Inc(ByRef lngCnt As Long, Optional ByVal Incriment As Long = 1)
-    lngCnt = lngCnt + Incriment
-End Sub
-'--------------------------------------------------------------
 '　指定桁での四捨五入(decimal型非対称)
 '--------------------------------------------------------------
 Public Function Round(ByVal varNumber As Variant, ByVal lngDigit As Long) As Variant
