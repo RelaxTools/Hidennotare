@@ -45,7 +45,8 @@ Attribute VB_Exposed = False
 '>**Definition**
 '>
 '>```
-'>Sub Append(ByVal Args As Variant)
+'>Sub WriteData(ByVal Args As Variant)
+'>Sub WriteLine(ByVal Args As Variant)
 '>Sub Flush()
 '>```
 '>
@@ -60,7 +61,10 @@ Public Enum OpenModeConstants
     Output
     AppendFile
 End Enum
-Sub Append(ByVal Args As Variant)
+Sub WriteData(ByVal Args As Variant)
+
+End Sub
+Sub WriteLine(ByVal Args As Variant)
 
 End Sub
 Sub Flush()

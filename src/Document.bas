@@ -205,16 +205,16 @@ Sub OutputMarkDown()
                 FileIO.TruncateFile strFile
                 
                 'UTF8 & LF で保存
-                Set IW = Constructor(New TextWriter, _
+                With Constructor(New TextWriter, _
                                      strFile, _
                                      NewLineCodeConstants.None, _
                                      EncodeConstants.UTF8, _
                                      OpenModeConstants.Output, _
                                      False)
         
-                IW.Append SB.ToString(vbLf)
+                    .WriteData SB.ToString(vbLf)
                 
-                Set IW = Nothing
+                End With
             
             End If
             
@@ -260,18 +260,20 @@ Sub OutputMarkDown()
         FileIO.TruncateFile strFile
         
         '静的コンテンツと生成した目次をUTF8 & LF にて出力。
-        Set IW = Constructor(New TextWriter, _
+        With Constructor(New TextWriter, _
                              strFile, _
                              NewLineCodeConstants.None, _
                              EncodeConstants.UTF8, _
                              OpenModeConstants.Output, _
                              False)
-
-        IW.Append strStatic
-        IW.Append Join(TC.ToArray(), vbLf)
         
-        Set IW = Nothing
-    
+        'IW.WriteData strStatic
+        'IW.WriteData Join(TC.ToArray(), vbLf)
+        
+        'Set IW = Nothing
+            .WriteData strStatic
+            .WriteData Join(TC.ToArray(), vbLf)
+        End With
     End If
     
     MsgBox "生成しました！", vbInformation, "Markdown"

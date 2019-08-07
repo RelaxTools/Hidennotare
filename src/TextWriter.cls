@@ -154,9 +154,9 @@ Private Function IConstructor_Instancing(Args As Collection) As Object
     If Args.Count >= 5 Then
         mBom = Args(5)
     End If
-    
-    Set IConstructor_Instancing = Me
-
+        
+    'IWriter Interface を返却する
+    Set IConstructor_Instancing = Me.GetIWriter
 
     Dim strFolder As String
     
@@ -173,12 +173,12 @@ Private Function IConstructor_Instancing(Args As Collection) As Object
 
 End Function
 '>---
-'>#### Append(IWriter I/F)
+'>#### WriteData(IWriter I/F)
 '>
 '>**Syntax**
 '>
 '>```
-'>expression.Append(Args)
+'>expression.WriteData(Args)
 '>```
 '>
 '>**Parameters**
@@ -194,7 +194,7 @@ End Function
 '>
 '>**Remarks**
 '>
-'>テキストの追加<br>
+'>テキストの書込み（改行なし）<br>
 '>指定データをテキストとして出力します。<br>
 '>明示的に保存する際にはFlushメソッドを呼び出すかインスタンスを終了(Set xxx = Nothing)する必要があります。<br>
 '>
@@ -206,7 +206,97 @@ End Function
 '>
 '>* TextWriter.Flush
 '>
-Private Sub IWriter_Append(ByVal Args As Variant)
+Private Sub IWriter_WriteData(ByVal Args As Variant)
+    
+    Dim strLine As String
+    Dim bytBuf() As Byte
+    Dim bytBom() As Byte
+    
+    '初回BOMの書き込みを行う。
+    If mBom And mFirst And mMode = OpenModeConstants.Output Then
+        'エンコード
+        Select Case mEncode
+            Case EncodeConstants.UTF8
+                
+                ReDim bytBom(0 To 2)
+            
+                bytBom(0) = &HEF
+                bytBom(1) = &HBB
+                bytBom(2) = &HBF
+            
+                Put #fp, , bytBom
+            
+            Case EncodeConstants.UTF16LE
+                
+                ReDim bytBom(0 To 1)
+            
+                bytBom(0) = &HFF
+                bytBom(1) = &HFE
+        
+                Put #fp, , bytBom
+        
+        End Select
+        mFirst = False
+    End If
+
+'    '改行
+'    Select Case mNewLineCode
+'        Case NewLineCodeConstants.CRLF
+'            strLine = Args & vbCrLf
+'        Case NewLineCodeConstants.LF
+'            strLine = Args & vbLf
+'        Case NewLineCodeConstants.None
+            strLine = Args
+'    End Select
+        
+    'エンコード
+    Select Case mEncode
+        Case EncodeConstants.CP932 'SJIS
+            bytBuf = VBA.StrConv(strLine, vbFromUnicode)
+        Case EncodeConstants.UTF8
+            bytBuf = Convert.ToUTF8(strLine)
+        Case EncodeConstants.UTF16LE
+            bytBuf = strLine
+    End Select
+
+    Put #fp, , bytBuf
+
+End Sub
+'>---
+'>#### WriteLine(IWriter I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>expression.WriteLine(Args)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|TextWriter|TextWriterオブジェクトを指定します。|
+'>|Args|必須|Variant|テキストを指定|
+'>
+'>**Return Value**
+'>
+'>* None
+'>
+'>**Remarks**
+'>
+'>テキストの書込み（改行あり）<br>
+'>指定データをテキストとして出力します（改行あり）。<br>
+'>明示的に保存する際にはFlushメソッドを呼び出すかインスタンスを終了(Set xxx = Nothing)する必要があります。<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* TextWriter.Flush
+'>
+Private Sub IWriter_WriteLine(ByVal Args As Variant)
     
     Dim strLine As String
     Dim bytBuf() As Byte
@@ -262,6 +352,7 @@ Private Sub IWriter_Append(ByVal Args As Variant)
     Put #fp, , bytBuf
 
 End Sub
+
 '>---
 '>#### Flush(IWriter I/F)
 '>
@@ -349,4 +440,38 @@ Private Sub fileOpen()
     End Select
 
 End Sub
+'>---
+'>#### GetIWriter(TextWriter)
+'>
+'>**Syntax**
+'>
+'>```
+'>Set i/f = obj.GetIWriter()
+'>```
+'>
+'>**Parameters**
+'>
+'>* None
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|i/f|IWriter|IWriter インターフェース(TextWriter)を返却|
+'>
+'>**Remarks**
+'>
+'>IWriterインターフェース返却メソッド<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* None
+'>
+Public Function GetIWriter() As IWriter
+    Set GetIWriter = Me
+End Function
 

@@ -160,9 +160,10 @@ Private Function IConstructor_Instancing(Args As Collection) As Object
         mEncode = Args(3)
     End If
     
-    
-    Set IConstructor_Instancing = Me
-
+    'IReader I/F ‚ð•Ô‹p‚·‚é
+    Dim IR As IReader
+    Set IR = Me
+    Set IConstructor_Instancing = IR
     
     If Not FileIO.FileExists(mFileName) Then
         Err.Raise 512 + 1, TypeName(Me) & ".IConstructor_Instancing", "file not found(" & mFileName & ")"

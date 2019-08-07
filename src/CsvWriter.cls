@@ -62,7 +62,7 @@ Option Explicit
 Implements IConstructor
 Implements IWriter
 
-Private IR As IWriter
+Private mIW As IWriter
 
 Private mFileName As String
 Private mNewLineCode As NewLineCodeConstants
@@ -171,22 +171,27 @@ Private Function IConstructor_Instancing(Args As Collection) As Object
     End If
     
     'TextWriterに委譲する。
-    Set IR = Constructor(New TextWriter, mFileName, mNewLineCode, mEncode, mMode, mBom)
+    Set mIW = Constructor(New TextWriter, mFileName, mNewLineCode, mEncode, mMode, mBom)
     
-    Set IConstructor_Instancing = Me
+    Set IConstructor_Instancing = Me.GetIWriter
     
 End Function
 
 Private Sub Class_Terminate()
-    Set IR = Nothing
+    Set mIW = Nothing
 End Sub
+
+Private Sub IWriter_WriteData(ByVal Args As Variant)
+    Err.Raise 512 + 1, TypeName(Me) & ".IWriter_WriteData", "Not Support Method"
+End Sub
+
 '>---
-'>#### 行追加
+'>#### WriteLine
 '>
 '>**Syntax**
 '>
 '>```
-'>expression.Append(Args)
+'>expression.WriteLine(Args)
 '>```
 '>
 '>**Parameters**
@@ -214,7 +219,7 @@ End Sub
 '>
 '>* CsvWriter.Flush
 '>
-Private Sub IWriter_Append(ByVal Args As Variant)
+Private Sub IWriter_WriteLine(ByVal Args As Variant)
     
     Dim c As Variant
     Dim SB As StringBuilder
@@ -225,15 +230,15 @@ Private Sub IWriter_Append(ByVal Args As Variant)
             SB.Append AddQuot(c)
         Next
         'TextWriterに委譲する。
-        IR.Append SB.ToString(mDelimiter)
+        mIW.WriteLine SB.ToString(mDelimiter)
     Else
         'TextWriterに委譲する。
-        IR.Append AddQuot(Args)
+        mIW.WriteLine AddQuot(Args)
     End If
 
 End Sub
 '>---
-'>#### 強制保存
+'>#### Flush
 '>
 '>**Syntax**
 '>
@@ -268,7 +273,7 @@ End Sub
 '>
 Private Sub IWriter_Flush()
     'TextWriterに委譲する。
-    IR.Flush
+    mIW.Flush
 End Sub
 '囲み文字設定
 Private Function AddQuot(ByVal v As String) As String
@@ -284,3 +289,38 @@ Private Function AddQuot(ByVal v As String) As String
     End Select
 
 End Function
+'>---
+'>#### GetIWriter(CsvWriter)
+'>
+'>**Syntax**
+'>
+'>```
+'>Set i/f = obj.GetIWriter()
+'>```
+'>
+'>**Parameters**
+'>
+'>* None
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|i/f|IWriter|IWriter インターフェース(CsvWriter)を返却|
+'>
+'>**Remarks**
+'>
+'>IWriterインターフェース返却メソッド<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* None
+'>
+Public Function GetIWriter() As IWriter
+    Set GetIWriter = Me
+End Function
+

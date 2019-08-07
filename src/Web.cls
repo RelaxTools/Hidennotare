@@ -58,14 +58,14 @@ Option Explicit
 '--------------------------------------------------------------
 '  RGB‚©‚çCSS•\‹L
 '--------------------------------------------------------------
-Function RGBToCSS(ByVal lngColor As Variant) As String
+Function RGBToWebColor(ByVal lngColor As Variant) As String
 
     Dim strBuf As String
     If IsNull(lngColor) Then
-        RGBToCSS = "#000000"
+        RGBToWebColor = "#000000"
     Else
         strBuf = Right$("000000" & Hex$(lngColor), 6)
-        RGBToCSS = "#" & Mid$(strBuf, 5, 2) & Mid$(strBuf, 3, 2) & Mid$(strBuf, 1, 2)
+        RGBToWebColor = "#" & Mid$(strBuf, 5, 2) & Mid$(strBuf, 3, 2) & Mid$(strBuf, 1, 2)
     End If
 End Function
 '--------------------------------------------------------------

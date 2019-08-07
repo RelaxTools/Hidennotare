@@ -63,7 +63,7 @@ Implements IConstructor
 Implements ICursor
 Implements IReader
 
-Private IR As IReader
+Private mIR As IReader
 
 Private mFileName As String
 Private mNewLineCode As NewLineCodeConstants
@@ -183,20 +183,24 @@ Private Function IConstructor_Instancing(Args As Collection) As Object
     End If
     
     'TextReaderに委譲する。改行コードをCsvReader側でパースする。
-    Set IR = Constructor(New TextReader, mFileName, NewLineCodeConstants.None, mEncode)
+    Set mIR = Constructor(New TextReader, mFileName, NewLineCodeConstants.None, mEncode)
     
-    Set mCol = StringHelper.CsvParser(IR.ReadAll, mQuotation, mDelimiter)
+    Set mCol = StringHelper.CsvParser(mIR.ReadAll, mQuotation, mDelimiter)
     
     ICursor_MoveFirst
     
-    Set IConstructor_Instancing = Me
+    Dim IR As IReader
+
+    Set IR = Me
+    
+    Set IConstructor_Instancing = IR
     
 End Function
 Private Sub Class_Terminate()
-    Set IR = Nothing
+    Set mIR = Nothing
 End Sub
 '>---
-'>#### 一括読み込み
+'>#### ReadAll(IReader I/F)
 '>
 '>**Syntax**
 '>
@@ -235,7 +239,7 @@ Private Function IReader_ReadAll() As Variant
 
 End Function
 '>---
-'>#### シート貼り付け
+'>#### Paste(CSvReader)
 '>
 '>**Syntax**
 '>
