@@ -45,7 +45,6 @@ Attribute VB_Exposed = False
 '>使用方法についてはDictionaryを参照。
 '>
 '>- IDictionary I/F を使用する必要がある。
-'>- 本家と異なる点。For Each を使う場合には XX.Keys を省略できない。
 '>- Orderd なので追加順を維持するため削除のパフォーマンスは悪いので注意。
 '>
 '>**Implements**
@@ -71,6 +70,7 @@ Implements INewInstance
 Implements ICompatibleProperty
 
 'VBAでは「継承」ができないため「委譲」する。
+Private mCol As Collection
 Private mDic As IDictionary
 Private mCP As IComparer
 Private mIndex As Long
@@ -83,6 +83,15 @@ End Sub
 Private Sub Class_Terminate()
     Set mDic = Nothing
 End Sub
+'--------------------------------------------------------------
+' For Each 用
+'--------------------------------------------------------------
+Private Function IDictionary_NewEnum() As stdole.IUnknown
+
+    Set mCol = Constructor(New Collection, mKeys)
+    Set IDictionary_NewEnum = mCol.[_NewEnum]
+
+End Function
 '--------------------------------------------------------------
 '  IDictionary I/F 取得
 '--------------------------------------------------------------

@@ -270,7 +270,7 @@ Public Function CsvParser(ByVal strBuf As String, Optional ByVal Quatation As Bo
     Dim sw As Boolean
     Dim blnLineBreak As Boolean
     Dim blnItemBreak As Boolean
-    Dim Col As Collection
+    Dim col As Collection
     Dim Row As Collection
     Dim lngQuot As Long
     
@@ -284,7 +284,7 @@ Public Function CsvParser(ByVal strBuf As String, Optional ByVal Quatation As Bo
     Do Until IC.Eof
         
         'èâä˙âª
-        Set Col = New Collection
+        Set col = New Collection
         blnLineBreak = False
 
         Do Until IC.Eof Or blnLineBreak
@@ -352,12 +352,12 @@ Public Function CsvParser(ByVal strBuf As String, Optional ByVal Quatation As Bo
             Loop
             
             'óÒí«â¡èàóù
-            Col.Add SB.ToString
+            col.Add SB.ToString
             
         Loop
         
         'çsí«â¡èàóù
-        Row.Add Col
+        Row.Add col
         
     Loop
     

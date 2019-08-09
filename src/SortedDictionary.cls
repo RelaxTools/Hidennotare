@@ -48,7 +48,6 @@ Attribute VB_Exposed = False
 '>IComparer I/F に対応したクラスのインスタンスを渡してください。
 '>
 '>* IDictionary I/F を使用する必要がある。
-'>* 本家と異なる点。For Each を使う場合には XX.Keys を省略できない。
 '>
 '>**Implements**
 '>* ICursor
@@ -75,6 +74,7 @@ Implements INewInstance
 Implements ICompatibleProperty
 
 'VBAでは「継承」ができないため「委譲」する。
+Private mCol As Collection
 Private mDic As IDictionary
 Private mCP As IComparer
 Private mIndex As Long
@@ -98,6 +98,15 @@ Private Function IConstructor_Instancing(Args As Collection) As Object
     End If
     
     Set IConstructor_Instancing = Me
+
+End Function
+'--------------------------------------------------------------
+' For Each 用
+'--------------------------------------------------------------
+Private Function IDictionary_NewEnum() As stdole.IUnknown
+
+    Set mCol = Constructor(New Collection, Sort())
+    Set IDictionary_NewEnum = mCol.[_NewEnum]
 
 End Function
 '--------------------------------------------------------------

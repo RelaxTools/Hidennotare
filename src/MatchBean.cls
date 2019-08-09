@@ -112,8 +112,8 @@ Private Function IConstructor_Instancing(ByRef Args As Collection) As Object
     End If
     
 End Function
-Public Property Get Index() As Long
-    Index = m_index
+Public Property Get index() As Long
+    index = m_index
 End Property
 Public Property Get Length() As Long
     Length = m_Length

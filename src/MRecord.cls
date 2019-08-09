@@ -76,6 +76,7 @@ Implements ICursor
 Implements IDictionary
 
 'VBAでは「継承」ができないため「委譲」する。
+Private mCol As Collection
 Private mDic As IDictionary
 Private Sub Class_Initialize()
     Set mDic = New Dictionary
@@ -83,6 +84,15 @@ End Sub
 Private Sub Class_Terminate()
     Set mDic = Nothing
 End Sub
+'--------------------------------------------------------------
+' For Each 用
+'--------------------------------------------------------------
+Private Function IDictionary_NewEnum() As stdole.IUnknown
+
+    Set mCol = Constructor(New Collection, mDic.Keys)
+    Set IDictionary_NewEnum = mCol.[_NewEnum]
+
+End Function
 Private Sub IDictionary_Add(KeyValue As Variant, obj As Variant)
     mDic.Add KeyValue, obj
 End Sub

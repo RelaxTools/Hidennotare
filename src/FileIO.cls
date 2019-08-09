@@ -451,7 +451,7 @@ End Property
 '>
 Public Sub FileSearch(ByVal strPath As String, _
                       ByVal varPatterns As Variant, _
-                      ByRef Col As Collection, _
+                      ByRef col As Collection, _
              Optional ByVal SubDir As Boolean = True, _
              Optional ByVal NaturalSort = True)
 
@@ -468,7 +468,7 @@ Public Sub FileSearch(ByVal strPath As String, _
         For Each objfl In objfld.files
             For Each v In varPatterns
                 If LCase(objfl.Name) Like LCase(v) And Left(objfl.Name, 2) <> "~$" Then
-                    Append Col, .BuildPath(objfl.ParentFolder.Path, objfl.Name), NaturalSort
+                    Append col, .BuildPath(objfl.ParentFolder.Path, objfl.Name), NaturalSort
                     Exit For
                 End If
             Next
@@ -478,7 +478,7 @@ Public Sub FileSearch(ByVal strPath As String, _
         'サブフォルダ検索
         If SubDir Then
             For Each objSub In objfld.SubFolders
-                FileSearch objSub.Path, varPatterns, Col, SubDir, NaturalSort
+                FileSearch objSub.Path, varPatterns, col, SubDir, NaturalSort
                 DoEvents
             Next
         End If
@@ -532,7 +532,7 @@ End Sub
 '>
 Public Sub FileSearchEx(ByVal strPath As String, _
                         ByVal varPatterns As Variant, _
-                        ByRef Col As Collection, _
+                        ByRef col As Collection, _
                Optional ByVal SubDir As Long = 0, _
                Optional ByVal ReturnFind As Boolean = False, _
                Optional ByVal NaturalSort As Boolean = True, _
@@ -557,8 +557,8 @@ Public Sub FileSearchEx(ByVal strPath As String, _
     End Select
     
     'Collectionにインスタンスが無い場合設定
-    If Col Is Nothing Then
-        Set Col = New Collection
+    If col Is Nothing Then
+        Set col = New Collection
     End If
     
     '配列じゃない場合、配列に変換
@@ -598,7 +598,7 @@ Public Sub FileSearchEx(ByVal strPath As String, _
                     Case Else
                         
                         '上記以外を追加
-                        Append Col, FileIO.BuildPath(strPath, strFile), NaturalSort
+                        Append col, FileIO.BuildPath(strPath, strFile), NaturalSort
                         
                         '即リターン
                         If ReturnFind Then
@@ -637,11 +637,11 @@ Public Sub FileSearchEx(ByVal strPath As String, _
             
                     '再帰呼び出し
                     lngLevel = lngLevel + 1
-                    FileSearchEx objSub.Path, varPatterns, Col, SubDir, ReturnFind, NaturalSort, varExcludedFolder
+                    FileSearchEx objSub.Path, varPatterns, col, SubDir, ReturnFind, NaturalSort, varExcludedFolder
                     lngLevel = lngLevel - 1
         
                     '即リターン
-                    If ReturnFind And Col.Count > 0 Then
+                    If ReturnFind And col.Count > 0 Then
                         Exit Sub
                     End If
                     
@@ -654,29 +654,29 @@ Public Sub FileSearchEx(ByVal strPath As String, _
 
 End Sub
 '自然数挿入ソート
-Private Sub Append(ByRef Col As Collection, _
+Private Sub Append(ByRef col As Collection, _
                    ByVal strFile As String, _
                    ByVal NaturalSort As Boolean)
 
     Dim i As Long
     
     If NaturalSort Then
-        If Col.Count = 0 Then
-            Col.Add strFile
+        If col.Count = 0 Then
+            col.Add strFile
         Else
-            For i = Col.Count To 1 Step -1
+            For i = col.Count To 1 Step -1
 
                 'ファイルの方が大きかった場合、その後に挿入。
-                If StrCmpLogicalW(StrPtr(strFile), StrPtr(Col(i))) >= 0 Then
-                    Col.Add strFile, , , i
+                If StrCmpLogicalW(StrPtr(strFile), StrPtr(col(i))) >= 0 Then
+                    col.Add strFile, , , i
                     Exit Sub
                 End If
 
             Next
-            Col.Add strFile, , 1
+            col.Add strFile, , 1
         End If
     Else
-        Col.Add strFile
+        col.Add strFile
     End If
 
 End Sub

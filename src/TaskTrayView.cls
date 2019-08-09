@@ -187,7 +187,7 @@ End Sub
 '---------------------------------------------------------------
 ' バルーンメッセージ
 '---------------------------------------------------------------
-Public Sub ShowBalloon(ByVal Title As String, ByVal message As String, Optional ByVal BalloonTimeOutSecond As Long = 5)
+Public Sub ShowBalloon(ByVal Title As String, ByVal Message As String, Optional ByVal BalloonTimeOutSecond As Long = 5)
 
     Dim IconLarge As LongPtr
     Dim IconSmall As LongPtr
@@ -201,8 +201,8 @@ Public Sub ShowBalloon(ByVal Title As String, ByVal message As String, Optional 
         .uTimeoutOrVersion = BalloonTimeOutSecond * 1000 'タイムアウト時間(ms)
         .dwInfoFlags = NIIF_INFO
         
-        message = Left$(message, 255) & vbNullChar
-        CopyMemory .szInfo(0), ByVal StrPtr(message), LenB(message)
+        Message = Left$(Message, 255) & vbNullChar
+        CopyMemory .szInfo(0), ByVal StrPtr(Message), LenB(Message)
         
         Title = Left$(Title, 63) & vbNullChar
         CopyMemory .szInfoTitle(0), ByVal StrPtr(Title), LenB(Title)

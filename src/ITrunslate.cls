@@ -55,6 +55,6 @@ Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 
-Function Trunslate(ByVal message As String) As String
+Function Trunslate(ByVal Message As String) As String
 
 End Function

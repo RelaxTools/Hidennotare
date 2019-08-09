@@ -61,7 +61,7 @@ End Property
 '--------------------------------------------------------------
 ' メッセージ設定
 '--------------------------------------------------------------
-Public Property Let message(ByVal v As String)
+Public Property Let Message(ByVal v As String)
     lblMessage.Caption = v
 End Property
 '--------------------------------------------------------------

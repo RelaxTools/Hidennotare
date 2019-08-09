@@ -166,7 +166,7 @@ End Function
 '>
 Function Replace(ByVal strText As String, ByVal strExp As String, ByVal strReplace As String, Optional ByVal blnIgnoreCase As Boolean = False, Optional ByVal blnMatchByte As Boolean = False, Optional ByVal blnWhole As Boolean = False) As String
     
-    Dim Col As Collection
+    Dim col As Collection
     Dim bean As MatchBean
     Dim i As Long
     Dim strL As String
@@ -174,16 +174,16 @@ Function Replace(ByVal strText As String, ByVal strExp As String, ByVal strRepla
     Dim strBuf As String
 
     '検索
-    Set Col = Me.Execute(strText, strExp, blnIgnoreCase, blnMatchByte, blnWhole)
+    Set col = Me.Execute(strText, strExp, blnIgnoreCase, blnMatchByte, blnWhole)
     
     strBuf = strText
     '置換するとIndexがずれるので逆順に処理
-    For i = Col.Count To 1 Step -1
+    For i = col.Count To 1 Step -1
     
-        Set bean = Col(i)
+        Set bean = col(i)
     
-        strL = Mid$(strBuf, 1, bean.Index - 1)
-        strR = Mid$(strBuf, bean.Index + bean.Length)
+        strL = Mid$(strBuf, 1, bean.index - 1)
+        strR = Mid$(strBuf, bean.index + bean.Length)
 
         strBuf = strL & strReplace & strR
     
@@ -237,12 +237,12 @@ End Function
 '>
 Public Function Execute(ByVal strText As String, ByVal strExp As String, Optional ByVal blnIgnoreCase As Boolean = False, Optional ByVal blnMatchByte As Boolean = False, Optional ByVal blnWhole As Boolean = False) As Collection
 
-    Dim Col As Collection
+    Dim col As Collection
     Dim lngPos As Long
     Dim r As MatchBean
     Dim strResult As String
     
-    Set Col = New Collection
+    Set col = New Collection
     
     Dim strCmp1 As String
     Dim strCmp2 As String
@@ -263,14 +263,14 @@ Public Function Execute(ByVal strText As String, ByVal strExp As String, Optiona
     If blnWhole Then
     
         If strCmp1 = strCmp2 Then
-            Col.Add Constructor(New MatchBean, 1, Len(strCmp1), strCmp1)
+            col.Add Constructor(New MatchBean, 1, Len(strCmp1), strCmp1)
         End If
     
     Else
     
         'パターンが空白の場合、全一致とする。
         If strCmp2 = "" Then
-            Col.Add Constructor(New MatchBean, 1, 0, strCmp1)
+            col.Add Constructor(New MatchBean, 1, 0, strCmp1)
         Else
     
             lngPos = InStr(strCmp1, strCmp2)
@@ -279,14 +279,14 @@ Public Function Execute(ByVal strText As String, ByVal strExp As String, Optiona
                 
                 strResult = Mid$(strText, lngPos, Len(strExp))
                 
-                Col.Add Constructor(New MatchBean, lngPos, Len(strResult), strResult)
+                col.Add Constructor(New MatchBean, lngPos, Len(strResult), strResult)
             
                 lngPos = InStr(lngPos + 1, strCmp1, strCmp2)
             Loop
         End If
     End If
     
-    Set Execute = Col
+    Set Execute = col
 
 End Function
 '>---
@@ -369,24 +369,24 @@ End Function
 '>
 Sub ReplaceShape(ByRef sh As Shape, ByVal strExp As String, ByVal strReplace As String, Optional ByVal blnIgnoreCase As Boolean = False, Optional ByVal blnMatchByte As Boolean = False, Optional ByVal blnWhole As Boolean = False)
 
-    Dim Col As Collection
+    Dim col As Collection
     Dim bean As MatchBean
     Dim i As Long
 
     With sh.TextFrame2.TextRange
 
         '検索
-        Set Col = Me.Execute(.Text, strExp, blnIgnoreCase, blnMatchByte, blnWhole)
+        Set col = Me.Execute(.Text, strExp, blnIgnoreCase, blnMatchByte, blnWhole)
         
         '置換するとIndexがずれるので逆順に処理
-        For i = Col.Count To 1 Step -1
+        For i = col.Count To 1 Step -1
         
-            Set bean = Col(i)
+            Set bean = col(i)
         
-            Call .Characters(bean.Index, bean.Length).Delete
+            Call .Characters(bean.index, bean.Length).Delete
             
             If strReplace <> "" Then
-                Call .Characters(bean.Index, 0).InsertAfter(strReplace)
+                Call .Characters(bean.index, 0).InsertAfter(strReplace)
             End If
         
         Next
@@ -438,24 +438,24 @@ End Sub
 '>
 Sub ReplaceRange(ByRef rng As Range, ByVal strExp As String, ByVal strReplace As String, Optional ByVal blnIgnoreCase As Boolean = False, Optional ByVal blnMatchByte As Boolean = False, Optional ByVal blnWhole As Boolean = False)
 
-    Dim Col As Collection
+    Dim col As Collection
     Dim bean As MatchBean
     Dim i As Long
 
     With rng
 
         '検索
-        Set Col = Me.Execute(.Value, strExp, blnIgnoreCase, blnMatchByte, blnWhole)
+        Set col = Me.Execute(.Value, strExp, blnIgnoreCase, blnMatchByte, blnWhole)
         
         '置換するとIndexがずれるので逆順に処理
-        For i = Col.Count To 1 Step -1
+        For i = col.Count To 1 Step -1
         
-            Set bean = Col(i)
+            Set bean = col(i)
         
-            Call .Characters(bean.Index, bean.Length).Delete
+            Call .Characters(bean.index, bean.Length).Delete
             
             If strReplace <> "" Then
-                Call .Characters(bean.Index, 0).Insert(strReplace)
+                Call .Characters(bean.index, 0).Insert(strReplace)
             End If
         
         Next

@@ -331,7 +331,7 @@ End Function
 '--------------------------------------------------------------
 '  コンボボックスの履歴作成＆リスト更新
 '--------------------------------------------------------------
-Public Function CreateHistory(c As ComboBox, Optional ByVal max As Long = 10) As String
+Public Function CreateHistory(c As ComboBox, Optional ByVal Max As Long = 10) As String
     
     Dim strBuf As String
     Dim i As Long
@@ -346,7 +346,7 @@ Public Function CreateHistory(c As ComboBox, Optional ByVal max As Long = 10) As
             strBuf = strBuf & vbTab & c.List(i)
             cnt = cnt + 1
             'リストは最大１０
-            If cnt >= max Then
+            If cnt >= Max Then
                 Exit For
             End If
         End If

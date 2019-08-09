@@ -46,6 +46,7 @@ Attribute VB_Exposed = False
 '>
 '>```
 '>Public Sub Add(Key As Variant, Item As Variant)
+'>Public Function NewEnum() As stdole.IUnknown
 '>Public Property Get Count() As Long
 '>Public Function ContainsKey(Key As Variant) As Boolean
 '>Public Property Let Item(Key As Variant, RHS As Variant)
@@ -75,7 +76,10 @@ Option Explicit
 Public Sub Add(Key As Variant, Item As Variant)
 
 End Sub
-
+Public Function NewEnum() As stdole.IUnknown
+Attribute NewEnum.VB_UserMemId = -4
+    'Attribute NewEnum.VB_UserMemId = -4
+End Function
 Public Property Get Count() As Long
 
 End Property

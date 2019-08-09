@@ -59,20 +59,20 @@ Sub Message_Sample()
 
 
     'Information メッセージ
-    message.Information "サンプルです。"
+    Message.Information "サンプルです。"
 
     '改行する場合
-    message.Information "サンプルです。\n改行も簡単に使えます。"
+    Message.Information "サンプルです。\n改行も簡単に使えます。"
 
     'リプレースホルダを使用する場合
-    message.Information "サンプルです。{0}のだけでなく{1}もある", "金", "名誉"
+    Message.Information "サンプルです。{0}のだけでなく{1}もある", "金", "名誉"
     
     'ステータスバー
-    message.StatusBar "サンプルです。{0}のだけでなく{1}もある", "金", "名誉"
+    Message.StatusBar "サンプルです。{0}のだけでなく{1}もある", "金", "名誉"
 
     
     'リプレースホルダの文字列を返却
-    Debug.Print message.PlaceHolder("サンプルです。{0}のだけでなく{1}もある", "金", "名誉")
+    Debug.Print Message.PlaceHolder("サンプルです。{0}のだけでなく{1}もある", "金", "名誉")
 
 
 End Sub
@@ -105,24 +105,24 @@ End Sub
 Sub Serialize_Sample()
 
     Dim Row As IList
-    Dim Col As IDictionary
+    Dim col As IDictionary
     
     Set Row = New ArrayList
     
-    Set Col = New Dictionary
+    Set col = New Dictionary
     
-    Col.Add "Field01", 10
-    Col.Add "Field02", 20
-    Col.Add "Field03", 30
+    col.Add "Field01", 10
+    col.Add "Field02", 20
+    col.Add "Field03", 30
 
-    Row.Add Col
+    Row.Add col
 
-    Set Col = New Dictionary
-    Col.Add "Field01", 40
-    Col.Add "Field02", 50
-    Col.Add "Field03", 60
+    Set col = New Dictionary
+    col.Add "Field01", 40
+    col.Add "Field02", 50
+    col.Add "Field03", 60
 
-    Row.Add Col
+    Row.Add col
     
     Debug.Print Row.ToString
 
@@ -149,7 +149,7 @@ Sub SortedDictionary_sample()
     d.Add "1", "1"
     d.Add "2", "2"
 
-    For Each v In d.Keys
+    For Each v In d
         Debug.Print v
     Next
 
@@ -170,7 +170,7 @@ Sub OrderedDictionary_sample()
     
     d.Key("2") = "3"
 
-    For Each v In d.Keys
+    For Each v In d
         Debug.Print v
     Next
     
@@ -183,14 +183,14 @@ Sub CsvParser_Sample()
 
     Dim strBuf As String
     Dim Row As Collection
-    Dim Col As Collection
+    Dim col As Collection
     Dim v As Variant
     strBuf = "1, Watanabe, Fukushima, 36, ""カンマがあっても,OK""" & vbCrLf & "2, satoh, chiba, 24, ""改行があっても" & vbLf & "OKやで"""
 
     Set Row = StringHelper.CsvParser(strBuf, True)
 
-    For Each Col In Row
-        For Each v In Col
+    For Each col In Row
+        For Each v In col
             Debug.Print v
         Next
     Next
@@ -206,7 +206,7 @@ Sub ArrayList_ParseFromListObject_Sample()
 
     For Each dic In lst
 
-        For Each Key In dic.Keys
+        For Each Key In dic
         
             Debug.Print dic.Item(Key)
         
@@ -230,11 +230,11 @@ Sub Dictionary_ParseFromListObject_Sample()
 
     Set lst = Dictionary.ParseFromListObject(ActiveSheet.ListObjects(1), "A")
 
-    For Each Key In lst.Keys
+    For Each Key In lst
 
         Set dic = lst.Item(Key)
 
-        For Each Key2 In dic.Keys
+        For Each Key2 In dic
         
             Debug.Print dic.Item(Key2)
         
@@ -395,5 +395,3 @@ Sub MCommand_Sample()
     '    Source4 = Table.PromoteHeaders(Source3, [PromoteAllScalars=true]) in Source4
 
 End Sub
-
-

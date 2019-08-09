@@ -47,29 +47,36 @@ Public Function Constructor(ByRef obj As Object, ParamArray Args() As Variant) A
     
     'コレクションのコンストラクタ
     If TypeOf obj Is Collection Then
-        For Each v In Args
-            obj.Add v
-        Next
+    
+        If UBound(Args) = 0 And IsArray(Args) Then
+            For Each v In Args(0)
+                obj.Add v
+            Next
+        Else
+            For Each v In Args
+                obj.Add v
+            Next
+        End If
         Set Constructor = obj
     
     'その他クラスのコンストラクタ
     Else
         '引数をCollectionに詰め替える
-        Dim Col As Collection
-        Set Col = New Collection
+        Dim col As Collection
+        Set col = New Collection
         
         For Each v In Args
             'FormのMe指定の場合Controlsが入ってしまう対策
             If TypeName(v) = "Controls" Then
-                Col.Add v(1).Parent
+                col.Add v(1).Parent
             Else
-                Col.Add v
+                col.Add v
             End If
         Next
         
         'IConstructor Interfaceを呼び出す。
         Set c = obj
-        Set Constructor = c.Instancing(Col)
+        Set Constructor = c.Instancing(col)
     End If
     
     'オブジェクトが返却されなかった場合エラー
@@ -77,8 +84,7 @@ Public Function Constructor(ByRef obj As Object, ParamArray Args() As Variant) A
         Error.Raise 512 + 1, "Core.Constructor", "Argument Error"
     End If
 
-End Function
-'-----------------------------------------------------------------------------------------------------
+End Function '-----------------------------------------------------------------------------------------------------
 ' VBA 個人的汎用処理 https://qiita.com/nukie_53/items/bde16afd9a6ca789949d
 ' @nukie_53
 ' Set/Letを隠蔽するプロパティ

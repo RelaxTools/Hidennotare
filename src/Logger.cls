@@ -157,8 +157,8 @@ End Sub
 '>
 '>* None
 '>
-Public Sub LogTrace(message As String, ParamArray p())
-    ReportLog LogLevel.Trace, PlaceHolder(message, p)
+Public Sub LogTrace(Message As String, ParamArray p())
+    ReportLog LogLevel.Trace, PlaceHolder(Message, p)
 End Sub
 '>---
 '>#### LogInfo(Logger)
@@ -188,8 +188,8 @@ End Sub
 '>
 '>* None
 '>
-Public Sub LogInfo(message As String, ParamArray p())
-    ReportLog LogLevel.Info, PlaceHolder(message, p)
+Public Sub LogInfo(Message As String, ParamArray p())
+    ReportLog LogLevel.Info, PlaceHolder(Message, p)
 End Sub
 '>---
 '>#### LogWarn(Logger)
@@ -219,8 +219,8 @@ End Sub
 '>
 '>* None
 '>
-Public Sub LogWarn(message As String, ParamArray p())
-    ReportLog LogLevel.Warn, PlaceHolder(message, p)
+Public Sub LogWarn(Message As String, ParamArray p())
+    ReportLog LogLevel.Warn, PlaceHolder(Message, p)
 End Sub
 '>---
 '>#### LogFatal(Logger)
@@ -250,7 +250,7 @@ End Sub
 '>
 '>* None
 '>
-Public Sub LogFatal(message As String, ParamArray p())
+Public Sub LogFatal(Message As String, ParamArray p())
 
     Dim lngErr As Long
     Dim strDesc As String
@@ -258,7 +258,7 @@ Public Sub LogFatal(message As String, ParamArray p())
     lngErr = Err.Number
     strDesc = Err.Description
     
-    ReportLog LogLevel.Fatal, "Fatal Error (" & PlaceHolder(message, p) & ")"
+    ReportLog LogLevel.Fatal, "Fatal Error (" & PlaceHolder(Message, p) & ")"
     Me.LogFlash
     
     Err.Number = lngErr
@@ -294,13 +294,13 @@ End Sub
 '>
 '>* None
 '>
-Public Sub LogBegin(lvl As LogLevel, message As String, ParamArray p())
+Public Sub LogBegin(lvl As LogLevel, Message As String, ParamArray p())
     
     If colStack Is Nothing Then
         Set colStack = New Collection
     End If
     
-    ReportLog lvl, "[" & colStack.Count + 1 & "]" & PlaceHolder(message, p) & ",BEGIN"
+    ReportLog lvl, "[" & colStack.Count + 1 & "]" & PlaceHolder(Message, p) & ",BEGIN"
 
     colStack.Add GetTickCount
 
@@ -334,7 +334,7 @@ End Sub
 '>
 '>* None
 '>
-Public Sub LogFinish(lvl As LogLevel, message As String, ParamArray p())
+Public Sub LogFinish(lvl As LogLevel, Message As String, ParamArray p())
     
     Dim t As LongPtr
 
@@ -350,10 +350,10 @@ Public Sub LogFinish(lvl As LogLevel, message As String, ParamArray p())
     End If
     
     If t = 0 Then
-        ReportLog lvl, PlaceHolder(message, p) & ",FINISH,[?]ms"
+        ReportLog lvl, PlaceHolder(Message, p) & ",FINISH,[?]ms"
     Else
         t = GetTickCount - t
-        ReportLog lvl, "[" & colStack.Count + 1 & "]" & PlaceHolder(message, p) & ",FINISH,[" & t & "]ms"
+        ReportLog lvl, "[" & colStack.Count + 1 & "]" & PlaceHolder(Message, p) & ",FINISH,[" & t & "]ms"
     End If
     Me.LogFlash
     
@@ -471,31 +471,31 @@ Private Sub OpenLog()
     'ログフォルダ作成
     strLogFolder = AppDataFolder
 
-    Dim Col As Collection
+    Dim col As Collection
     Dim objFolder As Object
     Dim objFile As Object
 
-    Set Col = New Collection
+    Set col = New Collection
 
     'ログフォルダを Collection に追加
     Set objFolder = mFSO.GetFolder(strLogFolder)
     For Each objFile In objFolder.files
     
-        For i = 1 To Col.Count
-            If Col(i) >= objFile.Name Then
-                Col.Add objFile.Name, , i
+        For i = 1 To col.Count
+            If col(i) >= objFile.Name Then
+                col.Add objFile.Name, , i
                 GoTo pass
             End If
         Next
-        Col.Add objFile.Name
+        col.Add objFile.Name
 pass:
     Next
 
     Dim v As Variant
 
     'フォルダ名の昇順に処理する
-    i = Col.Count
-    For Each v In Col
+    i = col.Count
+    For Each v In col
 
         If i > mlngHistory Then
             Kill strLogFolder & "\" & v
@@ -503,7 +503,7 @@ pass:
         i = i - 1
     Next
 
-    Set Col = Nothing
+    Set col = Nothing
     Set objFolder = Nothing
 
     strFile = mFSO.BuildPath(strLogFolder, Format(Now, "yyyymmdd") & ".log")

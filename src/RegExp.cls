@@ -217,12 +217,12 @@ End Function
 '>
 Function Execute(ByVal strText As String, ByVal strExp As String, Optional ByVal blnIgnoreCase As Boolean = False) As Collection
 
-    Dim Col As Collection
+    Dim col As Collection
     Dim matches As Object
     Dim m As Object
     Dim r As MatchBean
     
-    Set Col = New Collection
+    Set col = New Collection
 
     With RE
         
@@ -237,11 +237,11 @@ Function Execute(ByVal strText As String, ByVal strExp As String, Optional ByVal
     For Each m In matches
     
         'FirstIndexÇÕ0Ç©ÇÁÇ»ÇÃÇ≈+1
-        Col.Add Constructor(New MatchBean, m.FirstIndex + 1, m.Length, m.Value)
+        col.Add Constructor(New MatchBean, m.FirstIndex + 1, m.Length, m.Value)
     
     Next
         
-    Set Execute = Col
+    Set Execute = col
     
 End Function
 '>---
@@ -332,24 +332,24 @@ End Function
 '>
 Sub ReplaceShape(ByRef sh As Shape, ByVal strExp As String, ByVal strReplace As String, Optional ByVal blnIgnoreCase As Boolean = False)
 
-    Dim Col As Collection
+    Dim col As Collection
     Dim bean As MatchBean
     Dim i As Long
 
     With sh.TextFrame2.TextRange
 
         'åüçı
-        Set Col = Me.Execute(.Text, strExp, blnIgnoreCase)
+        Set col = Me.Execute(.Text, strExp, blnIgnoreCase)
 
         'íuä∑Ç∑ÇÈÇ∆IndexÇ™Ç∏ÇÍÇÈÇÃÇ≈ãtèáÇ…èàóù
-        For i = Col.Count To 1 Step -1
+        For i = col.Count To 1 Step -1
 
-            Set bean = Col(i)
+            Set bean = col(i)
 
-            Call .Characters(bean.Index, bean.Length).Delete
+            Call .Characters(bean.index, bean.Length).Delete
 
             If strReplace <> "" Then
-                Call .Characters(bean.Index, 0).InsertAfter(strReplace)
+                Call .Characters(bean.index, 0).InsertAfter(strReplace)
             End If
 
         Next
@@ -393,24 +393,24 @@ End Sub
 '>
 Sub ReplaceRange(ByRef rng As Range, ByVal strExp As String, ByVal strReplace As String, Optional ByVal blnIgnoreCase As Boolean = False)
 
-    Dim Col As Collection
+    Dim col As Collection
     Dim bean As MatchBean
     Dim i As Long
 
     With rng
 
         'åüçı
-        Set Col = Me.Execute(.Value, strExp, blnIgnoreCase)
+        Set col = Me.Execute(.Value, strExp, blnIgnoreCase)
 
         'íuä∑Ç∑ÇÈÇ∆IndexÇ™Ç∏ÇÍÇÈÇÃÇ≈ãtèáÇ…èàóù
-        For i = Col.Count To 1 Step -1
+        For i = col.Count To 1 Step -1
 
-            Set bean = Col(i)
+            Set bean = col(i)
 
-            Call .Characters(bean.Index, bean.Length).Delete
+            Call .Characters(bean.index, bean.Length).Delete
 
             If strReplace <> "" Then
-                Call .Characters(bean.Index, 0).Insert(strReplace)
+                Call .Characters(bean.index, 0).Insert(strReplace)
             End If
 
         Next

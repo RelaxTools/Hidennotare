@@ -82,13 +82,13 @@ pass:
     Exit Sub
 e:
     If Err.Number = 70 Then
-        If message.Question("他のプログラムで開いています。再試行しますか？") Then
-            message.Critical "処理を中断しました。"
+        If Message.Question("他のプログラムで開いています。再試行しますか？") Then
+            Message.Critical "処理を中断しました。"
         Else
             Resume
         End If
     End If
-    message.Critical "予期しないエラーが発生しました。{0},{1}", Err.Number, Err.Description
+    Message.Critical "予期しないエラーが発生しました。{0},{1}", Err.Number, Err.Description
     
 End Sub
 '-----------------------------------------------------------------------------------------------------
@@ -281,13 +281,13 @@ Sub OutputMarkDown()
     Exit Sub
 e:
     If Err.Number = 70 Then
-        If message.Question("他のプログラムで開いています。再試行しますか？") Then
-            message.Critical "処理を中断しました。"
+        If Message.Question("他のプログラムで開いています。再試行しますか？") Then
+            Message.Critical "処理を中断しました。"
         Else
             Resume
         End If
     End If
-    message.Critical "予期しないエラーが発生しました。{0},{1}", Err.Number, Err.Description
+    Message.Critical "予期しないエラーが発生しました。{0},{1}", Err.Number, Err.Description
 End Sub
 '---------------------------------------------------
 ' 章番号生成
@@ -299,23 +299,23 @@ Private Function LevelNo(ByVal strBuf As String, _
                          ByVal lngContentsLevel As Long, _
                          ByVal strName As String) As String
 
-    Dim Col As Collection
+    Dim col As Collection
     Dim SB As StringBuilder
     Dim lngLen As Long
     Dim i As Long
     Dim strID As String
     
     '章番号(###～)の場合
-    Set Col = RegExp.Execute(strBuf, "^#+ ")
-    If Col.Count > 0 Then
+    Set col = RegExp.Execute(strBuf, "^#+ ")
+    If col.Count > 0 Then
     
-        lngLen = Len(Col(1).Value) - 1
+        lngLen = Len(col(1).Value) - 1
         
         Dim strLeft As String
         Dim strRight As String
         
-        strLeft = Col(1).Value
-        strRight = Mid$(strBuf, Col(1).Length)
+        strLeft = col(1).Value
+        strRight = Mid$(strBuf, col(1).Length)
         
         '章番号生成レベル以上であれば、章番号作成
         If lngLen <= lngLevel Then

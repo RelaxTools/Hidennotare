@@ -43,7 +43,6 @@ Attribute VB_Exposed = False
 '>Scripting.Dictionary のコンポジット（移譲）クラス。
 '>
 '>- IDictionary I/F を使用する必要がある。
-'>- 本家と異なる点。For Each を使う場合には XX.Keys を省略できません。
 '>
 '>**Scripting.Dictionaryとの比較**
 '>
@@ -88,6 +87,7 @@ Implements IDictionary
 Implements INewInstance
 Implements ICompatibleProperty
 
+Private mCol As Collection
 Private mDic As Object
 Private mIndex As Long
 '--------------------------------------------------------------
@@ -104,6 +104,15 @@ End Sub
 Private Sub Class_Terminate()
     Set mDic = Nothing
 End Sub
+'--------------------------------------------------------------
+' For Each 用
+'--------------------------------------------------------------
+Private Function IDictionary_NewEnum() As stdole.IUnknown
+
+    Set mCol = Constructor(New Collection, mDic.Keys)
+    Set IDictionary_NewEnum = mCol.[_NewEnum]
+
+End Function
 '>---
 '>#### GetIDictionary(Dictionary)
 '>
@@ -418,7 +427,7 @@ Public Function ParseFromListObject(LO As ListObject, KeyField As String, Option
         Next
     
         'Keyフィールド取得
-        j = LO.ListColumns(KeyField).Index
+        j = LO.ListColumns(KeyField).index
         Key = LO.DataBodyRange.Cells(i, j).Value
         
         If lst.ContainsKey(Key) Then
