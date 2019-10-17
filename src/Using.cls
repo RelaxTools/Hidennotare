@@ -5,11 +5,11 @@ END
 Attribute VB_Name = "Using"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = False
+Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v1
+' [Hidennotare] v2
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -41,7 +41,8 @@ Attribute VB_Exposed = False
 '>**Remarks**
 '>
 '>開始／終了(With～End With)管理クラス<br>
-'>コンストラクタに指定されたオブジェクトのIUsing I/F を呼び出す。
+'>コンストラクタに指定されたオブジェクトのIUsing I/F を呼び出す。<br>
+'>**このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。**
 '>
 '>**Dependent**
 '>
@@ -55,29 +56,36 @@ Attribute VB_Exposed = False
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
-Implements IConstructor
 
 Private m_col As Collection
 '--------------------------------
 ' With 時点で実行
 '--------------------------------
-Private Function IConstructor_Instancing(Args As Collection) As Object
+Public Function CreateObject(ParamArray Args() As Variant) As Using
 
+    Dim us As Using
+    Dim v As Variant
+    
+    v = Args
+    
+    Set us = New Using
+    
+    Set us.Source = Core.ArrayToCollection(v)
+    us.Init
+    
+    Set CreateObject = us
+
+End Function
+Public Property Set Source(v As Collection)
+    Set m_col = v
+End Property
+Public Sub Init()
     Dim v As IUsing
-
-    If Args.Count = 0 Then
-        Exit Function
-    End If
-
-    Set m_col = Args
-
+    
     For Each v In m_col
         v.Begin
     Next
-    
-    Set IConstructor_Instancing = Me
-
-End Function
+End Sub
 '--------------------------------
 'End With 時点で実行
 '--------------------------------

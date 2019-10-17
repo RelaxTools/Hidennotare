@@ -5,11 +5,11 @@ END
 Attribute VB_Name = "FormManager"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = False
+Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v1
+' [Hidennotare] v2
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -43,6 +43,7 @@ Attribute VB_Exposed = False
 '>フォーム管理クラス<br>
 '>フォーム１枚で実行中表示、キャンセル表示、コンボの履歴表示を行う画面用フレームワーク<br>
 '>IUsing I/F にて 処理開始/終了を自動化可能。<br>
+'>**このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。**
 '>
 '>コントロールのTagプロパティに設定した文字列により実行を制御する。
 '>
@@ -53,7 +54,6 @@ Attribute VB_Exposed = False
 '>
 '>**Dependent**
 '>
-'>* IConstructor
 '>* IUsing
 '>
 '>**History**
@@ -65,7 +65,6 @@ Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 
-Implements IConstructor
 Implements IUsing
 
 Private mFrm As UserForm
@@ -111,18 +110,16 @@ End Sub
 ' Arg1 - UserForm     : Me etc...
 ' Arg2 - Button Name  : Cancel Button Name(Defallt 中断)
 '--------------------------------------------------------------
-Private Function IConstructor_Instancing(Args As Collection) As Object
+Public Function CreateObject(frm As UserForm, Optional ByVal ButtonCaption As String = C_CANCEL_STR) As FormManager
+
+    Dim FM As FormManager
+
+    Set FM = New FormManager
     
-    Select Case Args.Count
-        Case 1
-            Set Me.Form = Args(1)
-        Case 2
-            Set Me.Form = Args(1)
-            Me.ButtonCaption = Args(2)
-        Case Else
-    End Select
-    
-    Set IConstructor_Instancing = Me
+    Set FM.Form = frm
+    FM.ButtonCaption = ButtonCaption
+
+    Set CreateObject = FM
 
 End Function
 '--------------------------------------------------------------

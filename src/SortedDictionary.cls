@@ -5,7 +5,7 @@ END
 Attribute VB_Name = "SortedDictionary"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = False
+Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
@@ -43,6 +43,7 @@ Attribute VB_Exposed = False
 '>DictionaryのKeyのソート順を保証します。<br>
 '>Dictionary クラスをコンポジット（移譲）したクラス。<br>
 '>使用方法についてはDictionaryを参照。<br>
+'>**このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。**
 '>
 '>ソート順を変更(BinaryCompare以外)する場合、コンストラクタで<br>
 '>IComparer I/F に対応したクラスのインスタンスを渡してください。
@@ -51,7 +52,6 @@ Attribute VB_Exposed = False
 '>
 '>**Implements**
 '>* ICursor
-'>* IConstructor
 '>* IDictionary
 '>* ICompatibleProperty
 '>* INewInstance
@@ -69,17 +69,17 @@ Attribute VB_Exposed = False
 Option Explicit
 Implements ICursor
 Implements IDictionary
-Implements IConstructor
 Implements INewInstance
 Implements ICompatibleProperty
 
 'VBAでは「継承」ができないため「委譲」する。
 Private mCol As Collection
-Private mDic As IDictionary
+Private mDic As Object
 Private mCP As IComparer
 Private mIndex As Long
 Private Sub Class_Initialize()
-    Set mDic = New Dictionary
+    Set mDic = VBA.CreateObject("Scripting.Dictionary")
+    mDic.CompareMode = vbBinaryCompare
     mIndex = 0
 End Sub
 Private Sub Class_Terminate()
@@ -88,24 +88,27 @@ End Sub
 '--------------------------------------------------------------
 ' コンストラクタ
 '--------------------------------------------------------------
-Private Function IConstructor_Instancing(Args As Collection) As Object
+Public Function CreateObject(Optional ByRef Comparer As IComparer = Nothing) As IDictionary
     
-    'コンパレータ
-    If Args.Count = 1 Then
-        Set mCP = Args(1)
-    Else
-        Exit Function
+    Dim SD As SortedDictionary
+    Set SD = New SortedDictionary
+    
+    If Not Comparer Is Nothing Then
+        Set SD.Comparer = Comparer
     End If
     
-    Set IConstructor_Instancing = Me
-
+    Set CreateObject = SD
+    
 End Function
+Public Property Set Comparer(v As IComparer)
+    Set mCP = v
+End Property
 '--------------------------------------------------------------
 ' For Each 用
 '--------------------------------------------------------------
 Private Function IDictionary_NewEnum() As stdole.IUnknown
 
-    Set mCol = Constructor(New Collection, Sort())
+    Set mCol = Core.ArrayToCollection(Sort())
     Set IDictionary_NewEnum = mCol.[_NewEnum]
 
 End Function
@@ -119,7 +122,7 @@ Private Sub IDictionary_Add(KeyValue As Variant, obj As Variant)
     mDic.Add KeyValue, obj
 End Sub
 Private Function IDictionary_ContainsKey(KeyValue As Variant) As Boolean
-    IDictionary_ContainsKey = mDic.ContainsKey(KeyValue)
+    IDictionary_ContainsKey = mDic.Exists(KeyValue)
 End Function
 '--------------------------------------------------------------
 '  ソート済みキーリスト取得
@@ -131,11 +134,7 @@ Private Property Get IDictionary_Count() As Long
     IDictionary_Count = mDic.Count
 End Property
 Private Property Get IDictionary_Item(KeyValue As Variant) As Variant
-    If VBA.IsObject(mDic.Item(KeyValue)) Then
-        Set IDictionary_Item = mDic.Item(KeyValue)
-    Else
-        IDictionary_Item = mDic.Item(KeyValue)
-    End If
+    Core.SetVar(IDictionary_Item) = mDic.Item(KeyValue)
 End Property
 Private Property Let IDictionary_Item(KeyValue As Variant, NewItem As Variant)
     mDic.Item(KeyValue) = NewItem
@@ -153,7 +152,63 @@ Private Sub IDictionary_Clear()
     mDic.Clear
 End Sub
 Private Function IDictionary_ToString() As String
-    IDictionary_ToString = mDic.ToString
+    IDictionary_ToString = ToString
+End Function
+Private Function ToString() As String
+
+    Dim Item  As Variant
+    Dim KeyValue As Variant
+    
+    Dim v  As Variant
+    
+    Dim SB As StringBuilder
+    Set SB = New StringBuilder
+    
+    For Each KeyValue In mDic.Keys
+    
+        Core.SetVar(v) = mDic.Item(KeyValue)
+    
+        Select Case True
+            Case IsObject(v)
+                
+                SB.Append """" & KeyValue & """:" & v.ToString
+            
+            Case IsEmpty(v)
+                
+                SB.Append """" & KeyValue & """:" & "null"
+            
+            Case Else
+                Select Case VarType(v)
+                    
+                    Case vbBoolean
+        
+                        SB.Append """" & KeyValue & """:" & LCase(CStr(v))
+        
+                    Case vbString
+                    
+                        SB.Append """" & KeyValue & """:""" & Core.Escape(v) & """"
+                    
+#If Win64 Then
+                    Case vbByte, vbInteger, vbLong, vbSingle, vbDouble, vbCurrency, vbDecimal, vbLongLong
+#Else
+                    Case vbByte, vbInteger, vbLong, vbSingle, vbDouble, vbCurrency, vbDecimal
+#End If
+        
+                        SB.Append """" & KeyValue & """:" & CStr(v)
+        
+                    Case Else
+        
+                        'エラー
+                        Err.Raise 512 + 1, TypeName(Me) & ".ToString", "not cast type (" & TypeName(v) & ")"
+        
+                End Select
+
+        End Select
+    
+    Next
+
+    ToString = SB.ToString(", ", "{", "}")
+
 End Function
 Private Property Get IDictionary_GetCursor() As ICursor
     Set IDictionary_GetCursor = Me
@@ -279,10 +334,8 @@ Private Sub ICompatibleProperty_SetProperty(prop As Variant, Val As Variant)
     
 End Sub
 Private Function ICompatibleProperty_GetProperty(prop As Variant) As Variant
-    If IsObject(Me.GetIDictionary.Item(prop)) Then
-        Set ICompatibleProperty_GetProperty = Me.GetIDictionary.Item(prop)
-    Else
-        Let ICompatibleProperty_GetProperty = Me.GetIDictionary.Item(prop)
-    End If
+    
+    Core.SetVar(ICompatibleProperty_GetProperty) = Me.GetIDictionary.Item(prop)
+    
 End Function
 

@@ -5,11 +5,11 @@ END
 Attribute VB_Name = "TextWriter"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = False
+Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v1
+' [Hidennotare] v2
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -41,10 +41,10 @@ Attribute VB_Exposed = False
 '>**Remarks**
 '>
 '>Textファイル書込みクラス<br>
+'>**このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。**
 '>
 '>**Dependent**
 '>
-'>* IConstructor
 '>* IWriter
 '>
 '>**History**
@@ -55,7 +55,6 @@ Attribute VB_Exposed = False
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
-Implements IConstructor
 Implements IWriter
 
 Private fp As Integer
@@ -75,7 +74,7 @@ Private mFirst As Boolean
 '>**Syntax**
 '>
 '>```
-'>Set ret = Constructor(New TextWriter,
+'>Set ret = TextWriter.CreateObject(
 '>                      FileName,
 '>                      [NewLineCode = NewLineCodeConstants.CRLF],
 '>                      [Encode = EncodeConstants.CP932],
@@ -112,7 +111,7 @@ Private mFirst As Boolean
 '>
 '>strFile = "C:\Test.txt"
 '>
-'>Set IW = Constructor(New TextWriter, strFile)
+'>Set IW = TextWriter.CreateObject(strFile)
 '>
 '>IW.Append "Hello World!"
 '>IW.Flash
@@ -123,55 +122,44 @@ Private mFirst As Boolean
 '>
 '>* None
 '>
-Private Function IConstructor_Instancing(Args As Collection) As Object
-
-    If Args.Count = 0 Then
-        Exit Function
-    End If
+Public Function CreateObject(ByVal FileName As String, _
+                             Optional ByVal NewLineCode As NewLineCodeConstants = NewLineCodeCRLF, _
+                             Optional ByVal Encode As EncodeConstants = EncodeCP932, _
+                             Optional ByVal Mode As OpenModeConstants = OpenModeOutput, _
+                             Optional ByVal Bom As Boolean = False) As IWriter
     
-    'Default
-    mNewLineCode = NewLineCodeConstants.CRLF
-    mEncode = EncodeConstants.CP932
-    mMode = OpenModeConstants.Output
-    mBom = False
+    Dim TW As TextWriter
+    Set TW = New TextWriter
     
-    If Args.Count >= 1 Then
-        mFileName = Args(1)
-    End If
+    TW.FileName = FileName
+    TW.NewLineCode = NewLineCode
+    TW.Encode = Encode
+    TW.Mode = Mode
+    TW.Bom = Bom
     
-    If Args.Count >= 2 Then
-        mNewLineCode = Args(2)
-    End If
+    TW.Init
     
-    If Args.Count >= 3 Then
-        mEncode = Args(3)
-    End If
+    Set CreateObject = TW
     
-    If Args.Count >= 4 Then
-        mMode = Args(4)
-    End If
-    
-    If Args.Count >= 5 Then
-        mBom = Args(5)
-    End If
-        
-    'IWriter Interface を返却する
-    Set IConstructor_Instancing = Me.GetIWriter
-
-    Dim strFolder As String
-    
-    'フォルダの存在チェック
-    strFolder = FileIO.GetParentFolderName(mFileName)
-    
-    If Not FileIO.FolderExists(strFolder) Then
-        Err.Raise 512 + 1, TypeName(Me) & ".IConstructor_Instancing", "not exists folder. (" & strFolder & ")"
-    End If
-
-    Call fileOpen
-
-    mFirst = True
-
 End Function
+Public Property Let FileName(v As String)
+    mFileName = v
+End Property
+Public Property Let NewLineCode(v As NewLineCodeConstants)
+    mNewLineCode = v
+End Property
+Public Property Let Encode(v As EncodeConstants)
+    mEncode = v
+End Property
+Public Property Let Mode(v As OpenModeConstants)
+    mMode = v
+End Property
+Public Property Let Bom(v As Boolean)
+    mBom = v
+End Property
+Public Sub Init()
+    fileOpen
+End Sub
 '>---
 '>#### WriteData(IWriter I/F)
 '>
@@ -213,10 +201,10 @@ Private Sub IWriter_WriteData(ByVal Args As Variant)
     Dim bytBom() As Byte
     
     '初回BOMの書き込みを行う。
-    If mBom And mFirst And mMode = OpenModeConstants.Output Then
+    If mBom And mFirst And mMode = OpenModeConstants.OpenModeOutput Then
         'エンコード
         Select Case mEncode
-            Case EncodeConstants.UTF8
+            Case EncodeConstants.EncodeUTF8
                 
                 ReDim bytBom(0 To 2)
             
@@ -226,7 +214,7 @@ Private Sub IWriter_WriteData(ByVal Args As Variant)
             
                 Put #fp, , bytBom
             
-            Case EncodeConstants.UTF16LE
+            Case EncodeConstants.EncodeUTF16LE
                 
                 ReDim bytBom(0 To 1)
             
@@ -251,11 +239,11 @@ Private Sub IWriter_WriteData(ByVal Args As Variant)
         
     'エンコード
     Select Case mEncode
-        Case EncodeConstants.CP932 'SJIS
+        Case EncodeConstants.EncodeCP932  'SJIS
             bytBuf = VBA.StrConv(strLine, vbFromUnicode)
-        Case EncodeConstants.UTF8
+        Case EncodeConstants.EncodeUTF8
             bytBuf = Convert.ToUTF8(strLine)
-        Case EncodeConstants.UTF16LE
+        Case EncodeConstants.EncodeUTF16LE
             bytBuf = strLine
     End Select
 
@@ -303,10 +291,10 @@ Private Sub IWriter_WriteLine(ByVal Args As Variant)
     Dim bytBom() As Byte
     
     '初回BOMの書き込みを行う。
-    If mBom And mFirst And mMode = OpenModeConstants.Output Then
+    If mBom And mFirst And mMode = OpenModeConstants.OpenModeOutput Then
         'エンコード
         Select Case mEncode
-            Case EncodeConstants.UTF8
+            Case EncodeConstants.EncodeUTF8
                 
                 ReDim bytBom(0 To 2)
             
@@ -316,7 +304,7 @@ Private Sub IWriter_WriteLine(ByVal Args As Variant)
             
                 Put #fp, , bytBom
             
-            Case EncodeConstants.UTF16LE
+            Case EncodeConstants.EncodeUTF8
                 
                 ReDim bytBom(0 To 1)
             
@@ -331,21 +319,21 @@ Private Sub IWriter_WriteLine(ByVal Args As Variant)
 
     '改行
     Select Case mNewLineCode
-        Case NewLineCodeConstants.CRLF
+        Case NewLineCodeConstants.NewLineCodeCRLF
             strLine = Args & vbCrLf
-        Case NewLineCodeConstants.LF
+        Case NewLineCodeConstants.NewLineCodeLF
             strLine = Args & vbLf
-        Case NewLineCodeConstants.None
+        Case NewLineCodeConstants.NewLineCodeNone
             strLine = Args
     End Select
         
     'エンコード
     Select Case mEncode
-        Case EncodeConstants.CP932 'SJIS
+        Case EncodeConstants.EncodeCP932  'SJIS
             bytBuf = VBA.StrConv(strLine, vbFromUnicode)
-        Case EncodeConstants.UTF8
+        Case EncodeConstants.EncodeUTF8
             bytBuf = Convert.ToUTF8(strLine)
-        Case EncodeConstants.UTF16LE
+        Case EncodeConstants.EncodeUTF16LE
             bytBuf = strLine
     End Select
 
@@ -410,16 +398,22 @@ Private Sub Class_Terminate()
     On Error Resume Next
 
     '開いている場合にはクローズ
-    If mOpen Then
-        Close fp
-    End If
+    FileClose
 
 End Sub
-
 Private Sub fileOpen()
     
+    Dim strFolder As String
+
+    'フォルダの存在チェック
+    strFolder = FileIO.GetParentFolderName(mFileName)
+
+    If Not FileIO.FolderExists(strFolder) Then
+        Err.Raise 512 + 1, TypeName(Me) & ".fileOpen", "not exists folder. (" & strFolder & ")"
+    End If
+    
     Select Case mMode
-        Case OpenModeConstants.Output
+        Case OpenModeConstants.OpenModeOutput
             
             fp = FreeFile()
             Open mFileName For Output As fp
@@ -429,7 +423,7 @@ Private Sub fileOpen()
             Open mFileName For Binary As fp
             mOpen = True
         
-        Case OpenModeConstants.AppendFile
+        Case OpenModeConstants.OpenModeAppend
             
             fp = FreeFile
             Open mFileName For Binary As fp
@@ -438,7 +432,12 @@ Private Sub fileOpen()
             Seek #fp, VBA.LOF(fp) + 1
     
     End Select
-
+    mFirst = True
+End Sub
+Private Sub FileClose()
+    If mOpen Then
+        Close fp
+    End If
 End Sub
 '>---
 '>#### GetIWriter(TextWriter)

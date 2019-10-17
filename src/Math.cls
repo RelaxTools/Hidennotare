@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v1
+' [Hidennotare] v2
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -42,10 +42,11 @@ Attribute VB_Exposed = False
 '>
 '>計算クラス
 '>四捨五入など算術演算のクラス<br>
+'>**このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。**
 '>
 '>**Dependent**
 '>
-'>* IConstructor
+'>* None
 '>
 '>**History**
 '>

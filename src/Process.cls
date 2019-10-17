@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v1
+' [Hidennotare] v2
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -56,7 +56,7 @@ Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 
-Private Declare PtrSafe Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (destination As Any, source As Any, ByVal Length As LongPtr)
+Private Declare PtrSafe Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (destination As Any, Source As Any, ByVal Length As LongPtr)
 
 Private RefCount As Long
 '--------------------------------------------------------------
@@ -67,7 +67,7 @@ Public Sub MultiProsess(ByVal strMacro As String)
     Err.Clear
     
     On Error Resume Next
-    With CreateObject("Excel.Application")
+    With VBA.CreateObject("Excel.Application")
         .Workbooks.Open ThisWorkbook.FullName
         .Run ExcelHelper.BuildOnAction(strMacro)
     End With
@@ -91,7 +91,7 @@ Function Exec(ByVal strCommand As String) As String
     Dim WSH As Object
     Dim wExec As Object
     
-    Set WSH = CreateObject("WScript.Shell")
+    Set WSH = VBA.CreateObject("WScript.Shell")
     
     Set wExec = WSH.Exec(strCommand)
     Do While wExec.Status = 0
@@ -124,7 +124,7 @@ End Function
 '--------------------------------------------------------------
 Sub Shell(ByVal strCommand As String, ParamArray p())
 
-    Dim Ret As Variant
+    Dim ret As Variant
     Dim strBuf As String
     Dim v As Variant
 
@@ -139,9 +139,9 @@ Sub Shell(ByVal strCommand As String, ParamArray p())
     End If
     
     On Error Resume Next
-    Ret = VBA.Shell(strBuf, vbNormalFocus)
-    If Ret <> 0 Then
-        AppActivate Ret
+    ret = VBA.Shell(strBuf, vbNormalFocus)
+    If ret <> 0 Then
+        AppActivate ret
     End If
 
 End Sub
@@ -152,7 +152,7 @@ Sub OpenFile(ByVal strFile As String, Optional ByVal flg As Boolean = False)
 
     On Error GoTo e
 
-    With CreateObject("WScript.Shell")
+    With VBA.CreateObject("WScript.Shell")
         .Run """" & strFile & """", 1, flg
     End With
 
@@ -163,15 +163,45 @@ End Sub
 '--------------------------------------------------------------
 '　同期バッチ実行
 '--------------------------------------------------------------
-Sub ExecBatch(ByVal strFile As String)
+Function ExecBatch(ByVal strFile As String) As Long
 
     On Error GoTo e
 
-    With CreateObject("WScript.Shell")
-        .Run strFile, 0, True
+    With VBA.CreateObject("WScript.Shell")
+        ExecBatch = .Run(strFile, 0, True)
     End With
 
-    Exit Sub
+    Exit Function
 e:
     MsgBox "ファイルを開けませんでした。" & strFile, vbCritical
-End Sub
+End Function
+'--------------------------------------------------------------
+'　PowerShell 実行
+'--------------------------------------------------------------
+Function ExecPowerShell(ByVal strCommand As String) As Long
+    
+    Dim strFile As String
+    Dim SB As StringBuilder
+    
+    strFile = FileIO.BuildPath(FileIO.TempFolder, "ExecPowerShell.ps1")
+    
+    'テキスト出力
+    TextWriter.CreateObject(strFile).WriteData strCommand
+    
+    On Error GoTo e
+    
+    'PowerShell を実行
+    Set SB = New StringBuilder
+    
+    SB.Append "powershell"
+    SB.Append "-ExecutionPolicy"
+    SB.Append "RemoteSigned"
+    SB.Append "-File"
+    SB.Append strFile, True
+
+    Process.ExecBatch SB.ToString(" ")
+    
+e:
+    FileIO.DeleteFile strFile
+
+End Function

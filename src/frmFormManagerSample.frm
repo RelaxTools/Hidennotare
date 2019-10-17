@@ -38,7 +38,7 @@ Private Sub UserForm_Initialize()
     
 '--------------------------------------------------------------------
 
-    Set FM = Constructor(New FormManager, Me)
+    Set FM = FormManager.CreateObject(Me)
 
     FM.DispGuidance "開始しました。"
 
@@ -74,7 +74,7 @@ Private Sub cmdOk_Click()
     
     '処理中を表す。以下メソッドを呼ぶかUsingクラスを使用する。
     'FM.StartRunning
-    With Constructor(New Using, FM, New OneTimeSpeedBooster)
+    With Using.CreateObject(FM, New OneTimeSpeedBooster)
         
         lngMax = 10000
     

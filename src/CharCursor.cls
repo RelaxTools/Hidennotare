@@ -5,11 +5,11 @@ END
 Attribute VB_Name = "CharCursor"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = False
+Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v1
+' [Hidennotare] v2
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -42,10 +42,10 @@ Attribute VB_Exposed = False
 '>
 '>カーソル風文字列読み込みクラス<br>
 '>指定された文字列から１文字ずつ処理を行う。<br>
+'>**このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。**
 '>
 '>**Implements**
 '>
-'>* IConstructor
 '>* ICursor
 '>
 '>**Sample**
@@ -55,7 +55,7 @@ Attribute VB_Exposed = False
 '>strBuf ="123"
 '>
 '>Dim IC As ICursor
-'>Set IC = Constructor(New CharCursor, strBuf)
+'>Set IC = CharCursor.CreateObject(strBuf)
 '>
 '>Do Until IC.Eof
 '>
@@ -75,7 +75,6 @@ Attribute VB_Exposed = False
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
-Implements IConstructor
 Implements ICursor
 
 Private mBuf As String
@@ -89,14 +88,14 @@ End Sub
 '>**Syntax**
 '>
 '>```
-'>Set ret = Constructor(New CharCursor, str)
+'>Set ret = CharCursor.CreateObject(Source)
 '>```
 '>
 '>**Parameters**
 '>
 '>|Name|Required/Optional|Data type|Description|
 '>---|---|---|---
-'>|str|必須|String|１文字ずつ処理する文字列を指定|
+'>|Source|必須|String|１文字ずつ処理する文字列を指定|
 '>
 '>**Return Value**
 '>
@@ -116,19 +115,21 @@ End Sub
 '>
 '>* None
 '>
-Private Function IConstructor_Instancing(ByRef Args As Collection) As Object
+Public Function CreateObject(ByVal Source As String) As ICursor
 
-    Select Case Args.Count
-        Case 1
-            mBuf = CStr(Args(1))
-            ICursor_MoveFirst
-        Case Else
-            'エラー
-            Exit Function
-    End Select
+    Dim CC As CharCursor
     
-    Set IConstructor_Instancing = Me
+    Set CC = New CharCursor
+    
+    CC.Source = Source
+    CC.GetCursor.MoveFirst
+    
+    Set CreateObject = CC
+
 End Function
+Public Property Let Source(v As String)
+    mBuf = v
+End Property
 '>---
 '>#### GetCursor(CharCursor)
 '>

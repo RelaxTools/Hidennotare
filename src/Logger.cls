@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v1
+' [Hidennotare] v2
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -80,7 +80,7 @@ End Enum
 'ログレベル
 Public Enum LogLevel
     Trace = 0
-    Info = 1
+    info = 1
     Warn = 2
     Fatal = 3
     None = 4
@@ -101,14 +101,14 @@ End Property
 '--------------------------------------------------------------
 Private Sub Class_Initialize()
 
-    Set mFSO = CreateObject("Scripting.FileSystemObject")
+    Set mFSO = VBA.CreateObject("Scripting.FileSystemObject")
     
     fp = 225
 
     mLevelStr = Array("Trace", "Info", "Warn", "Fatal", "None")
     
     '規定のログレベル
-    mLevel = GetSetting(Title, "Log", "Level", LogLevel.Info)
+    mLevel = GetSetting(Title, "Log", "Level", LogLevel.info)
     
     'ログ出力先
     mLogType = CLng(GetSetting(Title, "Log", "LogType", LogType.Logfile))
@@ -189,7 +189,7 @@ End Sub
 '>* None
 '>
 Public Sub LogInfo(Message As String, ParamArray p())
-    ReportLog LogLevel.Info, PlaceHolder(Message, p)
+    ReportLog LogLevel.info, PlaceHolder(Message, p)
 End Sub
 '>---
 '>#### LogWarn(Logger)
@@ -526,7 +526,7 @@ Private Property Get AppDataFolder() As String
     
     With mFSO
     
-        strFolder = .BuildPath(CreateObject("Wscript.Shell").SpecialFolders("AppData"), Title & "\Log")
+        strFolder = .BuildPath(VBA.CreateObject("Wscript.Shell").SpecialFolders("AppData"), Title & "\Log")
         
         If .FolderExists(strFolder) Then
         Else
@@ -565,7 +565,7 @@ Private Function PlaceHolder(ByVal strMsg As String, ByVal p As Variant) As Stri
     If Not mLang Is Nothing Then
         strMsg = mLang.Trunslate(strMsg)
     Else
-        strMsg = Convert.Unescape(strMsg)
+        strMsg = Core.Unescape(strMsg)
     End If
 
     If UBound(p) >= 0 Then

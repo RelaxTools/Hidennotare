@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v1
+' [Hidennotare] v2
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -56,7 +56,7 @@ Attribute VB_Exposed = False
 '>```
 '>Dim IC as ICursor
 '>
-'>Set IC = Constructor(New TableCursor, WS.ListObjects(1))
+'>Set IC = TableCursor.CreateObject(WS.ListObjects(1))
 '>
 '>Do Until IC.Eof
 '>

@@ -5,11 +5,11 @@ END
 Attribute VB_Name = "SheetCursor"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = False
+Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v1
+' [Hidennotare] v2
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -41,16 +41,16 @@ Attribute VB_Exposed = False
 '>**Remarks**
 '>
 '>シート読み込みクラス
+'>**このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。**
 '>
 '>**Implements**
 '>
-'>* IConstructor
 '>* ICursor
 '>
 '>**Sample**
 '>
 '>```
-'>Set IC = Constructor(New SheetCursor, ActiveSheet, 10, "B")
+'>Set IC = SheetCursor.CreateObject(ActiveSheet, 10, "B")
 '>
 '>Do Until IC.Eof
 '>
@@ -62,7 +62,6 @@ Attribute VB_Exposed = False
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
-Implements IConstructor
 Implements ICursor
 
 'ワークシート
@@ -93,7 +92,7 @@ Private mDirection As SheetCursorConstants
 '>**Syntax**
 '>
 '>```
-'>Set return = Constructor(New SheetCursor,
+'>Set return = SheetCursor.CreateObject(
 '>                         worksheet,
 '>                         StartRow/Column,
 '>                         EOF Row/Column,
@@ -105,7 +104,7 @@ Private mDirection As SheetCursorConstants
 '>
 '>|Name|Required/Optional|Data type|Description|
 '>---|---|---|---
-'>|worksheet|必須|Worksheet|処理対象のワークシートを指定)|
+'>|Worksheet|必須|Worksheet|処理対象のワークシートを指定)|
 '>|StartRow/Column|必須|Variant|処理対象データが最初の行または列を指定(列の場合にはアルファベットで指定可能)|
 '>|EOF Row/Column|必須|Variant|処理対象の終了を判定する列または行を指定(列の場合にはアルファベットで指定可能)|
 '>|Direction|省略可|SheetCursorConstants|処理を行う方向。下向き:DirectionDown/右向き:DirectionRightデフォルト:DirectionDown|
@@ -115,7 +114,7 @@ Private mDirection As SheetCursorConstants
 '>
 '>|Name|Data type|Description|
 '>---|---|---
-'>|return|Object|新しいインスタンス(SheetCursor)|
+'>|return|ICursor|新しいインスタンス(ICursor)|
 '>
 '>**Remarks**
 '>
@@ -129,72 +128,55 @@ Private mDirection As SheetCursorConstants
 '>
 '>* None
 '>
-Private Function IConstructor_Instancing(ByRef Args As Collection) As Object
+Public Function CreateObject(ByRef WS As Worksheet, _
+                            ByVal StartNum As Variant, _
+                            ByVal EofNum As Variant, _
+                            Optional ByVal Direction As SheetCursorConstants = SheetCursorConstants.DirectionDown, _
+                            Optional ByVal EofStr As String = "") As ICursor
 
-    Const WORK_SHEET As Long = 1  '引数１　Worksheet オブジェクト
-    Const START_NUM As Long = 2   '引数２　開始行 or 列
-    Const EOF_NUM As Long = 3     '引数３　終了を判定する行 or 列
-    Const DIRECTION As Long = 4   '引数４　検索方向:下 or 右(default:下)
-    Const EOF_STR As Long = 5     '引数５　終了を判定する文字列(default:""）
+    Dim SC As SheetCursor
+
+    Set SC = New SheetCursor
     
-    '引数の数が３～５以外はエラー
-    Select Case Args.Count
-        Case 3 To 5
-        Case Else
-            Exit Function
-    End Select
-    
-    'カーソル方向の指定
-    If Args.Count >= DIRECTION Then
-        mDirection = Args(DIRECTION)
-    Else
-        mDirection = SheetCursorConstants.DirectionDown 'Default下方向
-    End If
-    
-    'EOF文字列の指定
-    If Args.Count >= EOF_STR Then
-        mEofStr = Args(EOF_STR)
-    Else
-        mEofStr = "" 'Default空文字列
-    End If
-    
-    If Args.Count >= EOF_NUM Then
-        
-        If TypeOf Args(WORK_SHEET) Is Worksheet Then
-            
-            Set mWS = Args(WORK_SHEET)
-            
-            If mDirection = DirectionDown Then
-                mRow = CLng(Args(START_NUM))
-                mStartRow = mRow
-                mEofCol = Args(EOF_NUM)
-            Else
-                '指定が数値ならそのまま。アルファベットなら列変換
-                If IsNumeric(Args(START_NUM)) Then
-                    mCol = Args(START_NUM)
-                Else
-                    mCol = mWS.Columns(Args(START_NUM)).Column
-                End If
-                
-                mStartCol = mCol
-                
-                mEofRow = CLng(Args(EOF_NUM))
-            
-            End If
-        Else
-            Exit Function
-        End If
-    End If
-    
-    If mDirection = DirectionDown Then
-        SkipHiddenRow
-    Else
-        SkipHiddenCol
-    End If
-    
-    Set IConstructor_Instancing = Me
+    Set SC.Worksheet = WS
+    SC.Direction = Direction
+    SC.StartNum = StartNum
+    SC.EofNum = EofNum
+    SC.GetCursor.MoveFirst
+
+    Set CreateObject = SC
 
 End Function
+Public Property Set Worksheet(ByRef WS As Worksheet)
+    Set mWS = WS
+End Property
+Public Property Let Direction(ByVal pDirection As SheetCursorConstants)
+    mDirection = pDirection
+End Property
+Public Property Let StartNum(ByVal v As Variant)
+
+    If mDirection = DirectionDown Then
+        mStartRow = v
+    Else
+        '指定が数値ならそのまま。アルファベットなら列変換
+        If IsNumeric(v) Then
+            mStartCol = v
+        Else
+            mStartCol = mWS.Columns(v).Column
+        End If
+    
+    End If
+
+End Property
+Public Property Let EofNum(ByVal v As Variant)
+            
+    If mDirection = DirectionDown Then
+        mEofCol = v
+    Else
+        mEofRow = CLng(v)
+    End If
+
+End Property
 '------------------------------------------------------
 ' デストラクタ
 '------------------------------------------------------
@@ -205,17 +187,21 @@ End Sub
 ' 非表示行をスキップ
 '------------------------------------------------------
 Private Sub SkipHiddenRow()
+
     Do Until Not mWS.Rows(mRow).Hidden Or ICursor_Eof
         mRow = mRow + 1
     Loop
+
 End Sub
 '------------------------------------------------------
 ' 非表示列をスキップ
 '------------------------------------------------------
 Private Sub SkipHiddenCol()
+
     Do Until Not mWS.Columns(mCol).Hidden Or ICursor_Eof
         mCol = mCol + 1
     Loop
+
 End Sub
 '>---
 '>#### GetCursor(SheetCursor)

@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v1
+' [Hidennotare] v2
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -40,10 +40,11 @@ Attribute VB_Exposed = False
 '>
 '>**Remarks**
 '>
-'>- このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。
 '>- Collectionと異なり、添え字は0から始まるので注意。
 '>- 行の途中の追加、削除のパフォーマンスが悪いです。添え字によるランダムアクセスに強いです。
 '>- 通常使用するメソッドはほとんど IList インターフェイス側にあるので IList の変数に代入して使うことになります。
+'>- ICursor インターフェースに対応しており他の ICursor I/F と同様にループ可能。
+'>**このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。**
 '>
 '>**Collection と ArrayList との比較**
 '>
@@ -61,25 +62,21 @@ Attribute VB_Exposed = False
 '>**Implements**
 '>* IList
 '>* ICursor
-'>* IConstructor
 '>* INewInstance
 '>
 '>**Sample**
 '>```
-'> intUbound = ArrayList.TryUBound(aray)
-'>
 '> Dim list As IList
 '> Set list = New ArrayList
 '>
 '> Dim list As IList
-'> Set list = Constructor(New ArrayList, コレクション)
+'> Set list = ArrayList.CreateObject(コレクション)
 '>
 '> Dim list As IList
-'> Set list = Constructor(New ArrayList, １次元配列)
+'> Set list = ArrayList.CreateObject(１次元配列)
 '>```
 '>**Dependent**
 '>
-'>* IConstructor
 '>* ICursor
 '>* IList
 '>* INewInstance
@@ -92,7 +89,6 @@ Attribute VB_Exposed = False
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
-Implements IConstructor
 Implements ICursor
 Implements IList
 Implements INewInstance
@@ -116,7 +112,7 @@ End Sub
 '>**Syntax**
 '>
 '>```
-'>Set ret = Constructor(New ArrayList, collection)
+'>Set ret = ArrayList.CreateObject(collection)
 '>```
 '>
 '>**Parameters**
@@ -129,7 +125,7 @@ End Sub
 '>
 '>|Name|Data type|Description|
 '>---|---|---
-'>|ret|Object|新しいインスタンス(ArrayList)|
+'>|ret|Object|新しいインスタンス(IList)|
 '>
 '>**Remarks**
 '>
@@ -149,7 +145,7 @@ End Sub
 '>**Syntax**
 '>
 '>```
-'>Set ret = Constructor(New ArrayList, Array)
+'>Set ret = ArrayList.CreateObject(Array)
 '>```
 '>
 '>**Parameters**
@@ -162,7 +158,7 @@ End Sub
 '>
 '>|Name|Data type|Description|
 '>---|---|---
-'>|ret|Object|新しいインスタンス(ArrayList)|
+'>|ret|Object|新しいインスタンス(IList)|
 '>
 '>**Remarks**
 '>
@@ -176,620 +172,76 @@ End Sub
 '>
 '>* None
 '>
-Private Function IConstructor_Instancing(ByRef Args As Collection) As Object
+Public Function CreateObject(ParamArray Args() As Variant) As IList
 
+    Dim cnt As Long
+    Dim lngValue As Long
+    Dim lngMin As Long
+    Dim lngMax As Long
+    Dim lngCount As Long
+    Dim var As Variant
     Dim v As Variant
     Dim i As Long
     
-    Select Case Args.Count
-        
-        '引数なし
+    var = Args
+    
+    lngMin = 0
+    lngMax = -1
+    
+    Dim IL As IList
+    
+    If Core.TryLBound(var, lngValue) Then
+        lngMin = lngValue
+    End If
+    
+    If Core.TryUBound(var, lngValue) Then
+        lngMax = lngValue
+    End If
+    
+    lngCount = lngMax + 1
+
+    Set IL = New ArrayList
+    IL.Clear
+    
+    Select Case lngCount
         Case 0
-        
-        '引数１個
         Case 1
+        
             Select Case True
                 
                 'コレクションからの変換
-                Case TypeOf Args(1) Is Collection
-                    Call IList_Clear
-                    For Each v In Args(1)
-                        IList_Add v
-                    Next
+                Case TypeOf Args(0) Is Collection
                     
-'                    Set mCol = Args(1)
+                    IL.Clear
+                    For Each v In Args(0)
+                        IL.Add v
+                    Next
                 
                 '１次元配列からの変換
-                Case IsArray(Args(1))
-                    Call IList_Clear
-                    mArray = Args(1)
-                    mCount = UBound(Args(1))
+                Case IsArray(Args(0))
+                
+                    For Each v In Args(0)
+                        IL.Add v
+                    Next
+                
                 Case Else
-                    'エラー
-                    Exit Function
-            End Select
-        
-        '引数からの追加
-        Case Else
-            Call IList_Clear
-            For Each v In Args
-                IList_Add v
-            Next
-    End Select
-    
-    Set IConstructor_Instancing = Me
-    
-End Function
-'>---
-'>#### IsArray(ArrayList)
-'>
-'>**Syntax**
-'>
-'>```
-'>flg = ArrayList.IsArray(v)
-'>```
-'>
-'>**Parameters**
-'>
-'>|Name|Required/Optional|Data type|Description|
-'>---|---|---|---
-'>|v|必須|Variant|配列かどうかチェックしたい変数を指定|
-'>
-'>**Return Value**
-'>
-'>|Name|Data type|Description|
-'>---|---|---
-'>|flg|Boolean|配列である:True / 配列ではないまたはエラー:False|
-'>
-'>**Remarks**
-'>
-'>空配列対応 IsArray<br>
-'>配列の場合 True を配列じゃない場合またはエラーが発生した場合は Falseを戻します。<br>
-'>そもそもの話ですが、Dim v As Variant で v = Array() で初期値を指定すれば通常のIsArrayで事足ります。
-'>
-'>**Example**
-'>
-'>* None
-'>
-'>**See also**
-'>
-'>* None
-'>
-Public Function IsArray(v As Variant) As Boolean
-
-    On Error GoTo e
-
-    IsArray = False
-
-    If VBA.IsArray(v) Then
-        IsArray = IIf(UBound(v) < LBound(v), False, True)
-    Else
-        IsArray = False
-    End If
-
-e:
-    Exit Function
-
-End Function
-'>---
-'>#### TryUbound(ArrayList)
-'>
-'>**Syntax**
-'>
-'>```
-'>flg = ArrayList.TryUBound(ary, idx, [dimension = 1])
-'>```
-'>
-'>**Parameters**
-'>
-'>|Name|Required/Optional|Data type|Description|
-'>---|---|---|---
-'>|ary|必須|Variant|チェックをする配列を指定|
-'>|idx|必須|Long|配列の上限を返却する変数を指定|
-'>|dimension|省略可|Long|省略時１（次元）。テストする次元数を指定|
-'>
-'>**Return Value**
-'>
-'>|Name|Data type|Description|
-'>---|---|---
-'>|flg|Boolean|正常:True / エラー:False|
-'>
-'>**Remarks**
-'>
-'>エラー検知付きUBound<br>
-'>テストする配列が１次元の場合に２次元の上限を求めようとすると実行時エラーになる。<br>
-'>そのためエラー検知可能なUboundとして作成。エラーの場合には False が返却される。
-'>
-'>**Example**
-'>
-'>**See also**
-'>
-'>* ArrayList.TryLBound
-'>
-Public Function TryUBound(ary As Variant, idx As Long, Optional ByVal dimension As Long = 1) As Boolean
- 
-    On Error GoTo e
-    
-    idx = UBound(ary, dimension)
-
-    TryUBound = True
-    
-    Exit Function
-e:
-    TryUBound = False
-
-End Function
-'>---
-'>#### TryLBound(ArrayList)
-'>
-'>**Syntax**
-'>
-'>```
-'>flg = ArrayList.TryLBound(ary, idx, [dimension = 1])
-'>```
-'>
-'>**Parameters**
-'>
-'>|Name|Required/Optional|Data type|Description|
-'>---|---|---|---
-'>|ary|必須|Variant|チェックをする配列を指定|
-'>|idx|必須|Long|配列の下限を返却する変数を指定|
-'>|dimension|省略可|Long|省略時１（次元）。テストする次元数を指定|
-'>
-'>**Return Value**
-'>
-'>|Name|Data type|Description|
-'>---|---|---
-'>|flg|Boolean|正常:True / エラー:False|
-'>
-'>**Remarks**
-'>
-'>エラー検知付きUBound<br>
-'>テストする配列が１次元の場合に２次元の下限を求めようとすると実行時エラーになる。<br>
-'>そのためエラー検知可能なUboundとして作成。エラーの場合には False が返却される。
-'>
-'>**Example**
-'>
-'>**See also**
-'>
-'>* ArrayList.TryUBound
-'>
-Public Function TryLBound(ary As Variant, lngIdx As Long, Optional ByVal dimension As Long = 1) As Boolean
- 
-    On Error GoTo e
-    
-    lngIdx = LBound(ary, dimension)
-
-    TryLBound = True
-    
-    Exit Function
-e:
-    TryLBound = False
-
-End Function
-'>---
-'>#### ParseFromListbox(ArrayList)
-'>
-'>**Syntax**
-'>
-'>```
-'>Set ret = ArrayList.ParseFromListbox(objList,[obj = Nothing])
-'>```
-'>
-'>**Parameters**
-'>
-'>|Name|Required/Optional|Data type|Description|
-'>---|---|---|---
-'>|objList|必須|Object|Parseする ListBox or ComboBox を指定|
-'>|obj|省略可|Object|レコードに使用するオブジェクトを指定。省略時は Dictionary |
-'>
-'>**Return Value**
-'>
-'>|Name|Data type|Description|
-'>---|---|---
-'>|ret|Boolean|新しいインスタンス(ArrayList)|
-'>
-'>
-'>**Remarks**
-'>
-'>ListBox/ComboBox パース<br>
-'>ListBox/ComboBoxからArrayList(レコードはDictionary)を生成する。<br>
-'>Tagにレコードを生成するためのフィールド名リスト（カンマ区切り）が必須。<br>
-'>レコードに使用するオブジェクトは INewInstance と ICompatibleProperty を Implements したクラスであること。
-'>
-'>**Example**
-'>
-'>```
-'>    'これはコードではなくプロパティウィンドウで設定しても良い
-'>    lstFavorite.Tag = "No,Name,Address"
-'>
-'>    Dim lst As IList
-'>    Set lst = ArrayList.ParseFromListbox(lstFavorite, New FavoriteBean)
-'>
-'>```
-'>
-'>**See also**
-'>
-'>* ArrayList.CopyToListbox
-'>* Dictionary
-'>* INewInstance
-'>* ICompatibleProperty
-'>
-Public Function ParseFromListbox(objList As Object, Optional obj As Object = Nothing) As IList
-
-    Dim ary As IList
-    Dim objRec As Object
-    Dim Fields As Variant
-    Dim i As Long
-    Dim j As Long
-    
-    'Tagにフィールド情報が無い場合
-    If objList.Tag = "" Then
-        Err.Raise 512 + 1, TypeName(Me) & ".ParseFromListbox", "Item name is not set in tag"
-    End If
-    
-    '配列に変換
-    Fields = Split(objList.Tag, ",")
-    
-    '1次元目はArrayList固定
-    Set ary = New ArrayList
-        
-    For i = 0 To objList.ListCount - 1
-        
-        '引数によりインスタンス化するオブジェクトを判定
-        Select Case True
-            Case obj Is Nothing
-                Set objRec = Core.GetNewInstance(New Dictionary)
-            Case Else
-                Set objRec = Core.GetNewInstance(obj)
-        End Select
-        
-        For j = 0 To objList.ColumnCount - 1
-        
-            '設定されているフィールドのみコピーする。
-            If Fields(j) <> "" Then
-                Core.CastICompatibleProperty(objRec).SetProperty Fields(j), objList.List(i, j)
-            End If
-        Next
+                
+                    IL.Add Args(0)
             
-        ary.Add objRec
+            End Select
+            
+        Case Else
+            
+            For i = lngMin To lngMax
+                IL.Add Args(i)
+            Next
     
-    Next
+    End Select
 
-    Set ParseFromListbox = ary
+    Set CreateObject = IL
 
 End Function
-'>---
-'>#### CopyToListbox(ArrayList)
-'>
-'>**Syntax**
-'>
-'>```
-'>ArrayList.CopyToListbox objList
-'>```
-'>
-'>**Parameters**
-'>
-'>|Name|Required/Optional|Data type|Description|
-'>---|---|---|---
-'>|objList|必須|Object|copyする ListBox or ComboBox を指定|
-'>
-'>**Return Value**
-'>
-'>* None
-'>
-'>**Remarks**
-'>
-'>ListBox/ComboBox へコピー<br>
-'>ArrayListの内容をListBox/ComboBoxにコピーする。<br>
-'>ListBox/ComboBoxのTagにArrayListのレコードを対応づけるフィールド名リスト（カンマ区切り）が必須。<br>
-'>レコードに使用するオブジェクトは INewInstance と ICompatibleProperty を Implements したクラスであること。
-'>
-'>**Example**
-'>
-'>```
-'>    'これはコードではなくプロパティウィンドウで設定しても良い
-'>    lstFavorite.Tag = "No,Name,Address"
-'>
-'>    ArrayList.CopyToListbox lstFavorite
-'>
-'>```
-'>
-'>**See also**
-'>
-'>* ArrayList.ParseFromListbox
-'>* Dictionary
-'>* INewInstance
-'>* ICompatibleProperty
-'>
-Public Sub CopyToListbox(objList As Object)
 
-    Dim ary As IList
-    Dim objRec As Object
-    Dim Fields As Variant
-    Dim v As Variant
-
-    'Tagにフィールド情報が無い場合
-    If objList.Tag = "" Then
-        Err.Raise 512 + 1, TypeName(Me) & ".CopyToListbox", "Item name is not set in tag"
-    End If
-
-    '配列に変換
-    Fields = Split(objList.Tag, ",")
-
-    '1次元目はArrayList固定
-    Set ary = Me
-
-    'リストボックスのクリア
-    objList.Clear
-
-    Dim i As Long
-    Dim j As Long
-    i = 0
-    For Each objRec In ary
-        j = 0
-        objList.AddItem
-        For Each v In Fields
-
-            '設定されているフィールドのみコピーする。
-            If v <> "" Then
-                objList.List(i, j) = Core.CastICompatibleProperty(objRec).GetProperty(v)
-            End If
-            j = j + 1
-        Next
-        i = i + 1
-    Next
-
-End Sub
-'>---
-'>#### ParseFromListObject(ArrayList)
-'>
-'>**Syntax**
-'>
-'>```
-'>Set ret = ArrayList.ParseFromListObject(objList,[obj = Nothing])
-'>```
-'>
-'>**Parameters**
-'>
-'>|Name|Required/Optional|Data type|Description|
-'>---|---|---|---
-'>|objList|必須|Listobject|Parseする Listobject を指定|
-'>|obj|省略可|Object|レコードに使用するオブジェクトを指定。省略時は Dictionary |
-'>
-'>**Return Value**
-'>
-'>|Name|Data type|Description|
-'>---|---|---
-'>|ret|Boolean|新しいインスタンス(ArrayList)|
-'>
-'>**Remarks**
-'>
-'>ListObject パース<br>
-'>ListobjectからArrayList(レコードはDictionary)を生成する。<br>
-'>ListObject(テーブル)の列ヘッダの情報が必須<br>
-'>レコードに使用するオブジェクトは INewInstance と ICompatibleProperty を Implements したクラスであること。
-'>
-'>**Example**
-'>
-'>```
-'>Sub ArrayList_ParseFromListObject_Sample()
-'>
-'>    Dim lst As IList
-'>    Dim dic As IDictionary
-'>    Dim Key As Variant
-'>
-'>    Set lst = ArrayList.ParseFromListObject(ActiveSheet.ListObjects(1))
-'>
-'>    For Each dic In lst
-'>
-'>        For Each Key In dic.Keys
-'>
-'>            Debug.Print dic.Item(Key)
-'>
-'>        Next
-'>
-'>    Next
-'>
-'>    Dim a As ArrayList
-'>
-'>    Set a = lst
-'>
-'>    a.CopyToListObject ActiveSheet.ListObjects(2)
-'>
-'>End Sub
-'>
-'>```
-'>
-'>**See also**
-'>
-'>* ArrayList.CopyToListObject
-'>* Dictionary
-'>* INewInstance
-'>* ICompatibleProperty
-'>
-Public Function ParseFromListObject(LO As ListObject, Optional obj As Object = Nothing) As IList
-
-    Dim lst As IList
-    Dim objRec As Object
-    Dim i As Long
-    Dim j As Long
-    
-    '1次元目はArrayList固定
-    Set lst = New ArrayList
-        
-    For i = 1 To LO.DataBodyRange.Rows.Count
-        
-        '引数によりインスタンス化するオブジェクトを判定
-        Select Case True
-            Case obj Is Nothing
-                Set objRec = Core.GetNewInstance(New Dictionary)
-            Case Else
-                Set objRec = Core.GetNewInstance(obj)
-        End Select
-        
-        For j = 1 To LO.HeaderRowRange.Columns.Count
-        
-            Core.CastICompatibleProperty(objRec).SetProperty LO.HeaderRowRange(, j).Value, LO.DataBodyRange.Cells(i, j).Value
-        Next
-    
-        lst.Add objRec
-    
-    Next
-
-    Set ParseFromListObject = lst
-
-End Function
-'>---
-'>#### CopyToListObject(ArrayList)
-'>
-'>**Syntax**
-'>
-'>```
-'>ArrayList.CopyToListObject objList
-'>```
-'>
-'>**Parameters**
-'>
-'>|Name|Required/Optional|Data type|Description|
-'>---|---|---|---
-'>|objList|必須|Object|copyする ListBox or ComboBox を指定|
-'>
-'>**Return Value**
-'>
-'>* None
-'>
-'>**Remarks**
-'>
-'>ListObject(テーブル機能)へコピー<br>
-'>ArrayListの内容をListobjectにコピーする。<br>
-'>ListobjectにArrayListのレコードを対応づける列名が必須。<br>
-'>レコードに使用するオブジェクトは INewInstance と ICompatibleProperty を Implements したクラスであること。
-'>
-'>**Example**
-'>
-'>```
-'>Sub ArrayList_ParseFromListObject_Sample()
-'>
-'>    Dim lst As IList
-'>    Dim dic As IDictionary
-'>    Dim Key As Variant
-'>
-'>    Set lst = ArrayList.ParseFromListObject(ActiveSheet.ListObjects(1))
-'>
-'>    For Each dic In lst
-'>
-'>        For Each Key In dic.Keys
-'>
-'>            Debug.Print dic.Item(Key)
-'>
-'>        Next
-'>
-'>    Next
-'>
-'>    Dim a As ArrayList
-'>
-'>    Set a = lst
-'>
-'>    a.CopyToListObject ActiveSheet.ListObjects(2)
-'>
-'>End Sub
-'>```
-'>
-'>**See also**
-'>
-'>* ArrayList.ParseFromListbox
-'>* Dictionary
-'>* INewInstance
-'>* ICompatibleProperty
-'>
-Public Sub CopyToListObject(LO As ListObject)
-
-    Dim lst As IList
-    Dim objRec As Object
-    Dim Fields As Variant
-    Dim v As Variant
-
-    '1次元目はArrayList固定
-    Set lst = Me
-
-    'リストオブジェクトのクリア
-    If Not LO.DataBodyRange Is Nothing Then
-        LO.DataBodyRange.ClearContents
-        LO.DataBodyRange.Delete
-    End If
-    
-    Dim i As Long
-    Dim j As Long
-    
-    i = 1
-    For Each objRec In lst
-        
-        LO.ListRows.Add
-        For j = 1 To LO.HeaderRowRange.Columns.Count
-
-            LO.DataBodyRange.Cells(i, j).Value = Core.CastICompatibleProperty(objRec).GetProperty(LO.HeaderRowRange(, j).Value)
-        
-        Next
-        i = i + 1
-    Next
-
-End Sub
-'>---
-'>#### CopyToRange(ArrayList)
-'>
-'>**Syntax**
-'>
-'>```
-'>ArrayList.CopyToRange objct
-'>```
-'>
-'>**Parameters**
-'>
-'>|Name|Required/Optional|Data type|Description|
-'>---|---|---|---
-'>|object|必須|Range|copyするシートの範囲(Range)の左上を指定|
-'>
-'>**Return Value**
-'>
-'>* None
-'>
-'>**Remarks**
-'>
-'>ArrayListをシートへ貼り付ける<br>
-'>指定されたRangeを起点にArrayListの内容を貼り付ける<br>
-'>ListobjectにArrayListのレコードを対応づける列名が必須。<br>
-'>レコードに使用するオブジェクトは INewInstance と ICompatibleProperty を Implements したクラスであること。
-'>
-'>**Example**
-'>
-'>* None
-'>
-'>**See also**
-'>
-'>* ArrayList.ParseFromListbox
-'>* Dictionary
-'>* INewInstance
-'>* ICompatibleProperty
-'>
-Public Sub CopyToRange(TopLeft As Range)
-
-    Dim v As Variant
-    Dim lngRow As Long
-    Dim lngCol As Long
-    
-    v = mArray
-    
-    If Not TryUBound(v, lngRow, 1) Then
-        Exit Sub
-    End If
-    If Not TryUBound(v, lngCol, 2) Then
-        Exit Sub
-    End If
-
-    TopLeft.resize(lngRow + 1, lngCol + 1).Value = v
-
-End Sub
 '>---
 '>#### Add(IList I/F)
 '>
@@ -827,11 +279,7 @@ Private Sub IList_Add(obj As Variant)
 
     ReDim Preserve mArray(0 To mCount)
 
-    If IsObject(obj) Then
-        Set mArray(mCount) = obj
-    Else
-        Let mArray(mCount) = obj
-    End If
+    Core.SetVar(mArray(mCount)) = obj
     
     mCount = mCount + 1
 
@@ -992,19 +440,11 @@ Private Sub IList_Insert(idx As Long, v As Variant)
     ReDim Preserve mArray(0 To mCount + 1)
 
     For i = mCount To idx Step -1
-        If IsObject(mArray(i)) Then
-            Set mArray(i + 1) = mArray(i)
-        Else
-            Let mArray(i + 1) = mArray(i)
-        End If
+        Core.SetVar(mArray(i + 1)) = mArray(i)
     Next
     
-    If IsObject(v) Then
-        Set mArray(idx) = v
-    Else
-        Let mArray(idx) = v
-    End If
-
+    Core.SetVar(mArray(idx)) = v
+    
     mCount = mCount + 1
 
 End Sub
@@ -1049,11 +489,7 @@ Private Property Get IList_Item(idx As Long) As Variant
         Err.Raise 512 + 1, TypeName(Me) & ".Item", "IndexOutOfRangeException"
     End If
 
-    If IsObject(mArray(idx)) Then
-        Set IList_Item = mArray(idx)
-    Else
-        Let IList_Item = mArray(idx)
-    End If
+    Core.SetVar(IList_Item) = mArray(idx)
 
 End Property
 '--------------------------------------------------------------
@@ -1062,7 +498,7 @@ End Property
 Private Function IList_NewEnum() As stdole.IUnknown
     
     '配列からCollection生成
-    Set mCol = Constructor(New Collection, mArray)
+    Set mCol = Core.ArrayToCollection(mArray)
     
     Set IList_NewEnum = mCol.[_NewEnum]
 
@@ -1109,11 +545,7 @@ Private Sub IList_RemoveAt(idx As Long)
     End If
 
     For i = idx To mCount - 1 - 1
-        If IsObject(mArray(i + 1)) Then
-            Set mArray(i) = mArray(i + 1)
-        Else
-            Let mArray(i) = mArray(i + 1)
-        End If
+        Core.SetVar(mArray(i)) = mArray(i + 1)
     Next
 
     mCount = mCount - 1
@@ -1160,8 +592,7 @@ End Sub
 '>
 Private Sub IList_Sort(Optional ByVal CP As IComparer = Nothing)
 Dim PL As PairLoggerInfo
-Set PL = Constructor(New PairLoggerInfo, _
-                     TypeName(Me) & ".IList_Sort")
+Set PL = PairLoggerInfo.CreateObject(TypeName(Me) & ".IList_Sort")
 
     If CP Is Nothing Then
         'Interfaceも普通のクラスなのでDefault比較として利用
@@ -1290,7 +721,7 @@ End Function
 '>
 Private Function IList_ToCollection() As Collection
     '配列からCollection生成
-    Set IList_ToCollection = Constructor(New Collection, mArray)
+    Set IList_ToCollection = Core.ArrayToCollection(mArray)
 End Function
 '>---
 '>#### ToString(IList I/F)
@@ -1352,7 +783,7 @@ Private Function IList_ToString() As String
         
                     Case vbString
                     
-                        SB.Append """" & Convert.Escape(v) & """"
+                        SB.Append """" & Escape(v) & """"
                     
 #If Win64 Then
                     Case vbByte, vbInteger, vbLong, vbSingle, vbDouble, vbCurrency, vbDecimal, vbLongLong
@@ -1372,6 +803,46 @@ Private Function IList_ToString() As String
     Next
 
     IList_ToString = SB.ToString(", ", "[", "]")
+
+End Function
+Private Function Escape(ByVal v As String) As String
+
+    Dim strChr As String
+    Dim SB As StringBuilder
+    Dim i As Long
+    
+    Set SB = New StringBuilder
+    
+    For i = 1 To Len(v)
+        
+        strChr = Mid$(v, i, 1)
+        
+        Select Case AscW(strChr)
+            Case &H0 To &H7, &HB, &HE To &H1F, &H7F
+                SB.Append "\u" & Hex$(AscW(strChr))
+            Case &H8
+                SB.Append "\b"
+            Case &H9
+                SB.Append "\t"
+            Case &HA
+                SB.Append "\n"
+            Case &HC
+                SB.Append "\f"
+            Case &HD
+                SB.Append "\r"
+            Case &H22
+                SB.Append "\"""
+            Case &H2F
+                SB.Append "\/"
+            Case &H5C
+                SB.Append "\\"
+            Case Else
+                SB.Append strChr
+        End Select
+
+    Next
+    
+    Escape = SB.ToString
 
 End Function
 '>---
@@ -1566,4 +1037,271 @@ Private Function INewInstance_NewInstance() As Object
     Set INewInstance_NewInstance = lst
 
 End Function
+'>---
+'>#### CopyToListbox(ArrayList)
+'>
+'>**Syntax**
+'>
+'>```
+'>ArrayList.CopyToListbox objList
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|objList|必須|Object|copyする ListBox or ComboBox を指定|
+'>
+'>**Return Value**
+'>
+'>* None
+'>
+'>**Remarks**
+'>
+'>ListBox/ComboBox へコピー<br>
+'>ArrayListの内容をListBox/ComboBoxにコピーする。<br>
+'>ListBox/ComboBoxのTagにArrayListのレコードを対応づけるフィールド名リスト（カンマ区切り）が必須。<br>
+'>レコードに使用するオブジェクトは INewInstance と ICompatibleProperty を Implements したクラスであること。
+'>
+'>**Example**
+'>
+'>```
+'>    'これはコードではなくプロパティウィンドウで設定しても良い
+'>    lstFavorite.Tag = "No,Name,Address"
+'>
+'>    ArrayList.CopyToListbox lstFavorite
+'>
+'>```
+'>
+'>**See also**
+'>
+'>* ArrayList.ParseFromListbox
+'>* Dictionary
+'>* INewInstance
+'>* ICompatibleProperty
+'>
+Public Sub CopyToListbox(objList As Object)
 
+    Dim ary As IList
+    Dim objRec As Object
+    Dim Fields As Variant
+    Dim v As Variant
+
+    'Tagにフィールド情報が無い場合
+    If objList.Tag = "" Then
+        Err.Raise 512 + 1, TypeName(Me) & ".CopyToListbox", "Item name is not set in tag"
+    End If
+
+    '配列に変換
+    Fields = Split(objList.Tag, ",")
+
+    '1次元目はArrayList固定
+    Set ary = Me
+
+    'リストボックスのクリア
+    objList.Clear
+
+    Dim i As Long
+    Dim j As Long
+    i = 0
+    For Each objRec In ary
+        j = 0
+        objList.AddItem
+        For Each v In Fields
+
+            '設定されているフィールドのみコピーする。
+            If v <> "" Then
+                objList.List(i, j) = CoreEx.CastICompatibleProperty(objRec).GetProperty(v)
+            End If
+            j = j + 1
+        Next
+        i = i + 1
+    Next
+
+End Sub
+'>---
+'>#### CopyToListObject(ArrayList)
+'>
+'>**Syntax**
+'>
+'>```
+'>ArrayList.CopyToListObject objList
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|objList|必須|Object|copyする ListBox or ComboBox を指定|
+'>
+'>**Return Value**
+'>
+'>* None
+'>
+'>**Remarks**
+'>
+'>ListObject(テーブル機能)へコピー<br>
+'>ArrayListの内容をListobjectにコピーする。<br>
+'>ListobjectにArrayListのレコードを対応づける列名が必須。<br>
+'>レコードに使用するオブジェクトは INewInstance と ICompatibleProperty を Implements したクラスであること。
+'>
+'>**Example**
+'>
+'>```
+'>Sub ArrayList_ParseFromListObject_Sample()
+'>
+'>    Dim lst As IList
+'>    Dim dic As IDictionary
+'>    Dim Key As Variant
+'>
+'>    Set lst = ArrayList.ParseFromListObject(ActiveSheet.ListObjects(1))
+'>
+'>    For Each dic In lst
+'>
+'>        For Each Key In dic.Keys
+'>
+'>            Debug.Print dic.Item(Key)
+'>
+'>        Next
+'>
+'>    Next
+'>
+'>    Dim a As ArrayList
+'>
+'>    Set a = lst
+'>
+'>    a.CopyToListObject ActiveSheet.ListObjects(2)
+'>
+'>End Sub
+'>```
+'>
+'>**See also**
+'>
+'>* ArrayList.ParseFromListbox
+'>* Dictionary
+'>* INewInstance
+'>* ICompatibleProperty
+'>
+Public Sub CopyToListObject(LO As ListObject)
+
+    Dim lst As IList
+    Dim objRec As Object
+    Dim Fields As Variant
+    Dim v As Variant
+
+    '1次元目はArrayList固定
+    Set lst = Me
+
+    'リストオブジェクトのクリア
+    If Not LO.DataBodyRange Is Nothing Then
+        LO.DataBodyRange.ClearContents
+        LO.DataBodyRange.Delete
+    End If
+    
+    Dim i As Long
+    Dim j As Long
+    
+    i = 1
+    For Each objRec In lst
+        
+        LO.ListRows.Add
+        For j = 1 To LO.HeaderRowRange.Columns.Count
+
+            LO.DataBodyRange.Cells(i, j).Value = CoreEx.CastICompatibleProperty(objRec).GetProperty(LO.HeaderRowRange(, j).Value)
+        
+        Next
+        i = i + 1
+    Next
+
+End Sub
+'>---
+'>#### CopyToRange(ArrayList)
+'>
+'>**Syntax**
+'>
+'>```
+'>ArrayList.CopyToRange objct
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|object|必須|Range|copyするシートの範囲(Range)の左上を指定|
+'>
+'>**Return Value**
+'>
+'>* None
+'>
+'>**Remarks**
+'>
+'>ArrayListをシートへ貼り付ける<br>
+'>指定されたRangeを起点にArrayListの内容を貼り付ける<br>
+'>ListobjectにArrayListのレコードを対応づける列名が必須。<br>
+'>レコードに使用するオブジェクトは INewInstance と ICompatibleProperty を Implements したクラスであること。
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* ArrayList.ParseFromListbox
+'>* Dictionary
+'>* INewInstance
+'>* ICompatibleProperty
+'>
+Public Sub CopyToRange(TopLeft As Range)
+
+    Dim v As Variant
+    Dim lngRow As Long
+    Dim lngCol As Long
+    
+    v = mArray
+    
+    If Not Core.TryUBound(v, lngRow, 1) Then
+        Exit Sub
+    End If
+    If Not Core.TryUBound(v, lngCol, 2) Then
+        Exit Sub
+    End If
+
+    TopLeft.resize(lngRow + 1, lngCol + 1).Value = v
+
+End Sub
+'>---
+'>#### GetIList(ArrayList)
+'>
+'>**Syntax**
+'>
+'>```
+'> Set obj = ArrayList.GetIList()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|object|必須|Object|IList I/F に対応するクラス|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|obj|IList|現在のインスタンス(IList I/F)|
+'>
+'>**Remarks**
+'>
+'>IList I/F を取得する。
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* IList
+'>
+Public Function GetIList() As IList
+    Set GetIList = Me
+End Function

@@ -5,11 +5,11 @@ END
 Attribute VB_Name = "LineCursor"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = False
+Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v1
+' [Hidennotare] v2
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -42,10 +42,10 @@ Attribute VB_Exposed = False
 '>
 '>カーソル風配列読み込みクラス<br>
 '>指定された配列から１アイテムずつ処理を行う。<br>
+'>**このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。**
 '>
 '>**Implements**
 '>
-'>* IConstructor
 '>* ICursor
 '>
 '>**Sample**
@@ -55,7 +55,7 @@ Attribute VB_Exposed = False
 '>arr = Array("1","2","3")
 '>
 '>Dim IC As ICursor
-'>Set IC = Constructor(New LineCursor, arr)
+'>Set IC = LineCursor.CreateObject(arr)
 '>
 '>Do Until IC.Eof
 '>
@@ -74,7 +74,6 @@ Attribute VB_Exposed = False
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
-Implements IConstructor
 Implements ICursor
 
 Private mBuf As Variant
@@ -85,7 +84,7 @@ Private mIndex As Long
 '>**Syntax**
 '>
 '>```
-'>Set Return = Constructor(New LineCursor, Array)
+'>Set Return = LineCursor.CreateObject(Array)
 '>```
 '>
 '>**Parameters**
@@ -112,23 +111,24 @@ Private mIndex As Long
 '>
 '>* None
 '>
-Private Function IConstructor_Instancing(ByRef Args As Collection) As Object
+Public Function CreateObject(Source As Variant) As LineCursor
 
-    Select Case Args.Count
-        Case 1
-            If IsArray(Args(1)) Then
-                mBuf = Args(1)
-            Else
-                Exit Function
-            End If
-        Case Else
-            Exit Function
-    End Select
+    Dim LC As LineCursor
     
-    ICursor_MoveFirst
-    Set IConstructor_Instancing = Me
+    Set LC = New LineCursor
     
+    LC.Source = Source
+    
+    LC.GetCursor.MoveFirst
+
+    Set CreateObject = LC
+
 End Function
+
+Public Property Let Source(ByVal v As Variant)
+    mBuf = v
+End Property
+
 '>---
 '>#### GetCursor(LineCursor)
 '>

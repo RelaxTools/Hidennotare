@@ -2,14 +2,14 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "StdSch"
+Attribute VB_Name = "StrSch"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v1
+' [Hidennotare] v2
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -36,7 +36,7 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-'>### StdSch クラス
+'>### StrSch クラス
 '>
 '>**Remarks**
 '>
@@ -57,12 +57,12 @@ Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 '>---
-'>#### Test(StdSch)
+'>#### Test(StrSch)
 '>
 '>**Syntax**
 '>
 '>```
-'>flg = StdSch.Test(strText,
+'>flg = StrSch.Test(strText,
 '>                  strExp,
 '>                  [blnIgnoreCase = False],
 '>                  [blnMatchByte = False],
@@ -123,12 +123,12 @@ Function Test(ByVal strText As String, ByVal strExp As String, Optional ByVal bl
 
 End Function
 '>---
-'>#### Replace(StdSch)
+'>#### Replace(StrSch)
 '>
 '>**Syntax**
 '>
 '>```
-'>ret = StdSch.Replace(strText,
+'>ret = StrSch.Replace(strText,
 '>                     strExp,
 '>                     strReplace,
 '>                     [blnIgnoreCase = False],
@@ -182,8 +182,8 @@ Function Replace(ByVal strText As String, ByVal strExp As String, ByVal strRepla
     
         Set bean = col(i)
     
-        strL = Mid$(strBuf, 1, bean.index - 1)
-        strR = Mid$(strBuf, bean.index + bean.Length)
+        strL = Mid$(strBuf, 1, bean.Index - 1)
+        strR = Mid$(strBuf, bean.Index + bean.Length)
 
         strBuf = strL & strReplace & strR
     
@@ -193,12 +193,12 @@ Function Replace(ByVal strText As String, ByVal strExp As String, ByVal strRepla
     
 End Function
 '>---
-'>#### Execute(StdSch)
+'>#### Execute(StrSch)
 '>
 '>**Syntax**
 '>
 '>```
-'>Set ret = StdSch.Execute(strText,
+'>Set ret = StrSch.Execute(strText,
 '>                         strExp,
 '>                         [blnIgnoreCase = False],
 '>                         [blnMatchByte = False],
@@ -263,14 +263,14 @@ Public Function Execute(ByVal strText As String, ByVal strExp As String, Optiona
     If blnWhole Then
     
         If strCmp1 = strCmp2 Then
-            col.Add Constructor(New MatchBean, 1, Len(strCmp1), strCmp1)
+            col.Add MatchBean.CreateObject(1, Len(strCmp1), strCmp1)
         End If
     
     Else
     
         'パターンが空白の場合、全一致とする。
         If strCmp2 = "" Then
-            col.Add Constructor(New MatchBean, 1, 0, strCmp1)
+            col.Add MatchBean.CreateObject(1, 0, strCmp1)
         Else
     
             lngPos = InStr(strCmp1, strCmp2)
@@ -279,7 +279,7 @@ Public Function Execute(ByVal strText As String, ByVal strExp As String, Optiona
                 
                 strResult = Mid$(strText, lngPos, Len(strExp))
                 
-                col.Add Constructor(New MatchBean, lngPos, Len(strResult), strResult)
+                col.Add MatchBean.CreateObject(lngPos, Len(strResult), strResult)
             
                 lngPos = InStr(lngPos + 1, strCmp1, strCmp2)
             Loop
@@ -290,12 +290,12 @@ Public Function Execute(ByVal strText As String, ByVal strExp As String, Optiona
 
 End Function
 '>---
-'>#### Check(StdSch)
+'>#### Check(StrSch)
 '>
 '>**Syntax**
 '>
 '>```
-'>flg = StdSch.Check(strExp)
+'>flg = StrSch.Check(strExp)
 '>```
 '>
 '>**Parameters**
@@ -326,12 +326,12 @@ Function Check(ByVal strExp As String)
     Check = False
 End Function
 '>---
-'>#### ReplaceShape(StdSch)
+'>#### ReplaceShape(StrSch)
 '>
 '>**Syntax**
 '>
 '>```
-'>StdSch.ReplaceShape sh,
+'>StrSch.ReplaceShape sh,
 '>                    strText,
 '>                    strExp,
 '>                    strReplace,
@@ -383,10 +383,10 @@ Sub ReplaceShape(ByRef sh As Shape, ByVal strExp As String, ByVal strReplace As 
         
             Set bean = col(i)
         
-            Call .Characters(bean.index, bean.Length).Delete
+            Call .Characters(bean.Index, bean.Length).Delete
             
             If strReplace <> "" Then
-                Call .Characters(bean.index, 0).InsertAfter(strReplace)
+                Call .Characters(bean.Index, 0).InsertAfter(strReplace)
             End If
         
         Next
@@ -395,12 +395,12 @@ Sub ReplaceShape(ByRef sh As Shape, ByVal strExp As String, ByVal strReplace As 
 
 End Sub
 '>---
-'>#### ReplaceRange(StdSch)
+'>#### ReplaceRange(StrSch)
 '>
 '>**Syntax**
 '>
 '>```
-'>StdSch.ReplaceRange rng,
+'>StrSch.ReplaceRange rng,
 '>                    strText,
 '>                    strExp,
 '>                    strReplace,
@@ -452,10 +452,10 @@ Sub ReplaceRange(ByRef rng As Range, ByVal strExp As String, ByVal strReplace As
         
             Set bean = col(i)
         
-            Call .Characters(bean.index, bean.Length).Delete
+            Call .Characters(bean.Index, bean.Length).Delete
             
             If strReplace <> "" Then
-                Call .Characters(bean.index, 0).Insert(strReplace)
+                Call .Characters(bean.Index, 0).Insert(strReplace)
             End If
         
         Next

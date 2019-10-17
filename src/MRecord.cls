@@ -46,7 +46,6 @@ Attribute VB_Exposed = False
 '>
 '* M 言語の Record が作成できるクラス
 '* IDictionary I/F を使用する必要がある。
-'* 本家Dictionaryと異なる点。For Each を使う場合には XX.Keys を省略できない。
 '* ToString すると M Language Record を出力する。
 '>
 '>**Example**
@@ -77,9 +76,10 @@ Implements IDictionary
 
 'VBAでは「継承」ができないため「委譲」する。
 Private mCol As Collection
-Private mDic As IDictionary
+Private mDic As Object
 Private Sub Class_Initialize()
-    Set mDic = New Dictionary
+    Set mDic = VBA.CreateObject("Scripting.Dictionary")
+    mDic.CompareMode = vbBinaryCompare
 End Sub
 Private Sub Class_Terminate()
     Set mDic = Nothing
@@ -89,7 +89,7 @@ End Sub
 '--------------------------------------------------------------
 Private Function IDictionary_NewEnum() As stdole.IUnknown
 
-    Set mCol = Constructor(New Collection, mDic.Keys)
+    Set mCol = Core.ArrayToCollection(mDic.Keys)
     Set IDictionary_NewEnum = mCol.[_NewEnum]
 
 End Function
@@ -97,7 +97,7 @@ Private Sub IDictionary_Add(KeyValue As Variant, obj As Variant)
     mDic.Add KeyValue, obj
 End Sub
 Private Function IDictionary_ContainsKey(KeyValue As Variant) As Boolean
-    IDictionary_ContainsKey = mDic.ContainsKey(KeyValue)
+    IDictionary_ContainsKey = mDic.Exists(KeyValue)
 End Function
 Private Function IDictionary_Keys() As Variant
     IDictionary_Keys = mDic.Keys
@@ -106,11 +106,7 @@ Private Property Get IDictionary_Count() As Long
     IDictionary_Count = mDic.Count
 End Property
 Private Property Get IDictionary_Item(KeyValue As Variant) As Variant
-    If VBA.IsObject(mDic.Item(KeyValue)) Then
-        Set IDictionary_Item = mDic.Item(KeyValue)
-    Else
-        IDictionary_Item = mDic.Item(KeyValue)
-    End If
+    Core.SetVar(IDictionary_Item) = mDic.Item(KeyValue)
 End Property
 Private Property Let IDictionary_Item(KeyValue As Variant, NewItem As Variant)
     mDic.Item(KeyValue) = NewItem
@@ -142,11 +138,7 @@ Private Function IDictionary_ToString() As String
     
     For Each KeyValue In mDic.Keys
     
-        If VBA.IsObject(mDic.Item(KeyValue)) Then
-            Set v = mDic.Item(KeyValue)
-        Else
-            v = mDic.Item(KeyValue)
-        End If
+        Core.SetVar(v) = mDic.Item(KeyValue)
     
         Select Case True
             

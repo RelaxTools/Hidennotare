@@ -1,7 +1,7 @@
 Attribute VB_Name = "Document"
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v1
+' [Hidennotare] v2
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -205,12 +205,11 @@ Sub OutputMarkDown()
                 FileIO.TruncateFile strFile
                 
                 'UTF8 & LF で保存
-                With Constructor(New TextWriter, _
-                                     strFile, _
-                                     NewLineCodeConstants.None, _
-                                     EncodeConstants.UTF8, _
-                                     OpenModeConstants.Output, _
-                                     False)
+                With TextWriter.CreateObject(strFile, _
+                                             NewLineCodeConstants.NewLineCodeNone, _
+                                             EncodeConstants.EncodeUTF8, _
+                                             OpenModeConstants.OpenModeOutput, _
+                                             False)
         
                     .WriteData SB.ToString(vbLf)
                 
@@ -244,13 +243,13 @@ Sub OutputMarkDown()
         TC.Insert 0, "#### 2 リファレンス"
         TC.Insert 1, "##### 2.1 標準モジュール"
         For i = 0 To TC.Count - 1
-            If StringHelper.StartsWith(TC.Item(i), "[2.2") Then
+            If Core.StartsWith(TC.Item(i), "[2.2") Then
                 TC.Insert i, "##### 2.2 インターフェイス"
                 Exit For
             End If
         Next
         For i = 0 To TC.Count - 1
-            If StringHelper.StartsWith(TC.Item(i), "[2.3") Then
+            If Core.StartsWith(TC.Item(i), "[2.3") Then
                 TC.Insert i, "##### 2.3 クラス"
                 Exit For
             End If
@@ -260,19 +259,15 @@ Sub OutputMarkDown()
         FileIO.TruncateFile strFile
         
         '静的コンテンツと生成した目次をUTF8 & LF にて出力。
-        With Constructor(New TextWriter, _
-                             strFile, _
-                             NewLineCodeConstants.None, _
-                             EncodeConstants.UTF8, _
-                             OpenModeConstants.Output, _
-                             False)
+        With TextWriter.CreateObject(strFile, _
+                                     NewLineCodeConstants.NewLineCodeNone, _
+                                     EncodeConstants.EncodeUTF8, _
+                                     OpenModeConstants.OpenModeOutput, _
+                                     False)
         
-        'IW.WriteData strStatic
-        'IW.WriteData Join(TC.ToArray(), vbLf)
-        
-        'Set IW = Nothing
             .WriteData strStatic
             .WriteData Join(TC.ToArray(), vbLf)
+        
         End With
     End If
     
@@ -400,14 +395,13 @@ Private Function GetStaticContents(ByVal strFile As String) As String
     
     Set SB = New StringBuilder
     
-    Set IC = Constructor(New TextReader, _
-                         strFile, _
-                         NewLineCodeConstants.LF, _
-                         EncodeConstants.UTF8)
+    Set IC = TextReader.CreateObject(strFile, _
+                                     NewLineCodeConstants.NewLineCodeLF, _
+                                     EncodeConstants.EncodeUTF8)
 
     Do Until IC.Eof
     
-        If StringHelper.StartsWith(IC, "#### 2") Then
+        If Core.StartsWith(IC, "#### 2") Then
             Exit Do
         End If
         

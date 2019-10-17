@@ -2,7 +2,7 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "MatchBean"
+Attribute VB_Name = "Graphics"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
@@ -36,97 +36,127 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-'>### MatchBean クラス
+'>### Graphics クラス
 '>
 '>**Remarks**
 '>
-'>Executeメソッド結果保持クラス
-'>RegExpクラスとStdSchクラスのExecuteメソッドの戻り値を保持します。<br>
+'>PNG形式の読み込み書き込みが行えるクラス<br>
 '>**このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。**
 '>
 '>**Dependent**
 '>
-'>* なし
+'>* None
 '>
 '>**History**
 '>
 '>|Date|Version|Note|
 '>|---|---|---|
-'>|2019-01-01|Ver.1.0.0|新規作成|
+'>|2019-09-04|Ver.1.0.0|新規作成|
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
-
-Private m_index As Long
-Private m_Length As Long
-Private m_Value As String
 '>---
-'>#### コンストラクタ
+'>#### LoadPicture(Graphics)
 '>
 '>**Syntax**
 '>
 '>```
-'>Set ret = MatchBean.CreateObject(
-'>                      index,
-'>                      length,
-'>                      value)
+'>Set var = Graphics.LoadPicture(filename)
 '>```
 '>
 '>**Parameters**
 '>
 '>|Name|Required/Optional|Data type|Description|
 '>---|---|---|---
-'>|index|必須|Long|開始場所を指定|
-'>|length|必須|Long|文字数を指定|
-'>|value|必須|String|検索結果を指定|
+'>|Graphics|必須|Graphics|Graphicsクラスを指定します。|
+'>|filename|必須|String|ロードする画像ファイル名を指定します。|
 '>
 '>**Return Value**
 '>
 '>|Name|Data type|Description|
 '>---|---|---
-'>|ret|Object|新しいインスタンス(MatchBean)|
+'>|var|IPicture|VBAで使用可能なピクチャ形式|
 '>
 '>**Remarks**
 '>
-'>** このクラスはコンストラクタを使用しないと実行できません。**
-'>
-'>**Example**
-'>
-'>* None
+'>画像ファイルをVBAで表示できるPicture形式に変換します。<br>
+'>対応フォーマット:BMP, GIF, JPEG, PNG, TIFF, Exif, WMF, and EMF
 '>
 '>**See also**
 '>
+'>* SavePicture
+'>
+Public Function LoadPicture(ByVal FileName As String) As IPictureDisp
+
+    '存在チェック
+    If Not FileIO.FileExists(FileName) Then
+        Err.Raise 512 + 1, TypeName(Me) & "LoadPicture", "file not found"
+    End If
+    
+    '形式チェック
+    Select Case UCase(FileIO.GetExtensionName(FileName))
+        Case "BMP"
+        Case "GIF"
+        Case "PNG"
+        Case "JPG", "JPEG"
+        Case "WMF", "EMF"
+        Case "EXIF"
+        Case "TIF", "TIFF"
+        Case Else
+            Err.Raise 512 + 1, TypeName(Me) & "LoadPicture", "Not Support Type "
+    End Select
+
+    Set LoadPicture = GDIPlus.CreateObjectFromFile(FileName).ToPicture
+
+End Function
+'>---
+'>#### SavePicture(Graphics)
+'>
+'>**Syntax**
+'>
+'>```
+'>Graphics.SavePicture(picture, filename)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|Graphics|必須|Graphics|Graphicsクラスを指定します。|
+'>|picture|必須|IPictureDisp|保存する画像のPictureプロパティを指定します。|
+'>|filename|必須|String|保存する画像ファイル名を指定します。|
+'>
+'>**Return Value**
+'>
 '>* None
 '>
+'>**Remarks**
 '>
-Public Function CreateObject(Index As Long, Length As Long, Value As String) As MatchBean
+'>指定されたPictureをPNG形式で保存します。<br>
+'>他、保存形式を使用したい場合にはGDIPlusクラスを利用すること。<br>
+'>
+'>**See also**
+'>
+'>* LoadPicture
+'>
+Public Sub SavePicture(Picture As IPictureDisp, FileName As String)
+
+    If FileIO.FileExists(FileName) Then
     
-    Dim MB As MatchBean
-    Set MB = New MatchBean
+        If Message.Question("ファイルが存在します。上書きしますか？") Then
+            Exit Sub
+        End If
     
-    MB.Index = Index
-    MB.Length = Length
-    MB.Value = Value
+        Call FileIO.DeleteFile(FileName)
     
-    Set CreateObject = MB
+    End If
+
+    With GDIPlus.CreateObjectFromIPictureDisp(Picture)
+        Call .SaveAsPNG(FileName)
+    End With
     
-End Function
-Public Property Let Index(v As Long)
-    m_index = v
-End Property
-Public Property Let Length(v As Long)
-    m_Length = v
-End Property
-Public Property Let Value(v As String)
-    m_Value = v
-End Property
-Public Property Get Index() As Long
-    Index = m_index
-End Property
-Public Property Get Length() As Long
-    Length = m_Length
-End Property
-Public Property Get Value() As String
-    Value = m_Value
-End Property
+End Sub
+
+
+
 

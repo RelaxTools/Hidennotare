@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v1
+' [Hidennotare] v2
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -46,7 +46,7 @@ Attribute VB_Exposed = False
 '>**Example**
 '>
 '>```
-'>With Constructor(New Using, New Word)
+'>With Using.CreateObject(New Word)
 '>   .Args(1).GetInstance
 '>End With
 '>```
@@ -69,7 +69,7 @@ Private mWD As Object
 'Instance を取得時にオブジェクトを生成する。
 Public Property Get GetInstance() As Object
     If mWD Is Nothing Then
-        Set mWD = CreateObject("Word.Application")
+        Set mWD = VBA.CreateObject("Word.Application")
     End If
     Set GetInstance = mWD
 End Property

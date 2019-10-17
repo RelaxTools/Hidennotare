@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v1
+' [Hidennotare] v2
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -94,7 +94,7 @@ Private mIndex As Long
 '  Initialize
 '--------------------------------------------------------------
 Private Sub Class_Initialize()
-    Set mDic = CreateObject("Scripting.Dictionary")
+    Set mDic = VBA.CreateObject("Scripting.Dictionary")
     mDic.CompareMode = vbBinaryCompare
     mIndex = 0
 End Sub
@@ -104,440 +104,18 @@ End Sub
 Private Sub Class_Terminate()
     Set mDic = Nothing
 End Sub
+Public Function CreateObject() As IDictionary
+    Set CreateObject = New Dictionary
+End Function
 '--------------------------------------------------------------
 ' For Each 用
 '--------------------------------------------------------------
 Private Function IDictionary_NewEnum() As stdole.IUnknown
 
-    Set mCol = Constructor(New Collection, mDic.Keys)
+    Set mCol = Core.ArrayToCollection(mDic.Keys)
     Set IDictionary_NewEnum = mCol.[_NewEnum]
 
 End Function
-'>---
-'>#### GetIDictionary(Dictionary)
-'>
-'>**Syntax**
-'>
-'>```
-'> Set obj = Dictionary.GetIDictionary()
-'>```
-'>
-'>**Parameters**
-'>
-'>* None
-'>
-'>**Return Value**
-'>
-'>|Name|Data type|Description|
-'>---|---|---
-'>|obj|IDictionary|現在のインスタンス(IDictionary I/F)|
-'>
-'>**Remarks**
-'>
-'>IDictionary I/F を取得する。
-'>
-'>**Example**
-'>
-'>* None
-'>
-'>**See also**
-'>
-'>* IDictionary
-'>
-Public Function GetIDictionary() As IDictionary
-    Set GetIDictionary = Me
-End Function
-'>---
-'>#### ParseFromListbox(Dictionary)
-'>
-'>**Syntax**
-'>
-'>```
-'>Set ret = Dictionary.ParseFromListbox(objList, Key, [obj = Nothing])
-'>```
-'>
-'>**Parameters**
-'>
-'>|Name|Required/Optional|Data type|Description|
-'>---|---|---|---
-'>|objList|必須|Object|Parseする ListBox or ComboBox を指定|
-'>|Key|必須|String|行全体のキーとなる項目名を指定(DBMSの主キーに相当)|
-'>|obj|省略可|Object|レコードに使用するオブジェクトを指定。省略時は Dictionary |
-'>
-'>**Return Value**
-'>
-'>|Name|Data type|Description|
-'>---|---|---
-'>|ret|Dictionary|新しいインスタンス(Dictionary)|
-'>
-'>
-'>**Remarks**
-'>
-'>ListBox/ComboBox パース<br>
-'>ListBox/ComboBoxからDictionary(レコードはDictionary)を生成する。<br>
-'>Tagにレコードを生成するためのフィールド名リスト（カンマ区切り）が必須。<br>
-'>レコードに使用するオブジェクトは INewInstance と ICompatibleProperty を Implements したクラスであること。
-'>
-'>**Example**
-'>
-'>```
-'>    'これはコードではなくプロパティウィンドウで設定しても良い
-'>    lstFavorite.Tag = "No,Name,Address"
-'>
-'>    Dim dic As IDictionary
-'>    Set dic = Dictionary.ParseFromListbox(lstFavorite, "Key", New FavoriteBean)
-'>
-'>```
-'>
-'>**See also**
-'>
-'>* Dictionary.CopyToListbox
-'>* Dictionary
-'>* INewInstance
-'>* ICompatibleProperty
-'>
-Public Function ParseFromListbox(objList As Object, KeyName As String, Optional obj As Object = Nothing) As IDictionary
-
-    Dim ary As IDictionary
-    Dim objRec As Object
-    Dim Fields As Variant
-    Dim i As Long
-    Dim j As Long
-    Dim Key As Variant
-    
-    'Tagにフィールド情報が無い場合
-    If objList.Tag = "" Then
-        Err.Raise 512 + 1, TypeName(Me) & ".ParseFromListbox", "Item name is not set in tag"
-    End If
-    
-    '配列に変換
-    Fields = Split(objList.Tag, ",")
-    
-    '1次元目はArrayList固定
-    Set ary = New Dictionary
-        
-    For i = 0 To objList.ListCount - 1
-        
-        '引数によりインスタンス化するオブジェクトを判定
-        Select Case True
-            Case obj Is Nothing
-                Set objRec = Core.GetNewInstance(New Dictionary)
-            Case Else
-                Set objRec = Core.GetNewInstance(obj)
-        End Select
-        
-        For j = 0 To objList.ColumnCount - 1
-        
-            '設定されているフィールドのみコピーする。
-            If Fields(j) <> "" Then
-                Core.CastICompatibleProperty(objRec).SetProperty Fields(j), objList.List(i, j)
-                
-                If KeyName = Fields(j) Then
-                    Key = objList.List(i, j)
-                End If
-            
-            End If
-        Next
-            
-        ary.Add Key, objRec
-    
-    Next
-
-    Set ParseFromListbox = ary
-
-End Function
-'>---
-'>#### CopyToListbox(Dictionary)
-'>
-'>**Syntax**
-'>
-'>```
-'>Dictionary.CopyToListbox objList
-'>```
-'>
-'>**Parameters**
-'>
-'>|Name|Required/Optional|Data type|Description|
-'>---|---|---|---
-'>|objList|必須|Object|copyする ListBox or ComboBox を指定|
-'>
-'>**Return Value**
-'>
-'>* None
-'>
-'>**Remarks**
-'>
-'>ListBox/ComboBox へコピー<br>
-'>ArrayListの内容をListBox/ComboBoxにコピーする。<br>
-'>ListBox/ComboBoxのTagにDictionaryのレコードを対応づけるフィールド名リスト（カンマ区切り）が必須。<br>
-'>レコードに使用するオブジェクトは INewInstance と ICompatibleProperty を Implements したクラスであること。
-'>
-'>**Example**
-'>
-'>```
-'>    'これはコードではなくプロパティウィンドウで設定しても良い
-'>    lstFavorite.Tag = "No,Name,Address"
-'>
-'>    Dictionary.CopyToListbox lstFavorite
-'>
-'>```
-'>
-'>**See also**
-'>
-'>* Dictionary.ParseFromListbox
-'>* Dictionary
-'>* INewInstance
-'>* ICompatibleProperty
-'>
-Public Sub CopyToListbox(objList As Object)
-
-    Dim ary As IDictionary
-    Dim objRec As Object
-    Dim Fields As Variant
-    Dim v As Variant
-    Dim Key As Variant
-
-    'Tagにフィールド情報が無い場合
-    If objList.Tag = "" Then
-        Err.Raise 512 + 1, TypeName(Me) & ".CopyToListbox", "Item name is not set in tag"
-    End If
-
-    '配列に変換
-    Fields = Split(objList.Tag, ",")
-
-    '1次元目はArrayList固定
-    Set ary = Me
-
-    'リストボックスのクリア
-    objList.Clear
-
-    Dim i As Long
-    Dim j As Long
-    i = 0
-    For Each Key In ary.Keys
-    
-        Set objRec = ary.Item(Key)
-    
-        j = 0
-        objList.AddItem
-        For Each v In Fields
-
-            '設定されているフィールドのみコピーする。
-            If v <> "" Then
-                objList.List(i, j) = Core.CastICompatibleProperty(objRec).GetProperty(v)
-            End If
-            j = j + 1
-        Next
-        i = i + 1
-    Next
-
-End Sub
-'>---
-'>#### ParseFromListObject(Dictionary)
-'>
-'>**Syntax**
-'>
-'>```
-'>Set ret = Dictionary.ParseFromListObject(objList, KeyField, [obj = Nothing])
-'>```
-'>
-'>**Parameters**
-'>
-'>|Name|Required/Optional|Data type|Description|
-'>---|---|---|---
-'>|objList|必須|Listobject|Parseする Listobject を指定|
-'>|KeyField|必須|String|行全体のキーとなる項目名を指定(DBMSの主キーに相当)|
-'>|obj|省略可|Object|レコードに使用するオブジェクトを指定。省略時は Dictionary |
-'>
-'>**Return Value**
-'>
-'>|Name|Data type|Description|
-'>---|---|---
-'>|ret|Dictionary|新しいインスタンス(Dictionary)|
-'>
-'>**Remarks**
-'>
-'>ListObject パース<br>
-'>ListobjectからDictionary(レコードはDictionary)を生成する。<br>
-'>ListObject(テーブル)の列ヘッダの情報が必須<br>
-'>レコードに使用するオブジェクトは INewInstance と ICompatibleProperty を Implements したクラスであること。
-'>
-'>**Example**
-'>
-'>```
-'>Sub Dictionary_ParseFromListObject_Sample()
-'>
-'>    Dim lst As IDictionary
-'>    Dim dic As IDictionary
-'>    Dim Key As Variant
-'>
-'>    Set lst = Dictionary.ParseFromListObject(ActiveSheet.ListObjects(1), "Key")
-'>
-'>    For Each dic In lst
-'>
-'>        For Each Key In dic.Keys
-'>
-'>            Debug.Print dic.Item(Key)
-'>
-'>        Next
-'>
-'>    Next
-'>
-'>    Dim a As ArrayList
-'>
-'>    Set a = lst
-'>
-'>    a.CopyToListObject ActiveSheet.ListObjects(2)
-'>
-'>End Sub
-'>
-'>```
-'>
-'>**See also**
-'>
-'>* Dictionary.CopyToListObject
-'>* Dictionary
-'>* INewInstance
-'>* ICompatibleProperty
-'>
-Public Function ParseFromListObject(LO As ListObject, KeyField As String, Optional obj As Object = Nothing) As IDictionary
-
-    Dim lst As IDictionary
-    Dim objRec As Object
-    Dim i As Long
-    Dim j As Long
-    Dim Key As Variant
-        
-    
-    '1次元目はArrayList固定
-    Set lst = New Dictionary
-        
-    For i = 1 To LO.DataBodyRange.Rows.Count
-        
-        '引数によりインスタンス化するオブジェクトを判定
-        Select Case True
-            Case obj Is Nothing
-                Set objRec = Core.GetNewInstance(New Dictionary)
-            Case Else
-                Set objRec = Core.GetNewInstance(obj)
-        End Select
-        
-        For j = 1 To LO.HeaderRowRange.Columns.Count
-            Core.CastICompatibleProperty(objRec).SetProperty LO.HeaderRowRange(, j).Value, LO.DataBodyRange.Cells(i, j).Value
-        Next
-    
-        'Keyフィールド取得
-        j = LO.ListColumns(KeyField).index
-        Key = LO.DataBodyRange.Cells(i, j).Value
-        
-        If lst.ContainsKey(Key) Then
-            Err.Raise 512 + 1, TypeName(Me) & ".ParseFromListObject", "Duplicate Key"
-        End If
-        
-        lst.Add Key, objRec
-    
-    Next
-
-    Set ParseFromListObject = lst
-
-End Function
-'>---
-'>#### CopyToListObject(Dictionary)
-'>
-'>**Syntax**
-'>
-'>```
-'>Dictionary.CopyToListObject objList
-'>```
-'>
-'>**Parameters**
-'>
-'>|Name|Required/Optional|Data type|Description|
-'>---|---|---|---
-'>|objList|必須|Object|copyする ListBox or ComboBox を指定|
-'>
-'>**Return Value**
-'>
-'>* None
-'>
-'>**Remarks**
-'>
-'>ListObject(テーブル機能)へコピー<br>
-'>ArrayListの内容をListobjectにコピーする。<br>
-'>ListobjectにDictionaryのレコードを対応づける列名が必須。<br>
-'>レコードに使用するオブジェクトは INewInstance と ICompatibleProperty を Implements したクラスであること。
-'>
-'>**Example**
-'>
-'>```
-'>Sub Dictionary_ParseFromListObject_Sample()
-'>
-'>    Dim lst As IDictionary
-'>    Dim dic As IDictionary
-'>    Dim Key As Variant
-'>
-'>    Set lst = Dictionary.ParseFromListObject(ActiveSheet.ListObjects(1))
-'>
-'>    For Each dic In lst
-'>
-'>        For Each Key In dic.Keys
-'>
-'>            Debug.Print dic.Item(Key)
-'>
-'>        Next
-'>
-'>    Next
-'>
-'>    Dim a As ArrayList
-'>
-'>    Set a = lst
-'>
-'>    a.CopyToListObject ActiveSheet.ListObjects(2)
-'>
-'>End Sub
-'>```
-'>
-'>**See also**
-'>
-'>* Dictionary.ParseFromListbox
-'>* Dictionary
-'>* INewInstance
-'>* ICompatibleProperty
-'>
-Public Sub CopyToListObject(LO As ListObject)
-
-    Dim lst As IDictionary
-    Dim Key As Variant
-    Dim obj As Object
-    Dim v As Variant
-
-    '1次元目はDictionary固定
-    Set lst = Me
-
-    'リストオブジェクトのクリア
-    If Not LO.DataBodyRange Is Nothing Then
-        LO.DataBodyRange.ClearContents
-        LO.DataBodyRange.Delete
-    End If
-    
-    Dim i As Long
-    Dim j As Long
-    
-    i = 1
-    For Each Key In lst.Keys
-        
-        Set obj = lst.Item(Key)
-        
-        LO.ListRows.Add
-        For j = 1 To LO.HeaderRowRange.Columns.Count
-
-            LO.DataBodyRange.Cells(i, j).Value = Core.CastICompatibleProperty(obj).GetProperty(LO.HeaderRowRange(, j).Value)
-        
-        Next
-        i = i + 1
-    Next
-
-End Sub
 '>---
 '>#### Add(IDictionary I/F)
 '>
@@ -723,11 +301,7 @@ End Property
 '>* IDictionary
 '>
 Private Property Get IDictionary_Item(KeyValue As Variant) As Variant
-    If VBA.IsObject(mDic.Item(KeyValue)) Then
-        Set IDictionary_Item = mDic.Item(KeyValue)
-    Else
-        IDictionary_Item = mDic.Item(KeyValue)
-    End If
+    Core.SetVar(IDictionary_Item) = mDic.Item(KeyValue)
 End Property
 '>---
 '>#### Item(IDictionary I/F)
@@ -932,11 +506,7 @@ Private Function ToString() As String
     
     For Each KeyValue In mDic.Keys
     
-        If VBA.IsObject(mDic.Item(KeyValue)) Then
-            Set v = mDic.Item(KeyValue)
-        Else
-            v = mDic.Item(KeyValue)
-        End If
+        Core.SetVar(v) = mDic.Item(KeyValue)
     
         Select Case True
             Case IsObject(v)
@@ -956,7 +526,7 @@ Private Function ToString() As String
         
                     Case vbString
                     
-                        SB.Append """" & KeyValue & """:" & Escape(v)
+                        SB.Append """" & KeyValue & """:""" & Core.Escape(v) & """"
                     
 #If Win64 Then
                     Case vbByte, vbInteger, vbLong, vbSingle, vbDouble, vbCurrency, vbDecimal, vbLongLong
@@ -980,12 +550,7 @@ Private Function ToString() As String
     ToString = SB.ToString(", ", "{", "}")
 
 End Function
-' 制御文字変換
-Private Function Escape(ByVal v As String) As String
 
-    Escape = """" & Convert.Escape(v) & """"
-
-End Function
 '>---
 '>#### GetCursor(IDictionary I/F)
 '>
@@ -1269,11 +834,7 @@ Private Sub ICompatibleProperty_SetProperty(prop As Variant, Val As Variant)
     Set dic = Me.GetIDictionary
     
     If dic.ContainsKey(prop) Then
-        If IsObject(Val) Then
-            Set dic.Item(prop) = Val
-        Else
-            dic.Item(prop) = Val
-        End If
+        Core.SetVar(dic.Item(prop)) = Val
     Else
         dic.Add prop, Val
     End If
@@ -1315,9 +876,225 @@ End Sub
 '>* ICompatibleProperty
 '>
 Private Function ICompatibleProperty_GetProperty(prop As Variant) As Variant
-    If IsObject(Me.GetIDictionary.Item(prop)) Then
-        Set ICompatibleProperty_GetProperty = Me.GetIDictionary.Item(prop)
-    Else
-        Let ICompatibleProperty_GetProperty = Me.GetIDictionary.Item(prop)
-    End If
+    
+    Core.SetVar(ICompatibleProperty_GetProperty) = Me.GetIDictionary.Item(prop)
+    
 End Function
+'>---
+'>#### GetIDictionary(Dictionary)
+'>
+'>**Syntax**
+'>
+'>```
+'> Set obj = Dictionary.GetIDictionary()
+'>```
+'>
+'>**Parameters**
+'>
+'>* None
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|obj|IDictionary|現在のインスタンス(IDictionary I/F)|
+'>
+'>**Remarks**
+'>
+'>IDictionary I/F を取得する。
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* IDictionary
+'>
+Public Function GetIDictionary() As IDictionary
+    Set GetIDictionary = Me
+End Function
+'>---
+'>#### CopyToListbox(Dictionary)
+'>
+'>**Syntax**
+'>
+'>```
+'>Dictionary.CopyToListbox objList
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|objList|必須|Object|copyする ListBox or ComboBox を指定|
+'>
+'>**Return Value**
+'>
+'>* None
+'>
+'>**Remarks**
+'>
+'>ListBox/ComboBox へコピー<br>
+'>ArrayListの内容をListBox/ComboBoxにコピーする。<br>
+'>ListBox/ComboBoxのTagにDictionaryのレコードを対応づけるフィールド名リスト（カンマ区切り）が必須。<br>
+'>レコードに使用するオブジェクトは INewInstance と ICompatibleProperty を Implements したクラスであること。
+'>
+'>**Example**
+'>
+'>```
+'>    'これはコードではなくプロパティウィンドウで設定しても良い
+'>    lstFavorite.Tag = "No,Name,Address"
+'>
+'>    Dictionary.CopyToListbox lstFavorite
+'>
+'>```
+'>
+'>**See also**
+'>
+'>* Dictionary.ParseFromListbox
+'>* Dictionary
+'>* INewInstance
+'>* ICompatibleProperty
+'>
+Public Sub CopyToListbox(objList As Object)
+
+    Dim ary As IDictionary
+    Dim objRec As Object
+    Dim Fields As Variant
+    Dim v As Variant
+    Dim Key As Variant
+
+    'Tagにフィールド情報が無い場合
+    If objList.Tag = "" Then
+        Err.Raise 512 + 1, TypeName(Me) & ".CopyToListbox", "Item name is not set in tag"
+    End If
+
+    '配列に変換
+    Fields = Split(objList.Tag, ",")
+
+    '1次元目はArrayList固定
+    Set ary = Me
+
+    'リストボックスのクリア
+    objList.Clear
+
+    Dim i As Long
+    Dim j As Long
+    i = 0
+    For Each Key In ary.Keys
+    
+        Set objRec = ary.Item(Key)
+    
+        j = 0
+        objList.AddItem
+        For Each v In Fields
+
+            '設定されているフィールドのみコピーする。
+            If v <> "" Then
+                objList.List(i, j) = CoreEx.CastICompatibleProperty(objRec).GetProperty(v)
+            End If
+            j = j + 1
+        Next
+        i = i + 1
+    Next
+
+End Sub
+'>---
+'>#### CopyToListObject(Dictionary)
+'>
+'>**Syntax**
+'>
+'>```
+'>Dictionary.CopyToListObject objList
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|objList|必須|Object|copyする ListBox or ComboBox を指定|
+'>
+'>**Return Value**
+'>
+'>* None
+'>
+'>**Remarks**
+'>
+'>ListObject(テーブル機能)へコピー<br>
+'>ArrayListの内容をListobjectにコピーする。<br>
+'>ListobjectにDictionaryのレコードを対応づける列名が必須。<br>
+'>レコードに使用するオブジェクトは INewInstance と ICompatibleProperty を Implements したクラスであること。
+'>
+'>**Example**
+'>
+'>```
+'>Sub Dictionary_ParseFromListObject_Sample()
+'>
+'>    Dim lst As IDictionary
+'>    Dim dic As IDictionary
+'>    Dim Key As Variant
+'>
+'>    Set lst = Dictionary.ParseFromListObject(ActiveSheet.ListObjects(1))
+'>
+'>    For Each dic In lst
+'>
+'>        For Each Key In dic.Keys
+'>
+'>            Debug.Print dic.Item(Key)
+'>
+'>        Next
+'>
+'>    Next
+'>
+'>    Dim a As ArrayList
+'>
+'>    Set a = lst
+'>
+'>    a.CopyToListObject ActiveSheet.ListObjects(2)
+'>
+'>End Sub
+'>```
+'>
+'>**See also**
+'>
+'>* Dictionary.ParseFromListbox
+'>* Dictionary
+'>* INewInstance
+'>* ICompatibleProperty
+'>
+Public Sub CopyToListObject(LO As ListObject)
+
+    Dim lst As IDictionary
+    Dim Key As Variant
+    Dim obj As Object
+    Dim v As Variant
+
+    '1次元目はDictionary固定
+    Set lst = Me
+
+    'リストオブジェクトのクリア
+    If Not LO.DataBodyRange Is Nothing Then
+        LO.DataBodyRange.ClearContents
+        LO.DataBodyRange.Delete
+    End If
+    
+    Dim i As Long
+    Dim j As Long
+    
+    i = 1
+    For Each Key In lst.Keys
+        
+        Set obj = lst.Item(Key)
+        
+        LO.ListRows.Add
+        For j = 1 To LO.HeaderRowRange.Columns.Count
+
+            LO.DataBodyRange.Cells(i, j).Value = CoreEx.CastICompatibleProperty(obj).GetProperty(LO.HeaderRowRange(, j).Value)
+        
+        Next
+        i = i + 1
+    Next
+
+End Sub
+

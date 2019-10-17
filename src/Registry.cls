@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v1
+' [Hidennotare] v2
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -105,7 +105,7 @@ Public Sub Export()
 
     strReg = "HKEY_CURRENT_USER\Software\VB and VBA Program Settings\" & Title
 
-    Set Locator = CreateObject("WbemScripting.SWbemLocator")
+    Set Locator = VBA.CreateObject("WbemScripting.SWbemLocator")
     Set Service = Locator.ConnectServer(vbNullString, "root\default")
     Set Reg = Service.Get("StdRegProv")
     

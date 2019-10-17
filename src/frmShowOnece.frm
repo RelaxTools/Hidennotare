@@ -15,7 +15,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v1
+' [Hidennotare] v2
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -48,7 +48,7 @@ Option Explicit
 
 Private mKey As String
 
-Sub Start(ByVal strMessage As String, ByVal strKey As String)
+Sub start(ByVal strMessage As String, ByVal strKey As String)
 
     If CBool(Registry.GetSetting("ShowOnece", strKey, False)) = False Then
         mKey = strKey

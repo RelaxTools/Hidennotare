@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v1
+' [Hidennotare] v2
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -50,7 +50,7 @@ Attribute VB_Exposed = False
 '>**Example**
 '>
 '>```
-'>With Constructor(New Using, New OneTimeSpeedBooster)
+'>With Using.CreateObject(New OneTimeSpeedBooster)
 '>
 '>   'メイン処理
 '>
@@ -66,32 +66,22 @@ Attribute VB_Exposed = False
 '>|Date|Version|Note|
 '>|---|---|---|
 '>|2019-05-22|Ver.1.0.0|新規作成|
+'>|2019-08-19|Ver.1.0.1|ブックが存在しない場合にCalculationの指定でエラーになる不具合を修正|
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements IUsing
 
-'Private mScreenUpdating As Boolean
-'Private mCalculation As XlCalculation
-'Private mEnableEvents As Boolean
-'Private mPrintCommunication As Boolean
-'Private mDisplayAlerts As Boolean
-
 Private Sub IUsing_Begin()
     
-'    'Applicationのプロパティを保存する。
-'    With Application
-'        mScreenUpdating = .ScreenUpdating
-'        mCalculation = .Calculation
-'        mEnableEvents = .EnableEvents
-'        mPrintCommunication = .PrintCommunication
-'        mDisplayAlerts = .DisplayAlerts
-'    End With
-
     'Applicationのプロパティを変更する。
     With Application
         .ScreenUpdating = False
-        .Calculation = xlCalculationManual
+        
+        If Not .ActiveWorkbook Is Nothing Then
+            .Calculation = xlCalculationManual
+        End If
+        
         .EnableEvents = False
         .PrintCommunication = False
         .DisplayAlerts = False
@@ -103,19 +93,13 @@ End Sub
 
 Private Sub IUsing_Finish()
     
-    'プログラムを中断すると、Falseのままになってしまうので
-    '保存はしない方向が無難かもしれない。
-    
     'Applicationのプロパティを復元する。
     With Application
-'        .ScreenUpdating = mScreenUpdating
-'        .Calculation = mCalculation
-'        .EnableEvents = mEnableEvents
-'        .PrintCommunication = mPrintCommunication
-'        .DisplayAlerts = mDisplayAlerts
         
         .ScreenUpdating = True
-        .Calculation = xlCalculationAutomatic
+        If Not .ActiveWorkbook Is Nothing Then
+            .Calculation = xlCalculationAutomatic
+        End If
         .EnableEvents = True
         .PrintCommunication = True
         .DisplayAlerts = True

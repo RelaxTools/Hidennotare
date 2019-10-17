@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v1
+' [Hidennotare] v2
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -46,7 +46,7 @@ Attribute VB_Exposed = False
 '>**Example**
 '>
 '>```
-'>With Constructor(New Using, New PowerPoint)
+'>With Using.CreateObject(New PowerPoint)
 '>   .Args(1).GetInstance
 '>End With
 '>```
@@ -69,7 +69,7 @@ Private mPP As Object
 'Instance を取得時にオブジェクトを生成する。
 Public Property Get GetInstance() As Object
     If mPP Is Nothing Then
-        Set mPP = CreateObject("PowerPoint.Application")
+        Set mPP = VBA.CreateObject("PowerPoint.Application")
     End If
     Set GetInstance = mPP
 End Property

@@ -5,11 +5,11 @@ END
 Attribute VB_Name = "PairLogger"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = False
+Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v1
+' [Hidennotare] v2
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -43,19 +43,18 @@ Attribute VB_Exposed = False
 '>開始終了ログ出力(Trace)<br>
 '>関数の開始／終了のメッセージを１行で出力するためのクラス<br>
 '>Traceレベルで出力する。
+'>**このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。**
 '>
 '>
 '>**Example**
 '>
 '>```
 '>Dim PL As PairLogger
-'>Set PL = Constructor(New PairLogger,
-'>                     TypeName(Me) & ".FileSearchEx")
+'>Set PL = PairLogger.CreateObject(TypeName(Me) & ".FileSearchEx")
 '>```
 '>
 '>**Dependent**
 '>
-'>* IConstructor
 '>* Logger
 '>
 '>**History**
@@ -66,19 +65,21 @@ Attribute VB_Exposed = False
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
-Implements IConstructor
 Dim mMsg As String
 '----------------------------------------------------
 ' コンストラクタ
 '----------------------------------------------------
-Private Function IConstructor_Instancing(ByRef Args As Collection) As Object
+Public Function CreateObject(Message As String) As PairLogger
+    Dim PL As PairLogger
+    Set PL = New PairLogger
+    PL.Message = Message
     
-    mMsg = Args(1)
-    Logger.LogBegin LogLevel.Trace, mMsg
-
-    Set IConstructor_Instancing = Me
+    Set CreateObject = PL
 
 End Function
+Public Property Let Message(v As String)
+    mMsg = v
+End Property
 '----------------------------------------------------
 ' デストラクタ
 '----------------------------------------------------

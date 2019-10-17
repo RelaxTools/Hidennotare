@@ -62,7 +62,6 @@ Attribute VB_Exposed = False
 '>* IList
 '>* ArrayList
 '>* ICursor
-'>* IConstructor
 '>
 '>**History**
 '>
@@ -72,7 +71,6 @@ Attribute VB_Exposed = False
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
-Implements IConstructor
 Implements ICursor
 Implements IList
 
@@ -91,13 +89,6 @@ End Sub
 Private Sub Class_Terminate()
     Set mCol = Nothing
 End Sub
-Private Function IConstructor_Instancing(ByRef Args As Collection) As Object
-
-    Dim IC As IConstructor
-    Set IC = mCol
-    Set IConstructor_Instancing = IC.Instancing(Args)
-    
-End Function
 Private Sub IList_Clear()
     mCol.Clear
 End Sub
@@ -114,11 +105,7 @@ Private Property Get IList_Count() As Long
     IList_Count = mCol.Count
 End Property
 Private Property Get IList_Item(idx As Long) As Variant
-    If VBA.IsObject(mCol.Item(idx)) Then
-        Set IList_Item = mCol.Item(idx)
-    Else
-        IList_Item = mCol.Item(idx)
-    End If
+    Core.SetVar(IList_Item) = mCol.Item(idx)
 End Property
 Private Sub IList_RemoveAt(idx As Long)
     mCol.RemoveAt idx

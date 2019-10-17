@@ -5,11 +5,11 @@ END
 Attribute VB_Name = "CSVReader"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = False
+Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v1
+' [Hidennotare] v2
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -43,10 +43,10 @@ Attribute VB_Exposed = False
 '>CSV読込クラス<br>
 '>RFC4180準拠<br>
 '>http://www.kasai.fm/wiki/rfc4180jp
+'>**このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。**
 '>
 '>**Dependent**
 '>
-'>* IConstructor
 '>* ICursor
 '>* IReader
 '>* TextReader
@@ -59,7 +59,6 @@ Attribute VB_Exposed = False
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
-Implements IConstructor
 Implements ICursor
 Implements IReader
 
@@ -74,23 +73,19 @@ Private mQuotation As Boolean
 
 Private mCol As Collection
 Private mIndex As Long
-Public Enum CsvReaderHeaderConstants
-    UseFirstRow
-    AddHedder
-    None
-End Enum
+
 '>---
 '>#### コンストラクタ
 '>
 '>**Syntax**
 '>
 '>```
-'>Set ret = Constructor(New CsvReader,
-'>                      FileName,
-'>                      [NewLineCode = NewLineCodeConstants.CRLF],
-'>                      [Encode = EncodeConstants.CP932],
-'>                      [Delimiter = ","],
-'>                      [Quotation = False])
+'>Set ret = CsvReader.CreateObject(
+'>                    FileName,
+'>                    [NewLineCode = NewLineCodeConstants.CRLF],
+'>                    [Encode = EncodeConstants.CP932],
+'>                    [Delimiter = ","],
+'>                    [Quotation = False])
 '>```
 '>
 '>**Parameters**
@@ -123,7 +118,7 @@ End Enum
 '>
 '>strFile = "C:\Test.csv"
 '>
-'>Set IC = Constructor(New CsvReader, strFile)
+'>Set IC = CsvReader.CreateObject(strFile)
 '>
 '>Do Until IC.Eof
 '>
@@ -140,7 +135,7 @@ End Enum
 '>
 '>strFile = "C:\Test.csv"
 '>
-'>Set IR = Constructor(New CsvReader, strFile)
+'>Set IR = CsvReader.CreateObject(strFile)
 '>
 '>Debug.Print IR.ReadAll '改行を指定した場合は配列、指定しなかった場合は文字列
 '>```
@@ -149,53 +144,56 @@ End Enum
 '>
 '>* None
 '>
-Private Function IConstructor_Instancing(Args As Collection) As Object
+Public Function CreateObject(ByVal FileName As String, _
+                            Optional ByVal NewLineCode As NewLineCodeConstants = NewLineCodeConstants.NewLineCodeCRLF, _
+                            Optional ByVal Encode As EncodeConstants = EncodeConstants.EncodeCP932, _
+                            Optional ByVal Delimiter As String = ",", _
+                            Optional ByVal Quotation As Boolean = False) As ICursor
+
+    Dim CR As CSVReader
     
-    If Args.Count = 0 Then
-        Exit Function
-    End If
+    Set CR = New CSVReader
     
-    'Default
-    mNewLineCode = NewLineCodeConstants.CRLF
-    mEncode = EncodeConstants.CP932
+    CR.FileName = FileName
+    CR.NewLineCode = NewLineCode
+    CR.Encode = Encode
+    CR.Delimiter = Delimiter
+    CR.Quotation = Quotation
     
-    mDelimiter = ","
-    mQuotation = False
-    
-    If Args.Count >= 1 Then
-        mFileName = Args(1)
-    End If
-    
-    If Args.Count >= 2 Then
-        mNewLineCode = Args(2)
-    End If
-    
-    If Args.Count >= 3 Then
-        mEncode = Args(3)
-    End If
-    
-    If Args.Count >= 4 Then
-        mDelimiter = Args(4)
-    End If
-    
-    If Args.Count >= 5 Then
-        mQuotation = Args(5)
-    End If
+    CR.Init
+
+    Set CreateObject = CR
+
+End Function
+Public Property Let FileName(v As String)
+    mFileName = v
+End Property
+Public Property Let NewLineCode(v As NewLineCodeConstants)
+    mNewLineCode = v
+End Property
+Public Property Let Encode(v As EncodeConstants)
+    mEncode = v
+End Property
+Public Property Let Delimiter(v As String)
+    mDelimiter = v
+End Property
+Public Property Let Quotation(v As Boolean)
+    mQuotation = v
+End Property
+Public Sub Init()
     
     'TextReaderに委譲する。改行コードをCsvReader側でパースする。
-    Set mIR = Constructor(New TextReader, mFileName, NewLineCodeConstants.None, mEncode)
+    Set mIR = TextReader.CreateObject(mFileName, NewLineCodeConstants.NewLineCodeNone, mEncode)
     
-    Set mCol = StringHelper.CsvParser(mIR.ReadAll, mQuotation, mDelimiter)
+    If IsEmpty(mIR.ReadAll) Then
+        Set mCol = New Collection
+    Else
+        Set mCol = Parser.ParseCsv(mIR.ReadAll(LBound(mIR.ReadAll)), mQuotation, mDelimiter)
+    End If
     
     ICursor_MoveFirst
-    
-    Dim IR As IReader
 
-    Set IR = Me
-    
-    Set IConstructor_Instancing = IR
-    
-End Function
+End Sub
 Private Sub Class_Terminate()
     Set mIR = Nothing
 End Sub
@@ -273,7 +271,7 @@ End Function
 '>
 '>* None
 '>
-Public Sub Paste(ByRef TopLeft As Range, ByRef Fields As IDictionary, Optional ByVal Header As CsvReaderHeaderConstants = CsvReaderHeaderConstants.None)
+Public Sub Paste(ByRef TopLeft As Range, ByRef Fields As IDictionary, Optional ByVal Header As CsvReaderHeaderConstants = CsvReaderHeaderConstants.HeaderNone)
 
     Dim lngCol As Long
     Dim lngRow As Long
@@ -358,7 +356,7 @@ Public Sub Paste(ByRef TopLeft As Range, ByRef Fields As IDictionary, Optional B
             Next
         
         'ヘッダ無し
-        Case CsvReaderHeaderConstants.None
+        Case CsvReaderHeaderConstants.HeaderNone
             
             For j = 1 To lngCol
                 Key = DEFAULT_FIELD & Format(j, "00")
@@ -488,19 +486,11 @@ End Property
 '>
 Private Property Get ICursor_Item(Optional ByVal opt As Variant) As Variant
 
+    'EOF後は最後の値を返す
     If ICursor_Eof Then
-        'EOF後は最後の値を返す
-        If IsObject(mCol.Item(mCol.Count)(opt)) Then
-            Set ICursor_Item = mCol.Item(mCol.Count)(opt)
-        Else
-            ICursor_Item = mCol.Item(mCol.Count)(opt)
-        End If
+        Core.SetVar(ICursor_Item) = mCol.Item(mCol.Count)(opt)
     Else
-        If IsObject(mCol.Item(mIndex)(opt)) Then
-            Set ICursor_Item = mCol.Item(mIndex)(opt)
-        Else
-            ICursor_Item = mCol.Item(mIndex)(opt)
-        End If
+        Core.SetVar(ICursor_Item) = mCol.Item(mIndex)(opt)
     End If
 
 End Property

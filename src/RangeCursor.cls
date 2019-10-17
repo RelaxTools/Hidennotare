@@ -5,11 +5,11 @@ END
 Attribute VB_Name = "RangeCursor"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = False
+Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v1
+' [Hidennotare] v2
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -42,17 +42,17 @@ Attribute VB_Exposed = False
 '>
 '>Range読み込みクラス<br>
 '>指定されたRangeから１アイテムずつ処理を行う。<br>
+'>**このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。**
 '>
 '>**Implements**
 '>
-'>* IConstructor
 '>* ICursor
 '>
 '>**Sample**
 '>
 '>```
 '>Dim IC As ICursor
-'>Set IC = Constructor(New RangeCursor, Selection)
+'>Set IC = RangeCursor.CreateObject(Selection)
 '>
 '>Do Until IC.Eof
 '>
@@ -64,7 +64,6 @@ Attribute VB_Exposed = False
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
-Implements IConstructor
 Implements ICursor
 
 'Range
@@ -80,7 +79,7 @@ Private mRow As Long
 '>**Syntax**
 '>
 '>```
-'>Set return = Constructor(New RangeCursor, range)
+'>Set return = RangeCursor.CreateObject(range)
 '>```
 '>
 '>**Parameters**
@@ -107,26 +106,23 @@ Private mRow As Long
 '>
 '>* None
 '>
-Private Function IConstructor_Instancing(ByRef Args As Collection) As Object
-
-    Const RANGE_AREA As Long = 1  '引数１　RANGE オブジェクト
+Public Function CreateObject(rng As Range) As RangeCursor
+    Dim RC As RangeCursor
+    Set RC = New RangeCursor
     
-    Select Case Args.Count
-        Case 1
-        Case Else
-            Exit Function
-    End Select
+    Set RC.Source = rng
+    RC.GetCursor.MoveFirst
     
-    Set mRange = Args(RANGE_AREA)
-                
-    mRow = 1
-    mStartRow = mRow
-    
-    SkipHiddenRow
-    
-    Set IConstructor_Instancing = Me
-
+    Set CreateObject = RC
 End Function
+Public Property Set Source(v As Range)
+    Set mRange = v
+End Property
+
+Private Sub Class_Initialize()
+    mStartRow = 1
+End Sub
+
 '------------------------------------------------------
 ' デストラクタ
 '------------------------------------------------------

@@ -5,11 +5,11 @@ END
 Attribute VB_Name = "TableCursor"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = False
+Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v1
+' [Hidennotare] v2
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -40,11 +40,11 @@ Attribute VB_Exposed = False
 '>
 '>**Remarks**
 '>
-'>テーブル(ListObject)読み込みクラス
+'>テーブル(ListObject)読み込みクラス<br>
+'>**このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。**
 '>
 '>**Implements**
 '>
-'>* IConstructor
 '>* ICursor
 '>
 '>**Sample**
@@ -52,7 +52,7 @@ Attribute VB_Exposed = False
 '>```
 '>Dim IC Ad ICursor
 '
-'>Set IC = Constructor(New TableCursor, WS.ListObjects(1))
+'>Set IC = TableCursor.CreateObject(WS.ListObjects(1))
 '
 '>Do Until IC.Eof
 '
@@ -64,7 +64,6 @@ Attribute VB_Exposed = False
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
-Implements IConstructor
 Implements ICursor
 
 Private mLO As ListObject
@@ -86,7 +85,7 @@ End Sub
 '>**Syntax**
 '>
 '>```
-'>Set return = Constructor(New TableCursor, listobject)
+'>Set return = TableCursor.CreateObject(listobject)
 '>```
 '>
 '>**Parameters**
@@ -113,43 +112,22 @@ End Sub
 '>
 '>* None
 '>
-Private Function IConstructor_Instancing(ByRef Args As Collection) As Object
-
-    '引数：WorksheetまたはListObject
-    Select Case Args.Count
-        Case 1
-            Select Case TypeName(Args(1))
-                Case "Worksheet"
-                    Set mWS = Args(1)
-                    Set mLO = mWS.ListObjects(1)
-                Case "ListObject"
-                    Set mLO = Args(1)
-                    Set mWS = mLO.Parent
-                Case Else
-                    Exit Function
-            End Select
-        Case Else
-            Exit Function
-    End Select
+Public Function CreateObject(LO As ListObject) As TableCursor
     
-    If mLO.ListRows.Count > 0 Then
-        'データの最初の行
-        mlngStartRow = mLO.DataBodyRange(1).Row
-        'データの最後の行
-        mlngLastRow = mLO.DataBodyRange(mLO.DataBodyRange.Count).Row
-        'カレント行
-        mlngRow = mlngStartRow
-        
-        SkipHiddenRow
-    Else
-        mlngStartRow = 0
-        mlngLastRow = 0
-        mlngRow = 0
-    End If
+    Dim TC As TableCursor
+    Set TC = New TableCursor
     
-    Set IConstructor_Instancing = Me
-
+    Set TC.ListObject = LO
+    
+    TC.GetCursor.MoveFirst
+    
+    Set CreateObject = TC
+    
 End Function
+Public Property Set ListObject(v As ListObject)
+    Set mLO = v
+    Set mWS = mLO.Parent
+End Property
 '------------------------------------------------------
 ' デストラクタ
 '------------------------------------------------------
@@ -309,6 +287,22 @@ End Property
 '>* ICursor
 '>
 Private Sub ICursor_MoveFirst()
+    
+    If mLO.ListRows.Count > 0 Then
+        'データの最初の行
+        mlngStartRow = mLO.DataBodyRange(1).Row
+        'データの最後の行
+        mlngLastRow = mLO.DataBodyRange(mLO.DataBodyRange.Count).Row
+        'カレント行
+        mlngRow = mlngStartRow
+        
+        SkipHiddenRow
+    Else
+        mlngStartRow = 0
+        mlngLastRow = 0
+        mlngRow = 0
+    End If
+    
     mlngRow = mlngStartRow
     SkipHiddenRow
 End Sub

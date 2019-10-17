@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v1
+' [Hidennotare] v2
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -55,16 +55,6 @@ Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 
-Public Enum NewLineCodeConstants
-    CRLF
-    LF
-    None
-End Enum
-Public Enum EncodeConstants
-    CP932
-    UTF8
-    UTF16LE
-End Enum
 Function ReadAll() As Variant
 
 End Function

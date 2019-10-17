@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v1
+' [Hidennotare] v2
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -104,7 +104,7 @@ Private Function PrivatePlaceHolder(ByVal strMsg As String, ByVal p As Variant) 
     If Not mLang Is Nothing Then
         strMsg = mLang.Trunslate(strMsg)
     Else
-        strMsg = Convert.Unescape(strMsg)
+        strMsg = Core.Unescape(strMsg)
     End If
     
     If UBound(p) >= 0 Then

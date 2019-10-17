@@ -5,11 +5,11 @@ END
 Attribute VB_Name = "CollectionCursor"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = False
+Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v1
+' [Hidennotare] v2
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -42,10 +42,10 @@ Attribute VB_Exposed = False
 '>
 '>カーソル風コレクション読み込みクラス<br>
 '>指定されたコレクションから１アイテムずつ処理を行う。<br>
+'>**このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。**
 '>
 '>**Implements**
 '>
-'>* IConstructor
 '>* ICursor
 '>
 '>**Sample**
@@ -59,7 +59,7 @@ Attribute VB_Exposed = False
 '>Col.Add "3"
 '>
 '>Dim IC As ICursor
-'>Set IC = Constructor(New CollectionCursor, Col)
+'>Set IC = CollectionCursor.CreateObject(Col)
 '>
 '>Do Until IC.Eof
 '>
@@ -78,7 +78,6 @@ Attribute VB_Exposed = False
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
-Implements IConstructor
 Implements ICursor
 
 Private mCol As Collection
@@ -89,7 +88,7 @@ Private mIndex As Long
 '>**Syntax**
 '>
 '>```
-'>Set ret = Constructor(New CollectionCursor, collection)
+'>Set ret = CollectionCursor.CreateObject(collection)
 '>```
 '>
 '>**Parameters**
@@ -116,25 +115,20 @@ Private mIndex As Long
 '>
 '>* None
 '>
-Private Function IConstructor_Instancing(ByRef Args As Collection) As Object
-
-    Const C_COLLECTION As Long = 1
+Public Function CreateObject(col As Collection) As ICursor
     
-    If Args.Count <> 1 Then
-        Exit Function
-    End If
+    Dim CC As CollectionCursor
     
-    If Not TypeOf Args(C_COLLECTION) Is Collection Then
-        Exit Function
-    End If
+    Set CC = New CollectionCursor
+    Set CC.Source = col
+    CC.GetCursor.MoveFirst
     
-    Set mCol = Args(C_COLLECTION)
-
-    ICursor_MoveFirst
-    
-    Set IConstructor_Instancing = Me
+    Set CreateObject = CC
     
 End Function
+Public Property Set Source(v As Collection)
+    Set mCol = v
+End Property
 Private Sub Class_Initialize()
     mIndex = 0
 End Sub
@@ -261,17 +255,9 @@ Private Property Get ICursor_Item(Optional ByVal opt As Variant) As Variant
     
     If ICursor_Eof Then
         'EOF後は最後の値を返す
-        If IsObject(mCol(mCol.Count)) Then
-            Set ICursor_Item = mCol(mCol.Count)
-        Else
-            ICursor_Item = mCol(mCol.Count)
-        End If
+        Core.SetVar(ICursor_Item) = mCol(mCol.Count)
     Else
-        If IsObject(mCol(mIndex)) Then
-            Set ICursor_Item = mCol(mIndex)
-        Else
-            ICursor_Item = mCol(mIndex)
-        End If
+        Core.SetVar(ICursor_Item) = mCol(mIndex)
     End If
 
 End Property

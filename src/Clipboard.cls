@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v1
+' [Hidennotare] v2
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -59,13 +59,13 @@ Attribute VB_Exposed = False
 Option Explicit
 
 'クリップボード関数
-Private Declare PtrSafe Function OpenClipboard Lib "user32" (ByVal hWnd As LongPtr) As Long
-Private Declare PtrSafe Function CloseClipboard Lib "user32" () As Long
-Private Declare PtrSafe Function EmptyClipboard Lib "user32" () As Long
-Private Declare PtrSafe Function GetClipboardData Lib "user32" (ByVal wFormat As Long) As LongPtr
-Private Declare PtrSafe Function SetClipboardData Lib "user32" (ByVal wFormat As Long, ByVal hMem As LongPtr) As LongPtr
+Private Declare PtrSafe Function OpenClipboard Lib "USER32" (ByVal hWnd As LongPtr) As Long
+Private Declare PtrSafe Function CloseClipboard Lib "USER32" () As Long
+Private Declare PtrSafe Function EmptyClipboard Lib "USER32" () As Long
+Private Declare PtrSafe Function GetClipboardData Lib "USER32" (ByVal wFormat As Long) As LongPtr
+Private Declare PtrSafe Function SetClipboardData Lib "USER32" (ByVal wFormat As Long, ByVal hMem As LongPtr) As LongPtr
 Private Declare PtrSafe Function IsClipboardFormatAvailable Lib "user32.dll" (ByVal wFormat As Long) As Long
-Private Declare PtrSafe Function RegisterClipboardFormat Lib "user32" Alias "RegisterClipboardFormatA" (ByVal lpString As String) As Long
+Private Declare PtrSafe Function RegisterClipboardFormat Lib "USER32" Alias "RegisterClipboardFormatA" (ByVal lpString As String) As Long
 Private Declare PtrSafe Function DragQueryFileW Lib "shell32.dll" (ByVal hDrop As LongPtr, ByVal UINT As Long, ByVal lpszFile As LongPtr, ByVal ch As Long) As Long
 
 'グローバルヒープ関数
@@ -75,10 +75,7 @@ Private Declare PtrSafe Function GlobalUnlock Lib "kernel32" (ByVal hMem As Long
 Private Declare PtrSafe Function GlobalSize Lib "kernel32" (ByVal hMem As LongPtr) As LongPtr
 
 'その他関数
-Private Declare PtrSafe Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (destination As Any, source As Any, ByVal Length As LongPtr)
-Private Declare PtrSafe Function OleCreatePictureIndirect Lib "oleaut32" (ByRef lpPictDesc As PICTDESC, ByRef RefIID As GUID, ByVal fPictureOwnsHandle As LongPtr, ByRef IPic As IPicture) As Long
-Private Declare PtrSafe Function CopyImage Lib "user32" (ByVal handle As LongPtr, ByVal un1 As Long, ByVal n1 As Long, ByVal n2 As Long, ByVal un2 As Long) As LongPtr
-Private Declare PtrSafe Sub Sleep Lib "kernel32" (ByVal ms As LongPtr)
+Private Declare PtrSafe Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (destination As Any, Source As Any, ByVal Length As LongPtr)
 
 Private Type POINTAPI
     X As Long
@@ -92,33 +89,11 @@ Private Type DROPFILES
     fWide As Long
 End Type
 
-Private Type PICTDESC
-    cbSizeofStruct As Long
-    picType        As Long
-    hImage         As LongPtr
-    Option1        As LongPtr
-    Option2        As LongPtr
-End Type
-Private Type GUID
-    Data1          As Long
-    Data2          As Integer
-    Data3          As Integer
-    Data4(7)       As Byte
-End Type
-
 Private Const CF_TEXT As Long = 1
 Private Const CF_HDROP As Long = 15
 Private Const CF_BITMAP      As Long = 2
 Private Const CF_PALETTE     As Long = 9
 Private Const CF_UNICODETEXT As Long = 13
-
-Private Const CC_RGBINIT = &H1                '色のデフォルト値を設定
-Private Const CC_LFULLOPEN = &H2              '色の作成を行う部分を表示
-Private Const CC_PREVENTFULLOPEN = &H4        '色の作成ボタンを無効にする
-Private Const CC_SHOWHELP = &H8               'ヘルプボタンを表示
-
-Private Const IMAGE_BITMAP As Long = 0
-Private Const LR_COPYRETURNORG As Long = &H4
 '>---
 '>#### getObjectLink(Clipboard)
 '>
@@ -160,7 +135,7 @@ Private Function getObjectLink() As String
 
     Const MAXSIZE = 4096
     Dim MyString As String
-    Dim size As Long
+    Dim Size As Long
     Dim data() As Byte
     Dim i As Long
   
@@ -171,17 +146,17 @@ Private Function getObjectLink() As String
         
         If hMem <> 0 Then
         
-            size = CLng(GlobalSize(hMem))
+            Size = CLng(GlobalSize(hMem))
             p = GlobalLock(hMem)
             
             If p <> 0 Then
                 
-                ReDim data(0 To size - 1)
-                Call CopyMemory(data(0), ByVal p, size)
+                ReDim data(0 To Size - 1)
+                Call CopyMemory(data(0), ByVal p, Size)
                 
                 Call GlobalUnlock(hMem)
                 
-                For i = 0 To size - 1
+                For i = 0 To Size - 1
                     If data(i) = 0 Then
                         data(i) = &H9
                     End If
@@ -237,106 +212,7 @@ Public Sub ClearClipboard()
     End If
 
 End Sub
-'>---
-'>#### CreatePictureFromClipboard(Clipboard)
-'>
-'>**Syntax**
-'>
-'>```
-'>Set ret = Clipboard.CreatePictureFromClipboard(Object)
-'>```
-'>
-'>**Parameters**
-'>
-'>|Name|Required/Optional|Data type|Description|
-'>---|---|---|---
-'>|Object|必須|Object|ピクチャ化したいシェイプを指定|
-'>
-'>**Return Value**
-'>
-'>|Name|Data type|Description|
-'>---|---|---
-'>|ret|StdPicture|StdPicture オブジェクト|
-'>
-'>**Remarks**
-'>
-'>Picture オブジェクト生成<br>
-'>クリップボードのビットマップデータから Picture オブジェクトを作成する。<br>
-'>
-'>**Example**
-'>
-'>* None
-'>
-'>**See also**
-'>
-'>* None
-'>
-Public Function CreatePictureFromClipboard(o As Object) As StdPicture
-  
-    Dim hImg      As LongPtr
-    Dim hPalette As LongPtr
-    Dim hCopy As LongPtr
-    
-    Dim uPictDesc As PICTDESC
-    Dim uGUID     As GUID
-    
-    Set CreatePictureFromClipboard = Nothing
-  
-    On Error GoTo e
-    
-    'クリップボードの保存
-    If OpenClipboard(0&) <> 0 Then
-        Call EmptyClipboard
-        Call CloseClipboard
-    End If
-    
-    '指定シェイプをビットマップでクリップボードに貼り付け
-10  o.CopyPicture Appearance:=xlScreen, Format:=xlBitmap
 
-    Call CopyClipboardSleep
-        
-    If IsClipboardFormatAvailable(CF_BITMAP) <> 0 Then
-    
-        If OpenClipboard(0&) <> 0 Then
-            
-            hImg = GetClipboardData(CF_BITMAP)
-        
-            If hImg <> 0 Then
-          
-                hCopy = CopyImage(hImg, IMAGE_BITMAP, 0, 0, LR_COPYRETURNORG)
-                
-                With uPictDesc
-                    .cbSizeofStruct = Len(uPictDesc)
-                    .picType = 1
-                    .hImage = hCopy
-                    .Option1 = 0&
-                End With
-                
-                With uGUID
-                    .Data1 = &H20400
-                    .Data4(0) = &HC0
-                    .Data4(7) = &H46
-                End With
-                
-                Call OleCreatePictureIndirect(uPictDesc, uGUID, True, CreatePictureFromClipboard)
-            
-                Call EmptyClipboard
-                
-            End If
-            
-            Call CloseClipboard
-        End If
-        
-    End If
-    
-    'クリップボードの復元
-    Exit Function
-e:
-    If Erl = 10 Then
-        Resume
-    End If
-    
-End Function
 '>---
 '>#### GetCopyClipText(Clipboard)
 '>
@@ -383,7 +259,7 @@ Public Function GetCopyClipText() As String
     Dim files As Long
     Dim i As Long
     Dim strFilePath As String
-    Dim Ret As String
+    Dim ret As String
     Dim SB As StringBuilder
     
     Set SB = New StringBuilder
@@ -713,12 +589,6 @@ Public Sub SetCopyClipText(strBuf() As String)
     If blnErrflg Then Err.Raise 520, TypeName(Me) & ".SetCopyClipText", "not write clipboard."
 
 End Sub
-'------------------------------------------------------------------------------------------------------------------------
-' CopyPictureがJavaアプリやクリップボードツールなどで失敗する対策
-'------------------------------------------------------------------------------------------------------------------------
-Public Sub CopyClipboardSleep()
-    DoEvents
-    Sleep Val(Registry.GetSetting("Option", "ClipboardSleep", 0))
-End Sub
+
 
 

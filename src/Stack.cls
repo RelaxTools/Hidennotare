@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v1
+' [Hidennotare] v2
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -74,11 +74,7 @@ Function Pop() As Variant
     If mCol.Count = 0 Then
         Pop = ""
     Else
-        If IsObject(mCol(mCol.Count)) Then
-            Set Pop = mCol(mCol.Count)
-        Else
-            Pop = mCol(mCol.Count)
-        End If
+        Core.SetVar(Pop) = mCol(mCol.Count)
         mCol.Remove mCol.Count
     End If
 End Function
@@ -89,11 +85,7 @@ Function Peek() As Variant
     If mCol.Count = 0 Then
         Peek = ""
     Else
-        If IsObject(mCol(mCol.Count)) Then
-            Set Peek = mCol(mCol.Count)
-        Else
-            Peek = mCol(mCol.Count)
-        End If
+        Core.SetVar(Peek) = mCol(mCol.Count)
     End If
 End Function
 '----------------------------------------

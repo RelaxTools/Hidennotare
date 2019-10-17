@@ -5,11 +5,11 @@ END
 Attribute VB_Name = "TaskTrayView"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = False
+Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v1
+' [Hidennotare] v2
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -41,6 +41,7 @@ Attribute VB_Exposed = False
 '>**Remarks**
 '>
 '>タスクトレイアイコン表示＆メッセージ<br>
+'>**このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。**
 '>
 '>**Dependent**
 '>
@@ -56,15 +57,14 @@ Attribute VB_Exposed = False
 ' TODO: 64bitでエラーにはならないがで表示されない？
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
-Implements IConstructor
 
 Private hWnd As LongPtr
 Private Declare PtrSafe Function WindowFromAccessibleObject Lib "oleacc" (ByVal obj As Object, hWnd As LongPtr) As LongPtr
 
-Private Declare PtrSafe Function Shell_NotifyIconW Lib "shell32" (ByVal dwMessage As Long, pnid As NOTIFYICONDATAW) As Boolean
-Private Declare PtrSafe Function ExtractIconExW Lib "shell32" (ByVal lpszFile As LongPtr, ByVal nIconIndex As Long, phiconLarge As LongPtr, phiconSmall As LongPtr, ByVal nIcons As Long) As Long
-Private Declare PtrSafe Function DrawMenuBar Lib "user32" (ByVal hWnd As LongPtr) As Long
-Private Declare PtrSafe Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (destination As Any, source As Any, ByVal Length As LongPtr)
+Private Declare PtrSafe Function Shell_NotifyIconW Lib "Shell32" (ByVal dwMessage As Long, pnid As NOTIFYICONDATAW) As Boolean
+Private Declare PtrSafe Function ExtractIconExW Lib "Shell32" (ByVal lpszFile As LongPtr, ByVal nIconIndex As Long, phiconLarge As LongPtr, phiconSmall As LongPtr, ByVal nIcons As Long) As Long
+Private Declare PtrSafe Function DrawMenuBar Lib "USER32" (ByVal hWnd As LongPtr) As Long
+Private Declare PtrSafe Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (destination As Any, Source As Any, ByVal Length As LongPtr)
 
 Private Const CHAR_8  As Long = 8 - 1 '0 to 7
 Private Const WCHAR_64  As Long = 64 * 2 - 1 '0 to 63
@@ -115,27 +115,42 @@ Private Const NIIF_USER = &H4
 Private Const NOTIFYICON_VERSION_4 = 4
 
 Private typ_Icon As NOTIFYICONDATAW '自クラスで管理するアイコンのデータ(構造体)
+
+Private mWindow As Object
+Private mMessage As String
+
 '---------------------------------------------------------------
 ' コンストラクタ
 '---------------------------------------------------------------
-Private Function IConstructor_Instancing(Args As Collection) As Object
-
+Public Function CreateObject(Window As Object, ByVal Message As String) As TaskTrayView
+    
+    Dim TV As TaskTrayView
+    
+    Set TV.Window = Window
+    TV.Message = Message
+    TV.Init
+    
+    Set CreateObject = TV
+    
+End Function
+Public Property Set Window(v As Object)
+    Set mWindow = v
+End Property
+Public Property Let Message(v As String)
+    mMessage = v
+End Property
+Public Sub Init()
+    
     Dim obj As Object
     Dim strMessage As String
 
-    If Args.Count <> 2 Then
-        Exit Function
-    End If
-    
-    Set obj = Args(1)
-    strMessage = Args(2)
+    Set obj = mWindow
+    strMessage = mMessage
 
     WindowFromAccessibleObject obj, hWnd
     AddIcon hWnd, strMessage
-    
-    Set IConstructor_Instancing = Me
 
-End Function
+End Sub
 '---------------------------------------------------------------
 ' デストラクタ
 '---------------------------------------------------------------
@@ -152,7 +167,7 @@ Private Sub AddIcon(ByVal hWnd As LongPtr, ByVal ToolTip As String)
     Dim IconLarge As LongPtr
     Dim IconSmall As LongPtr
     Dim IconIndex As Long
-    Dim Ret As Boolean
+    Dim ret As Boolean
  
     Dim strFile As String
     
@@ -176,9 +191,9 @@ Private Sub AddIcon(ByVal hWnd As LongPtr, ByVal ToolTip As String)
      
     DrawMenuBar hWnd
      
-    Ret = Shell_NotifyIconW(NIM_ADD, typ_Icon)
+    ret = Shell_NotifyIconW(NIM_ADD, typ_Icon)
     
-    If Ret Then
+    If ret Then
     Else
         MsgBox "Shell_NotifyIconW Faild", vbCritical
     End If
@@ -192,7 +207,7 @@ Public Sub ShowBalloon(ByVal Title As String, ByVal Message As String, Optional 
     Dim IconLarge As LongPtr
     Dim IconSmall As LongPtr
     Dim IconIndex As Long
-    Dim Ret As Boolean
+    Dim ret As Boolean
  
     With typ_Icon
         
@@ -209,9 +224,9 @@ Public Sub ShowBalloon(ByVal Title As String, ByVal Message As String, Optional 
         
     End With
     
-    Ret = Shell_NotifyIconW(NIM_MODIFY, typ_Icon)
+    ret = Shell_NotifyIconW(NIM_MODIFY, typ_Icon)
      
-    If Ret Then
+    If ret Then
     Else
         MsgBox "Shell_NotifyIconW Faild", vbCritical
     End If

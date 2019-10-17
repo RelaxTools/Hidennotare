@@ -2,14 +2,14 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "JSON"
+Attribute VB_Name = "Parser"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v1
+' [Hidennotare] v2
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -36,7 +36,7 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-'>### JSON クラス
+'>### Parser クラス
 '>
 '>**Remarks**
 '>
@@ -58,17 +58,16 @@ Attribute VB_Exposed = False
 '>* Convert
 '>* ICursor
 '>* CharCursor
-'>* IConstructor
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 '>---
-'>#### ParseJSON(JSON)
+'>#### ParseJSON(Parser)
 '>
 '>**Syntax**
 '>
 '>```
-'>Set ret = JSON.ParseJSON(strJSON, [obj = Nothing])
+'>Set ret = Parser.ParseJSON(strJSON, [obj = Nothing])
 '>```
 '>
 '>**Parameters**
@@ -119,7 +118,7 @@ Option Explicit
 '>
 Public Function ParseJSON(ByVal strJSON As String, Optional ByRef obj As Object = Nothing) As Object
 
-    Dim PL As PairLoggerInfo: Set PL = Constructor(New PairLoggerInfo, TypeName(Me) & ".ParseJSON")
+    Dim PL As PairLoggerInfo: Set PL = PairLoggerInfo.CreateObject(TypeName(Me) & ".ParseJSON")
     
     Dim Level As Long
     
@@ -146,7 +145,7 @@ Private Function ParseObject(ByVal strJSON As String, obj As Object, ByVal Level
     Dim lineBreak As Boolean
     Dim SB As StringBuilder
     
-    If Not StringHelper.StartsWith(strJSON, "{") Or Not StringHelper.EndsWith(strJSON, "}") Then
+    If Not Core.StartsWith(strJSON, "{") Or Not Core.EndsWith(strJSON, "}") Then
         Err.Raise 512 + 1, TypeName(Me) & ".ParseObject", "JSONFormatError"
     End If
     
@@ -157,22 +156,22 @@ Private Function ParseObject(ByVal strJSON As String, obj As Object, ByVal Level
         
         'Default
         Case obj Is Nothing
-            Set objJObj = Core.GetNewInstance(New Dictionary)
+            Set objJObj = CoreEx.GetNewInstance(New Dictionary)
         
         'ネストレベル指定
         Case TypeOf obj Is Collection
-            Set objJObj = Core.GetNewInstance(obj(Level))
+            Set objJObj = CoreEx.GetNewInstance(obj(Level))
         
         '直接指定
         Case Else
-            Set objJObj = Core.GetNewInstance(obj)
+            Set objJObj = CoreEx.GetNewInstance(obj)
     
     End Select
     
     strJSON = Mid$(strJSON, 2, Len(strJSON) - 2)
     
     Dim IC As ICursor
-    Set IC = Constructor(New CharCursor, strJSON)
+    Set IC = CharCursor.CreateObject(strJSON)
     
     Do Until IC.Eof
         
@@ -188,7 +187,7 @@ Private Function ParseObject(ByVal strJSON As String, obj As Object, ByVal Level
                     
                     If Len(propertyName) > 0 Then
                         
-                        CastICompatibleProperty(objJObj).SetProperty propertyName, ParseString(StringExtraction(IC))
+                        CoreEx.CastICompatibleProperty(objJObj).SetProperty propertyName, ParseString(StringExtraction(IC))
                         propertyName = ""
                     
                     Else
@@ -205,13 +204,13 @@ Private Function ParseObject(ByVal strJSON As String, obj As Object, ByVal Level
                 Case "["
                     
                     '下位レベルのパース（Array)
-                    CastICompatibleProperty(objJObj).SetProperty propertyName, ParseArray(ElementExtraction(IC), obj, Level)
+                    CoreEx.CastICompatibleProperty(objJObj).SetProperty propertyName, ParseArray(ElementExtraction(IC), obj, Level)
                     propertyName = ""
                     
                 Case "{"
                     
                     '下位レベルのパース（Object)
-                    CastICompatibleProperty(objJObj).SetProperty propertyName, ParseObject(ElementExtraction(IC), obj, Level)
+                    CoreEx.CastICompatibleProperty(objJObj).SetProperty propertyName, ParseObject(ElementExtraction(IC), obj, Level)
                     propertyName = ""
                 
                 Case " ", vbTab, vbCr, vbLf, vbCrLf
@@ -235,7 +234,7 @@ Private Function ParseObject(ByVal strJSON As String, obj As Object, ByVal Level
                 Exit Function
             End If
             
-            CastICompatibleProperty(objJObj).SetProperty propertyName, ParseValue(SB.ToString)
+            CoreEx.CastICompatibleProperty(objJObj).SetProperty propertyName, ParseValue(SB.ToString)
             
         End If
     
@@ -253,7 +252,7 @@ Private Function ParseArray(strJSON As String, obj As Object, ByVal Level As Lon
     Dim lineBreak As Boolean
     Dim SB As StringBuilder
     
-    If Not StringHelper.StartsWith(strJSON, "[") Or Not StringHelper.EndsWith(strJSON, "]") Then
+    If Not Core.StartsWith(strJSON, "[") Or Not Core.EndsWith(strJSON, "]") Then
         Err.Raise 512 + 1, TypeName(Me) & ".ParseArray", "JSONFormatError"
         Exit Function
     End If
@@ -263,13 +262,13 @@ Private Function ParseArray(strJSON As String, obj As Object, ByVal Level As Lon
     Select Case True
         
         Case obj Is Nothing
-            Set objAry = Core.GetNewInstance(New ArrayList)
+            Set objAry = CoreEx.GetNewInstance(New ArrayList)
         
         Case TypeOf obj Is Collection
-            Set objAry = Core.GetNewInstance(obj(Level))
+            Set objAry = CoreEx.GetNewInstance(obj(Level))
         
         Case Else
-            Set objAry = Core.GetNewInstance(obj)
+            Set objAry = CoreEx.GetNewInstance(obj)
     
     End Select
     
@@ -277,7 +276,7 @@ Private Function ParseArray(strJSON As String, obj As Object, ByVal Level As Lon
     strJSON = Mid$(strJSON, 2, Len(strJSON) - 2)
     
     Dim IC As ICursor
-    Set IC = Constructor(New CharCursor, strJSON)
+    Set IC = CharCursor.CreateObject(strJSON)
     
     Do Until IC.Eof
     
@@ -330,7 +329,7 @@ End Function
 '-------------------------------------------------
 Private Function StringExtraction(ByRef IC As ICursor) As String
     
-    Dim buffer As String
+    Dim Buffer As String
     Dim doubleQuat As Long
     
     Dim SB As StringBuilder
@@ -415,7 +414,7 @@ End Function
 '---------------------------------------------------------------------
 Private Function ParseString(strJSON As String) As String
     
-    If Not StringHelper.StartsWith(strJSON, """") Or Not StringHelper.EndsWith(strJSON, """") Then
+    If Not Core.StartsWith(strJSON, """") Or Not Core.EndsWith(strJSON, """") Then
         Err.Raise 512 + 1, TypeName(Me) & ".ParseString", "JSONFormatError"
         Exit Function
     End If
@@ -424,7 +423,7 @@ Private Function ParseString(strJSON As String) As String
     strJSON = Mid$(strJSON, 2, Len(strJSON) - 2)
     
     '文字列のUnEscape
-    ParseString = Convert.Unescape(strJSON)
+    ParseString = Core.Unescape(strJSON)
 
 End Function
 '---------------------------------------------------------------------
@@ -453,4 +452,332 @@ Private Function ParseValue(ByVal strJSON As String) As Variant
 
 End Function
 
+
+'>---
+'>#### ParseFromListbox(Parser)
+'>
+'>**Syntax**
+'>
+'>```
+'>Set ret = Parser.ParseFromListbox(objList,[obj = Nothing])
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|objList|必須|Object|Parseする ListBox or ComboBox を指定|
+'>|obj|省略可|Object|レコードに使用するオブジェクトを指定。省略時は Dictionary |
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|ret|Boolean|新しいインスタンス(ArrayList)|
+'>
+'>
+'>**Remarks**
+'>
+'>ListBox/ComboBox パース<br>
+'>ListBox/ComboBoxからArrayList(レコードはDictionary)を生成する。<br>
+'>Tagにレコードを生成するためのフィールド名リスト（カンマ区切り）が必須。<br>
+'>レコードに使用するオブジェクトは INewInstance と ICompatibleProperty を Implements したクラスであること。
+'>
+'>**Example**
+'>
+'>```
+'>    'これはコードではなくプロパティウィンドウで設定しても良い
+'>    lstFavorite.Tag = "No,Name,Address"
+'>
+'>    Dim lst As IList
+'>    Set lst = Parser.ParseFromListbox(lstFavorite, New FavoriteBean)
+'>
+'>```
+'>
+'>**See also**
+'>
+'>* Parser.CopyToListbox
+'>* Dictionary
+'>* INewInstance
+'>* ICompatibleProperty
+'>
+Public Function ParseFromListbox(objList As Object, Optional obj As Object = Nothing) As IList
+
+    Dim ary As IList
+    Dim objRec As Object
+    Dim Fields As Variant
+    Dim i As Long
+    Dim j As Long
+    
+    'Tagにフィールド情報が無い場合
+    If objList.Tag = "" Then
+        Err.Raise 512 + 1, TypeName(Me) & ".ParseFromListbox", "Item name is not set in tag"
+    End If
+    
+    '配列に変換
+    Fields = Split(objList.Tag, ",")
+    
+    '引数によりインスタンス化するオブジェクトを判定
+    Select Case True
+        Case obj Is Nothing
+            Set ary = New ArrayList
+        Case Else
+            If TypeOf obj Is Collection Then
+                Set ary = CoreEx.GetNewInstance(obj(1))
+            Else
+                Set ary = New ArrayList
+            End If
+    End Select
+        
+    For i = 0 To objList.ListCount - 1
+        
+        '引数によりインスタンス化するオブジェクトを判定
+        Select Case True
+            Case obj Is Nothing
+                Set objRec = New Dictionary
+            Case Else
+                If TypeOf obj Is Collection Then
+                    Set objRec = CoreEx.GetNewInstance(obj(2))
+                Else
+                    Set objRec = CoreEx.GetNewInstance(obj)
+                End If
+        End Select
+        
+        For j = 0 To objList.ColumnCount - 1
+        
+            '設定されているフィールドのみコピーする。
+            If Fields(j) <> "" Then
+                CoreEx.CastICompatibleProperty(objRec).SetProperty Fields(j), objList.List(i, j)
+            End If
+        Next
+            
+        ary.Add objRec
+    
+    Next
+
+    Set ParseFromListbox = ary
+
+End Function
+'>---
+'>#### ParseFromListObject(Parser)
+'>
+'>**Syntax**
+'>
+'>```
+'>Set ret = Parser.ParseFromListObject(objList,[obj = Nothing])
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|objList|必須|Listobject|Parseする Listobject を指定|
+'>|obj|省略可|Object|レコードに使用するオブジェクトを指定。省略時は Dictionary |
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|ret|Boolean|新しいインスタンス(ArrayList)|
+'>
+'>**Remarks**
+'>
+'>ListObject パース<br>
+'>ListobjectからArrayList(レコードはDictionary)を生成する。<br>
+'>ListObject(テーブル)の列ヘッダの情報が必須<br>
+'>レコードに使用するオブジェクトは INewInstance と ICompatibleProperty を Implements したクラスであること。
+'>
+'>**Example**
+'>
+'>```
+'>Sub ArrayList_ParseFromListObject_Sample()
+'>
+'>    Dim lst As IList
+'>    Dim dic As IDictionary
+'>    Dim Key As Variant
+'>
+'>    Set lst = Parser.ParseFromListObject(ActiveSheet.ListObjects(1))
+'>
+'>    For Each dic In lst
+'>
+'>        For Each Key In dic.Keys
+'>
+'>            Debug.Print dic.Item(Key)
+'>
+'>        Next
+'>
+'>    Next
+'>
+'>    Dim a As ArrayList
+'>
+'>    Set a = lst
+'>
+'>    a.CopyToListObject ActiveSheet.ListObjects(2)
+'>
+'>End Sub
+'>
+'>```
+'>
+'>**See also**
+'>
+'>* Parser.CopyToListObject
+'>* Dictionary
+'>* INewInstance
+'>* ICompatibleProperty
+'>
+Public Function ParseFromListObject(LO As ListObject, Optional obj As Object = Nothing) As IList
+
+    Dim lst As IList
+    Dim objRec As Object
+    Dim i As Long
+    Dim j As Long
+    
+    '引数によりインスタンス化するオブジェクトを判定
+    Select Case True
+        Case obj Is Nothing
+            Set lst = New ArrayList
+        Case Else
+            If TypeOf obj Is Collection Then
+                Set lst = CoreEx.GetNewInstance(obj(1))
+            Else
+                Set lst = New ArrayList
+            End If
+    End Select
+        
+    For i = 1 To LO.DataBodyRange.Rows.Count
+        
+        '引数によりインスタンス化するオブジェクトを判定
+        Select Case True
+            Case obj Is Nothing
+                Set objRec = New Dictionary
+            Case Else
+                If TypeOf obj Is Collection Then
+                    Set objRec = CoreEx.GetNewInstance(obj(2))
+                Else
+                    Set objRec = CoreEx.GetNewInstance(obj)
+                End If
+        End Select
+        
+        For j = 1 To LO.HeaderRowRange.Columns.Count
+        
+            CoreEx.CastICompatibleProperty(objRec).SetProperty LO.HeaderRowRange(, j).Value, LO.DataBodyRange.Cells(i, j).Value
+        Next
+    
+        lst.Add objRec
+    
+    Next
+
+    Set ParseFromListObject = lst
+
+End Function
+'--------------------------------------------------------------
+' CSVパーサー RFC4180準拠
+' コーテーションの有無, デリミタ指定あり
+'--------------------------------------------------------------
+Public Function ParseCsv(ByVal strBuf As String, Optional ByVal Quatation As Boolean = False, Optional ByVal Delimiter As String = ",") As Collection
+
+    Const C_QUAT As String = """"
+    Dim IC As ICursor
+    Dim sw As Boolean
+    Dim blnLineBreak As Boolean
+    Dim blnItemBreak As Boolean
+    Dim col As Collection
+    Dim Row As Collection
+    Dim lngQuot As Long
+    
+    lngQuot = 0
+    
+    sw = False
+    
+    Set Row = New Collection
+    
+    Set IC = CharCursor.CreateObject(strBuf)
+    Do Until IC.Eof
+        
+        '初期化
+        Set col = New Collection
+        blnLineBreak = False
+
+        Do Until IC.Eof Or blnLineBreak
+        
+            '初期化
+            Dim SB As StringBuilder
+            Set SB = New StringBuilder
+            blnItemBreak = False
+            
+            Do Until IC.Eof Or blnLineBreak Or blnItemBreak
+
+                Select Case IC.Item
+                    Case C_QUAT
+
+                        'コーテーションありの場合
+                        If Quatation Then
+
+                            lngQuot = lngQuot + 1
+
+                            If sw Then
+
+                                '次の文字がQuatation
+                                If IC.Item(1) = C_QUAT Then
+                                    lngQuot = lngQuot + 1
+                                    SB.Append C_QUAT
+                                    IC.MoveNext
+                                Else
+                                    sw = False
+                                End If
+
+                            Else
+                                sw = True
+                            End If
+                        End If
+
+                    Case vbCr
+
+                        If sw Then
+                            SB.Append IC.Item
+                        End If
+
+                    Case vbLf
+
+                        If sw Then
+                            SB.Append IC.Item
+                        Else
+                            blnLineBreak = True
+                        End If
+
+                    Case Delimiter
+
+                        If sw Then
+                            SB.Append IC.Item
+                        Else
+                            blnItemBreak = True
+                        End If
+
+                    Case Else
+
+                        SB.Append IC.Item
+
+                End Select
+            
+                IC.MoveNext
+            Loop
+            
+            '列追加処理
+            col.Add SB.ToString
+            
+        Loop
+        
+        '行追加処理
+        Row.Add col
+        
+    Loop
+    
+    'ダブルコーテーションが偶数ではない場合
+    If lngQuot Mod 2 <> 0 Then
+        Err.Raise 512 + 1, TypeName(Me) & ".CsvParser", "Invalid Format(Quotation)"
+    End If
+    
+    Set ParseCsv = Row
+    
+End Function
 

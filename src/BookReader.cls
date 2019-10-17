@@ -5,11 +5,11 @@ END
 Attribute VB_Name = "BookReader"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = False
+Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v1
+' [Hidennotare] v2
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -43,11 +43,12 @@ Attribute VB_Exposed = False
 '>ブック参照／編集クラス<br>
 '>With で使用しブックのオープン。End With でクローズ。<br>
 '>別プロセスのExcelで使用する場合はApplicationオブジェクトを渡す。<br>
-'>With Constructor(New BookReader, ファイル名, 読み取り専用, Applicationオブジェクト)<br>
+'>With BookReader.CreateObject(ファイル名, 読み取り専用, Applicationオブジェクト)<br>
+'>**このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。**
 '>
 '>**Dependent**
 '>
-'>* IConstructor
+'>* None
 '>
 '>**History**
 '>
@@ -57,15 +58,12 @@ Attribute VB_Exposed = False
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
-Implements IConstructor
-
-Public Enum BookReaderConstants
-    None = 0
-    SetA1
-End Enum
 
 Private XL As Excel.Application
 Private WB As Workbook
+
+Private mBookName As String
+Private mReadOnly As Boolean
 
 Private mOpen As Boolean
 Private mSheetPos As Long
@@ -82,10 +80,9 @@ End Sub
 '>**Syntax**
 '>
 '>```
-'>Set ret Constructor(New BookReader,
-'>                    FileName,
-'>                    [Readonly = True],
-'>                    [Application = Excel.Application])
+'>Set ret = BookReader.CreateObject(FileName,
+'>                                 [Readonly = True],
+'>                                 [Application = Excel.Application])
 '>```
 '>
 '>**Parameters**
@@ -115,7 +112,7 @@ End Sub
 '>
 '>strFile = "C:\Test.xlsx"
 '>
-'>With Constructor(New BookReader, strFile)
+'>With BookReader.CreateObject(strFile)
 '>
 '>    For Each WS In .VisibleSheets
 '>
@@ -130,38 +127,39 @@ End Sub
 '>
 '>* None
 '>
-Private Function IConstructor_Instancing(ByRef Args As Collection) As Object
-
-    Dim strBook As String
-    Dim blnReadOnly As Boolean
-
-    Select Case Args.Count
-        Case 1
-            If TypeOf Args(1) Is Workbook Then
-                Set WB = Args(1)
-            Else
-                strBook = Args(1)       'Book Name
-                blnReadOnly = True      'Read Only
-                Set XL = Application    'Excel Application
-                Call OpenFile(strBook, blnReadOnly)
-            End If
-        Case 2
-            strBook = Args(1)       'Book Name
-            blnReadOnly = Args(2)   'Read Only
-            Set XL = Application    'Excel Application
-            Call OpenFile(strBook, blnReadOnly)
-        Case 3
-            strBook = Args(1)       'Book Name
-            blnReadOnly = Args(2)   'Read Only
-            Set XL = Args(3)        'Excel Application
-            Call OpenFile(strBook, blnReadOnly)
-        Case Else
-            Exit Function
-    End Select
+Public Function CreateObject(ByVal BookName As String, Optional ByVal ReadOnly As Boolean = True, Optional App As Application = Nothing) As BookReader
     
-    Set IConstructor_Instancing = Me
+    Dim BR As BookReader
+    
+    Set BR = New BookReader
+    
+    BR.BookName = BookName
+    BR.ReadOnly = ReadOnly
+    
+    If App Is Nothing Then
+        Set BR.Application = Excel.Application
+    Else
+        Set BR.Application = App
+    End If
+    
+    BR.Init
+    
+    Set CreateObject = BR
 
 End Function
+Public Property Let BookName(ByVal v As String)
+    mBookName = v
+End Property
+Public Property Let ReadOnly(ByVal v As Boolean)
+    mReadOnly = v
+End Property
+Public Property Set Application(v As Application)
+    Set XL = v
+End Property
+Public Sub Init()
+    OpenFile
+End Sub
+
 '>---
 '>#### VisibleSheets
 '>
@@ -212,20 +210,20 @@ End Property
 '-------------------------------------------------
 '  ブック Open
 '-------------------------------------------------
-Private Sub OpenFile(ByVal strBook As String, ByVal blnReadOnly As Boolean)
+Private Sub OpenFile()
 
-    If Not FileIO.FileExists(strBook) Then
-        Err.Raise 512 + 1, TypeName(Me) & ".OpenFile", "not exists file. (" & strBook & ")"
+    If Not FileIO.FileExists(mBookName) Then
+        Err.Raise 512 + 1, TypeName(Me) & ".OpenFile", "not exists file. (" & mBookName & ")"
     End If
 
     Dim objWB As Workbook
     For Each objWB In XL.Workbooks
-        If LCase(objWB.FullName) = LCase(strBook) Then
-            Err.Raise 512 + 1, TypeName(Me) & ".OpenFile", "already opened excel file. (" & strBook & ")"
+        If LCase(objWB.FullName) = LCase(mBookName) Then
+            Err.Raise 512 + 1, TypeName(Me) & ".OpenFile", "already opened excel file. (" & mBookName & ")"
         End If
     Next
     
-    Set WB = XL.Workbooks.Open(FileName:=strBook, ReadOnly:=blnReadOnly, UpdateLinks:=0, IgnoreReadOnlyRecommended:=True, notify:=False, local:=True)
+    Set WB = XL.Workbooks.Open(FileName:=mBookName, ReadOnly:=mReadOnly, UpdateLinks:=0, IgnoreReadOnlyRecommended:=True, notify:=False, local:=True)
     If XL.visible Then
         WB.Application.WindowState = xlMinimized
         DoEvents
@@ -253,14 +251,14 @@ End Sub
 '>**Syntax**
 '>
 '>```
-'>object.Save([opt = BookReaderConstants.None])
+'>object.Save([opt = False])
 '>```
 '>
 '>**Parameters**
 '>
 '>|Name|Required/Optional|Data type|Description|
 '>---|---|---|---
-'>|opt|必須|String|保存時にカーソルをA1にする。:BookReaderConstants.SetA1に設定<br>なし:BookReaderConstants.None<br>デフォルト:なし|
+'>|opt|必須|String|保存時にカーソルをA1にする。:True<br>なし:False<br>デフォルト:なし|
 '>
 '>**Return Value**
 '>
@@ -278,11 +276,11 @@ End Sub
 '>
 '>* None
 '>
-Public Sub Save(Optional ByVal opt As BookReaderConstants = BookReaderConstants.None)
+Public Sub Save(Optional ByVal opt As Boolean = False)
     
     If Not WB.ReadOnly Then
         'お作法
-        If opt = BookReaderConstants.SetA1 Then
+        If opt Then
             setAllA1
         End If
         

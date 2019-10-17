@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v1
+' [Hidennotare] v2
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -129,7 +129,7 @@ End Type
 ' Inisialize
 '--------------------------------------------------------------
 Private Sub Class_Initialize()
-    Set FSO = CreateObject("Scripting.FileSystemObject")
+    Set FSO = VBA.CreateObject("Scripting.FileSystemObject")
 End Sub
 '--------------------------------------------------------------
 ' Terminate
@@ -395,7 +395,7 @@ Public Property Get AppDataFolder() As String
     
     With FSO
     
-        strFolder = .BuildPath(CreateObject("Wscript.Shell").SpecialFolders("AppData"), Title)
+        strFolder = .BuildPath(VBA.CreateObject("Wscript.Shell").SpecialFolders("AppData"), Title)
         
         If .FolderExists(strFolder) Then
         Else
@@ -538,7 +538,7 @@ Public Sub FileSearchEx(ByVal strPath As String, _
                Optional ByVal NaturalSort As Boolean = True, _
                Optional ByVal varExcludedFolder As Variant = "")
 
-'    Dim PL As PairLogger: Set PL = Constructor(New PairLogger, TypeName(Me) & ".FileSearchEx")
+'    Dim PL As PairLogger: Set PL = PairLogger.CreateObject(TypeName(Me) & ".FileSearchEx")
 
     Dim v As Variant
     Dim udtWin32FindData        As WIN32_FIND_DATA      '[WIN32_FIND_DATA]構造体(検索結果)
@@ -1269,7 +1269,7 @@ End Function
 '>
 Public Sub SetMyDocument()
     On Error Resume Next
-    ChDir CreateObject("Wscript.Shell").SpecialFolders("MyDocuments")
+    ChDir VBA.CreateObject("Wscript.Shell").SpecialFolders("MyDocuments")
 End Sub
 '>---
 '>#### DriveToUNC(FileIO)
@@ -1369,7 +1369,7 @@ End Function
 '>
 Public Sub OpenFolder(ByVal strFolder As String)
 
-    With CreateObject("WScript.Shell")
+    With VBA.CreateObject("WScript.Shell")
         .Run ("""" & strFolder & """")
     End With
     
@@ -1454,7 +1454,7 @@ End Sub
 '>
 '>* None
 '>
-Public Sub CopyFile(ByVal source As String, _
+Public Sub CopyFile(ByVal Source As String, _
                     ByVal destination As String, _
            Optional ByVal keepTimestamp As Boolean = False)
     
@@ -1469,10 +1469,10 @@ Public Sub CopyFile(ByVal source As String, _
     With FSO
         
         '検索フルパス名を生成
-        If source Like "\\*" Then
-            strSeachFullPath = "\\?\UNC\" & Mid$(source, 3)
+        If Source Like "\\*" Then
+            strSeachFullPath = "\\?\UNC\" & Mid$(Source, 3)
         Else
-            strSeachFullPath = "\\?\" & source
+            strSeachFullPath = "\\?\" & Source
         End If
         
         '文字列に一致するファイルを検索し、WIN32_FIND_DATA構造体に値を代入
@@ -1499,7 +1499,7 @@ Public Sub CopyFile(ByVal source As String, _
             End Select
                 
             Dim strFullSource As String
-            strFullSource = FileIO.BuildPath(FileIO.GetParentFolderName(source), strFile)
+            strFullSource = FileIO.BuildPath(FileIO.GetParentFolderName(Source), strFile)
             
             'タイムスタンプ取得
             If keepTimestamp Then
@@ -1803,6 +1803,47 @@ Public Sub CreateFolderImage(ByVal strSource As String, ByVal strDest As String)
     End With
 
 End Sub
+'>---
+'>#### MoveFolder(FileIO)
+'>
+'>**Syntax**
+'>
+'>```
+'>FileIO.MoveFolder(source, destination)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|source|必須|String|移動元フォルダ|
+'>|destination|必須|移動先フォルダ|
+'>
+'>**Return Value**
+'>
+'>* None
+'>
+'>**Remarks**
+'>
+'>フォルダの移動<br>
+'>指定フォルダを移動する<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* None
+'>
+Sub MoveFolder(ByVal Source As String, ByVal destination As String)
+
+    With FSO
+        .MoveFolder Source, destination
+    End With
+
+End Sub
+
 'アプリケーション名取得
 Private Property Get Title() As String
     Title = ThisWorkbook.BuiltinDocumentProperties("Title").Value

@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v1
+' [Hidennotare] v2
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -40,10 +40,11 @@ Attribute VB_Exposed = False
 '>
 '>**Remarks**
 '>
-'>- このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。
 '>- Collection をベースに実装しているが、添字は0からなので注意。
 '>- 行途中の追加、削除に強いですが、添え字によるランダムアクセスの弱いです。
 '>- 通常使用するメソッドはほとんど IList インターフェイス側にあるので IList の変数に代入して使うことになります。
+'>- ICursor インターフェースに対応しており他の ICursor I/F と同様にループ可能。
+'>**このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。**
 '>
 '>**Collection と LinkedList との比較**
 '>
@@ -61,7 +62,6 @@ Attribute VB_Exposed = False
 '>**Implements**
 '>* IList
 '>* ICursor
-'>* IConstructor
 '>* INewInstance
 '>
 '>**Sample**
@@ -72,14 +72,13 @@ Attribute VB_Exposed = False
 '> Set list = New LinkedList
 '>
 '> Dim list As IList
-'> Set list = Constructor(New LinkedList, コレクション)
+'> Set list = LinkedList.CreateObject(コレクション)
 '>
 '> Dim list As IList
-'> Set list = Constructor(New LinkedList, １次元配列)
+'> Set list = LinkedList.CreateObject(１次元配列)
 '>```
 '>**Dependent**
 '>
-'>* IConstructor
 '>* ICursor
 '>* IList
 '>* INewInstance
@@ -92,7 +91,6 @@ Attribute VB_Exposed = False
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
-Implements IConstructor
 Implements ICursor
 Implements IList
 Implements INewInstance
@@ -118,7 +116,7 @@ End Sub
 '>**Syntax**
 '>
 '>```
-'>Set ret = Constructor(New LinkedList, collection)
+'>Set ret = LinkedList.CreateObject(collection)
 '>```
 '>
 '>**Parameters**
@@ -151,7 +149,7 @@ End Sub
 '>**Syntax**
 '>
 '>```
-'>Set ret = Constructor(New LinkedList, Array)
+'>Set ret = LinkedList.CreateObject(Array)
 '>```
 '>
 '>**Parameters**
@@ -178,506 +176,76 @@ End Sub
 '>
 '>* None
 '>
-Private Function IConstructor_Instancing(ByRef Args As Collection) As Object
+Public Function CreateObject(ParamArray Args() As Variant) As IList
 
+    Dim cnt As Long
+    Dim lngValue As Long
+    Dim lngMin As Long
+    Dim lngMax As Long
+    Dim lngCount As Long
+    Dim var As Variant
     Dim v As Variant
     Dim i As Long
     
-    Select Case Args.Count
-        
-        '引数なし
+    var = Args
+    
+    lngMin = 0
+    lngMax = -1
+    
+    Dim IL As IList
+    
+    If Core.TryLBound(var, lngValue) Then
+        lngMin = lngValue
+    End If
+    
+    If Core.TryUBound(var, lngValue) Then
+        lngMax = lngValue
+    End If
+    
+    lngCount = lngMax + 1
+
+    Set IL = New LinkedList
+    IL.Clear
+    
+    Select Case lngCount
         Case 0
-        
-        '引数１個
         Case 1
+        
             Select Case True
                 
                 'コレクションからの変換
-                Case TypeOf Args(1) Is Collection
-                    Call IList_Clear
-                    Set mCol = Args(1)
+                Case TypeOf Args(0) Is Collection
+                    
+                    IL.Clear
+                    For Each v In Args(0)
+                        IL.Add v
+                    Next
                 
                 '１次元配列からの変換
-                Case IsArray(Args(1))
-                    Call IList_Clear
-                    For i = LBound(Args(1)) To UBound(Args(1))
-                        mCol.Add Args(1)(i)
+                Case IsArray(Args(0))
+                
+                    For Each v In Args(0)
+                        IL.Add v
                     Next
+                
                 Case Else
-                    'エラー
-                    Exit Function
-            End Select
-        
-        '引数からの追加
-        Case Else
-            Call IList_Clear
-            For Each v In Args
-                mCol.Add v
-            Next
-    End Select
-    
-    Set IConstructor_Instancing = Me
-    
-End Function
-'>---
-'>#### ParseFromListbox(LinkedList)
-'>
-'>**Syntax**
-'>
-'>```
-'>Set ret = LinkedList.ParseFromListbox(objList,[obj = Nothing])
-'>```
-'>
-'>**Parameters**
-'>
-'>|Name|Required/Optional|Data type|Description|
-'>---|---|---|---
-'>|objList|必須|Object|Parseする ListBox or ComboBox を指定|
-'>|obj|省略可|Object|レコードに使用するオブジェクトを指定。省略時は Dictionary |
-'>
-'>**Return Value**
-'>
-'>|Name|Data type|Description|
-'>---|---|---
-'>|ret|Boolean|新しいインスタンス(LinkedList)|
-'>
-'>
-'>**Remarks**
-'>
-'>ListBox/ComboBox パース<br>
-'>ListBox/ComboBoxからLinkedList(レコードはDictionary)を生成する。<br>
-'>Tagにレコードを生成するためのフィールド名リスト（カンマ区切り）が必須。<br>
-'>レコードに使用するオブジェクトは INewInstance と ICompatibleProperty を Implements したクラスであること。
-'>
-'>**Example**
-'>
-'>```
-'>    'これはコードではなくプロパティウィンドウで設定しても良い
-'>    lstFavorite.Tag = "No,Name,Address"
-'>
-'>    Dim lst As IList
-'>    Set lst = LinkedList.ParseFromListbox(lstFavorite, New FavoriteBean)
-'>
-'>```
-'>
-'>**See also**
-'>
-'>* LinkedList.CopyToListbox
-'>* Dictionary
-'>* INewInstance
-'>* ICompatibleProperty
-'>
-Public Function ParseFromListbox(objList As Object, Optional obj As Object = Nothing) As IList
-
-    Dim ary As IList
-    Dim objRec As Object
-    Dim Fields As Variant
-    Dim i As Long
-    Dim j As Long
-    
-    'Tagにフィールド情報が無い場合
-    If objList.Tag = "" Then
-        Err.Raise 512 + 1, TypeName(Me) & ".ParseFromListbox", "Item name is not set in tag"
-    End If
-    
-    '配列に変換
-    Fields = Split(objList.Tag, ",")
-    
-    '1次元目はLinkedList固定
-    Set ary = New LinkedList
-        
-    For i = 0 To objList.ListCount - 1
-        
-        '引数によりインスタンス化するオブジェクトを判定
-        Select Case True
-            Case obj Is Nothing
-                Set objRec = Core.GetNewInstance(New Dictionary)
-            Case Else
-                Set objRec = Core.GetNewInstance(obj)
-        End Select
-        
-        For j = 0 To objList.ColumnCount - 1
-        
-            '設定されているフィールドのみコピーする。
-            If Fields(j) <> "" Then
-                Core.CastICompatibleProperty(objRec).SetProperty Fields(j), objList.List(i, j)
-            End If
-        Next
+                
+                    IL.Add Args(0)
             
-        ary.Add objRec
+            End Select
+            
+        Case Else
+            
+            For i = lngMin To lngMax
+                IL.Add Args(i)
+            Next
     
-    Next
+    End Select
 
-    Set ParseFromListbox = ary
+    Set CreateObject = IL
 
 End Function
-'>---
-'>#### CopyToListbox(LinkedList)
-'>
-'>**Syntax**
-'>
-'>```
-'>LinkedList.CopyToListbox objList
-'>```
-'>
-'>**Parameters**
-'>
-'>|Name|Required/Optional|Data type|Description|
-'>---|---|---|---
-'>|objList|必須|Object|copyする ListBox or ComboBox を指定|
-'>
-'>**Return Value**
-'>
-'>* None
-'>
-'>**Remarks**
-'>
-'>ListBox/ComboBox へコピー<br>
-'>LinkedListの内容をListBox/ComboBoxにコピーする。<br>
-'>ListBox/ComboBoxのTagにLinkedListのレコードを対応づけるフィールド名リスト（カンマ区切り）が必須。<br>
-'>レコードに使用するオブジェクトは INewInstance と ICompatibleProperty を Implements したクラスであること。
-'>
-'>**Example**
-'>
-'>```
-'>    'これはコードではなくプロパティウィンドウで設定しても良い
-'>    lstFavorite.Tag = "No,Name,Address"
-'>
-'>    LinkedList.CopyToListbox lstFavorite
-'>
-'>```
-'>
-'>**See also**
-'>
-'>* LinkedList.ParseFromListbox
-'>* Dictionary
-'>* INewInstance
-'>* ICompatibleProperty
-'>
-Public Sub CopyToListbox(objList As Object)
 
-    Dim ary As IList
-    Dim objRec As Object
-    Dim Fields As Variant
-    Dim v As Variant
-
-    'Tagにフィールド情報が無い場合
-    If objList.Tag = "" Then
-        Err.Raise 512 + 1, TypeName(Me) & ".CopyToListbox", "Item name is not set in tag"
-    End If
-
-    '配列に変換
-    Fields = Split(objList.Tag, ",")
-
-    '1次元目はLinkedList固定
-    Set ary = Me
-
-    'リストボックスのクリア
-    objList.Clear
-
-    Dim i As Long
-    Dim j As Long
-    i = 0
-    For Each objRec In ary
-        j = 0
-        objList.AddItem
-        For Each v In Fields
-
-            '設定されているフィールドのみコピーする。
-            If v <> "" Then
-                objList.List(i, j) = Core.CastICompatibleProperty(objRec).GetProperty(v)
-            End If
-            j = j + 1
-        Next
-        i = i + 1
-    Next
-
-End Sub
-'>---
-'>#### ParseFromListObject(LinkedList)
-'>
-'>**Syntax**
-'>
-'>```
-'>Set ret = LinkedList.ParseFromListObject(objList,[obj = Nothing])
-'>```
-'>
-'>**Parameters**
-'>
-'>|Name|Required/Optional|Data type|Description|
-'>---|---|---|---
-'>|objList|必須|Listobject|Parseする Listobject を指定|
-'>|obj|省略可|Object|レコードに使用するオブジェクトを指定。省略時は Dictionary |
-'>
-'>**Return Value**
-'>
-'>|Name|Data type|Description|
-'>---|---|---
-'>|ret|Boolean|新しいインスタンス(LinkedList)|
-'>
-'>**Remarks**
-'>
-'>ListObject パース<br>
-'>ListobjectからLinkedList(レコードはDictionary)を生成する。<br>
-'>ListObject(テーブル)の列ヘッダの情報が必須<br>
-'>レコードに使用するオブジェクトは INewInstance と ICompatibleProperty を Implements したクラスであること。
-'>
-'>**Example**
-'>
-'>```
-'>Sub LinkedList_ParseFromListObject_Sample()
-'>
-'>    Dim lst As IList
-'>    Dim dic As IDictionary
-'>    Dim Key As Variant
-'>
-'>    Set lst = LinkedList.ParseFromListObject(ActiveSheet.ListObjects(1))
-'>
-'>    For Each dic In lst
-'>
-'>        For Each Key In dic.Keys
-'>
-'>            Debug.Print dic.Item(Key)
-'>
-'>        Next
-'>
-'>    Next
-'>
-'>    Dim a As LinkedList
-'>
-'>    Set a = lst
-'>
-'>    a.CopyToListObject ActiveSheet.ListObjects(2)
-'>
-'>End Sub
-'>
-'>```
-'>
-'>**See also**
-'>
-'>* LinkedList.CopyToListObject
-'>* Dictionary
-'>* INewInstance
-'>* ICompatibleProperty
-'>
-Public Function ParseFromListObject(LO As ListObject, Optional obj As Object = Nothing) As IList
-
-    Dim lst As IList
-    Dim objRec As Object
-    Dim i As Long
-    Dim j As Long
-    
-    '1次元目はLinkedList固定
-    Set lst = New LinkedList
-        
-    For i = 1 To LO.DataBodyRange.Rows.Count
-        
-        '引数によりインスタンス化するオブジェクトを判定
-        Select Case True
-            Case obj Is Nothing
-                Set objRec = Core.GetNewInstance(New Dictionary)
-            Case Else
-                Set objRec = Core.GetNewInstance(obj)
-        End Select
-        
-        For j = 1 To LO.HeaderRowRange.Columns.Count
-        
-            Core.CastICompatibleProperty(objRec).SetProperty LO.HeaderRowRange(, j).Value, LO.DataBodyRange.Cells(i, j).Value
-        Next
-    
-        lst.Add objRec
-    
-    Next
-
-    Set ParseFromListObject = lst
-
-End Function
-'>---
-'>#### CopyToListObject(LinkedList)
-'>
-'>**Syntax**
-'>
-'>```
-'>LinkedList.CopyToListObject objList
-'>```
-'>
-'>**Parameters**
-'>
-'>|Name|Required/Optional|Data type|Description|
-'>---|---|---|---
-'>|objList|必須|Object|copyする ListBox or ComboBox を指定|
-'>
-'>**Return Value**
-'>
-'>* None
-'>
-'>**Remarks**
-'>
-'>ListObject(テーブル機能)へコピー<br>
-'>LinkedListの内容をListobjectにコピーする。<br>
-'>ListobjectにLinkedListのレコードを対応づける列名が必須。<br>
-'>レコードに使用するオブジェクトは INewInstance と ICompatibleProperty を Implements したクラスであること。
-'>
-'>**Example**
-'>
-'>```
-'>Sub LinkedList_ParseFromListObject_Sample()
-'>
-'>    Dim lst As IList
-'>    Dim dic As IDictionary
-'>    Dim Key As Variant
-'>
-'>    Set lst = LinkedList.ParseFromListObject(ActiveSheet.ListObjects(1))
-'>
-'>    For Each dic In lst
-'>
-'>        For Each Key In dic.Keys
-'>
-'>            Debug.Print dic.Item(Key)
-'>
-'>        Next
-'>
-'>    Next
-'>
-'>    Dim a As LinkedList
-'>
-'>    Set a = lst
-'>
-'>    a.CopyToListObject ActiveSheet.ListObjects(2)
-'>
-'>End Sub
-'>```
-'>
-'>**See also**
-'>
-'>* LinkedList.ParseFromListbox
-'>* Dictionary
-'>* INewInstance
-'>* ICompatibleProperty
-'>
-Public Sub CopyToListObject(LO As ListObject)
-
-    Dim lst As IList
-    Dim objRec As Object
-    Dim Fields As Variant
-    Dim v As Variant
-
-    '1次元目はLinkedList固定
-    Set lst = Me
-
-    'リストオブジェクトのクリア
-    If Not LO.DataBodyRange Is Nothing Then
-        LO.DataBodyRange.ClearContents
-        LO.DataBodyRange.Delete
-    End If
-    
-    Dim i As Long
-    Dim j As Long
-    
-    i = 1
-    For Each objRec In lst
-        
-        LO.ListRows.Add
-        For j = 1 To LO.HeaderRowRange.Columns.Count
-
-            LO.DataBodyRange.Cells(i, j).Value = Core.CastICompatibleProperty(objRec).GetProperty(LO.HeaderRowRange(, j).Value)
-        
-        Next
-        i = i + 1
-    Next
-
-End Sub
-'>---
-'>#### CopyToRange(LinkedList)
-'>
-'>**Syntax**
-'>
-'>```
-'>LinkedList.CopyToRange objct
-'>```
-'>
-'>**Parameters**
-'>
-'>|Name|Required/Optional|Data type|Description|
-'>---|---|---|---
-'>|object|必須|Range|copyするシートの範囲(Range)の左上を指定|
-'>
-'>**Return Value**
-'>
-'>* None
-'>
-'>**Remarks**
-'>
-'>LinkedListをシートへ貼り付ける<br>
-'>指定されたRangeを起点にLinkedListの内容を貼り付ける<br>
-'>ListobjectにLinkedListのレコードを対応づける列名が必須。<br>
-'>レコードに使用するオブジェクトは INewInstance と ICompatibleProperty を Implements したクラスであること。
-'>
-'>**Example**
-'>
-'>* None
-'>
-'>**See also**
-'>
-'>* LinkedList.ParseFromListbox
-'>* Dictionary
-'>* INewInstance
-'>* ICompatibleProperty
-'>
-Public Sub CopyToRange(TopLeft As Range)
-
-    Dim v As Variant
-    Dim lngRow As Long
-    Dim lngCol As Long
-    
-    v = IList_ToArray
-    
-    If Not ArrayList.TryUBound(v, lngRow, 1) Then
-        Exit Sub
-    End If
-    If Not ArrayList.TryUBound(v, lngCol, 2) Then
-        Exit Sub
-    End If
-
-    TopLeft.resize(lngRow + 1, lngCol + 1).Value = v
-
-End Sub
-'>---
-'>#### GetIList(LinkedList)
-'>
-'>**Syntax**
-'>
-'>```
-'> Set obj = LinkedList.GetIList()
-'>```
-'>
-'>**Parameters**
-'>
-'>|Name|Required/Optional|Data type|Description|
-'>---|---|---|---
-'>|object|必須|Object|IList I/F に対応するクラス|
-'>
-'>**Return Value**
-'>
-'>|Name|Data type|Description|
-'>---|---|---
-'>|obj|IList|現在のインスタンス(IList I/F)|
-'>
-'>**Remarks**
-'>
-'>IList I/F を取得する。
-'>
-'>**Example**
-'>
-'>* None
-'>
-'>**See also**
-'>
-'>* IList
-'>
-Public Function GetIList() As IList
-    Set GetIList = Me
-End Function
 '>---
 '>#### Clear(IList I/F)
 '>
@@ -881,11 +449,7 @@ Private Property Get IList_Item(idx As Long) As Variant
         Err.Raise 512 + 1, TypeName(Me) & ".Item", "IndexOutOfRangeException"
     End If
 
-    If VBA.IsObject(mCol.Item(idx + 1)) Then
-        Set IList_Item = mCol.Item(idx + 1)
-    Else
-        IList_Item = mCol.Item(idx + 1)
-    End If
+    Core.SetVar(IList_Item) = mCol.Item(idx + 1)
     
 End Property
 '>---
@@ -1065,7 +629,7 @@ Private Function IList_ToArray() As Variant
     
     'Dictionary or LinkedList の２次元を想定
     For Each v In lst
-        If IsDictionary(v) Or IsList(v) Then
+        If Core.IsDictionary(v) Or Core.IsList(v) Then
             If lngCol < v.Count Then
                 lngCol = v.Count
             End If
@@ -1083,11 +647,7 @@ Private Function IList_ToArray() As Variant
             ReDim result(0 To lngRow - 1)
         
             For i = 0 To lst.Count - 1
-                If IsObject(lst(i)) Then
-                    Set result(i) = lst(i)
-                Else
-                    Let result(i) = lst(i)
-                End If
+                Core.SetVar(result(i)) = lst(i)
             Next
     
             IList_ToArray = result
@@ -1101,30 +661,21 @@ Private Function IList_ToArray() As Variant
             
                 Select Case True
                     'List系の場合
-                    Case IsList(lst(i))
+                    Case Core.IsList(lst(i))
                         For j = 0 To lst(i).Count - 1
-                            If IsObject(lst(i)(j)) Then
-                                Set result(i, j) = lst(i)(j)
-                            Else
-                                Let result(i, j) = lst(i)(j)
-                            End If
+                            Core.SetVar(result(i, j)) = lst(i)(j)
                         Next
                     
                     'Dictionary系の場合
-                    Case IsDictionary(lst(i))
+                    Case Core.IsDictionary(lst(i))
                         Dim dic As Object
                         Dim Key As Variant
                         
                         Set dic = lst(i)
+                        
                         j = 0
                         For Each Key In dic.Keys
-                    
-                            If IsObject(dic.Item(Key)) Then
-                                Set result(i, j) = dic.Item(Key)
-                            Else
-                                Let result(i, j) = dic.Item(Key)
-                            End If
-                            
+                            Core.SetVar(result(i, j)) = dic.Item(Key)
                             j = j + 1
                         Next
                 
@@ -1235,7 +786,7 @@ Private Function IList_ToString() As String
         
                     Case vbString
                     
-                        SB.Append """" & Convert.Escape(v) & """"
+                        SB.Append """" & Escape(v) & """"
                     
 #If Win64 Then
                     Case vbByte, vbInteger, vbLong, vbSingle, vbDouble, vbCurrency, vbDecimal, vbLongLong
@@ -1369,17 +920,9 @@ End Property
 Private Property Get ICursor_Item(Optional ByVal opt As Variant) As Variant
     
     If mIndex >= mCol.Count Then
-        If IsObject(mCol.Item(mCol.Count)) Then
-            Set ICursor_Item = mCol(mCol.Count)
-        Else
-            ICursor_Item = mCol.Item(mCol.Count)
-        End If
+        Core.SetVar(ICursor_Item) = mCol(mCol.Count)
     Else
-        If IsObject(mCol.Item(mIndex + 1)) Then
-            Set ICursor_Item = mCol.Item(mIndex + 1)
-        Else
-            ICursor_Item = mCol.Item(mIndex + 1)
-        End If
+        Core.SetVar(ICursor_Item) = mCol.Item(mIndex + 1)
     End If
     
 End Property
@@ -1501,5 +1044,313 @@ Private Function INewInstance_NewInstance() As Object
     
     Set INewInstance_NewInstance = lst
 
+End Function
+Private Function Escape(ByVal v As String) As String
+
+    Dim strChr As String
+    Dim SB As StringBuilder
+    Dim i As Long
+    
+    Set SB = New StringBuilder
+    
+    For i = 1 To Len(v)
+        
+        strChr = Mid$(v, i, 1)
+        
+        Select Case AscW(strChr)
+            Case &H0 To &H7, &HB, &HE To &H1F, &H7F
+                SB.Append "\u" & Hex$(AscW(strChr))
+            Case &H8
+                SB.Append "\b"
+            Case &H9
+                SB.Append "\t"
+            Case &HA
+                SB.Append "\n"
+            Case &HC
+                SB.Append "\f"
+            Case &HD
+                SB.Append "\r"
+            Case &H22
+                SB.Append "\"""
+            Case &H2F
+                SB.Append "\/"
+            Case &H5C
+                SB.Append "\\"
+            Case Else
+                SB.Append strChr
+        End Select
+
+    Next
+    
+    Escape = SB.ToString
+
+End Function
+'>---
+'>#### CopyToListbox(LinkedList)
+'>
+'>**Syntax**
+'>
+'>```
+'>LinkedList.CopyToListbox objList
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|objList|必須|Object|copyする ListBox or ComboBox を指定|
+'>
+'>**Return Value**
+'>
+'>* None
+'>
+'>**Remarks**
+'>
+'>ListBox/ComboBox へコピー<br>
+'>LinkedListの内容をListBox/ComboBoxにコピーする。<br>
+'>ListBox/ComboBoxのTagにLinkedListのレコードを対応づけるフィールド名リスト（カンマ区切り）が必須。<br>
+'>レコードに使用するオブジェクトは INewInstance と ICompatibleProperty を Implements したクラスであること。
+'>
+'>**Example**
+'>
+'>```
+'>    'これはコードではなくプロパティウィンドウで設定しても良い
+'>    lstFavorite.Tag = "No,Name,Address"
+'>
+'>    LinkedList.CopyToListbox lstFavorite
+'>
+'>```
+'>
+'>**See also**
+'>
+'>* LinkedList.ParseFromListbox
+'>* Dictionary
+'>* INewInstance
+'>* ICompatibleProperty
+'>
+Public Sub CopyToListbox(objList As Object)
+
+    Dim ary As IList
+    Dim objRec As Object
+    Dim Fields As Variant
+    Dim v As Variant
+
+    'Tagにフィールド情報が無い場合
+    If objList.Tag = "" Then
+        Err.Raise 512 + 1, TypeName(Me) & ".CopyToListbox", "Item name is not set in tag"
+    End If
+
+    '配列に変換
+    Fields = Split(objList.Tag, ",")
+
+    '1次元目はLinkedList固定
+    Set ary = Me
+
+    'リストボックスのクリア
+    objList.Clear
+
+    Dim i As Long
+    Dim j As Long
+    i = 0
+    For Each objRec In ary
+        j = 0
+        objList.AddItem
+        For Each v In Fields
+
+            '設定されているフィールドのみコピーする。
+            If v <> "" Then
+                objList.List(i, j) = CoreEx.CastICompatibleProperty(objRec).GetProperty(v)
+            End If
+            j = j + 1
+        Next
+        i = i + 1
+    Next
+
+End Sub
+'>---
+'>#### CopyToListObject(LinkedList)
+'>
+'>**Syntax**
+'>
+'>```
+'>LinkedList.CopyToListObject objList
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|objList|必須|Object|copyする ListBox or ComboBox を指定|
+'>
+'>**Return Value**
+'>
+'>* None
+'>
+'>**Remarks**
+'>
+'>ListObject(テーブル機能)へコピー<br>
+'>LinkedListの内容をListobjectにコピーする。<br>
+'>ListobjectにLinkedListのレコードを対応づける列名が必須。<br>
+'>レコードに使用するオブジェクトは INewInstance と ICompatibleProperty を Implements したクラスであること。
+'>
+'>**Example**
+'>
+'>```
+'>Sub LinkedList_ParseFromListObject_Sample()
+'>
+'>    Dim lst As IList
+'>    Dim dic As IDictionary
+'>    Dim Key As Variant
+'>
+'>    Set lst = LinkedList.ParseFromListObject(ActiveSheet.ListObjects(1))
+'>
+'>    For Each dic In lst
+'>
+'>        For Each Key In dic.Keys
+'>
+'>            Debug.Print dic.Item(Key)
+'>
+'>        Next
+'>
+'>    Next
+'>
+'>    Dim a As LinkedList
+'>
+'>    Set a = lst
+'>
+'>    a.CopyToListObject ActiveSheet.ListObjects(2)
+'>
+'>End Sub
+'>```
+'>
+'>**See also**
+'>
+'>* LinkedList.ParseFromListbox
+'>* Dictionary
+'>* INewInstance
+'>* ICompatibleProperty
+'>
+Public Sub CopyToListObject(LO As ListObject)
+
+    Dim lst As IList
+    Dim objRec As Object
+    Dim Fields As Variant
+    Dim v As Variant
+
+    '1次元目はLinkedList固定
+    Set lst = Me
+
+    'リストオブジェクトのクリア
+    If Not LO.DataBodyRange Is Nothing Then
+        LO.DataBodyRange.ClearContents
+        LO.DataBodyRange.Delete
+    End If
+    
+    Dim i As Long
+    Dim j As Long
+    
+    i = 1
+    For Each objRec In lst
+        
+        LO.ListRows.Add
+        For j = 1 To LO.HeaderRowRange.Columns.Count
+
+            LO.DataBodyRange.Cells(i, j).Value = CoreEx.CastICompatibleProperty(objRec).GetProperty(LO.HeaderRowRange(, j).Value)
+        
+        Next
+        i = i + 1
+    Next
+
+End Sub
+'>---
+'>#### CopyToRange(LinkedList)
+'>
+'>**Syntax**
+'>
+'>```
+'>LinkedList.CopyToRange objct
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|object|必須|Range|copyするシートの範囲(Range)の左上を指定|
+'>
+'>**Return Value**
+'>
+'>* None
+'>
+'>**Remarks**
+'>
+'>LinkedListをシートへ貼り付ける<br>
+'>指定されたRangeを起点にLinkedListの内容を貼り付ける<br>
+'>ListobjectにLinkedListのレコードを対応づける列名が必須。<br>
+'>レコードに使用するオブジェクトは INewInstance と ICompatibleProperty を Implements したクラスであること。
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* LinkedList.ParseFromListbox
+'>* Dictionary
+'>* INewInstance
+'>* ICompatibleProperty
+'>
+Public Sub CopyToRange(TopLeft As Range)
+
+    Dim v As Variant
+    Dim lngRow As Long
+    Dim lngCol As Long
+    
+    v = IList_ToArray
+    
+    If Not Core.TryUBound(v, lngRow, 1) Then
+        Exit Sub
+    End If
+    If Not Core.TryUBound(v, lngCol, 2) Then
+        Exit Sub
+    End If
+
+    TopLeft.resize(lngRow + 1, lngCol + 1).Value = v
+
+End Sub
+'>---
+'>#### GetIList(LinkedList)
+'>
+'>**Syntax**
+'>
+'>```
+'> Set obj = LinkedList.GetIList()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|object|必須|Object|IList I/F に対応するクラス|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|obj|IList|現在のインスタンス(IList I/F)|
+'>
+'>**Remarks**
+'>
+'>IList I/F を取得する。
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* IList
+'>
+Public Function GetIList() As IList
+    Set GetIList = Me
 End Function
 

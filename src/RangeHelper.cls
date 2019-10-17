@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v1
+' [Hidennotare] v2
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -174,7 +174,7 @@ End Function
 '--------------------------------------------------------------
 Function Except(r As Range, s As Range) As Range
 
-     Dim PL As PairLogger: Set PL = Constructor(New PairLogger, TypeName(Me) & ".Except")
+     Dim PL As PairLogger: Set PL = PairLogger.CreateObject(TypeName(Me) & ".Except")
     'èdÇ»ÇÈïîï™Ç™Ç†ÇÈÇ©ÅH
 
     Dim n As Range

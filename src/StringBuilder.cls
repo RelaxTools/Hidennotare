@@ -5,11 +5,11 @@ END
 Attribute VB_Name = "StringBuilder"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = False
+Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v1
+' [Hidennotare] v2
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -41,16 +41,17 @@ Attribute VB_Exposed = False
 '>**Remarks**
 '>
 '>文字列連結クラス
+'>**このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。**
 '>
 '>**Implements**
 '>
-'>* IConstructor
+'>* なし
 '>
 '>**Sample**
 '>
 '>```
 '>Dim SB As StringBuilder
-'>Set SB = New StringBuilder
+'>Set SB = StringBuilder.NewInstance
 '>
 '>SB.Append "A"
 '>SB.Append "B"
@@ -61,7 +62,6 @@ Attribute VB_Exposed = False
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
-Implements IConstructor
 
 Private mstrBuf() As String
 Private mlngCount As Long
@@ -87,20 +87,20 @@ End Sub
 '>**Syntax**
 '>
 '>```
-'>Set IC = Constructor(New StringBuilder, Number)
+'>Set SB = StringBuilder.CreateObject(Number)
 '>```
 '>
 '>**Parameters**
 '>
 '>|Name|Required/Optional|Data type|Description|
 '>---|---|---|---
-'>|Number|必須|Long|初期配列サイズを指定。デフォルト25|
+'>|Number|省略可|Long|初期配列サイズを指定。デフォルト25|
 '>
 '>**Return Value**
 '>
 '>|Name|Data type|Description|
 '>---|---|---
-'>|IC|Object|新しいインスタンス(StringBuilder)|
+'>|SB|Object|新しいインスタンス(StringBuilder)|
 '>
 '>**Remarks**
 '>
@@ -112,7 +112,7 @@ End Sub
 '>```
 '>Dim SB As StringBuilder
 '>
-'>Set SB = Constructor(New StringBuilder, 3000)
+'>Set SB = StringBuilder.CreateObject(3000)
 '>
 '>For i = 1 To 3000
 '>
@@ -125,16 +125,19 @@ End Sub
 '>
 '>* None
 '>
-Private Function IConstructor_Instancing(ByRef Args As Collection) As Object
+Public Function CreateObject(Optional ByVal Size As Long = 25) As StringBuilder
 
-    If Args.Count = 1 Then
-        mlngInitCount = Args(1)
-        Me.Clear
-    End If
+    Dim obj As StringBuilder
     
-    Set IConstructor_Instancing = Me
-    
+    Set obj = New StringBuilder
+
+    obj.Size = Size
+    Set CreateObject = obj
+
 End Function
+Public Property Let Size(v As Long)
+    mlngInitCount = v
+End Property
 '>---
 '>#### Clear(StringBuilder)
 '>
@@ -230,14 +233,14 @@ End Sub
 '>
 '>* None
 '>
-Function Append(ByVal s As String, Optional ByVal quotation As Boolean = False)
+Function Append(ByVal s As String, Optional ByVal Quotation As Boolean = False)
 
     '配列にセット
     If mlngCount > UBound(mstrBuf) Then
         ReDim Preserve mstrBuf(0 To mlngCount)
     End If
     
-    If quotation Then
+    If Quotation Then
         mstrBuf(mlngCount) = """" & s & """"
     Else
         mstrBuf(mlngCount) = s

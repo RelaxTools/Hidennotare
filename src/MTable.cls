@@ -48,7 +48,7 @@ Attribute VB_Exposed = False
 '>
 '>**Dependent**
 '>
-'>* IConstructor
+'>* None
 '>
 '>**History**
 '>
@@ -58,7 +58,6 @@ Attribute VB_Exposed = False
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
-Implements IConstructor
 
 Public Name As String
 Private mValue As String
@@ -66,21 +65,24 @@ Private mParent As MTable
 '---------------------------------------
 ' コンストラクタ
 '---------------------------------------
-Private Function IConstructor_Instancing(Args As Collection) As Object
-    Select Case Args.Count
-        Case 1
-            mValue = Args(1)
-            Set mParent = Nothing
-        Case 2
-            mValue = Args(1)
-            Set mParent = Args(2)
-        Case Else
-            Exit Function
-    End Select
+Public Function CreateObject(Value As String, Optional ByRef Parent As MTable = Nothing) As MTable
     
-    Set IConstructor_Instancing = Me
+    Dim m As MTable
+    
+    Set m = New MTable
+    
+    m.Value = Value
+    Set m.Parent = Parent
+    
+    Set CreateObject = m
 
 End Function
+Public Property Let Value(v As String)
+    mValue = v
+End Property
+Public Property Set Parent(v As MTable)
+    Set mParent = v
+End Property
 '>---
 '>#### PromoteHeaders(MFile)
 '>
@@ -133,7 +135,7 @@ Public Function PromoteHeaders(t As MTable, Optional m As Variant) As MTable
         strName = t.Name
     End If
     
-    Set PromoteHeaders = Constructor(New MTable, GetClassName & "PromoteHeaders(" & strName & strMFunc & ")", t)
+    Set PromoteHeaders = MTable.CreateObject(GetClassName & "PromoteHeaders(" & strName & strMFunc & ")", t)
 
 End Function
 '>---
@@ -185,7 +187,7 @@ Public Function InsertRows(t As MTable, offset As Long, lst As Variant) As MTabl
         strName = t.Name
     End If
     
-    Set InsertRows = Constructor(New MTable, GetClassName & "InsertRows(" & strName & ", " & offset & ", " & strMFunc & ")", t)
+    Set InsertRows = MTable.CreateObject(GetClassName & "InsertRows(" & strName & ", " & offset & ", " & strMFunc & ")", t)
 
 End Function
 '>---
@@ -236,7 +238,7 @@ Public Function TransformColumnTypes(t As MTable, lst As Variant) As MTable
         strName = t.Name
     End If
     
-    Set TransformColumnTypes = Constructor(New MTable, GetClassName & "TransformColumnTypes(" & strName & ", " & strMFunc & ")", t)
+    Set TransformColumnTypes = MTable.CreateObject(GetClassName & "TransformColumnTypes(" & strName & ", " & strMFunc & ")", t)
 
 End Function
 '>---
@@ -279,7 +281,7 @@ Public Function Skip(t As MTable, countOrCondition As Long) As MTable
         strBuf = t.Name
     End If
     
-    Set Skip = Constructor(New MTable, GetClassName & "Skip(" & strBuf & ", " & countOrCondition & ")", t)
+    Set Skip = MTable.CreateObject(GetClassName & "Skip(" & strBuf & ", " & countOrCondition & ")", t)
     
 End Function
 '>---

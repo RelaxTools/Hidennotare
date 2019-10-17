@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v1
+' [Hidennotare] v2
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -46,7 +46,9 @@ Attribute VB_Exposed = False
 '>
 '>**Dependent**
 '>
+'>* Core
 '>* MatchBean
+'>* StringBuilder
 '>
 '>**History**
 '>
@@ -60,7 +62,7 @@ Option Explicit
 Private RE As Object
 
 Private Sub Class_Initialize()
-    Set RE = CreateObject("VBScript.RegExp")
+    Set RE = VBA.CreateObject("VBScript.RegExp")
 End Sub
 Private Sub Class_Terminate()
     Set RE = Nothing
@@ -109,7 +111,7 @@ End Property
 '>
 '>**See also**
 '>
-'>* StdSch.Test
+'>* StrSch.Test
 '>
 Function Test(ByVal strText As String, ByVal strExp As String, Optional ByVal blnIgnoreCase As Boolean = False) As Boolean
 
@@ -154,11 +156,11 @@ End Function
 '>
 '>**See also**
 '>
-'>* StdSch.Replace
+'>* StrSch.Replace
 '>
 Function Replace(ByVal strText As String, ByVal strExp As String, ByVal strReplace As String, Optional ByVal blnIgnoreCase As Boolean = False) As String
 
-    strReplace = Convert.Escape(strReplace)
+    strReplace = Core.Escape(strReplace)
     
     With RE
         .Pattern = strExp
@@ -213,7 +215,7 @@ End Function
 '>
 '>**See also**
 '>
-'>* StdSch.Execute
+'>* StrSch.Execute
 '>
 Function Execute(ByVal strText As String, ByVal strExp As String, Optional ByVal blnIgnoreCase As Boolean = False) As Collection
 
@@ -237,7 +239,7 @@ Function Execute(ByVal strText As String, ByVal strExp As String, Optional ByVal
     For Each m In matches
     
         'FirstIndex‚Í0‚©‚ç‚È‚Ì‚Å+1
-        col.Add Constructor(New MatchBean, m.FirstIndex + 1, m.Length, m.Value)
+        col.Add MatchBean.CreateObject(m.FirstIndex + 1, m.Length, m.Value)
     
     Next
         
@@ -275,7 +277,7 @@ End Function
 '>
 '>**See also**
 '>
-'>* StdSch.Check
+'>* StrSch.Check
 '>
 Function Check(ByVal strExp As String)
 
@@ -328,7 +330,7 @@ End Function
 '>
 '>**See also**
 '>
-'>* StdSch.ReplaceShape
+'>* StrSch.ReplaceShape
 '>
 Sub ReplaceShape(ByRef sh As Shape, ByVal strExp As String, ByVal strReplace As String, Optional ByVal blnIgnoreCase As Boolean = False)
 
@@ -346,10 +348,10 @@ Sub ReplaceShape(ByRef sh As Shape, ByVal strExp As String, ByVal strReplace As 
 
             Set bean = col(i)
 
-            Call .Characters(bean.index, bean.Length).Delete
+            Call .Characters(bean.Index, bean.Length).Delete
 
             If strReplace <> "" Then
-                Call .Characters(bean.index, 0).InsertAfter(strReplace)
+                Call .Characters(bean.Index, 0).InsertAfter(strReplace)
             End If
 
         Next
@@ -389,7 +391,7 @@ End Sub
 '>
 '>**See also**
 '>
-'>* StdSch.ReplaceRange
+'>* StrSch.ReplaceRange
 '>
 Sub ReplaceRange(ByRef rng As Range, ByVal strExp As String, ByVal strReplace As String, Optional ByVal blnIgnoreCase As Boolean = False)
 
@@ -407,10 +409,10 @@ Sub ReplaceRange(ByRef rng As Range, ByVal strExp As String, ByVal strReplace As
 
             Set bean = col(i)
 
-            Call .Characters(bean.index, bean.Length).Delete
+            Call .Characters(bean.Index, bean.Length).Delete
 
             If strReplace <> "" Then
-                Call .Characters(bean.index, 0).Insert(strReplace)
+                Call .Characters(bean.Index, 0).Insert(strReplace)
             End If
 
         Next

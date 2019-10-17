@@ -5,11 +5,11 @@ END
 Attribute VB_Name = "TextReader"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = False
+Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v1
+' [Hidennotare] v2
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -41,11 +41,11 @@ Attribute VB_Exposed = False
 '>**Remarks**
 '>
 '>TextReaderクラス<br>
-'>一度にメモリに読み込むため、巨大なファイルを読むには向かないファイルサイズ10MB以上非推奨。
+'>一度にメモリに読み込むため、巨大なファイルを読むには向かない。ファイルサイズ10MB以上非推奨。<br>
+'>**このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。**
 '>
 '>**Dependent**
 '>
-'>- IConstructor クラス
 '>- IReader クラス
 '>- ICursor クラス
 '>
@@ -57,7 +57,6 @@ Attribute VB_Exposed = False
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
-Implements IConstructor
 Implements IReader
 Implements ICursor
 
@@ -77,10 +76,9 @@ Private mIndex As Long
 '>**Syntax**
 '>
 '>```
-'>Set IC = Constructor(New TextReader,
-'>                     FileName,
-'>                     [NewLineCode = NewLineCodeConstants.CRLF],
-'>                     [Encode = EncodeConstants.CP932])
+'>Set IC = TextReader.CreateObject(FileName,
+'>                                 [NewLineCode = NewLineCodeConstants.CRLF],
+'>                                 [Encode = EncodeConstants.CP932])
 '>```
 '>
 '>**Parameters**
@@ -112,7 +110,7 @@ Private mIndex As Long
 '>
 '>strFile = "C:\Test.txt"
 '>
-'>Set IC = Constructor(New TextReader, strFile)
+'>Set IC = TextReader.CreateObject(strFile)
 '>
 '>Do Until IC.Eof
 '>
@@ -129,7 +127,7 @@ Private mIndex As Long
 '>
 '>strFile = "C:\Test.txt"
 '>
-'>Set IR = Constructor(New TextReader, strFile)
+'>Set IR = TextReader.CreateObject(strFile)
 '>
 '>Debug.Print IR.ReadAll '改行を指定した場合は配列、指定しなかった場合は文字列
 '>```
@@ -138,52 +136,48 @@ Private mIndex As Long
 '>
 '>* None
 '>
-Private Function IConstructor_Instancing(Args As Collection) As Object
+Public Function CreateObject(ByVal FileName As String, _
+                            Optional ByVal NewLineCode As NewLineCodeConstants = NewLineCodeConstants.NewLineCodeCRLF, _
+                            Optional ByVal Encode As EncodeConstants = EncodeConstants.EncodeCP932) As ICursor
 
-    If Args.Count = 0 Then
-        Exit Function
-    End If
+    Dim TR As TextReader
     
-    'Default
-    mNewLineCode = NewLineCodeConstants.CRLF
-    mEncode = EncodeConstants.CP932
+    Set TR = New TextReader
     
-    If Args.Count >= 1 Then
-        mFileName = Args(1)
-    End If
+    TR.FileName = FileName
+    TR.NewLineCode = NewLineCode
+    TR.Encode = Encode
     
-    If Args.Count >= 2 Then
-        mNewLineCode = Args(2)
-    End If
-    
-    If Args.Count >= 3 Then
-        mEncode = Args(3)
-    End If
-    
-    'IReader I/F を返却する
-    Dim IR As IReader
-    Set IR = Me
-    Set IConstructor_Instancing = IR
-    
-    If Not FileIO.FileExists(mFileName) Then
-        Err.Raise 512 + 1, TypeName(Me) & ".IConstructor_Instancing", "file not found(" & mFileName & ")"
-    End If
+    TR.Init
 
-    'テキストファイルの一括読み込み
-    mBuf = BulkRead()
-    If IsArray(mBuf) Then
-        ICursor_MoveFirst
-    End If
+    Set CreateObject = TR
 
 End Function
+Public Property Let FileName(v As String)
+    mFileName = v
+End Property
+Public Property Let NewLineCode(v As NewLineCodeConstants)
+    mNewLineCode = v
+End Property
+Public Property Let Encode(v As EncodeConstants)
+    mEncode = v
+End Property
+Public Sub Init()
+    BulkRead
+    ICursor_MoveFirst
+End Sub
 '--------------------------------------------------------------
 ' テキストファイルの一括読み込み
 '--------------------------------------------------------------
-Private Function BulkRead() As Variant
+Private Sub BulkRead()
     
-    Dim buffer() As Byte
+    Dim Buffer() As Byte
     Dim strBuf As String
     Dim lngSize As Long
+
+    If Not FileIO.FileExists(mFileName) Then
+        Err.Raise 512 + 1, TypeName(Me) & ".BulkRead", "file not found(" & mFileName & ")"
+    End If
 
     fp = FreeFile
     Open mFileName For Binary As fp
@@ -193,59 +187,69 @@ Private Function BulkRead() As Variant
     
     If lngSize <> 0 Then
 
-        ReDim buffer(0 To lngSize - 1)
+        ReDim Buffer(0 To lngSize - 1)
     
-        Get fp, , buffer()
+        Get fp, , Buffer()
         
         Select Case mEncode
             
-            Case EncodeConstants.CP932
+            Case EncodeConstants.EncodeCP932
                 
-                strBuf = StrConv(buffer, vbUnicode)
+                strBuf = StrConv(Buffer, vbUnicode)
             
-            Case EncodeConstants.UTF8
+            Case EncodeConstants.EncodeUTF8
             
                 'BOMがある場合取り除く
-                If StartWith(buffer, &HEF, &HBB, &HBF) Then
-                    strBuf = Convert.FromUTF8(MidB$(buffer, 4))
+                If StartWith(Buffer, &HEF, &HBB, &HBF) Then
+                    strBuf = Convert.FromUTF8(MidB$(Buffer, 4))
                 Else
-                    strBuf = Convert.FromUTF8(buffer)
+                    strBuf = Convert.FromUTF8(Buffer)
                 End If
         
-            Case EncodeConstants.UTF16LE
+            Case EncodeConstants.EncodeUTF16LE
                 
                 'BOMがある場合取り除く
-                If StartWith(buffer, &HFF, &HFE) Then
-                    strBuf = MidB$(buffer, 3)
+                If StartWith(Buffer, &HFF, &HFE) Then
+                    strBuf = MidB$(Buffer, 3)
                 Else
-                    strBuf = buffer
+                    strBuf = Buffer
                 End If
         
         End Select
         
         Select Case mNewLineCode
-            Case NewLineCodeConstants.CRLF
+            Case NewLineCodeConstants.NewLineCodeCRLF
                 
-                BulkRead = Split(strBuf, vbCrLf)
+                '最後に改行がある場合削除する。
+                If Mid$(strBuf, Len(strBuf) - 1) = vbCrLf Then
+                    strBuf = Mid$(strBuf, 1, Len(strBuf) - 2)
+                End If
+                
+                mBuf = Split(strBuf, vbCrLf)
             
-            Case NewLineCodeConstants.LF
+            Case NewLineCodeConstants.NewLineCodeLF
                 
-                BulkRead = Split(strBuf, vbLf)
+                '最後に改行がある場合削除する。
+                If Mid$(strBuf, Len(strBuf)) = vbLf Then
+                    strBuf = Mid$(strBuf, 1, Len(strBuf) - 1)
+                End If
+                
+                mBuf = Split(strBuf, vbLf)
         
-            Case NewLineCodeConstants.None
+            Case NewLineCodeConstants.NewLineCodeNone
                 
-                BulkRead = strBuf
+                mBuf = Array(strBuf)
         
         End Select
 
     Else
-        BulkRead = Empty
+        mBuf = Empty
     End If
     
     Close fp
     mOpen = False
         
-End Function
+End Sub
 '--------------------------------------------------------------
 ' BOMチェック
 '--------------------------------------------------------------

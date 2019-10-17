@@ -5,11 +5,11 @@ END
 Attribute VB_Name = "CsvWriter"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = False
+Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v1
+' [Hidennotare] v2
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -43,10 +43,10 @@ Attribute VB_Exposed = False
 '>CSV書込みクラス<br>
 '>RFC4180準拠<br>
 '>http://www.kasai.fm/wiki/rfc4180jp
+'>**このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。**
 '>
 '>**Dependent**
 '>
-'>* IConstructor
 '>* StringBuilder
 '>* IWriter
 '>* TextWriter
@@ -59,7 +59,6 @@ Attribute VB_Exposed = False
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
-Implements IConstructor
 Implements IWriter
 
 Private mIW As IWriter
@@ -78,13 +77,12 @@ Private mQuotation As Boolean
 '>**Syntax**
 '>
 '>```
-'>Set ret = Constructor(New CsvWriter,
-'>                      FileName,
-'>                      [NewLineCode = NewLineCodeConstants.CRLF],
-'>                      [Encode = EncodeConstants.CP932],
-'>                      [Mode = OpenModeConstants.デフォルトOutput],
-'>                      [Bom = False],
-'>                      [Delimiter = ","])
+'>Set ret = CsvWriter.CreateObject(FileName,
+'>                                 [NewLineCode = NewLineCodeConstants.CRLF],
+'>                                 [Encode = EncodeConstants.CP932],
+'>                                 [Mode = OpenModeConstants.デフォルトOutput],
+'>                                 [Bom = False],
+'>                                 [Delimiter = ","])
 '>```
 '>
 '>**Parameters**
@@ -117,7 +115,7 @@ Private mQuotation As Boolean
 '>
 '>strFile = "C:\Test.csv"
 '>
-'>Set IW = Constructor(New CsvWriter, strFile)
+'>Set IW = CsvWriter.CreateObject(strFile)
 '>
 '>IW.Append Array("a", "b", "c")
 '>IW.Flash
@@ -129,54 +127,50 @@ Private mQuotation As Boolean
 '>* None
 '>
 '--------------------------------------------------------------
-Private Function IConstructor_Instancing(Args As Collection) As Object
+Public Function CreateObject(ByVal FileName As String, _
+                             Optional ByVal NewLineCode As NewLineCodeConstants = NewLineCodeConstants.NewLineCodeCRLF, _
+                             Optional ByVal Encode As EncodeConstants = EncodeConstants.EncodeCP932, _
+                             Optional ByVal Mode As OpenModeConstants = OpenModeConstants.OpenModeOutput, _
+                             Optional ByVal Bom As Boolean = False, _
+                             Optional ByVal Delimiter As String = ",") As IWriter
     
-    Select Case Args.Count
-        Case 1 To 6
-        Case Else
-            Exit Function
-    End Select
+    Dim CW As CsvWriter
+    Set CW = New CsvWriter
     
-    'Default
-    mNewLineCode = NewLineCodeConstants.CRLF
-    mEncode = EncodeConstants.CP932
-    mMode = OpenModeConstants.Output
-    mBom = False
+    CW.FileName = FileName
+    CW.NewLineCode = NewLineCode
+    CW.Encode = Encode
+    CW.Mode = Mode
+    CW.Bom = Bom
+    CW.Delimiter = Delimiter
     
-    mDelimiter = ","
-    mQuotation = False
+    CW.Init
     
-    If Args.Count >= 1 Then
-        mFileName = Args(1)
-    End If
-    
-    If Args.Count >= 2 Then
-        mNewLineCode = Args(2)
-    End If
-    
-    If Args.Count >= 3 Then
-        mEncode = Args(3)
-    End If
-    
-    If Args.Count >= 4 Then
-        mMode = Args(4)
-    End If
-    
-    If Args.Count >= 5 Then
-        mBom = Args(5)
-    End If
-    
-    If Args.Count >= 6 Then
-        mDelimiter = Args(6)
-    End If
-    
-    'TextWriterに委譲する。
-    Set mIW = Constructor(New TextWriter, mFileName, mNewLineCode, mEncode, mMode, mBom)
-    
-    Set IConstructor_Instancing = Me.GetIWriter
+    Set CreateObject = CW
     
 End Function
-
+Public Property Let FileName(v As String)
+    mFileName = v
+End Property
+Public Property Let NewLineCode(v As NewLineCodeConstants)
+    mNewLineCode = v
+End Property
+Public Property Let Encode(v As EncodeConstants)
+    mEncode = v
+End Property
+Public Property Let Mode(v As OpenModeConstants)
+    mMode = v
+End Property
+Public Property Let Bom(v As Boolean)
+    mBom = v
+End Property
+Public Property Let Delimiter(v As String)
+    mDelimiter = v
+End Property
+Public Sub Init()
+    'TextWriterに委譲する。
+    Set mIW = TextWriter.CreateObject(mFileName, mNewLineCode, mEncode, mMode, mBom)
+End Sub
 Private Sub Class_Terminate()
     Set mIW = Nothing
 End Sub
