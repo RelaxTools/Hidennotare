@@ -52,7 +52,7 @@ Attribute VB_Exposed = False
 '>
 '>|Date|Version|Note|
 '>|---|---|---|
-'>|2018-12-06|Ver.1.0.0|新規作成|
+'>|2019-10-17|Ver.1.0.0|新規作成|
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
@@ -62,15 +62,14 @@ Option Explicit
 '>**Syntax**
 '>
 '>```
-'>Zip.CompressArchive(col, zipfile)
+'>Zip.CompressArchive(ary, zipfile)
 '>```
 '>
 '>**Parameters**
 '>
 '>|Name|Required/Optional|Data type|Description|
 '>---|---|---|---
-'>|Zip|必須|Zip|Zipオブジェクトを指定します。|
-'>|col|必須|Collection|圧縮するファイルをCollectionで指定|
+'>|ary|必須|Array|圧縮するファイルを配列で指定|
 '>|zipfile|必須|String|作成するZipファイルを指定|
 '>
 '>**Return Value**
@@ -153,9 +152,7 @@ End Sub
 '>**Parameters**
 '>
 '>|Name|Required/Optional|Data type|Description|
-'>---|---|---|---
-'>|Zip|必須|Zip|Zipオブジェクトを指定します。|
-'>|zipfile|必須|Collection|Zipファイル指定|
+'>|zipfile|必須|String|Zipファイル指定|
 '>|path|必須|String|展開するフォルダを指定|
 '>
 '>**Return Value**
