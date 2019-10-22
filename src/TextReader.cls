@@ -93,7 +93,7 @@ Private mIndex As Long
 '>
 '>|Name|Data type|Description|
 '>---|---|---
-'>|IC|Object|新しいインスタンス(TextReader)|
+'>|IC|Object|新しいインスタンス(ICursor)|
 '>
 '>**Remarks**
 '>

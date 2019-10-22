@@ -186,7 +186,7 @@ Sub OutputMarkDown()
                            SB.Append LevelNo(strMark, No1(), Level, TC, ContentsLevel, obj.Name)
                         
                         '1文字目が"I"、2文字目が大文字の場合、インターフェース
-                        Case RegExp.Test(obj.Name, "^I[A-Z]")
+                        Case RegExp.Test(obj.Name, "^I[A-Z]") And obj.Name <> "ICON"
                            SB.Append LevelNo(strMark, No2(), Level, TC, ContentsLevel, obj.Name)
                         
                         'その他クラス
