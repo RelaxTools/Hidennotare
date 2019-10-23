@@ -355,6 +355,47 @@ Public Property Get TempFolder() As String
 
 End Property
 '>---
+'>#### GetTempName(FileIO)
+'>
+'>**Syntax**
+'>
+'>```
+'>ret = FileIO.GetTempName()
+'>```
+'>
+'>**Parameters**
+'>
+'>* None
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|ret|String|テンポラリファイル名|
+'>
+'>**Remarks**
+'>
+'>テンポラリファイル名取得
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* FileIO.TempFolder
+'>
+Public Property Get GetTempName() As String
+    
+    With FSO
+        
+        GetTempName = .GetTempName
+        
+    End With
+    
+
+End Property
+'>---
 '>#### AppDataFolder(FileIO)
 '>
 '>**Syntax**
@@ -945,6 +986,60 @@ Public Sub ClearFolder(ByVal strPath As String)
     End With
 
 End Sub
+'>---
+'>#### ClearTemmpFolder(FileIO)
+'>
+'>**Syntax**
+'>
+'>```
+'>FileIO.ClearTempFolder()
+'>```
+'>
+'>**Parameters**
+'>
+'>* None
+'>
+'>**Return Value**
+'>
+'>* None
+'>
+'>**Remarks**
+'>
+'>テンポラリフォルダ以下ファイル＆フォルダ削除<br>
+'>テンポラリフォルダは消さずにそれ以下を消すことに注意<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* FileIO.TempFolder
+'>
+Public Sub ClearTempFolder()
+    
+    Dim fld As Object
+    Dim f As Object
+    Dim strPath As String
+    
+    strPath = FileIO.TempFolder
+    
+    With FSO
+    
+        Set fld = .GetFolder(strPath)
+        
+        For Each f In fld.files
+            .DeleteFile .BuildPath(strPath, f.Name), True
+        Next
+        
+        For Each f In fld.SubFolders
+            .DeleteFolder .BuildPath(strPath, f.Name), True
+        Next
+        
+    End With
+
+End Sub
+
 '>---
 '>#### CreateFolder(FileIO)
 '>

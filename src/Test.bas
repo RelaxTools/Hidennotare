@@ -21,6 +21,7 @@ Sub Test_All()
     Call Test_TextWriter
     Call Test_CsvWriter
     Call Test_Compress
+    Call Test_PlaceHolder
 
     Message.Information "正常終了!"
 
@@ -751,5 +752,10 @@ Sub Test_Compress()
     
     FileIO.DeleteFile strFile
     FileIO.DeleteFile strZip
+
+End Sub
+Sub Test_PlaceHolder()
+
+    Debug.Assert Core.PlaceHolder("これはテストです。\n{0}", 10) = "これはテストです。" & vbLf & "10"
 
 End Sub

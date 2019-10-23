@@ -569,3 +569,21 @@ Public Function Unescape(ByVal v As String) As String
     Unescape = SB.ToString
 
 End Function
+'---------------------------------------
+' プレースホルダ変換
+'---------------------------------------
+Public Function PlaceHolder(ByVal strMsg As String, ParamArray p() As Variant) As String
+    
+    '翻訳
+    strMsg = Core.Unescape(strMsg)
+    
+    If UBound(p) >= 0 Then
+        Dim i As Long
+        For i = 0 To UBound(p)
+            strMsg = Replace(strMsg, "{" & CStr(i) & "}", p(i))
+        Next
+    End If
+    
+    PlaceHolder = strMsg
+
+End Function

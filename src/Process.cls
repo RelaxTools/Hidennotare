@@ -183,7 +183,7 @@ Function ExecPowerShell(ByVal strCommand As String) As Long
     Dim strFile As String
     Dim SB As StringBuilder
     
-    strFile = FileIO.BuildPath(FileIO.TempFolder, "ExecPowerShell.ps1")
+    strFile = FileIO.BuildPath(FileIO.TempFolder, FileIO.GetTempName & ".ps1")
     
     'テキスト出力
     TextWriter.CreateObject(strFile).WriteData strCommand
