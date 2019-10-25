@@ -146,7 +146,7 @@ Private Declare PtrSafe Function GdipCreateFromHDC Lib "GDIPlus" (ByVal hDc As L
     
 Private Declare PtrSafe Function GdipCreateFontFamilyFromName Lib "GDIPlus" (ByVal FontName As LongPtr, ByVal fontCollection As Long, fontFamily As LongPtr) As Long
 Private Declare PtrSafe Function GdipCreateFont Lib "GDIPlus" (ByVal fontFamily As LongPtr, ByVal emSize As Single, ByVal style As Integer, ByVal unit As Integer, font As LongPtr) As Long
-Private Declare PtrSafe Function GdipDrawString Lib "GDIPlus" (ByVal Graphics As LongPtr, ByVal str As LongPtr, ByVal Length As Long, ByVal font As LongPtr, layoutRect As RECTF, ByVal StringFormat As Long, ByVal brush As LongPtr) As Long
+Private Declare PtrSafe Function GdipDrawString Lib "GDIPlus" (ByVal Graphics As LongPtr, ByVal str As LongPtr, ByVal Length As Long, ByVal font As LongPtr, layoutRect As RECTF, ByVal StringFormat As LongPtr, ByVal brush As LongPtr) As Long
     
 Enum StringAlignment
     StringAlignmentNear = 0
@@ -707,6 +707,7 @@ Public Sub DrawString(ByVal X As Long, ByVal Y As Long, ByVal Width As Long, ByV
     Dim hGraphics As LongPtr
     Dim hBrush As LongPtr
     Dim result As Long
+    Dim hFormat As LongPtr
     
     result = GdipGetImageGraphicsContext(hGdiImage, hGraphics)
     If result <> Status.ok Then
@@ -747,7 +748,7 @@ Public Sub DrawString(ByVal X As Long, ByVal Y As Long, ByVal Width As Long, ByV
     rect.Right = X + Width
     rect.Bottom = Y + Height
     
-    Dim hFormat As LongPtr
+
     
     'StringFormat
     result = GdipCreateStringFormat(0, LANG_NEUTRAL, hFormat)

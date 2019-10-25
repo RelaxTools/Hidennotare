@@ -122,9 +122,11 @@ Private mMessage As String
 '---------------------------------------------------------------
 ' コンストラクタ
 '---------------------------------------------------------------
-Public Function CreateObject(Window As Object, ByVal Message As String) As TaskTrayView
+Public Function CreateObject(ByVal Message As String, Optional Window As Object = Nothing) As TaskTrayView
     
     Dim TV As TaskTrayView
+    
+    Set TV = New TaskTrayView
     
     Set TV.Window = Window
     TV.Message = Message
@@ -147,7 +149,12 @@ Public Sub Init()
     Set obj = mWindow
     strMessage = mMessage
 
-    WindowFromAccessibleObject obj, hWnd
+    If obj Is Nothing Then
+        hWnd = Application.hWnd
+    Else
+        WindowFromAccessibleObject obj, hWnd
+    End If
+    
     AddIcon hWnd, strMessage
 
 End Sub
@@ -208,13 +215,21 @@ Public Sub ShowBalloon(ByVal Title As String, ByVal Message As String, Optional 
     Dim IconSmall As LongPtr
     Dim IconIndex As Long
     Dim ret As Boolean
+    Dim strFile As String
+    
+    strFile = Application.Path & "\" & "EXCEL.EXE"
+    IconIndex = 1
+    
+    Call ExtractIconExW(StrPtr(strFile), IconIndex, IconLarge, IconSmall, 1)
  
     With typ_Icon
         
         .cbsize = Len(typ_Icon)
         .uFlags = NIF_INFO
         .uTimeoutOrVersion = BalloonTimeOutSecond * 1000 'タイムアウト時間(ms)
-        .dwInfoFlags = NIIF_INFO
+        .dwInfoFlags = NIIF_LARGE_ICON Or NIIF_USER 'NIIF_INFO
+        
+        .hBalloonIcon = IconLarge
         
         Message = Left$(Message, 255) & vbNullChar
         CopyMemory .szInfo(0), ByVal StrPtr(Message), LenB(Message)

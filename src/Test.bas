@@ -22,8 +22,11 @@ Sub Test_All()
     Call Test_CsvWriter
     Call Test_Compress
     Call Test_PlaceHolder
+    
+    
+    Call Test_TaskTrayView
 
-    Message.Information "正常終了!"
+'    Message.Information "正常終了!"
 
 End Sub
 
@@ -758,4 +761,13 @@ Sub Test_PlaceHolder()
 
     Debug.Assert Core.PlaceHolder("これはテストです。\n{0}", 10) = "これはテストです。" & vbLf & "10"
 
+End Sub
+Sub Test_TaskTrayView()
+
+    Dim TV As TaskTrayView
+    
+    With TaskTrayView.CreateObject("テストです。")
+        .ShowBalloon "おしらせ", "正常終了です。", 5
+    End With
+    
 End Sub
