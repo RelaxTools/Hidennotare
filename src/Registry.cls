@@ -59,13 +59,13 @@ Option Explicit
 'レジストリ読み込み
 '--------------------------------------------------------------
 Public Function GetSetting(ByVal Section As String, ByVal Key As String, Optional ByVal Default As String = "") As String
-    GetSetting = VBA.GetSetting(Title, Section, Key, Default)
+    GetSetting = VBA.GetSetting(Core.GetTitleName, Section, Key, Default)
 End Function
 '--------------------------------------------------------------
 'レジストリ書き込み
 '--------------------------------------------------------------
 Public Sub SaveSetting(ByVal Section As String, ByVal Key As String, ByVal Value As String)
-    VBA.SaveSetting Title, Section, Key, Value
+    VBA.SaveSetting Core.GetTitleName, Section, Key, Value
 End Sub
 '--------------------------------------------------------------
 'レジストリ削除
@@ -73,9 +73,9 @@ End Sub
 Public Sub DeleteSetting(ByVal Section As String, Optional ByVal Key As String = "")
     On Error Resume Next
     If Len(Key) = 0 Then
-        VBA.DeleteSetting Title, Section
+        VBA.DeleteSetting Core.GetTitleName, Section
     Else
-        VBA.DeleteSetting Title, Section, Key
+        VBA.DeleteSetting Core.GetTitleName, Section, Key
     End If
 End Sub
 '--------------------------------------------------------------
@@ -96,14 +96,14 @@ Public Sub Export()
     
     Dim fp As Integer
     
-    FileName = Application.GetSaveAsFilename(InitialFileName:=Title & ".reg", fileFilter:="登録ファイル,*.reg")
+    FileName = Application.GetSaveAsFilename(InitialFileName:=Core.GetTitleName & ".reg", fileFilter:="登録ファイル,*.reg")
     If FileName = False Then
         Exit Sub
     End If
     
     On Error GoTo err_Handle
 
-    strReg = "HKEY_CURRENT_USER\Software\VB and VBA Program Settings\" & Title
+    strReg = "HKEY_CURRENT_USER\Software\VB and VBA Program Settings\" & Core.GetTitleName
 
     Set Locator = VBA.CreateObject("WbemScripting.SWbemLocator")
     Set Service = Locator.ConnectServer(vbNullString, "root\default")
@@ -112,7 +112,7 @@ Public Sub Export()
     Const HKEY_CURRENT_USER = &H80000001
     
     Const ROOT = "HKEY_CURRENT_USER\"
-    Key = "Software\VB and VBA Program Settings\" & Title
+    Key = "Software\VB and VBA Program Settings\" & Core.GetTitleName
     
     Reg.EnumKey HKEY_CURRENT_USER, Key, SubKey
     
@@ -175,9 +175,4 @@ Public Sub Export()
 err_Handle:
     Message.Information "登録ファイルの保存に失敗しました。"
 End Sub
-'--------------------------------------------------------------
-'アプリケーション名取得
-'--------------------------------------------------------------
-Private Property Get Title() As String
-    Title = ThisWorkbook.BuiltinDocumentProperties("Title").Value
-End Property
+

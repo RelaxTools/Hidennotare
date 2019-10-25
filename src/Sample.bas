@@ -20,7 +20,7 @@ Sub Message_Sample()
 
     
     'リプレースホルダの文字列を返却
-    Debug.Print Message.PlaceHolder("サンプルです。{0}のだけでなく{1}もある", "金", "名誉")
+    Debug.Print Core.PlaceHolder("サンプルです。{0}のだけでなく{1}もある", "金", "名誉")
 
 
 End Sub

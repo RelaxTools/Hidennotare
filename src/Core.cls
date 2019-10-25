@@ -80,6 +80,12 @@ Public Enum CsvReaderHeaderConstants
     HeaderNone
 End Enum
 '-----------------------------------------------------------------------------------------------------
+' アプリケーション名取得（ブックのタイトルプロパティより取得）
+'-----------------------------------------------------------------------------------------------------
+Public Function GetTitleName() As String
+    GetTitleName = ThisWorkbook.BuiltinDocumentProperties("Title").Value
+End Function
+'-----------------------------------------------------------------------------------------------------
 ' 配列またはParamArrayをCollectionに変換
 '-----------------------------------------------------------------------------------------------------
 Public Function ArrayToCollection(Args As Variant) As Collection

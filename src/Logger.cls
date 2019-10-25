@@ -46,7 +46,6 @@ Attribute VB_Exposed = False
 '>**Dependent**
 '>
 '>* Registry
-'>* ITrunslate
 '>
 '>**History**
 '>
@@ -90,12 +89,7 @@ Private mLevel As LogLevel
 Private mLogType As Long
 Private mlngHistory As Long
 Private mLevelStr As Variant
-Private mLang As ITrunslate
 Private mFSO As Object
-'言語サポート
-Public Property Set LangSupport(v As Object)
-    Set mLang = v
-End Property
 '--------------------------------------------------------------
 '　Class_Initialize
 '--------------------------------------------------------------
@@ -108,13 +102,13 @@ Private Sub Class_Initialize()
     mLevelStr = Array("Trace", "Info", "Warn", "Fatal", "None")
     
     '規定のログレベル
-    mLevel = GetSetting(Title, "Log", "Level", LogLevel.info)
+    mLevel = GetSetting(Core.GetTitleName, "Log", "Level", LogLevel.info)
     
     'ログ出力先
-    mLogType = CLng(GetSetting(Title, "Log", "LogType", LogType.Logfile))
+    mLogType = CLng(GetSetting(Core.GetTitleName, "Log", "LogType", LogType.Logfile))
     
     'ヒストリ数
-    mlngHistory = CLng(GetSetting(Title, "Log", "History", 5))
+    mlngHistory = CLng(GetSetting(Core.GetTitleName, "Log", "History", 5))
 
     If mLogType And LogType.Logfile Then
         Call OpenLog
@@ -425,7 +419,7 @@ Private Sub ReportLog(ByVal l As LogLevel, ByVal strMsg As String)
     On Error GoTo e
 
     If l >= mLevel Then
-        strLog = Title & "," & Format$(Now, "yyyy-mm-dd,hh:nn:ss") & "." & getMSec & "," & mLevelStr(l) & "," & strMsg
+        strLog = Core.GetTitleName & "," & Format$(Now, "yyyy-mm-dd,hh:nn:ss") & "." & getMSec & "," & mLevelStr(l) & "," & strMsg
         If mLogType And LogType.DebugWindow Then
             Debug.Print strLog
         End If
@@ -526,7 +520,7 @@ Private Property Get AppDataFolder() As String
     
     With mFSO
     
-        strFolder = .BuildPath(VBA.CreateObject("Wscript.Shell").SpecialFolders("AppData"), Title & "\Log")
+        strFolder = .BuildPath(VBA.CreateObject("Wscript.Shell").SpecialFolders("AppData"), Core.GetTitleName & "\Log")
         
         If .FolderExists(strFolder) Then
         Else
@@ -561,12 +555,7 @@ End Sub
 '----------------------------------------------------------------------------------
 Private Function PlaceHolder(ByVal strMsg As String, ByVal p As Variant) As String
 
-    '翻訳
-    If Not mLang Is Nothing Then
-        strMsg = mLang.Trunslate(strMsg)
-    Else
-        strMsg = Core.Unescape(strMsg)
-    End If
+    strMsg = Core.Unescape(strMsg)
 
     If UBound(p) >= 0 Then
         Dim i As Long
@@ -578,7 +567,3 @@ Private Function PlaceHolder(ByVal strMsg As String, ByVal p As Variant) As Stri
     PlaceHolder = strMsg
 
 End Function
-'アプリケーション名取得
-Private Property Get Title() As String
-    Title = ThisWorkbook.BuiltinDocumentProperties("Title").Value
-End Property

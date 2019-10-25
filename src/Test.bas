@@ -698,7 +698,7 @@ Sub Test_CsvWriter()
 
     With CsvWriter.CreateObject(strFile, NewLineCodeLF, EncodeUTF16LE, OpenModeOutput, True, ",")
 
-        .WriteLine Array("‚ ‚¢,‚¤‚¦‚¨", Message.PlaceHolder("‚©‚«‚­\n‚¯‚±"))
+        .WriteLine Array("‚ ‚¢,‚¤‚¦‚¨", Core.PlaceHolder("‚©‚«‚­\n‚¯‚±"))
 
     End With
 

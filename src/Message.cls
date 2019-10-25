@@ -43,43 +43,29 @@ Attribute VB_Exposed = False
 ' ブックのプロパティ[タイトル]を設定してください。
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
-
-Private mLang As ITrunslate
-'---------------------------------------
-' 言語サポート
-'---------------------------------------
-Public Property Set LangSupport(v As Object)
-    Set mLang = v
-End Property
 '---------------------------------------
 ' 情報メッセージ
 '---------------------------------------
 Public Sub Information(ByVal strMsg As String, ParamArray p())
-    VBA.MsgBox PrivatePlaceHolder(strMsg, p), vbOKOnly + vbInformation, Title
+    VBA.MsgBox PrivatePlaceHolder(strMsg, p), vbOKOnly + vbInformation, Core.GetTitleName
 End Sub
 '---------------------------------------
 ' 警告メッセージ
 '---------------------------------------
 Public Sub Error(ByVal strMsg As String, ParamArray p())
-    VBA.MsgBox PrivatePlaceHolder(strMsg, p), vbOKOnly + vbExclamation, Title
+    VBA.MsgBox PrivatePlaceHolder(strMsg, p), vbOKOnly + vbExclamation, Core.GetTitleName
 End Sub
 '---------------------------------------
 ' 異常終了メッセージ
 '---------------------------------------
 Public Sub Critical(ByVal strMsg As String, ParamArray p())
-    VBA.MsgBox PrivatePlaceHolder(strMsg, p), vbOKOnly + vbCritical, Title
+    VBA.MsgBox PrivatePlaceHolder(strMsg, p), vbOKOnly + vbCritical, Core.GetTitleName
 End Sub
 '---------------------------------------
 ' 応答メッセージ
 '---------------------------------------
 Public Function Question(ByVal strMsg As String, ParamArray p()) As Boolean
-    Question = VBA.MsgBox(PrivatePlaceHolder(strMsg, p), vbOKCancel + vbQuestion, Title) <> vbOK
-End Function
-'---------------------------------------
-' プレースホルダ変換
-'---------------------------------------
-Public Function PlaceHolder(ByVal strMsg As String, ParamArray p()) As String
-    PlaceHolder = PrivatePlaceHolder(strMsg, p)
+    Question = VBA.MsgBox(PrivatePlaceHolder(strMsg, p), vbOKCancel + vbQuestion, Core.GetTitleName) <> vbOK
 End Function
 '---------------------------------------
 ' ステータスバーメッセージ
@@ -100,12 +86,7 @@ End Sub
 '---------------------------------------
 Private Function PrivatePlaceHolder(ByVal strMsg As String, ByVal p As Variant) As String
     
-    '翻訳
-    If Not mLang Is Nothing Then
-        strMsg = mLang.Trunslate(strMsg)
-    Else
-        strMsg = Core.Unescape(strMsg)
-    End If
+    strMsg = Core.Unescape(strMsg)
     
     If UBound(p) >= 0 Then
         Dim i As Long
@@ -117,29 +98,3 @@ Private Function PrivatePlaceHolder(ByVal strMsg As String, ByVal p As Variant) 
     PrivatePlaceHolder = strMsg
 
 End Function
-''---------------------------------------
-'' エラー処理
-''---------------------------------------
-'Public Sub Throw(ByVal lngNo As Long, ByVal Module As Variant, ByVal strSrc As String, ByVal strMsg As String, ParamArray p())
-'
-'    Dim strMessage As String
-'    Dim strSource As String
-'
-'    If IsObject(Module) Then
-'        strSource = TypeName(Module) & "." & strSrc
-'    Else
-'        strSource = CStr(Module) & "." & strSrc
-'    End If
-'
-'    'プレースホルダ変換
-'    strMessage = PrivatePlaceHolder(strMsg, p)
-'
-'    Err.Raise 512 + lngNo, strSource, strMessage
-'
-'End Sub
-' アプリケーション名取得
-Private Property Get Title() As String
-    Title = ThisWorkbook.BuiltinDocumentProperties("Title").Value
-End Property
-
-

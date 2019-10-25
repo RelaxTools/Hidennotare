@@ -548,8 +548,8 @@ End Sub
 '>|varPatterns|必須|Variant|ファイルのパターンを指定。複数の場合には配列で指定。ワイルドカードが使用可能。|
 '>|Col|必須|Collection|検索したファイル一覧を返却する。|
 '>|SubDir|省略可|Boolean|True(-1):制限なし/False(0):指定フォルダのみ/階数:指定階数まで検索|
-'>|ReturnFind|省略可|NaturalSort|Trueの場合、自然数ソートを行う。省略時True|
-'>|NaturalSort|省略可|NaturalSort|Trueの場合、自然数ソートを行う。省略時True|
+'>|ReturnFind|省略可|Boolean|Trueの場合、ファイルが見つかった時点で即リターン。省略時True|
+'>|NaturalSort|省略可|Boolean|Trueの場合、自然数ソートを行う。省略時True|
 '>|varExcludedFolder|省略可|除外フォルダを指定。複数の場合には配列で指定。|
 '>
 '>**Return Value**

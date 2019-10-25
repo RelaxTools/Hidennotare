@@ -58,7 +58,7 @@ Option Explicit
 '--------------------------------------------------------------
 ' 新ブックへのシートのコピー
 '--------------------------------------------------------------
-Function CopySheetAsNewBook(WS As Worksheet, Optional ByVal Minimized As Boolean = False) As Worksheet
+Public Function CopySheetAsNewBook(WS As Worksheet, Optional ByVal Minimized As Boolean = False) As Worksheet
 
     WS.Copy
     With WS.Application
@@ -78,7 +78,7 @@ End Function
 '--------------------------------------------------------------
 ' シートのコピー（シートの最後に追加）
 '--------------------------------------------------------------
-Function CopySheet(WS As Worksheet) As Worksheet
+Public Function CopySheet(WS As Worksheet) As Worksheet
 
     WS.Copy After:=WS.Parent.Sheets(WS.Parent.Sheets.Count)
     Set CopySheet = WS.Application.ActiveSheet
@@ -87,7 +87,7 @@ End Function
 '--------------------------------------------------------------
 ' シート名が重複しないようにリネーム
 '--------------------------------------------------------------
-Sub RenameUniqSheet(WS As Worksheet, ByVal strDefName As String)
+Public Sub RenameUniqSheet(WS As Worksheet, ByVal strDefName As String)
 
     Dim blnFind As Boolean
     Dim s As Worksheet
@@ -115,7 +115,7 @@ End Sub
 '--------------------------------------------------------------
 ' 同一ブックOpenチェック
 '--------------------------------------------------------------
-Function IsOpenedBook(ByVal strBook As String) As Boolean
+Public Function IsOpenedBook(ByVal strBook As String) As Boolean
     
     Dim v As Workbook
     
