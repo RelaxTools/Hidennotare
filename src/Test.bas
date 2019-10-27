@@ -247,17 +247,17 @@ Sub Test_ICursor_SheetCursor()
         'IC.Item("C").Value Ç≈Ç‡ IC.Item(3).Value Ç≈Ç‡ó«Ç¢ÅBRangeÇï‘ãpÅB
         Select Case i
             Case 0
-                Debug.Assert IC.Item("C") = "A1"
-                Debug.Assert IC.Item("D") = "B1"
-                Debug.Assert IC.Item("E") = "C1"
+                Debug.Assert IC("C") = "A1"
+                Debug.Assert IC("D") = "B1"
+                Debug.Assert IC("E") = "C1"
             Case 1
-                Debug.Assert IC.Item("C") = "A2"
-                Debug.Assert IC.Item("D") = "B2"
-                Debug.Assert IC.Item("E") = "C2"
+                Debug.Assert IC("C") = "A2"
+                Debug.Assert IC("D") = "B2"
+                Debug.Assert IC("E") = "C2"
             Case 2
-                Debug.Assert IC.Item("C") = "A3"
-                Debug.Assert IC.Item("D") = "B3"
-                Debug.Assert IC.Item("E") = "C3"
+                Debug.Assert IC("C") = "A3"
+                Debug.Assert IC("D") = "B3"
+                Debug.Assert IC("E") = "C3"
         End Select
         i = i + 1
         IC.MoveNext

@@ -41,7 +41,7 @@ Attribute VB_Exposed = False
 '>**Remarks**
 '>
 '>フォーム管理クラス<br>
-'>フォーム１枚で実行中表示、キャンセル表示、コンボの履歴表示を行う画面用フレームワーク<br>
+'>フォーム１枚で実行中表示、中断ボタン表示、コンボの履歴表示を行う画面用フレームワーク<br>
 '>IUsing I/F にて 処理開始/終了を自動化可能。<br>
 '>**このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。**
 '>
@@ -104,12 +104,34 @@ Private Sub Class_Terminate()
     mFrm.lblBack.Caption = mstrBackup
 
 End Sub
-'--------------------------------------------------------------
-' コンストラクタ
-'--------------------------------------------------------------
-' Arg1 - UserForm     : Me etc...
-' Arg2 - Button Name  : Cancel Button Name(Defallt 中断)
-'--------------------------------------------------------------
+'>---
+'>#### コンストラクタ
+'>
+'>**Syntax**
+'>
+'>```
+'>Set ret = FormManager.CreateObject(
+'>                    frm,
+'>                    [ButtonCaption])
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|frm|必須|UserForm|処理を行うUserFormを指定|
+'>|ButtonCaption|省略可|中断ボタンのキャプションを指定|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|ret|Object|新しいインスタンス(FormManager)|
+'>
+'>**Remarks**
+'>
+'>**このクラスはコンストラクタを使用しないと実行できません。**
+'>
 Public Function CreateObject(frm As UserForm, Optional ByVal ButtonCaption As String = C_CANCEL_STR) As FormManager
 
     Dim FM As FormManager
@@ -156,27 +178,149 @@ End Property
 Public Property Let ButtonCaption(ByVal v As String)
     mstrCancelStr = v
 End Property
-'--------------------------------------------------------------
-'  中断ボタンが押されたか？
-'--------------------------------------------------------------
+'>---
+'>#### IsCancel
+'>
+'>**Syntax**
+'>
+'>```
+'>bool = expression.IsCancel()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|FormManager|FormManager のインスタンス|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|bool|Boolean|中断ボタンが押された:True/左記以外:False|
+'>
+'>**Remarks**
+'>
+'>中断ボタン(Tagに"c"が設定されたボタン）が<br>
+'>押された際にTruenになります。
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* None
+'>
 Public Property Get IsCancel() As Boolean
     IsCancel = mblnCancel
 End Property
-'--------------------------------------------------------------
-'  実行中か？
-'--------------------------------------------------------------
+'>---
+'>#### IsRunning
+'>
+'>**Syntax**
+'>
+'>```
+'>bool = expression.IsRunning()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|FormManager|FormManager のインスタンス|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|bool|Boolean|処理が実行されている場合:True/左記以外:False|
+'>
+'>**Remarks**
+'>
+'>StartRunning/StopRunning または Using I/F で実行中になっているかどうかを<br>
+'>確認するプロパティです。
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* None
+'>
 Public Property Get IsRunning() As Boolean
     IsRunning = mblnRunning
 End Property
-'--------------------------------------------------------------
-'  処理開始
-'--------------------------------------------------------------
+'>---
+'>#### StartRunning
+'>
+'>**Syntax**
+'>
+'>```
+'>expression.StartRunning()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|FormManager|FormManager のインスタンス|
+'>
+'>**Return Value**
+'>
+'>* None
+'>
+'>**Remarks**
+'>
+'>Formでの処理の実行開始を宣言するメソッド。<br>
+'>画面を非活性(Disable)j状態にします。<br>
+'>Using I/F を使用すると簡略化が可能です。
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* None
+'>
 Public Sub StartRunning()
     IUsing_Begin
 End Sub
-'--------------------------------------------------------------
-'  処理終了
-'--------------------------------------------------------------
+'>---
+'>#### StopRunning
+'>
+'>**Syntax**
+'>
+'>```
+'>expression.StopRunning()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|FormManager|FormManager のインスタンス|
+'>
+'>**Return Value**
+'>
+'>* None
+'>
+'>**Remarks**
+'>
+'>Formでの処理の実行終了を宣言するメソッド。<br>
+'>画面を非活性(Disable)j状態を元に戻します。<br>
+'>Using I/F を使用すると簡略化が可能です。
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* None
+'>
 Public Sub StopRunning()
     IUsing_Finish
 End Sub
@@ -247,9 +391,38 @@ Private Sub IUsing_Finish()
     End If
     
 End Sub
-'--------------------------------------------------------------
-'  ガイダンスメッセージ表示
-'--------------------------------------------------------------
+'>---
+'>#### DispGuidance
+'>
+'>**Syntax**
+'>
+'>```
+'>expression.DispGuidance()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|FormManager|FormManager のインスタンス|
+'>|Value|必須|String|ガイダンスラベルに表示するメッセージを指定|
+'>
+'>**Return Value**
+'>
+'>* None
+'>
+'>**Remarks**
+'>
+'>ガイダンスラベルにメッセージを表示するメソッド<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* None
+'>
 Public Sub DispGuidance(ByVal strValue As String)
 
     If Not mobjMessageLabel Is Nothing Then
@@ -260,9 +433,38 @@ Public Sub DispGuidance(ByVal strValue As String)
     DoEvents
 
 End Sub
-'--------------------------------------------------------------
-'  進捗状況開始
-'--------------------------------------------------------------
+'>---
+'>#### StartGauge
+'>
+'>**Syntax**
+'>
+'>```
+'>expression.StartGauge(Value)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|FormManager|FormManager のインスタンス|
+'>|Value|必須|Long|処理を行う数の最大を指定|
+'>
+'>**Return Value**
+'>
+'>* None
+'>
+'>**Remarks**
+'>
+'>ゲージラベルの表示を開始します。<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* None
+'>
 Public Sub StartGauge(ByVal lngValue As Long)
     
     If Not mobjGaugeLabel Is Nothing Then
@@ -270,9 +472,38 @@ Public Sub StartGauge(ByVal lngValue As Long)
     End If
 
 End Sub
-'--------------------------------------------------------------
-'  進捗状況描画
-'--------------------------------------------------------------
+'>---
+'>#### DisplayGauge
+'>
+'>**Syntax**
+'>
+'>```
+'>expression.DisplayGauge(Value)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|FormManager|FormManager のインスタンス|
+'>|Value|必須|Long|処理を行った数を指定|
+'>
+'>**Return Value**
+'>
+'>* None
+'>
+'>**Remarks**
+'>
+'>ゲージラベルの処理状況を更新します。<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* None
+'>
 Public Sub DisplayGauge(ByVal lngValue As Long)
 
     Dim dblValue As Double
@@ -296,9 +527,37 @@ Public Sub DisplayGauge(ByVal lngValue As Long)
     End If
     
 End Sub
-'--------------------------------------------------------------
-'  キャンセルメソッド
-'--------------------------------------------------------------
+'>---
+'>#### doCancel
+'>
+'>**Syntax**
+'>
+'>```
+'>expression.doCancel()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|FormManager|FormManager のインスタンス|
+'>
+'>**Return Value**
+'>
+'>* None
+'>
+'>**Remarks**
+'>
+'>中断ボタンの押下をFormMangerに通知します。<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* None
+'>
 Public Sub doCancel()
     
     mblnCancel = True
@@ -307,9 +566,39 @@ Public Sub doCancel()
     DoEvents
 
 End Sub
-'--------------------------------------------------------------
-'  コンボボックスの履歴設定
-'--------------------------------------------------------------
+'>---
+'>#### SetHistory
+'>
+'>**Syntax**
+'>
+'>```
+'>expression.SetHistory(obj, history)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|FormManager|FormManager のインスタンス|
+'>|obj|必須|ComboBox|履歴情報を設定するコンボボックス|
+'>|history|必須|String|履歴情報をTab区切で設定（CreateHistoryの返却値）|
+'>
+'>**Return Value**
+'>
+'>* None
+'>
+'>**Remarks**
+'>
+'>ComboBoxに履歴を表示する。<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* None
+'>
 Public Function SetHistory(c As ComboBox, ByVal strHistory As String)
 
     Dim strFolder() As String
@@ -325,9 +614,41 @@ Public Function SetHistory(c As ComboBox, ByVal strHistory As String)
     End If
 
 End Function
-'--------------------------------------------------------------
-'  コンボボックスの履歴作成＆リスト更新
-'--------------------------------------------------------------
+'>---
+'>#### CreateHistory
+'>
+'>**Syntax**
+'>
+'>```
+'>history = expression.CreateHistory(obj, max)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|FormManager|FormManager のインスタンス|
+'>|obj|必須|ComboBox|履歴情報を設定するコンボボックス|
+'>|max|省略可|Long|保存するコンボボックスの履歴数を指定。規定値は10|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|history|String|コンボボックスに表示されている文字をTab区切で返却|
+'>
+'>**Remarks**
+'>
+'>コンボボックスの内容を指定された数分、文字列に変換する。<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* None
+'>
 Public Function CreateHistory(c As ComboBox, Optional ByVal Max As Long = 10) As String
     
     Dim strBuf As String

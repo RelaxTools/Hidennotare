@@ -42,7 +42,7 @@ Attribute VB_Exposed = False
 '>
 '>CSV読込クラス<br>
 '>RFC4180準拠<br>
-'>http://www.kasai.fm/wiki/rfc4180jp
+'>http://www.kasai.fm/wiki/rfc4180jp<br>
 '>**このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。**
 '>
 '>**Dependent**
@@ -102,11 +102,11 @@ Private mIndex As Long
 '>
 '>|Name|Data type|Description|
 '>---|---|---
-'>|ret|Object|新しいインスタンス(CsvReader)|
+'>|ret|Object|新しいインスタンス(ICursor)|
 '>
 '>**Remarks**
 '>
-'>** このクラスはコンストラクタを使用しないと実行できません。**
+'>**このクラスはコンストラクタを使用しないと実行できません。**
 '>
 '>**Example**
 '>

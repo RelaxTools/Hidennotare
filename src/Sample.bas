@@ -96,12 +96,9 @@ Sub BookReader_Sample()
     
     Set BR = BookReader.CreateObject("Sample.xlsx")
     
-    
     Set BR = Nothing
 
-
 End Sub
-
 
 
 
