@@ -181,7 +181,7 @@ End Function
 Function ExecPowerShell(ByVal strCommand As String) As Long
     
     Dim strFile As String
-    Dim SB As StringBuilder
+    Dim SB As IStringBuilder
     
     strFile = FileIO.BuildPath(FileIO.TempFolder, FileIO.GetTempName & ".ps1")
     
@@ -191,7 +191,7 @@ Function ExecPowerShell(ByVal strCommand As String) As Long
     On Error GoTo e
     
     'PowerShell Çé¿çs
-    Set SB = New StringBuilder
+    Set SB = StringBuilder.CreateObject
     
     SB.Append "powershell"
     SB.Append "-ExecutionPolicy"

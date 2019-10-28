@@ -43,9 +43,17 @@ Attribute VB_Exposed = False
 '>シート読み込みクラス
 '>**このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。**
 '>
-'>**Implements**
+'>**Dependent**
 '>
-'>* ICursor
+'>- ISheetCursor クラス
+'>- ICursor クラス
+'>
+'>**History**
+'>
+'>|Date|Version|Note|
+'>|---|---|---|
+'>|2018-12-06|Ver.1.0.0|新規作成|
+'>|2019-10-28|Ver.1.0.1|クラスのメンバにCreateObject以外表示されないように修正|
 '>
 '>**Sample**
 '>
@@ -63,6 +71,7 @@ Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements ICursor
+Implements ISheetCursorParam
 
 'ワークシート
 Private mWS As Worksheet
@@ -134,7 +143,7 @@ Public Function CreateObject(ByRef WS As Worksheet, _
                             Optional ByVal Direction As SheetCursorConstants = SheetCursorConstants.DirectionDown, _
                             Optional ByVal EofStr As String = "") As ICursor
 
-    Dim SC As SheetCursor
+    Dim SC As ISheetCursorParam
 
     Set SC = New SheetCursor
     
@@ -142,40 +151,37 @@ Public Function CreateObject(ByRef WS As Worksheet, _
     SC.Direction = Direction
     SC.StartNum = StartNum
     SC.EofNum = EofNum
-    SC.GetCursor.MoveFirst
 
     Set CreateObject = SC
+    
+    CreateObject.MoveFirst
 
 End Function
-Public Property Set Worksheet(ByRef WS As Worksheet)
-    Set mWS = WS
+Private Property Let ISheetCursorParam_Direction(ByVal RHS As SheetCursorConstants)
+    mDirection = RHS
 End Property
-Public Property Let Direction(ByVal pDirection As SheetCursorConstants)
-    mDirection = pDirection
-End Property
-Public Property Let StartNum(ByVal v As Variant)
-
+Private Property Let ISheetCursorParam_EofNum(ByVal RHS As Variant)
     If mDirection = DirectionDown Then
-        mStartRow = v
+        mEofCol = RHS
+    Else
+        mEofRow = CLng(RHS)
+    End If
+End Property
+Private Property Let ISheetCursorParam_StartNum(ByVal RHS As Variant)
+    If mDirection = DirectionDown Then
+        mStartRow = RHS
     Else
         '指定が数値ならそのまま。アルファベットなら列変換
-        If IsNumeric(v) Then
-            mStartCol = v
+        If IsNumeric(RHS) Then
+            mStartCol = RHS
         Else
-            mStartCol = mWS.Columns(v).Column
+            mStartCol = mWS.Columns(RHS).Column
         End If
     
     End If
-
 End Property
-Public Property Let EofNum(ByVal v As Variant)
-            
-    If mDirection = DirectionDown Then
-        mEofCol = v
-    Else
-        mEofRow = CLng(v)
-    End If
-
+Private Property Set ISheetCursorParam_Worksheet(RHS As Worksheet)
+    Set mWS = RHS
 End Property
 '------------------------------------------------------
 ' デストラクタ
@@ -203,43 +209,7 @@ Private Sub SkipHiddenCol()
     Loop
 
 End Sub
-'>---
-'>#### GetCursor(SheetCursor)
-'>
-'>**Syntax**
-'>
-'>```
-'>Set var = expression.GetCursor()
-'>```
-'>
-'>**Parameters**
-'>
-'>|Name|Required/Optional|Data type|Description|
-'>---|---|---|---
-'>|expression|必須|SheetCursor|SheetCursorインスタンスを指定します。|
-'>
-'>**Return Value**
-'>
-'>|Name|Data type|Description|
-'>---|---|---
-'>|var|ICursor|ICursor I/F を返却|
-'>
-'>**Remarks**
-'>
-'>SheetCursorのメソッドです。<br>
-'>ICursor インターフェースを取得
-'>
-'>**Example**
-'>
-'>* None
-'>
-'>**See also**
-'>
-'>* ICursor
-'>
-Public Property Get GetCursor() As ICursor
-    Set GetCursor = Me
-End Property
+
 '>---
 '>#### Eof(ICursor I/F)
 '>
@@ -404,3 +374,4 @@ Private Sub ICursor_MoveNext()
         SkipHiddenCol
     End If
 End Sub
+

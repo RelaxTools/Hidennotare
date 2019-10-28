@@ -43,9 +43,17 @@ Attribute VB_Exposed = False
 '>テーブル(ListObject)読み込みクラス<br>
 '>**このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。**
 '>
-'>**Implements**
+'>**Dependent**
 '>
-'>* ICursor
+'>- ITableCursorParam クラス
+'>- ICursor クラス
+'>
+'>**History**
+'>
+'>|Date|Version|Note|
+'>|---|---|---|
+'>|2018-12-06|Ver.1.0.0|新規作成|
+'>|2019-10-28|Ver.1.0.1|クラスのメンバにCreateObject以外表示されないように修正|
 '>
 '>**Sample**
 '>
@@ -65,6 +73,7 @@ Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements ICursor
+Implements ITableCursorParam
 
 Private mLO As ListObject
 Private mWS As Worksheet
@@ -98,7 +107,7 @@ End Sub
 '>
 '>|Name|Data type|Description|
 '>---|---|---
-'>|return|Object|新しいインスタンス(TableCursor)|
+'>|return|Object|新しいインスタンス(ICursor)|
 '>
 '>**Remarks**
 '>
@@ -112,21 +121,24 @@ End Sub
 '>
 '>* None
 '>
-Public Function CreateObject(LO As ListObject) As TableCursor
+Public Function CreateObject(LO As ListObject) As ICursor
     
-    Dim TC As TableCursor
+    Dim TC As ITableCursorParam
+    
     Set TC = New TableCursor
     
     Set TC.ListObject = LO
     
-    TC.GetCursor.MoveFirst
-    
     Set CreateObject = TC
     
+    CreateObject.MoveFirst
+    
 End Function
-Public Property Set ListObject(v As ListObject)
-    Set mLO = v
+Private Property Set ITableCursorParam_ListObject(RHS As ListObject)
+    
+    Set mLO = RHS
     Set mWS = mLO.Parent
+
 End Property
 '------------------------------------------------------
 ' デストラクタ
@@ -143,43 +155,6 @@ Private Sub SkipHiddenRow()
         mlngRow = mlngRow + 1
     Loop
 End Sub
-'>---
-'>#### GetCursor(TableCursor)
-'>
-'>**Syntax**
-'>
-'>```
-'>Set var = expression.GetCursor()
-'>```
-'>
-'>**Parameters**
-'>
-'>|Name|Required/Optional|Data type|Description|
-'>---|---|---|---
-'>|expression|必須|TableCursor|TableCursorインスタンスを指定します。|
-'>
-'>**Return Value**
-'>
-'>|Name|Data type|Description|
-'>---|---|---
-'>|var|ICursor|ICursor I/F を返却|
-'>
-'>**Remarks**
-'>
-'>TableCursorのメソッドです。<br>
-'>ICursor インターフェースを取得
-'>
-'>**Example**
-'>
-'>* None
-'>
-'>**See also**
-'>
-'>* ICursor
-'>
-Public Property Get GetCursor() As ICursor
-    Set GetCursor = Me
-End Property
 '>---
 '>#### Eof(ICursor I/F)
 '>
@@ -342,3 +317,5 @@ Private Sub ICursor_MoveNext()
     mlngRow = mlngRow + 1
     SkipHiddenRow
 End Sub
+
+

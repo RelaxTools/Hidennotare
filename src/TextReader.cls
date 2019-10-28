@@ -54,13 +54,15 @@ Attribute VB_Exposed = False
 '>|Date|Version|Note|
 '>|---|---|---|
 '>|2018-12-06|Ver.1.0.0|新規作成|
+'>|2019-10-28|Ver.1.0.1|クラスのメンバにCreateObject以外表示されないように修正|
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements IReader
 Implements ICursor
+Implements IFileParameter
 
-Private fp As Integer
+Private FP As Integer
 Private mOpen As Boolean
 
 'プロパティ保持
@@ -140,32 +142,53 @@ Public Function CreateObject(ByVal FileName As String, _
                             Optional ByVal NewLineCode As NewLineCodeConstants = NewLineCodeConstants.NewLineCodeCRLF, _
                             Optional ByVal Encode As EncodeConstants = EncodeConstants.EncodeCP932) As ICursor
 
-    Dim TR As TextReader
+    Dim FA As IFileParameter
     
-    Set TR = New TextReader
+    Set FA = New TextReader
     
-    TR.FileName = FileName
-    TR.NewLineCode = NewLineCode
-    TR.Encode = Encode
+    FA.FileName = FileName
+    FA.NewLineCode = NewLineCode
+    FA.Encode = Encode
     
-    TR.Init
+    FA.Init
 
-    Set CreateObject = TR
+    Set CreateObject = FA
 
 End Function
-Public Property Let FileName(v As String)
-    mFileName = v
+
+Private Property Let IFileParameter_Bom(RHS As Boolean)
+
 End Property
-Public Property Let NewLineCode(v As NewLineCodeConstants)
-    mNewLineCode = v
+
+Private Property Let IFileParameter_Delimiter(RHS As String)
+
 End Property
-Public Property Let Encode(v As EncodeConstants)
-    mEncode = v
+
+Private Property Let IFileParameter_Encode(RHS As EncodeConstants)
+    mEncode = RHS
 End Property
-Public Sub Init()
+
+Private Property Let IFileParameter_FileName(RHS As String)
+    mFileName = RHS
+End Property
+
+Private Property Let IFileParameter_Mode(RHS As OpenModeConstants)
+
+End Property
+
+Private Property Let IFileParameter_NewLineCode(RHS As NewLineCodeConstants)
+    mNewLineCode = RHS
+End Property
+
+Private Property Let IFileParameter_Quotation(RHS As Boolean)
+
+End Property
+
+Private Sub IFileParameter_Init()
     BulkRead
     ICursor_MoveFirst
 End Sub
+
 '--------------------------------------------------------------
 ' テキストファイルの一括読み込み
 '--------------------------------------------------------------
@@ -179,17 +202,17 @@ Private Sub BulkRead()
         Err.Raise 512 + 1, TypeName(Me) & ".BulkRead", "file not found(" & mFileName & ")"
     End If
 
-    fp = FreeFile
-    Open mFileName For Binary As fp
+    FP = FreeFile
+    Open mFileName For Binary As FP
     mOpen = True
     
-    lngSize = VBA.LOF(fp)
+    lngSize = VBA.LOF(FP)
     
     If lngSize <> 0 Then
 
         ReDim Buffer(0 To lngSize - 1)
     
-        Get fp, , Buffer()
+        Get FP, , Buffer()
         
         Select Case mEncode
             
@@ -246,7 +269,7 @@ Private Sub BulkRead()
         mBuf = Empty
     End If
     
-    Close fp
+    Close FP
     mOpen = False
         
 End Sub
@@ -319,47 +342,10 @@ Private Sub Class_Terminate()
 
     '開いている場合にはクローズ
     If mOpen Then
-        Close fp
+        Close FP
     End If
 
 End Sub
-'>---
-'>#### GetCursor(TextReader)
-'>
-'>**Syntax**
-'>
-'>```
-'>Set var = expression.GetCursor()
-'>```
-'>
-'>**Parameters**
-'>
-'>|Name|Required/Optional|Data type|Description|
-'>---|---|---|---
-'>|expression|必須|TextReader|TextReaderインスタンスを指定します。|
-'>
-'>**Return Value**
-'>
-'>|Name|Data type|Description|
-'>---|---|---
-'>|var|ICursor|ICursor I/F を返却|
-'>
-'>**Remarks**
-'>
-'>TextReaderのメソッドです。<br>
-'>ICursor インターフェースを取得
-'>
-'>**Example**
-'>
-'>* None
-'>
-'>**See also**
-'>
-'>* ICursor
-'>
-Public Property Get GetCursor() As ICursor
-    Set GetCursor = Me
-End Property
 '>---
 '>#### Eof(ICursor I/F)
 '>

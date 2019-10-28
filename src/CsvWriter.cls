@@ -49,6 +49,7 @@ Attribute VB_Exposed = False
 '>
 '>* StringBuilder
 '>* IWriter
+'>* IFileParameter
 '>* TextWriter
 '>
 '>**History**
@@ -56,10 +57,12 @@ Attribute VB_Exposed = False
 '>|Date|Version|Note|
 '>|---|---|---|
 '>|2018-12-06|Ver.1.0.0|新規作成|
+'>|2019-10-28|Ver.1.0.1|クラスのメンバにCreateObject以外表示されないように修正|
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements IWriter
+Implements IFileParameter
 
 Private mIW As IWriter
 
@@ -134,43 +137,57 @@ Public Function CreateObject(ByVal FileName As String, _
                              Optional ByVal Bom As Boolean = False, _
                              Optional ByVal Delimiter As String = ",") As IWriter
     
-    Dim CW As CsvWriter
-    Set CW = New CsvWriter
+    Dim FP As IFileParameter
+    Set FP = New CsvWriter
     
-    CW.FileName = FileName
-    CW.NewLineCode = NewLineCode
-    CW.Encode = Encode
-    CW.Mode = Mode
-    CW.Bom = Bom
-    CW.Delimiter = Delimiter
+    FP.FileName = FileName
+    FP.NewLineCode = NewLineCode
+    FP.Encode = Encode
+    FP.Mode = Mode
+    FP.Bom = Bom
+    FP.Delimiter = Delimiter
     
-    CW.Init
+    FP.Init
     
-    Set CreateObject = CW
+    Set CreateObject = FP
     
 End Function
-Public Property Let FileName(v As String)
-    mFileName = v
+
+Private Property Let IFileParameter_Bom(RHS As Boolean)
+    mBom = RHS
 End Property
-Public Property Let NewLineCode(v As NewLineCodeConstants)
-    mNewLineCode = v
+
+Private Property Let IFileParameter_Delimiter(RHS As String)
+    mDelimiter = RHS
 End Property
-Public Property Let Encode(v As EncodeConstants)
-    mEncode = v
+
+Private Property Let IFileParameter_Encode(RHS As EncodeConstants)
+    mEncode = RHS
+
 End Property
-Public Property Let Mode(v As OpenModeConstants)
-    mMode = v
+
+Private Property Let IFileParameter_FileName(RHS As String)
+    mFileName = RHS
 End Property
-Public Property Let Bom(v As Boolean)
-    mBom = v
-End Property
-Public Property Let Delimiter(v As String)
-    mDelimiter = v
-End Property
-Public Sub Init()
+
+Private Sub IFileParameter_Init()
     'TextWriterに委譲する。
     Set mIW = TextWriter.CreateObject(mFileName, mNewLineCode, mEncode, mMode, mBom)
 End Sub
+
+Private Property Let IFileParameter_Mode(RHS As OpenModeConstants)
+    mMode = RHS
+End Property
+
+Private Property Let IFileParameter_NewLineCode(RHS As NewLineCodeConstants)
+    mNewLineCode = RHS
+
+End Property
+
+Private Property Let IFileParameter_Quotation(RHS As Boolean)
+
+End Property
+
 Private Sub Class_Terminate()
     Set mIW = Nothing
 End Sub
@@ -216,8 +233,8 @@ End Sub
 Private Sub IWriter_WriteLine(ByVal Args As Variant)
     
     Dim c As Variant
-    Dim SB As StringBuilder
-    Set SB = New StringBuilder
+    Dim SB As IStringBuilder
+    Set SB = StringBuilder.CreateObject
 
     If IsArray(Args) Then
         For Each c In Args
@@ -283,38 +300,3 @@ Private Function AddQuot(ByVal v As String) As String
     End Select
 
 End Function
-'>---
-'>#### GetIWriter(CsvWriter)
-'>
-'>**Syntax**
-'>
-'>```
-'>Set i/f = obj.GetIWriter()
-'>```
-'>
-'>**Parameters**
-'>
-'>* None
-'>
-'>**Return Value**
-'>
-'>|Name|Data type|Description|
-'>---|---|---
-'>|i/f|IWriter|IWriter インターフェース(CsvWriter)を返却|
-'>
-'>**Remarks**
-'>
-'>IWriterインターフェース返却メソッド<br>
-'>
-'>**Example**
-'>
-'>* None
-'>
-'>**See also**
-'>
-'>* None
-'>
-Public Function GetIWriter() As IWriter
-    Set GetIWriter = Me
-End Function
-

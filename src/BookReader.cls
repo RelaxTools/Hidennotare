@@ -48,16 +48,20 @@ Attribute VB_Exposed = False
 '>
 '>**Dependent**
 '>
-'>* None
+'>* IBookReader
+'>* IBookReaderParam
 '>
 '>**History**
 '>
 '>|Date|Version|Note|
 '>|---|---|---|
 '>|2019-01-01|Ver.1.0.0|新規作成|
+'>|2019-10-28|Ver.1.0.1|クラスのメンバにCreateObject以外表示されないように修正|
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
+Implements IBookReader
+Implements IBookReaderParam
 
 Private XL As Excel.Application
 Private WB As Workbook
@@ -129,7 +133,7 @@ End Sub
 '>
 Public Function CreateObject(ByVal BookName As String, Optional ByVal ReadOnly As Boolean = True, Optional App As Application = Nothing) As BookReader
     
-    Dim BR As BookReader
+    Dim BR As IBookReaderParam
     
     Set BR = New BookReader
     
@@ -147,21 +151,23 @@ Public Function CreateObject(ByVal BookName As String, Optional ByVal ReadOnly A
     Set CreateObject = BR
 
 End Function
-Public Property Let BookName(ByVal v As String)
-    mBookName = v
+Private Property Set IBookReaderParam_Application(RHS As Application)
+    Set XL = RHS
 End Property
-Public Property Let ReadOnly(ByVal v As Boolean)
-    mReadOnly = v
+
+Private Property Let IBookReaderParam_BookName(ByVal RHS As String)
+    mBookName = RHS
 End Property
-Public Property Set Application(v As Application)
-    Set XL = v
-End Property
-Public Sub Init()
+
+Private Sub IBookReaderParam_Init()
     OpenFile
 End Sub
 
+Private Property Let IBookReaderParam_ReadOnly(ByVal RHS As Boolean)
+    mReadOnly = RHS
+End Property
 '>---
-'>#### VisibleSheets
+'>#### VisibleSheets(IBookReader I/F)
 '>
 '>**Syntax**
 '>
@@ -192,7 +198,7 @@ End Sub
 '>
 '>* None
 '>
-Public Property Get VisibleSheets() As Collection
+Private Property Get IBookReader_VisibleSheets() As Collection
 
     Dim WS As Worksheet
     Dim col As Collection
@@ -204,7 +210,7 @@ Public Property Get VisibleSheets() As Collection
         End If
     Next
     
-    Set VisibleSheets = col
+    Set IBookReader_VisibleSheets = col
 
 End Property
 '-------------------------------------------------
@@ -246,7 +252,7 @@ Private Sub CloseFile()
 
 End Sub
 '>---
-'>#### Save
+'>#### Save(IBookReader I/F)
 '>
 '>**Syntax**
 '>
@@ -276,7 +282,7 @@ End Sub
 '>
 '>* None
 '>
-Public Sub Save(Optional ByVal opt As Boolean = False)
+Private Sub IBookReader_Save(Optional ByVal opt As Boolean = False)
     
     If Not WB.ReadOnly Then
         'お作法

@@ -260,9 +260,9 @@ Public Function GetCopyClipText() As String
     Dim i As Long
     Dim strFilePath As String
     Dim ret As String
-    Dim SB As StringBuilder
+    Dim SB As IStringBuilder
     
-    Set SB = New StringBuilder
+    Set SB = StringBuilder.CreateObject
     
     If OpenClipboard(0) <> 0 Then
    

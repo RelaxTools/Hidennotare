@@ -44,9 +44,17 @@ Attribute VB_Exposed = False
 '>指定されたコレクションから１アイテムずつ処理を行う。<br>
 '>**このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。**
 '>
-'>**Implements**
+'>**Dependent**
 '>
-'>* ICursor
+'>- ICollectionCursorParam クラス
+'>- ICursor クラス
+'>
+'>**History**
+'>
+'>|Date|Version|Note|
+'>|---|---|---|
+'>|2018-12-06|Ver.1.0.0|新規作成|
+'>|2019-10-28|Ver.1.0.1|クラスのメンバにCreateObject以外表示されないように修正|
 '>
 '>**Sample**
 '>
@@ -79,6 +87,7 @@ Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements ICursor
+Implements ICollectionCursorParam
 
 Private mCol As Collection
 Private mIndex As Long
@@ -101,7 +110,7 @@ Private mIndex As Long
 '>
 '>|Name|Data type|Description|
 '>---|---|---
-'>|ret|Object|新しいインスタンス(CollectionCursor)|
+'>|ret|Object|新しいインスタンス(ICursor)|
 '>
 '>**Remarks**
 '>
@@ -117,17 +126,18 @@ Private mIndex As Long
 '>
 Public Function CreateObject(col As Collection) As ICursor
     
-    Dim CC As CollectionCursor
+    Dim CC As ICollectionCursorParam
     
     Set CC = New CollectionCursor
     Set CC.Source = col
-    CC.GetCursor.MoveFirst
     
     Set CreateObject = CC
     
+    CreateObject.MoveFirst
+    
 End Function
-Public Property Set Source(v As Collection)
-    Set mCol = v
+Private Property Set ICollectionCursorParam_Source(RHS As Collection)
+    Set mCol = RHS
 End Property
 Private Sub Class_Initialize()
     mIndex = 0
@@ -135,44 +145,6 @@ End Sub
 Private Sub Class_Terminate()
     Set mCol = Nothing
 End Sub
-'>---
-'>#### GetCursor(IList I/F)
-'>
-'>**Syntax**
-'>
-'>```
-'>Set var = expression.GetCursor()
-'>```
-'>
-'>**Parameters**
-'>
-'>|Name|Required/Optional|Data type|Description|
-'>---|---|---|---
-'>|expression|必須|IList|IList I/F を指定します。|
-'>
-'>**Return Value**
-'>
-'>|Name|Data type|Description|
-'>---|---|---
-'>|var|ICursor|ICursor I/F を返却|
-'>
-'>**Remarks**
-'>
-'>IList I/F のメソッドです。<br>
-'>ICursor インターフェースを取得
-'>
-'>**Example**
-'>
-'>* None
-'>
-'>**See also**
-'>
-'>* IList
-'>* ICursor
-'>
-Public Property Get GetCursor() As ICursor
-    Set GetCursor = Me
-End Property
 '>---
 '>#### Eof(ICursor I/F)
 '>

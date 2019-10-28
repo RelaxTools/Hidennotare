@@ -2,10 +2,10 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "PairLogger"
+Attribute VB_Name = "IFileParameter"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = True
+Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
@@ -36,60 +36,53 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-'>### PairLogger クラス
+'>### IFileParameter インターフェイス
 '>
 '>**Remarks**
 '>
-'>開始終了ログ出力(Trace)<br>
-'>関数の開始／終了のメッセージを１行で出力するためのクラス<br>
-'>Traceレベルで出力する。
-'>**このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。**
+'>ファイル操作に関するパラメータを受け渡すインターフェイス
 '>
-'>
-'>**Example**
+'>**Definition**
 '>
 '>```
-'>Dim PL As PairLogger
-'>Set PL = PairLogger.CreateObject(TypeName(Me) & ".FileSearchEx")
+'>Public Property Let FileName(v As String)
+'>Public Property Let NewLineCode(v As NewLineCodeConstants)
+'>Public Property Let Encode(v As EncodeConstants)
+'>Public Property Let Mode(v As OpenModeConstants)
+'>Public Property Let Bom(v As Boolean)
+'>Public Property Let Delimiter(v As String)
+'>Public Property Let Quotation(v As Boolean)
+'>Public Sub Init()
 '>```
 '>
-'>**Dependent**
+'>**Sample**
 '>
-'>* Logger
-'>* IPairLoggerParam
-'>
-'>**History**
-'>
-'>|Date|Version|Note|
-'>|---|---|---|
-'>|2019-05-22|Ver.1.0.0|新規作成|
-'>|2019-10-28|Ver.1.0.1|クラスのメンバにCreateObject以外表示されないように修正|
+'>* None
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
-Implements IPairLoggerParam
 
-Dim mMsg As String
-'----------------------------------------------------
-' コンストラクタ
-'----------------------------------------------------
-Public Function CreateObject(Message As String) As PairLogger
-    
-    Dim PL As IPairLoggerParam
-    
-    Set PL = New PairLogger
-    PL.Message = Message
-    
-    Set CreateObject = PL
+Public Property Let FileName(v As String)
 
-End Function
-Private Property Let IPairLoggerParam_Message(RHS As String)
-    mMsg = RHS
 End Property
-'----------------------------------------------------
-' デストラクタ
-'----------------------------------------------------
-Private Sub Class_Terminate()
-    Logger.LogFinish LogLevel.Trace, mMsg
-End Sub
+Public Property Let NewLineCode(v As NewLineCodeConstants)
 
+End Property
+Public Property Let Encode(v As EncodeConstants)
+
+End Property
+Public Property Let Mode(v As OpenModeConstants)
+
+End Property
+Public Property Let Bom(v As Boolean)
+
+End Property
+Public Property Let Delimiter(v As String)
+
+End Property
+Public Property Let Quotation(v As Boolean)
+
+End Property
+Public Sub Init()
+
+End Sub

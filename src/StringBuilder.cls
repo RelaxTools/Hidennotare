@@ -50,8 +50,8 @@ Attribute VB_Exposed = False
 '>**Sample**
 '>
 '>```
-'>Dim SB As StringBuilder
-'>Set SB = StringBuilder.NewInstance
+'>Dim SB As IStringBuilder
+'>Set SB = StringBuilder.CreateObject
 '>
 '>SB.Append "A"
 '>SB.Append "B"
@@ -62,25 +62,13 @@ Attribute VB_Exposed = False
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
+Implements IStringBuilder
+Implements IStringBuilderParam
 
 Private mstrBuf() As String
 Private mlngCount As Long
 Private mlngLength As Long
-Private Const C_INIT_COUNT As Long = 25
 Private mlngInitCount As Long
-'------------------------------------------------------
-' Initialize
-'------------------------------------------------------
-Private Sub Class_Initialize()
-    mlngInitCount = C_INIT_COUNT
-    Me.Clear
-End Sub
-'------------------------------------------------------
-' Terminate
-'------------------------------------------------------
-Private Sub Class_Terminate()
-    Erase mstrBuf
-End Sub
 '>---
 '>#### コンストラクタ
 '>
@@ -125,21 +113,30 @@ End Sub
 '>
 '>* None
 '>
-Public Function CreateObject(Optional ByVal Size As Long = 25) As StringBuilder
+Public Function CreateObject(Optional ByVal Size As Long = 25) As IStringBuilder
 
-    Dim obj As StringBuilder
+    Dim obj As IStringBuilderParam
     
     Set obj = New StringBuilder
 
     obj.Size = Size
     Set CreateObject = obj
 
+    CreateObject.Clear
+
 End Function
-Public Property Let Size(v As Long)
-    mlngInitCount = v
+Private Property Let IStringBuilderParam_Size(RHS As Long)
+    mlngInitCount = RHS
 End Property
+'------------------------------------------------------
+' Terminate
+'------------------------------------------------------
+Private Sub Class_Terminate()
+    Erase mstrBuf
+End Sub
+
 '>---
-'>#### Clear(StringBuilder)
+'>#### Clear(IStringBuilder I/F)
 '>
 '>**Syntax**
 '>
@@ -170,7 +167,7 @@ End Property
 '>
 '>* None
 '>
-Public Sub Clear()
+Private Sub IStringBuilder_Clear()
     
     Erase mstrBuf
     ReDim Preserve mstrBuf(0 To mlngInitCount)
@@ -180,7 +177,7 @@ Public Sub Clear()
 
 End Sub
 '>---
-'>#### Append(StringBuilder)
+'>#### Append(IStringBuilder I/F)
 '>
 '>**Syntax**
 '>
@@ -233,7 +230,7 @@ End Sub
 '>
 '>* None
 '>
-Function Append(ByVal s As String, Optional ByVal Quotation As Boolean = False)
+Private Sub IStringBuilder_Append(ByVal s As String, Optional ByVal Quotation As Boolean = False)
 
     '配列にセット
     If mlngCount > UBound(mstrBuf) Then
@@ -252,9 +249,9 @@ Function Append(ByVal s As String, Optional ByVal Quotation As Boolean = False)
     '要素数＋１
     mlngCount = mlngCount + 1
 
-End Function
+End Sub
 '>---
-'>#### ToString(StringBuilder)
+'>#### ToString(IStringBuilder I/F)
 '>
 '>**Syntax**
 '>
@@ -326,14 +323,14 @@ End Function
 '>
 '>* None
 '>
-Function ToString(Optional ByVal Delimiter As String = "", Optional ByVal Header As String = "", Optional ByVal Footer As String = "")
+Private Function IStringBuilder_ToString(Optional ByVal Delimiter As String = "", Optional ByVal Header As String = "", Optional ByVal Footer As String = "")
 
     Call resize
-    ToString = Header & Join(mstrBuf, Delimiter) & Footer
+    IStringBuilder_ToString = Header & Join(mstrBuf, Delimiter) & Footer
 
 End Function
 '>---
-'>#### ToArray(StringBuilder)
+'>#### ToArray(IStringBuilder I/F)
 '>
 '>**Syntax**
 '>
@@ -381,14 +378,14 @@ End Function
 '>
 '>* None
 '>
-Function ToArray() As String()
+Private Function IStringBuilder_ToArray() As String()
     
     Call resize
-    ToArray = mstrBuf()
+    IStringBuilder_ToArray = mstrBuf()
 
 End Function
 '>---
-'>#### Length(StringBuilder)
+'>#### Length(IStringBuilder I/F)
 '>
 '>**Syntax**
 '>
@@ -436,11 +433,11 @@ End Function
 '>
 '>* None
 '>
-Public Property Get Length() As Long
-    Length = mlngLength
+Private Property Get IStringBuilder_Length() As Long
+    IStringBuilder_Length = mlngLength
 End Property
 '>---
-'>#### Replace(StringBuilder)
+'>#### Replace(IStringBuilder I/F)
 '>
 '>**Syntax**
 '>
@@ -489,7 +486,7 @@ End Property
 '>
 '>* None
 '>
-Public Sub Replace(ByVal strFind As String, ByVal strReplace As String)
+Private Sub IStringBuilder_Replace(ByVal strFind As String, ByVal strReplace As String)
 
     Dim i As Long
     If mlngCount > 0 Then
@@ -512,4 +509,5 @@ Private Sub resize()
     End Select
 
 End Sub
+
 

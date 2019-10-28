@@ -46,7 +46,9 @@ Attribute VB_Exposed = False
 '>
 '>**Dependent**
 '>
-'>* None
+'>* IUsing
+'>* IUsingParam
+'>* IUsingArgs
 '>
 '>**History**
 '>
@@ -56,14 +58,16 @@ Attribute VB_Exposed = False
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
+Implements IUsingParam
+Implements IUsingArgs
 
 Private m_col As Collection
 '--------------------------------
 ' With 時点で実行
 '--------------------------------
-Public Function CreateObject(ParamArray Args() As Variant) As Using
+Public Function CreateObject(ParamArray Args() As Variant) As IUsingArgs
 
-    Dim us As Using
+    Dim us As IUsingParam
     Dim v As Variant
     
     v = Args
@@ -76,15 +80,20 @@ Public Function CreateObject(ParamArray Args() As Variant) As Using
     Set CreateObject = us
 
 End Function
-Public Property Set Source(v As Collection)
-    Set m_col = v
+Private Property Set IUsingParam_Source(RHS As Collection)
+    Set m_col = RHS
 End Property
-Public Sub Init()
+'--------------------------------
+'With 時点で実行
+'--------------------------------
+Private Sub IUsingParam_Init()
+    
     Dim v As IUsing
     
     For Each v In m_col
         v.Begin
     Next
+
 End Sub
 '--------------------------------
 'End With 時点で実行
@@ -103,11 +112,39 @@ Private Sub Class_Terminate()
     Set m_col = Nothing
 
 End Sub
-'--------------------------------
-' Args
-'--------------------------------
-Public Property Get Args() As Collection
-    Set Args = m_col
+'>---
+'>#### Args(IUsingArgs I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>Set col = obj.Args()
+'>```
+'>
+'>**Parameters**
+'>
+'>* None
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|col|Collection|引数に渡されたオブジェクトのコレクション|
+'>
+'>**Remarks**
+'>
+'>CreteObjectに指定したオブジェクトを参照するためのコレクション<br>
+'>Collectionなので1開始です。<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* None
+'>
+Private Property Get IUsingArgs_Args() As Collection
+    Set IUsingArgs_Args = m_col
 End Property
-
 

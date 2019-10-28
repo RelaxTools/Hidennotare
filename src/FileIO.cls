@@ -886,12 +886,12 @@ End Sub
 '>
 Sub TruncateFile(ByVal strFile As String)
 
-    Dim fp As Integer
+    Dim FP As Integer
 
     '出力ファイルのクリア
-    fp = FreeFile()
-    Open strFile For Output As fp
-    Close fp
+    FP = FreeFile()
+    Open strFile For Output As FP
+    Close FP
 
 End Sub
 '>---

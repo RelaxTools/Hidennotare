@@ -49,6 +49,7 @@ Attribute VB_Exposed = False
 '>
 '>* ICursor
 '>* IReader
+'>* IFileParameter
 '>* TextReader
 '>
 '>**History**
@@ -56,11 +57,13 @@ Attribute VB_Exposed = False
 '>|Date|Version|Note|
 '>|---|---|---|
 '>|2018-12-06|Ver.1.0.0|新規作成|
+'>|2019-10-28|Ver.1.0.1|クラスのメンバにCreateObject以外表示されないように修正|
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements ICursor
 Implements IReader
+Implements IFileParameter
 
 Private mIR As IReader
 
@@ -150,37 +153,39 @@ Public Function CreateObject(ByVal FileName As String, _
                             Optional ByVal Delimiter As String = ",", _
                             Optional ByVal Quotation As Boolean = False) As ICursor
 
-    Dim CR As CSVReader
+    Dim FP As IFileParameter
     
-    Set CR = New CSVReader
+    Set FP = New CSVReader
     
-    CR.FileName = FileName
-    CR.NewLineCode = NewLineCode
-    CR.Encode = Encode
-    CR.Delimiter = Delimiter
-    CR.Quotation = Quotation
+    FP.FileName = FileName
+    FP.NewLineCode = NewLineCode
+    FP.Encode = Encode
+    FP.Delimiter = Delimiter
+    FP.Quotation = Quotation
     
-    CR.Init
+    FP.Init
 
-    Set CreateObject = CR
+    Set CreateObject = FP
 
 End Function
-Public Property Let FileName(v As String)
-    mFileName = v
+
+Private Property Let IFileParameter_Bom(RHS As Boolean)
+
 End Property
-Public Property Let NewLineCode(v As NewLineCodeConstants)
-    mNewLineCode = v
+
+Private Property Let IFileParameter_Delimiter(RHS As String)
+    mDelimiter = RHS
 End Property
-Public Property Let Encode(v As EncodeConstants)
-    mEncode = v
+
+Private Property Let IFileParameter_Encode(RHS As EncodeConstants)
+    mEncode = RHS
 End Property
-Public Property Let Delimiter(v As String)
-    mDelimiter = v
+
+Private Property Let IFileParameter_FileName(RHS As String)
+    mFileName = RHS
 End Property
-Public Property Let Quotation(v As Boolean)
-    mQuotation = v
-End Property
-Public Sub Init()
+
+Private Sub IFileParameter_Init()
     
     'TextReaderに委譲する。改行コードをCsvReader側でパースする。
     Set mIR = TextReader.CreateObject(mFileName, NewLineCodeConstants.NewLineCodeNone, mEncode)
@@ -194,6 +199,18 @@ Public Sub Init()
     ICursor_MoveFirst
 
 End Sub
+
+Private Property Let IFileParameter_Mode(RHS As OpenModeConstants)
+
+End Property
+
+Private Property Let IFileParameter_NewLineCode(RHS As NewLineCodeConstants)
+    mNewLineCode = RHS
+End Property
+
+Private Property Let IFileParameter_Quotation(RHS As Boolean)
+    mQuotation = RHS
+End Property
 Private Sub Class_Terminate()
     Set mIR = Nothing
 End Sub
@@ -369,43 +386,43 @@ Public Sub Paste(ByRef TopLeft As Range, ByRef Fields As IDictionary, Optional B
     r.Value = var
     
 End Sub
-'>---
-'>#### GetCursor(CsvReader)
-'>
-'>**Syntax**
-'>
-'>```
-'>Set var = expression.GetCursor()
-'>```
-'>
-'>**Parameters**
-'>
-'>|Name|Required/Optional|Data type|Description|
-'>---|---|---|---
-'>|expression|必須|CsvReader|CsvReaderを指定します。|
-'>
-'>**Return Value**
-'>
-'>|Name|Data type|Description|
-'>---|---|---
-'>|var|ICursor|ICursor I/F を返却|
-'>
-'>**Remarks**
-'>
-'>CsvReaderのメソッドです。<br>
-'>ICursor インターフェースを取得
-'>
-'>**Example**
-'>
-'>* None
-'>
-'>**See also**
-'>
-'>* ICursor
-'>
-Public Property Get GetCursor() As ICursor
-    Set GetCursor = Me
-End Property
+''>---
+''>#### GetCursor(CsvReader)
+''>
+''>**Syntax**
+''>
+''>```
+''>Set var = expression.GetCursor()
+''>```
+''>
+''>**Parameters**
+''>
+''>|Name|Required/Optional|Data type|Description|
+''>---|---|---|---
+''>|expression|必須|CsvReader|CsvReaderを指定します。|
+''>
+''>**Return Value**
+''>
+''>|Name|Data type|Description|
+''>---|---|---
+''>|var|ICursor|ICursor I/F を返却|
+''>
+''>**Remarks**
+''>
+''>CsvReaderのメソッドです。<br>
+''>ICursor インターフェースを取得
+''>
+''>**Example**
+''>
+''>* None
+''>
+''>**See also**
+''>
+''>* ICursor
+''>
+'Public Property Get GetCursor() As ICursor
+'    Set GetCursor = Me
+'End Property
 '>---
 '>#### Eof(ICursor I/F)
 '>

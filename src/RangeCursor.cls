@@ -41,12 +41,20 @@ Attribute VB_Exposed = False
 '>**Remarks**
 '>
 '>Range読み込みクラス<br>
-'>指定されたRangeから１アイテムずつ処理を行う。<br>
+'>指定されたRangeから１行ずつ処理を行う。<br>
 '>**このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。**
 '>
-'>**Implements**
+'>**Dependent**
 '>
-'>* ICursor
+'>- IRangeCursorParam クラス
+'>- ICursor クラス
+'>
+'>**History**
+'>
+'>|Date|Version|Note|
+'>|---|---|---|
+'>|2018-12-06|Ver.1.0.0|新規作成|
+'>|2019-10-28|Ver.1.0.1|クラスのメンバにCreateObject以外表示されないように修正|
 '>
 '>**Sample**
 '>
@@ -65,6 +73,7 @@ Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements ICursor
+Implements IRangeCursorParam
 
 'Range
 Private mRange As Range
@@ -92,7 +101,7 @@ Private mRow As Long
 '>
 '>|Name|Data type|Description|
 '>---|---|---
-'>|return|Object|新しいインスタンス(RangeCursor)|
+'>|return|Object|新しいインスタンス(ICursor)|
 '>
 '>**Remarks**
 '>
@@ -106,17 +115,20 @@ Private mRow As Long
 '>
 '>* None
 '>
-Public Function CreateObject(rng As Range) As RangeCursor
-    Dim RC As RangeCursor
+Public Function CreateObject(rng As Range) As ICursor
+    
+    Dim RC As IRangeCursorParam
     Set RC = New RangeCursor
     
     Set RC.Source = rng
-    RC.GetCursor.MoveFirst
     
     Set CreateObject = RC
+
+    CreateObject.MoveFirst
+
 End Function
-Public Property Set Source(v As Range)
-    Set mRange = v
+Private Property Set IRangeCursorParam_Source(RHS As Range)
+    Set mRange = RHS
 End Property
 
 Private Sub Class_Initialize()
@@ -137,42 +149,6 @@ Private Sub SkipHiddenRow()
         mRow = mRow + 1
     Loop
 End Sub
-'>---
-'>#### GetCursor(RangeCursor)
-'>
-'>**Syntax**
-'>
-'>```
-'>Set var = expression.GetCursor()
-'>```
-'>
-'>**Parameters**
-'>
-'>|Name|Required/Optional|Data type|Description|
-'>---|---|---|---
-'>|expression|必須|RangeCursor|RangeCursorインスタンスを指定します。|
-'>
-'>**Return Value**
-'>
-'>|Name|Data type|Description|
-'>---|---|---
-'>|var|ICursor|ICursor I/F を返却|
-'>
-'>**Remarks**
-'>
-'>ICursor インターフェースを取得
-'>
-'>**Example**
-'>
-'>* None
-'>
-'>**See also**
-'>
-'>* ICursor
-'>
-Public Property Get GetCursor() As ICursor
-    Set GetCursor = Me
-End Property
 '>---
 '>#### Eof(ICursor I/F)
 '>
@@ -319,3 +295,5 @@ Private Sub ICursor_MoveNext()
     mRow = mRow + 1
     SkipHiddenRow
 End Sub
+
+

@@ -46,18 +46,21 @@ Attribute VB_Exposed = False
 '>**Dependent**
 '>
 '>* IWriter
+'>* IFileParameter
 '>
 '>**History**
 '>
 '>|Date|Version|Note|
 '>|---|---|---|
 '>|2018-12-06|Ver.1.0.0|新規作成|
+'>|2019-10-28|Ver.1.0.1|クラスのメンバにCreateObject以外表示されないように修正|
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements IWriter
+Implements IFileParameter
 
-Private fp As Integer
+Private FP As Integer
 Private mOpen As Boolean
 
 'プロパティ保持
@@ -128,36 +131,50 @@ Public Function CreateObject(ByVal FileName As String, _
                              Optional ByVal Mode As OpenModeConstants = OpenModeOutput, _
                              Optional ByVal Bom As Boolean = False) As IWriter
     
-    Dim TW As TextWriter
-    Set TW = New TextWriter
+    Dim FP As IFileParameter
+    Set FP = New TextWriter
     
-    TW.FileName = FileName
-    TW.NewLineCode = NewLineCode
-    TW.Encode = Encode
-    TW.Mode = Mode
-    TW.Bom = Bom
+    FP.FileName = FileName
+    FP.NewLineCode = NewLineCode
+    FP.Encode = Encode
+    FP.Mode = Mode
+    FP.Bom = Bom
     
-    TW.Init
+    FP.Init
     
-    Set CreateObject = TW
+    Set CreateObject = FP
     
 End Function
-Public Property Let FileName(v As String)
-    mFileName = v
+
+Private Property Let IFileParameter_Bom(RHS As Boolean)
+    mBom = RHS
 End Property
-Public Property Let NewLineCode(v As NewLineCodeConstants)
-    mNewLineCode = v
+
+Private Property Let IFileParameter_Delimiter(RHS As String)
+
 End Property
-Public Property Let Encode(v As EncodeConstants)
-    mEncode = v
+
+Private Property Let IFileParameter_Encode(RHS As EncodeConstants)
+    mEncode = RHS
 End Property
-Public Property Let Mode(v As OpenModeConstants)
-    mMode = v
+
+Private Property Let IFileParameter_FileName(RHS As String)
+    mFileName = RHS
 End Property
-Public Property Let Bom(v As Boolean)
-    mBom = v
+
+Private Property Let IFileParameter_Mode(RHS As OpenModeConstants)
+    mMode = RHS
 End Property
-Public Sub Init()
+
+Private Property Let IFileParameter_NewLineCode(RHS As NewLineCodeConstants)
+    mNewLineCode = RHS
+End Property
+
+Private Property Let IFileParameter_Quotation(RHS As Boolean)
+
+End Property
+
+Private Sub IFileParameter_Init()
     fileOpen
 End Sub
 '>---
@@ -212,7 +229,7 @@ Private Sub IWriter_WriteData(ByVal Args As Variant)
                 bytBom(1) = &HBB
                 bytBom(2) = &HBF
             
-                Put #fp, , bytBom
+                Put #FP, , bytBom
             
             Case EncodeConstants.EncodeUTF16LE
                 
@@ -221,7 +238,7 @@ Private Sub IWriter_WriteData(ByVal Args As Variant)
                 bytBom(0) = &HFF
                 bytBom(1) = &HFE
         
-                Put #fp, , bytBom
+                Put #FP, , bytBom
         
         End Select
         mFirst = False
@@ -247,7 +264,7 @@ Private Sub IWriter_WriteData(ByVal Args As Variant)
             bytBuf = strLine
     End Select
 
-    Put #fp, , bytBuf
+    Put #FP, , bytBuf
 
 End Sub
 '>---
@@ -302,7 +319,7 @@ Private Sub IWriter_WriteLine(ByVal Args As Variant)
                 bytBom(1) = &HBB
                 bytBom(2) = &HBF
             
-                Put #fp, , bytBom
+                Put #FP, , bytBom
             
             Case EncodeConstants.EncodeUTF8
                 
@@ -311,7 +328,7 @@ Private Sub IWriter_WriteLine(ByVal Args As Variant)
                 bytBom(0) = &HFF
                 bytBom(1) = &HFE
         
-                Put #fp, , bytBom
+                Put #FP, , bytBom
         
         End Select
         mFirst = False
@@ -337,7 +354,7 @@ Private Sub IWriter_WriteLine(ByVal Args As Variant)
             bytBuf = strLine
     End Select
 
-    Put #fp, , bytBuf
+    Put #FP, , bytBuf
 
 End Sub
 
@@ -382,14 +399,14 @@ Private Sub IWriter_Flush()
     On Error Resume Next
     
     If mOpen Then
-        Close fp
+        Close FP
     End If
     
-    fp = FreeFile
-    Open mFileName For Binary As fp
+    FP = FreeFile
+    Open mFileName For Binary As FP
     mOpen = True
 
-    Seek #fp, VBA.LOF(fp) + 1
+    Seek #FP, VBA.LOF(FP) + 1
     
 End Sub
 
@@ -415,62 +432,28 @@ Private Sub fileOpen()
     Select Case mMode
         Case OpenModeConstants.OpenModeOutput
             
-            fp = FreeFile()
-            Open mFileName For Output As fp
-            Close fp
+            FP = FreeFile()
+            Open mFileName For Output As FP
+            Close FP
         
-            fp = FreeFile
-            Open mFileName For Binary As fp
+            FP = FreeFile
+            Open mFileName For Binary As FP
             mOpen = True
         
         Case OpenModeConstants.OpenModeAppend
             
-            fp = FreeFile
-            Open mFileName For Binary As fp
+            FP = FreeFile
+            Open mFileName For Binary As FP
             mOpen = True
         
-            Seek #fp, VBA.LOF(fp) + 1
+            Seek #FP, VBA.LOF(FP) + 1
     
     End Select
     mFirst = True
 End Sub
 Private Sub FileClose()
     If mOpen Then
-        Close fp
+        Close FP
     End If
 End Sub
-'>---
-'>#### GetIWriter(TextWriter)
-'>
-'>**Syntax**
-'>
-'>```
-'>Set i/f = obj.GetIWriter()
-'>```
-'>
-'>**Parameters**
-'>
-'>* None
-'>
-'>**Return Value**
-'>
-'>|Name|Data type|Description|
-'>---|---|---
-'>|i/f|IWriter|IWriter インターフェース(TextWriter)を返却|
-'>
-'>**Remarks**
-'>
-'>IWriterインターフェース返却メソッド<br>
-'>
-'>**Example**
-'>
-'>* None
-'>
-'>**See also**
-'>
-'>* None
-'>
-Public Function GetIWriter() As IWriter
-    Set GetIWriter = Me
-End Function
 

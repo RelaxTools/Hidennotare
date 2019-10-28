@@ -143,7 +143,7 @@ Private Function ParseObject(ByVal strJSON As String, obj As Object, ByVal Level
     
     Dim propertyName As String
     Dim lineBreak As Boolean
-    Dim SB As StringBuilder
+    Dim SB As IStringBuilder
     
     If Not Core.StartsWith(strJSON, "{") Or Not Core.EndsWith(strJSON, "}") Then
         Err.Raise 512 + 1, TypeName(Me) & ".ParseObject", "JSONFormatError"
@@ -176,7 +176,7 @@ Private Function ParseObject(ByVal strJSON As String, obj As Object, ByVal Level
     Do Until IC.Eof
         
         propertyName = ""
-        Set SB = New StringBuilder
+        Set SB = StringBuilder.CreateObject()
         lineBreak = False
         
         'èIóπÇ‹ÇΩÇÕçsÇÃèIÇÌÇË
@@ -250,7 +250,7 @@ Private Function ParseArray(strJSON As String, obj As Object, ByVal Level As Lon
     
     Dim objAry As IList
     Dim lineBreak As Boolean
-    Dim SB As StringBuilder
+    Dim SB As IStringBuilder
     
     If Not Core.StartsWith(strJSON, "[") Or Not Core.EndsWith(strJSON, "]") Then
         Err.Raise 512 + 1, TypeName(Me) & ".ParseArray", "JSONFormatError"
@@ -280,7 +280,7 @@ Private Function ParseArray(strJSON As String, obj As Object, ByVal Level As Lon
     
     Do Until IC.Eof
     
-        Set SB = New StringBuilder
+        Set SB = StringBuilder.CreateObject()
         lineBreak = False
         
         Do Until IC.Eof Or lineBreak
@@ -332,8 +332,8 @@ Private Function StringExtraction(ByRef IC As ICursor) As String
     Dim Buffer As String
     Dim doubleQuat As Long
     
-    Dim SB As StringBuilder
-    Set SB = New StringBuilder
+    Dim SB As IStringBuilder
+    Set SB = StringBuilder.CreateObject
     
     doubleQuat = 0
     Do Until IC.Eof
@@ -367,10 +367,10 @@ Private Function ElementExtraction(ByRef IC As ICursor) As String
     Dim curlyBraces As Long
     
     Dim sw As Boolean
-    Dim SB As StringBuilder
+    Dim SB As IStringBuilder
     
     sw = False
-    Set SB = New StringBuilder
+    Set SB = StringBuilder.CreateObject()
     
     Do Until IC.Eof
         
@@ -701,8 +701,8 @@ Public Function ParseCsv(ByVal strBuf As String, Optional ByVal Quatation As Boo
         Do Until IC.Eof Or blnLineBreak
         
             'èâä˙âª
-            Dim SB As StringBuilder
-            Set SB = New StringBuilder
+            Dim SB As IStringBuilder
+            Set SB = StringBuilder.CreateObject()
             blnItemBreak = False
             
             Do Until IC.Eof Or blnLineBreak Or blnItemBreak

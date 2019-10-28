@@ -449,10 +449,10 @@ End Function
 Public Function Escape(ByVal v As String) As String
 
     Dim strChr As String
-    Dim SB As StringBuilder
+    Dim SB As IStringBuilder
     Dim i As Long
     
-    Set SB = New StringBuilder
+    Set SB = StringBuilder.CreateObject
     
     For i = 1 To Len(v)
         
@@ -523,10 +523,10 @@ Public Function Unescape(ByVal v As String) As String
 
     Dim strChr As String
     Dim strBuf As String
-    Dim SB As StringBuilder
+    Dim SB As IStringBuilder
     Dim i As Long
     
-    Set SB = New StringBuilder
+    Set SB = StringBuilder.CreateObject
     i = 1
     Do Until i > Len(v)
 

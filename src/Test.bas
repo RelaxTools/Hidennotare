@@ -298,6 +298,8 @@ Sub Test_CollectionCursor()
 End Sub
 Sub Test_LineCursor()
 
+    'LineCursorは廃止、同機能のArrayListを使用のこと。
+
 
     Dim v As Variant
     
@@ -306,7 +308,7 @@ Sub Test_LineCursor()
 
     Dim IC As ICursor
 
-    Set IC = LineCursor.CreateObject(v)
+    Set IC = ArrayList.CreateObject(v)
 
     Dim i As Long
     i = 0
@@ -327,9 +329,9 @@ Sub Test_LineCursor()
 End Sub
 Sub Test_StringBuilder()
 
-    Dim SB As StringBuilder
+    Dim SB As IStringBuilder
     
-    Set SB = New StringBuilder
+    Set SB = StringBuilder.CreateObject
     
     SB.Append "A"
     SB.Append "B"
@@ -340,9 +342,9 @@ Sub Test_StringBuilder()
     '文字列の連結
     Debug.Assert SB.ToString = "ABCDE"
     
-    Dim S2 As StringBuilder
+    Dim S2 As IStringBuilder
     
-    Set S2 = New StringBuilder
+    Set S2 = StringBuilder.CreateObject
     
     'Trueをつけるとダブルコーテーションで囲む
     S2.Append "red", True
@@ -770,4 +772,9 @@ Sub Test_TaskTrayView()
         .ShowBalloon "おしらせ", "正常終了です。", 5
     End With
     
+End Sub
+
+Sub a()
+
+
 End Sub

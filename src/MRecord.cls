@@ -133,8 +133,8 @@ Private Function IDictionary_ToString() As String
     
     Dim v  As Variant
     
-    Dim SB As StringBuilder
-    Set SB = New StringBuilder
+    Dim SB As IStringBuilder
+    Set SB = StringBuilder.CreateObject
     
     For Each KeyValue In mDic.Keys
     

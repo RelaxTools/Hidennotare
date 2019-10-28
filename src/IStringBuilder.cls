@@ -2,10 +2,10 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "PairLogger"
+Attribute VB_Name = "IStringBuilder"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = True
+Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
@@ -36,60 +36,49 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-'>### PairLogger クラス
+'>### IStringBuilder インターフェイス
 '>
 '>**Remarks**
 '>
-'>開始終了ログ出力(Trace)<br>
-'>関数の開始／終了のメッセージを１行で出力するためのクラス<br>
-'>Traceレベルで出力する。
-'>**このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。**
+'>文字列を組み立てるインターフェイス
 '>
-'>
-'>**Example**
+'>**Definition**
 '>
 '>```
-'>Dim PL As PairLogger
-'>Set PL = PairLogger.CreateObject(TypeName(Me) & ".FileSearchEx")
+'>Public Sub Clear()
+'>Public Sub Append(ByVal s As String, Optional ByVal Quotation As Boolean = False)
+'>Public Function ToString(Optional ByVal Delimiter As String = "", Optional ByVal Header As String = "", Optional ByVal Footer As String = "")
+'>Public Function ToArray() As String()
+'>Public Property Get Length() As Long
+'>Public Sub Replace(ByVal strFind As String, ByVal strReplace As String)
 '>```
 '>
-'>**Dependent**
+'>**Sample**
 '>
-'>* Logger
-'>* IPairLoggerParam
-'>
-'>**History**
-'>
-'>|Date|Version|Note|
-'>|---|---|---|
-'>|2019-05-22|Ver.1.0.0|新規作成|
-'>|2019-10-28|Ver.1.0.1|クラスのメンバにCreateObject以外表示されないように修正|
+'>* None
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
-Implements IPairLoggerParam
 
-Dim mMsg As String
-'----------------------------------------------------
-' コンストラクタ
-'----------------------------------------------------
-Public Function CreateObject(Message As String) As PairLogger
+Public Sub Clear()
     
-    Dim PL As IPairLoggerParam
-    
-    Set PL = New PairLogger
-    PL.Message = Message
-    
-    Set CreateObject = PL
+End Sub
+Public Sub Append(ByVal s As String, Optional ByVal Quotation As Boolean = False)
+
+End Sub
+Public Function ToString(Optional ByVal Delimiter As String = "", Optional ByVal Header As String = "", Optional ByVal Footer As String = "")
 
 End Function
-Private Property Let IPairLoggerParam_Message(RHS As String)
-    mMsg = RHS
+Public Function ToArray() As String()
+    
+End Function
+Public Property Get Length() As Long
+
 End Property
-'----------------------------------------------------
-' デストラクタ
-'----------------------------------------------------
-Private Sub Class_Terminate()
-    Logger.LogFinish LogLevel.Trace, mMsg
+Public Sub Replace(ByVal strFind As String, ByVal strReplace As String)
+    
 End Sub
+
+
+
 

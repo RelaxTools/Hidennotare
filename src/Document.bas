@@ -100,12 +100,12 @@ Sub OutputMarkDown()
     Dim obj As Object
     Dim strFolder As String
     Dim strFile As String
-    Dim SB As StringBuilder
+    Dim SB As IStringBuilder
     Dim strBuf As String
     Dim strMark As String
     Dim i As Long
     Dim TC As IList
-    Dim fp As Integer
+    Dim FP As Integer
     Dim bytBuf() As Byte
     Dim IW As IWriter
     
@@ -166,7 +166,7 @@ Sub OutputMarkDown()
         
         With obj.CodeModule
             
-            Set SB = New StringBuilder
+            Set SB = StringBuilder.CreateObject
             
             For i = 1 To .CountOfLines
                 
@@ -295,7 +295,7 @@ Private Function LevelNo(ByVal strBuf As String, _
                          ByVal strName As String) As String
 
     Dim col As Collection
-    Dim SB As StringBuilder
+    Dim SB As IStringBuilder
     Dim lngLen As Long
     Dim i As Long
     Dim strID As String
@@ -324,7 +324,7 @@ Private Function LevelNo(ByVal strBuf As String, _
             Next
 
             'èÕî‘çÜÇÃê∂ê¨
-            Set SB = New StringBuilder
+            Set SB = StringBuilder.CreateObject
             For i = 1 To lngLen
                 SB.Append CStr(No(i))
             Next
@@ -388,12 +388,12 @@ End Function
 '---------------------------------------------------
 Private Function GetStaticContents(ByVal strFile As String) As String
 
-    Dim SB As StringBuilder
+    Dim SB As IStringBuilder
     Dim IC As ICursor
     
     GetStaticContents = ""
     
-    Set SB = New StringBuilder
+    Set SB = StringBuilder.CreateObject
     
     Set IC = TextReader.CreateObject(strFile, _
                                      NewLineCodeConstants.NewLineCodeLF, _

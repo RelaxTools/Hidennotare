@@ -91,8 +91,8 @@ Option Explicit
 '>
 Public Sub CompressArchive(ByVal ary As Variant, ByVal strDest As String)
 
-    Dim SB As StringBuilder
-    Dim PH As StringBuilder
+    Dim SB As IStringBuilder
+    Dim PH As IStringBuilder
     Dim v As Variant
     
     If Not strDest Like "*.zip" Then
@@ -115,14 +115,14 @@ Public Sub CompressArchive(ByVal ary As Variant, ByVal strDest As String)
         End If
     Next
     
-    Set SB = New StringBuilder
+    Set SB = StringBuilder.CreateObject
     
     'コマンド
     SB.Append "Compress-Archive"
     
     '圧縮するファイル
     SB.Append "-Path"
-    Set PH = New StringBuilder
+    Set PH = StringBuilder.CreateObject
     For Each v In ary
     
         PH.Append v, True
@@ -186,9 +186,9 @@ Public Sub ExpandArchive(ByVal strArchive As String, ByVal strPath As String)
         Err.Raise 512 + 1, TypeName(Me) & ".ExpandArchive", "folder not exists"
     End If
     
-    Dim SB As StringBuilder
+    Dim SB As IStringBuilder
     
-    Set SB = New StringBuilder
+    Set SB = StringBuilder.CreateObject
     
     'コマンド
     SB.Append "Expand-Archive"

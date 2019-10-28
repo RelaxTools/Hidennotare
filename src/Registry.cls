@@ -94,7 +94,7 @@ Public Sub Export()
     Dim Reg, Locator, Service, SubKey, RegName, RegType
     Dim i As Long, j As Long, buf As String, RegData As String
     
-    Dim fp As Integer
+    Dim FP As Integer
     
     FileName = Application.GetSaveAsFilename(InitialFileName:=Core.GetTitleName & ".reg", fileFilter:="“o˜^ƒtƒ@ƒCƒ‹,*.reg")
     If FileName = False Then
@@ -116,30 +116,30 @@ Public Sub Export()
     
     Reg.EnumKey HKEY_CURRENT_USER, Key, SubKey
     
-    fp = FreeFile()
-    Open FileName For Output As fp
-    Close fp
+    FP = FreeFile()
+    Open FileName For Output As FP
+    Close FP
     
-    fp = FreeFile()
-    Open FileName For Binary As fp
+    FP = FreeFile()
+    Open FileName For Binary As FP
     
     Dim strBuf() As Byte
     
-    Put fp, , C_FF
-    Put fp, , C_FE
+    Put FP, , C_FF
+    Put FP, , C_FE
     
     strBuf = "Windows Registry Editor Version 5.00" & vbCrLf & vbCrLf
-    Put fp, , strBuf
+    Put FP, , strBuf
     
     strBuf = "[" & ROOT & Key & "]" & vbCrLf
-    Put fp, , strBuf
+    Put FP, , strBuf
     
     For i = 0 To UBound(SubKey)
         
         Reg.EnumValues HKEY_CURRENT_USER, Key & "\" & SubKey(i), RegName, RegType
             
         strBuf = vbCrLf & "[" & ROOT & Key & "\" & SubKey(i) & "]" & vbCrLf
-        Put fp, , strBuf
+        Put FP, , strBuf
         
         For j = 0 To UBound(RegName)
         
@@ -156,14 +156,14 @@ Public Sub Export()
             
             strBuf = """" & RegName(j) & """=""" & strDat & """" & vbCrLf
             
-            Put fp, , strBuf
+            Put FP, , strBuf
         
         Next j
         
     Next i
     strBuf = vbCrLf
-    Put fp, , strBuf
-    Close fp
+    Put FP, , strBuf
+    Close FP
     
     Set Reg = Nothing
     Set Service = Nothing

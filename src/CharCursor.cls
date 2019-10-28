@@ -44,9 +44,17 @@ Attribute VB_Exposed = False
 '>指定された文字列から１文字ずつ処理を行う。<br>
 '>**このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。**
 '>
-'>**Implements**
+'>**Dependent**
 '>
-'>* ICursor
+'>- ICharCursorParam クラス
+'>- ICursor クラス
+'>
+'>**History**
+'>
+'>|Date|Version|Note|
+'>|---|---|---|
+'>|2018-12-06|Ver.1.0.0|新規作成|
+'>|2019-10-28|Ver.1.0.1|クラスのメンバにCreateObject以外表示されないように修正|
 '>
 '>**Sample**
 '>
@@ -76,6 +84,7 @@ Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements ICursor
+Implements ICharCursorParam
 
 Private mBuf As String
 Private mIndex As Long
@@ -101,7 +110,7 @@ End Sub
 '>
 '>|Name|Data type|Description|
 '>---|---|---
-'>|ret|Object|新しいインスタンス(CharCursor)|
+'>|ret|Object|新しいインスタンス(ICursor)|
 '>
 '>**Remarks**
 '>
@@ -117,55 +126,19 @@ End Sub
 '>
 Public Function CreateObject(ByVal Source As String) As ICursor
 
-    Dim CC As CharCursor
+    Dim CC As ICharCursorParam
     
     Set CC = New CharCursor
     
     CC.Source = Source
-    CC.GetCursor.MoveFirst
     
     Set CreateObject = CC
 
+    CreateObject.MoveFirst
+
 End Function
-Public Property Let Source(v As String)
-    mBuf = v
-End Property
-'>---
-'>#### GetCursor(CharCursor)
-'>
-'>**Syntax**
-'>
-'>```
-'>Set var = expression.GetCursor()
-'>```
-'>
-'>**Parameters**
-'>
-'>|Name|Required/Optional|Data type|Description|
-'>---|---|---|---
-'>|expression|必須|CharCursor|CharCursorインスタンスを指定します。|
-'>
-'>**Return Value**
-'>
-'>|Name|Data type|Description|
-'>---|---|---
-'>|var|ICursor|ICursor I/F を返却|
-'>
-'>**Remarks**
-'>
-'>CharCursorのメソッドです。<br>
-'>ICursor インターフェースを取得
-'>
-'>**Example**
-'>
-'>* None
-'>
-'>**See also**
-'>
-'>* ICursor
-'>
-Public Property Get GetCursor() As ICursor
-    Set GetCursor = Me
+Private Property Let ICharCursorParam_Source(RHS As String)
+    mBuf = RHS
 End Property
 '>---
 '>#### Eof(ICursor I/F)

@@ -763,8 +763,8 @@ End Function
 Private Function IList_ToString() As String
 
     Dim v As Variant
-    Dim SB As StringBuilder
-    Set SB = New StringBuilder
+    Dim SB As IStringBuilder
+    Set SB = StringBuilder.CreateObject
     
     For Each v In mCol
     
@@ -1048,10 +1048,10 @@ End Function
 Private Function Escape(ByVal v As String) As String
 
     Dim strChr As String
-    Dim SB As StringBuilder
+    Dim SB As IStringBuilder
     Dim i As Long
     
-    Set SB = New StringBuilder
+    Set SB = StringBuilder.CreateObject
     
     For i = 1 To Len(v)
         

@@ -67,7 +67,7 @@ Private Declare PtrSafe Sub Sleep Lib "kernel32" (ByVal ms As LongPtr)
 Private colStack As New Collection
 
 'ファイル番号
-Private fp As Integer
+Private FP As Integer
 
 'ログタイプ
 Public Enum LogType
@@ -97,7 +97,7 @@ Private Sub Class_Initialize()
 
     Set mFSO = VBA.CreateObject("Scripting.FileSystemObject")
     
-    fp = 225
+    FP = 225
 
     mLevelStr = Array("Trace", "Info", "Warn", "Fatal", "None")
     
@@ -120,7 +120,7 @@ End Sub
 '--------------------------------------------------------------
 Private Sub Class_Terminate()
     On Error Resume Next
-    Close fp
+    Close FP
     Set mFSO = Nothing
 End Sub
 '>---
@@ -424,7 +424,7 @@ Private Sub ReportLog(ByVal l As LogLevel, ByVal strMsg As String)
             Debug.Print strLog
         End If
         If mLogType And LogType.Logfile Then
-            Print #fp, strLog
+            Print #FP, strLog
         End If
     End If
     
@@ -458,7 +458,7 @@ Private Sub OpenLog()
     Dim i As Long
 
     On Error Resume Next
-    Close fp
+    Close FP
 
     On Error GoTo e
 
@@ -501,7 +501,7 @@ pass:
     Set objFolder = Nothing
 
     strFile = mFSO.BuildPath(strLogFolder, Format(Now, "yyyymmdd") & ".log")
-    Open strFile For Append As fp
+    Open strFile For Append As FP
     
     Exit Sub
 e:

@@ -56,29 +56,35 @@ Attribute VB_Exposed = False
 '>**Dependent**
 '>
 '>* Logger
+'>* PairLoggerInfo
 '>
 '>**History**
 '>
 '>|Date|Version|Note|
 '>|---|---|---|
 '>|2019-05-22|Ver.1.0.0|新規作成|
+'>|2019-10-28|Ver.1.0.1|クラスのメンバにCreateObject以外表示されないように修正|
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
+Implements IPairLoggerParam
+
 Dim mMsg As String
 '----------------------------------------------------
 ' コンストラクタ
 '----------------------------------------------------
 Public Function CreateObject(Message As String) As PairLoggerInfo
-    Dim PL As PairLoggerInfo
+    
+    Dim PL As IPairLoggerParam
+    
     Set PL = New PairLoggerInfo
     PL.Message = Message
     
     Set CreateObject = PL
 
 End Function
-Public Property Let Message(v As String)
-    mMsg = v
+Private Property Let IPairLoggerParam_Message(RHS As String)
+    mMsg = RHS
 End Property
 '----------------------------------------------------
 ' デストラクタ

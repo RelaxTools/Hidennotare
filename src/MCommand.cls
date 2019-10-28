@@ -64,7 +64,7 @@ Const TABLE_NAME As String = "Source"
 'テーブルの連番
 Private mSeq As Long
 
-Private mSb As StringBuilder
+Private mSb As IStringBuilder
 
 '最後に追加したテーブル
 Private mLast As MTable
@@ -75,7 +75,7 @@ Private mAliasName As String
 ' Initialize
 '---------------------------------------
 Private Sub Class_Initialize()
-    Set mSb = New StringBuilder
+    Set mSb = StringBuilder.CreateObject()
     mSeq = 1
     mAliasName = TABLE_NAME
 End Sub
