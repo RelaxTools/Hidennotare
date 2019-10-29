@@ -547,7 +547,7 @@ Public Function ParseFromListbox(objList As Object, Optional obj As Object = Not
         
             '設定されているフィールドのみコピーする。
             If Fields(j) <> "" Then
-                CoreEx.CastICompatibleProperty(objRec).SetProperty Fields(j), objList.List(i, j)
+                CoreEx.CastICompatibleProperty(objRec).SetProperty Fields(j), objList.list(i, j)
             End If
         Next
             
@@ -674,7 +674,7 @@ End Function
 ' CSVパーサー RFC4180準拠
 ' コーテーションの有無, デリミタ指定あり
 '--------------------------------------------------------------
-Public Function ParseCsv(ByVal strBuf As String, Optional ByVal Quatation As Boolean = False, Optional ByVal Delimiter As String = ",") As Collection
+Public Function ParseCsv(ByVal strBuf As String, Optional ByVal Quatation As Boolean = False, Optional ByVal Delimiter As String = ",", Optional ByVal Header As Boolean = False) As Collection
 
     Const C_QUAT As String = """"
     Dim IC As ICursor
@@ -683,11 +683,19 @@ Public Function ParseCsv(ByVal strBuf As String, Optional ByVal Quatation As Boo
     Dim blnItemBreak As Boolean
     Dim col As Collection
     Dim Row As Collection
+    Dim Head As Collection
+    Dim first As Boolean
+    
     Dim lngQuot As Long
     
     lngQuot = 0
     
     sw = False
+    first = True
+    
+    If Header Then
+        Set Head = New Collection
+    End If
     
     Set Row = New Collection
     
@@ -763,12 +771,21 @@ Public Function ParseCsv(ByVal strBuf As String, Optional ByVal Quatation As Boo
             Loop
             
             '列追加処理
-            col.Add SB.ToString
+            If Header And Not first Then
+                col.Add SB.ToString, Head(col.Count + 1)
+            Else
+                col.Add SB.ToString
+            End If
             
         Loop
         
-        '行追加処理
-        Row.Add col
+        If Header And first Then
+            Set Head = col
+        Else
+            '行追加処理
+            Row.Add col
+        End If
+        first = False
         
     Loop
     

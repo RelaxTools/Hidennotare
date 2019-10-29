@@ -90,7 +90,7 @@ End Sub
 '--------------------------------------------------------------
 Public Function CreateObject(Optional ByRef Comparer As IComparer = Nothing) As IDictionary
     
-    Dim SD As SortedDictionary
+    Dim SD As IDictionary
     Set SD = New SortedDictionary
     
     If Not Comparer Is Nothing Then
@@ -99,8 +99,10 @@ Public Function CreateObject(Optional ByRef Comparer As IComparer = Nothing) As 
     
     Set CreateObject = SD
     
+    
+    Call Class_Terminate
 End Function
-Public Property Set Comparer(v As IComparer)
+Private Property Set IDictionary_Comparer(v As IComparer)
     Set mCP = v
 End Property
 '--------------------------------------------------------------
@@ -112,11 +114,8 @@ Private Function IDictionary_NewEnum() As stdole.IUnknown
     Set IDictionary_NewEnum = mCol.[_NewEnum]
 
 End Function
-'--------------------------------------------------------------
-'  IDictionary I/F Žæ“¾
-'--------------------------------------------------------------
-Public Function GetIDictionary() As IDictionary
-    Set GetIDictionary = Me
+Private Function Self() As IDictionary
+    Set Self = Me
 End Function
 Private Sub IDictionary_Add(KeyValue As Variant, obj As Variant)
     mDic.Add KeyValue, obj
@@ -330,12 +329,12 @@ End Function
 '--------------------------------------------------------------
 Private Sub ICompatibleProperty_SetProperty(prop As Variant, Val As Variant)
     
-    Me.GetIDictionary.Add prop, Val
+    Self.Add prop, Val
     
 End Sub
 Private Function ICompatibleProperty_GetProperty(prop As Variant) As Variant
     
-    Core.SetVar(ICompatibleProperty_GetProperty) = Me.GetIDictionary.Item(prop)
+    Core.SetVar(ICompatibleProperty_GetProperty) = Self.Item(prop)
     
 End Function
 

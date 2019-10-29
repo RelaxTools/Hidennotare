@@ -91,7 +91,15 @@ Public Function CreateObject() As IDictionary
 
     Set CreateObject = New OrderedDictionary
 
+
+
+
+    Call Class_Terminate
+
 End Function
+
+
+
 '--------------------------------------------------------------
 ' For Each 用
 '--------------------------------------------------------------
@@ -101,11 +109,8 @@ Private Function IDictionary_NewEnum() As stdole.IUnknown
     Set IDictionary_NewEnum = mCol.[_NewEnum]
 
 End Function
-'--------------------------------------------------------------
-'  IDictionary I/F 取得
-'--------------------------------------------------------------
-Public Function GetIDictionary() As IDictionary
-    Set GetIDictionary = Me
+Private Function Self() As IDictionary
+    Set Self = Me
 End Function
 Private Sub IDictionary_Add(KeyValue As Variant, obj As Variant)
     
@@ -252,6 +257,9 @@ End Function
 Private Property Get IDictionary_GetCursor() As ICursor
     Set IDictionary_GetCursor = Me
 End Property
+Private Property Set IDictionary_Comparer(RHS As IComparer)
+    Err.Raise 512 + 1, TypeName(Me) & ".Comparer", "Not Support Property"
+End Property
 '--------------------------------------------------------------
 '  ICursor の Eof プロパティを取得
 '--------------------------------------------------------------
@@ -303,10 +311,10 @@ End Function
 ' ICompatibleProperty I/F
 '--------------------------------------------------------------
 Private Sub ICompatibleProperty_SetProperty(prop As Variant, Val As Variant)
-    Me.GetIDictionary.Add prop, Val
+    Self.Add prop, Val
 End Sub
 Private Function ICompatibleProperty_GetProperty(prop As Variant) As Variant
     
-    Core.SetVar(ICompatibleProperty_GetProperty) = Me.GetIDictionary.Item(prop)
+    Core.SetVar(ICompatibleProperty_GetProperty) = Self.Item(prop)
 
 End Function

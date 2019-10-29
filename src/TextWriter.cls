@@ -46,7 +46,7 @@ Attribute VB_Exposed = False
 '>**Dependent**
 '>
 '>* IWriter
-'>* IFileParameter
+'>* ITextWriterParam
 '>
 '>**History**
 '>
@@ -58,7 +58,7 @@ Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements IWriter
-Implements IFileParameter
+Implements ITextWriterParam
 
 Private FP As Integer
 Private mOpen As Boolean
@@ -99,7 +99,7 @@ Private mFirst As Boolean
 '>
 '>|Name|Data type|Description|
 '>---|---|---
-'>|ret|Object|新しいインスタンス(TextWriter)|
+'>|ret|Object|新しいインスタンス(IWriter)|
 '>
 '>**Remarks**
 '>
@@ -131,7 +131,7 @@ Public Function CreateObject(ByVal FileName As String, _
                              Optional ByVal Mode As OpenModeConstants = OpenModeOutput, _
                              Optional ByVal Bom As Boolean = False) As IWriter
     
-    Dim FP As IFileParameter
+    Dim FP As ITextWriterParam
     Set FP = New TextWriter
     
     FP.FileName = FileName
@@ -146,35 +146,27 @@ Public Function CreateObject(ByVal FileName As String, _
     
 End Function
 
-Private Property Let IFileParameter_Bom(RHS As Boolean)
+Private Property Let ITextWriterParam_Bom(RHS As Boolean)
     mBom = RHS
 End Property
 
-Private Property Let IFileParameter_Delimiter(RHS As String)
-
-End Property
-
-Private Property Let IFileParameter_Encode(RHS As EncodeConstants)
+Private Property Let ITextWriterParam_Encode(RHS As EncodeConstants)
     mEncode = RHS
 End Property
 
-Private Property Let IFileParameter_FileName(RHS As String)
+Private Property Let ITextWriterParam_FileName(RHS As String)
     mFileName = RHS
 End Property
 
-Private Property Let IFileParameter_Mode(RHS As OpenModeConstants)
+Private Property Let ITextWriterParam_Mode(RHS As OpenModeConstants)
     mMode = RHS
 End Property
 
-Private Property Let IFileParameter_NewLineCode(RHS As NewLineCodeConstants)
+Private Property Let ITextWriterParam_NewLineCode(RHS As NewLineCodeConstants)
     mNewLineCode = RHS
 End Property
 
-Private Property Let IFileParameter_Quotation(RHS As Boolean)
-
-End Property
-
-Private Sub IFileParameter_Init()
+Private Sub ITextWriterParam_Init()
     fileOpen
 End Sub
 '>---

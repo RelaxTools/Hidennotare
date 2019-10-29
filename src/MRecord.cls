@@ -84,6 +84,8 @@ End Sub
 Private Sub Class_Terminate()
     Set mDic = Nothing
 End Sub
+
+
 '--------------------------------------------------------------
 ' For Each —p
 '--------------------------------------------------------------
@@ -160,6 +162,9 @@ End Function
 Private Property Get IDictionary_GetCursor() As ICursor
     Set IDictionary_GetCursor = mDic.GetCursor
 End Property
+Private Property Set IDictionary_Comparer(RHS As IComparer)
+    Err.Raise 512 + 1, TypeName(Me) & ".Comparer", "Not Support Property"
+End Property
 Private Property Get ICursor_Eof() As Boolean
     ICursor_Eof = mDic.GetCursor.Eof
 End Property
@@ -172,5 +177,6 @@ End Sub
 Private Sub ICursor_MoveNext()
     mDic.GetCursor.MoveNext
 End Sub
+
 
 

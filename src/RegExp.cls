@@ -239,7 +239,14 @@ Function Execute(ByVal strText As String, ByVal strExp As String, Optional ByVal
     For Each m In matches
     
         'FirstIndex‚Í0‚©‚ç‚È‚Ì‚Å+1
-        col.Add MatchBean.CreateObject(m.FirstIndex + 1, m.Length, m.Value)
+        
+        Set r = New MatchBean
+        
+        r.Index = m.FirstIndex + 1
+        r.Length = m.Length
+        r.Value = m.Value
+        
+        col.Add r
     
     Next
         

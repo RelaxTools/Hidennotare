@@ -55,6 +55,7 @@ Attribute VB_Exposed = False
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
+Implements IGDIPlusParam
 
 'クラスID
 Private Const IID_IPictureDisp As String = "{7BF80981-BF32-101A-8BBB-00AA00300CAB}"
@@ -279,60 +280,6 @@ Private mHeight As Long
 Private mColor As Long
 Private mPic As IPictureDisp
 Private mShape As Object
-Public Property Let EditType(v As GDIPlusConstants)
-    mEditType = v
-End Property
-Public Property Let FileName(v As String)
-    mFileName = v
-End Property
-Public Property Let hIcon(v As LongPtr)
-    mhIcon = v
-End Property
-Public Property Let Width(v As Long)
-    mWidth = v
-End Property
-Public Property Let Height(v As Long)
-    mHeight = v
-End Property
-Public Property Let Color(v As Long)
-    mColor = v
-End Property
-Public Property Set Pic(v As IPictureDisp)
-    Set mPic = v
-End Property
-Public Property Set Shape(v As Object)
-    Set mShape = v
-End Property
-'--------------------------------------------------------------
-' Initialize
-'--------------------------------------------------------------
-Private Sub Class_Initialize()
-    
-    Dim uGdiInput As GdiplusStartupInput
-    Dim result As Long
-    
-    uGdiInput.GdiplusVersion = 1&
-    
-    result = GdiplusStartup(hGdiPlus, uGdiInput)
-    If result <> Status.ok Then
-        Err.Raise 512 + result, TypeName(Me) & ".Class_Initialize", "GdiplusStartup error"
-    End If
-    
-End Sub
-'--------------------------------------------------------------
-' Terminate
-'--------------------------------------------------------------
-Private Sub Class_Terminate()
-    
-    If hGdiImage <> 0 Then
-        Call GdipDisposeImage(hGdiImage)
-    End If
-    
-    If hGdiPlus <> 0 Then
-        Call GdiplusShutdown(hGdiPlus)
-    End If
-
-End Sub
 '>---
 '>#### コンストラクタ
 '>
@@ -383,78 +330,113 @@ End Sub
 '>* None
 '>
 '--------------------------------------------------------------
-Public Function CreateObjectFromFile(ByVal FileName As String) As GDIPlus
+Public Function CreateObjectFromFile(ByVal FileName As String) As IGDIPlus
                 
-    Dim GP As GDIPlus
+    Dim GP As IGDIPlusParam
                 
     Set GP = New GDIPlus
+    
+    GP.Initialize
     
     GP.EditType = GDIPlusConstants.GDIPlusCreateFromFile
     GP.FileName = FileName
     
-    GP.Init
+    GP.Run
                 
     Set CreateObjectFromFile = GP
 
 End Function
-Public Function CreateObjectFromIconHandle(ByVal hIcon As LongPtr) As GDIPlus
+Public Function CreateObjectFromIconHandle(ByVal hIcon As LongPtr) As IGDIPlus
                 
-    Dim GP As GDIPlus
+    Dim GP As IGDIPlusParam
                 
     Set GP = New GDIPlus
+    
+    GP.Initialize
     
     GP.EditType = GDIPlusConstants.GDIPlusCreateFromIconHandle
     GP.hIcon = hIcon
     
-    GP.Init
+    GP.Run
                 
     Set CreateObjectFromIconHandle = GP
 
 End Function
-Public Function CreateObjectFromShape(obj As Object) As GDIPlus
+Public Function CreateObjectFromShape(obj As Object) As IGDIPlus
                 
-    Dim GP As GDIPlus
+    Dim GP As IGDIPlusParam
                 
     Set GP = New GDIPlus
+    
+    GP.Initialize
     
     GP.EditType = GDIPlusConstants.GDIPlusCreateFromShape
     Set GP.Shape = obj
     
-    GP.Init
+    GP.Run
                 
     Set CreateObjectFromShape = GP
 End Function
-Public Function CreateObjectFromIPictureDisp(Pic As IPictureDisp) As GDIPlus
+Public Function CreateObjectFromIPictureDisp(Pic As IPictureDisp) As IGDIPlus
 
-    Dim GP As GDIPlus
+    Dim GP As IGDIPlusParam
                 
     Set GP = New GDIPlus
+    
+    GP.Initialize
     
     GP.EditType = GDIPlusConstants.GDIPlusCreateFromIPictureDisp
     Set GP.Pic = Pic
     
-    GP.Init
+    GP.Run
                 
     Set CreateObjectFromIPictureDisp = GP
 
 End Function
-Public Function CreateObject(ByVal Width As Long, ByVal Height As Long, Optional ByVal Color As Long = 0) As GDIPlus
+Public Function CreateObject(ByVal Width As Long, ByVal Height As Long, Optional ByVal Color As Long = 0) As IGDIPlus
                     
-    Dim GP As GDIPlus
+    Dim GP As IGDIPlusParam
                 
     Set GP = New GDIPlus
+    
+    GP.Initialize
     
     GP.EditType = GDIPlusConstants.GDIPlusCreateImage
     GP.Width = Width
     GP.Height = Height
     GP.Color = Color
     
-    GP.Init
+    GP.Run
                 
     Set CreateObject = GP
 
 End Function
-Public Sub Init()
+Private Property Let IGDIPlusParam_EditType(v As GDIPlusConstants)
+    mEditType = v
+End Property
+Private Property Let IGDIPlusParam_FileName(v As String)
+    mFileName = v
+End Property
+Private Property Let IGDIPlusParam_hIcon(v As LongPtr)
+    mhIcon = v
+End Property
+Private Property Let IGDIPlusParam_Width(v As Long)
+    mWidth = v
+End Property
+Private Property Let IGDIPlusParam_Height(v As Long)
+    mHeight = v
+End Property
+Private Property Let IGDIPlusParam_Color(v As Long)
+    mColor = v
+End Property
+Private Property Set IGDIPlusParam_Pic(v As IPictureDisp)
+    Set mPic = v
+End Property
+Private Property Set IGDIPlusParam_Shape(v As Object)
+    Set mShape = v
+End Property
+
+Private Sub IGDIPlusParam_Run()
 
         Dim result As Long
 
@@ -471,7 +453,7 @@ Public Sub Init()
                     Case Status.UnknownImageFormat
                         MsgBox "not support iamge format", vbExclamation, "GDIPlus"
                     Case Else
-                        Err.Raise 512 + result, TypeName(Me) & ".Init", "GdipCreateBitmapFromFile error"
+                        Err.Raise 512 + result, TypeName(Me) & ".Run", "GdipCreateBitmapFromFile error"
                 End Select
 
             Case GDIPlusCreateFromIconHandle
@@ -479,7 +461,7 @@ Public Sub Init()
                 'hIcon → GdiPlusBitmap
                 result = GdipCreateBitmapFromHICON(mhIcon, hGdiImage)
                 If result <> Status.ok Then
-                    Err.Raise 512 + result, TypeName(Me) & ".Init", "GdipCreateBitmapFromHICON error"
+                    Err.Raise 512 + result, TypeName(Me) & ".Run", "GdipCreateBitmapFromHICON error"
                 End If
 
             Case GDIPlusCreateFromShape
@@ -490,7 +472,7 @@ Public Sub Init()
 
                 'クリップボードの保存
                 If OpenClipboard(0&) = BOOL_FALSE Then
-                    Err.Raise 512 + 1, TypeName(Me) & ".Init", "OpenClipboard error"
+                    Err.Raise 512 + 1, TypeName(Me) & ".Run", "OpenClipboard error"
                 End If
 
                 Call EmptyClipboard
@@ -502,28 +484,28 @@ Public Sub Init()
                 Call CopyClipboardSleep
 
                 If IsClipboardFormatAvailable(CF_BITMAP) = BOOL_FALSE Then
-                    Err.Raise 512 + 1, TypeName(Me) & ".Init", "IsClipboardFormatAvailable error"
+                    Err.Raise 512 + 1, TypeName(Me) & ".Run", "IsClipboardFormatAvailable error"
                 End If
 
                 If OpenClipboard(0&) = BOOL_FALSE Then
-                    Err.Raise 512 + 1, TypeName(Me) & ".Init", "OpenClipboard error"
+                    Err.Raise 512 + 1, TypeName(Me) & ".Run", "OpenClipboard error"
                 End If
 
                 hImg = GetClipboardData(CF_BITMAP)
                 If hImg = 0 Then
-                    Err.Raise 512 + 1, TypeName(Me) & ".Init", "GetClipboardData error"
+                    Err.Raise 512 + 1, TypeName(Me) & ".Run", "GetClipboardData error"
                 End If
 
                 hPalette = GetClipboardData(CF_PALETTE)
 
                 hCopy = CopyImage(hImg, IMAGE_BITMAP, 0, 0, LR_COPYRETURNORG)
                 If hCopy = 0 Then
-                    Err.Raise 512 + 1, TypeName(Me) & ".Init", "CopyImage error"
+                    Err.Raise 512 + 1, TypeName(Me) & ".Run", "CopyImage error"
                 End If
 
                 result = GdipCreateBitmapFromHBITMAP(hCopy, hPalette, hGdiImage)
                 If result <> Status.ok Then
-                    Err.Raise 512 + result, TypeName(Me) & ".Init", "GdipCreateBitmapFromHBITMAP error"
+                    Err.Raise 512 + result, TypeName(Me) & ".Run", "GdipCreateBitmapFromHBITMAP error"
                 End If
 
                 Call EmptyClipboard
@@ -533,7 +515,7 @@ Public Sub Init()
 
                 result = GdipCreateBitmapFromHBITMAP(mPic.handle, mPic.hpal, hGdiImage)
                 If result <> Status.ok Then
-                    Err.Raise 512 + result, TypeName(Me) & ".Init", "GdipCreateBitmapFromHBITMAP error"
+                    Err.Raise 512 + result, TypeName(Me) & ".Run", "GdipCreateBitmapFromHBITMAP error"
                 End If
 
             Case GDIPlusCreateImage
@@ -556,22 +538,52 @@ Public Sub Init()
 
                 result = GdipCreateBitmapFromHBITMAP(hBitmap, 0&, hGdiImage)
                 If result <> Status.ok Then
-                    Err.Raise 512 + result, TypeName(Me) & ".Init", "GdipCreateBitmapFromHBITMAP error"
+                    Err.Raise 512 + result, TypeName(Me) & ".Run", "GdipCreateBitmapFromHBITMAP error"
                 End If
 
                 Dim lngColor As Long
 
                 lngColor = mColor
 
-                DrawFillRectangle 0, 0, lngWidth, lngHeight, lngColor, 100
+                IGDIPlus_DrawFillRectangle 0, 0, lngWidth, lngHeight, lngColor, 100
 
             Case Else
                 Exit Sub
         End Select
 
 End Sub
+'--------------------------------------------------------------
+' Initialize
+'--------------------------------------------------------------
+Private Sub IGDIPlusParam_Initialize()
+   
+    Dim uGdiInput As GdiplusStartupInput
+    Dim result As Long
+    
+    uGdiInput.GdiplusVersion = 1&
+    
+    result = GdiplusStartup(hGdiPlus, uGdiInput)
+    If result <> Status.ok Then
+        Err.Raise 512 + result, TypeName(Me) & ".Class_Initialize", "GdiplusStartup error"
+    End If
+    
+End Sub
+'--------------------------------------------------------------
+' Terminate
+'--------------------------------------------------------------
+Private Sub Class_Terminate()
+    
+    If hGdiImage <> 0 Then
+        Call GdipDisposeImage(hGdiImage)
+    End If
+    
+    If hGdiPlus <> 0 Then
+        Call GdiplusShutdown(hGdiPlus)
+    End If
+
+End Sub
 'alpha は %
-Public Sub DrawFillRectangle(ByVal X As Long, ByVal Y As Long, ByVal Width As Long, ByVal Height As Long, Optional ByVal lColor As Long = 0, Optional ByVal Alpha As Long = 100, Optional ByVal Smoothing As Boolean = False)
+Private Sub IGDIPlus_DrawFillRectangle(ByVal X As Long, ByVal Y As Long, ByVal Width As Long, ByVal Height As Long, Optional ByVal lColor As Long = 0, Optional ByVal Alpha As Long = 100, Optional ByVal Smoothing As Boolean = False)
 
     Dim hGraphics As LongPtr
     Dim hBrush As LongPtr
@@ -603,7 +615,7 @@ Public Sub DrawFillRectangle(ByVal X As Long, ByVal Y As Long, ByVal Width As Lo
     Call GdipDeleteGraphics(hGraphics)
     
 End Sub
-Public Sub DrawFillEllipse(ByVal X As Long, ByVal Y As Long, ByVal Width As Long, ByVal Height As Long, Optional ByVal lColor As Long = 0, Optional ByVal Alpha As Long = 100, Optional ByVal Smoothing As Boolean = False)
+Private Sub IGDIPlus_DrawFillEllipse(ByVal X As Long, ByVal Y As Long, ByVal Width As Long, ByVal Height As Long, Optional ByVal lColor As Long = 0, Optional ByVal Alpha As Long = 100, Optional ByVal Smoothing As Boolean = False)
 
     Dim hGraphics As LongPtr
     Dim hBrush As LongPtr
@@ -635,10 +647,7 @@ Public Sub DrawFillEllipse(ByVal X As Long, ByVal Y As Long, ByVal Width As Long
     Call GdipDeleteGraphics(hGraphics)
     
 End Sub
-
-
-
-Public Function DrawRectangle(ByVal X As Long, ByVal Y As Long, ByVal Width As Long, ByVal Height As Long, Optional ByVal lColor As Long = 0, Optional ByVal Alpha As Long = 100, Optional ByVal Smoothing As Boolean = False) As Boolean
+Private Function IGDIPlus_DrawRectangle(ByVal X As Long, ByVal Y As Long, ByVal Width As Long, ByVal Height As Long, Optional ByVal lColor As Long = 0, Optional ByVal Alpha As Long = 100, Optional ByVal Smoothing As Boolean = False) As Boolean
 
     Dim hGraphics As LongPtr
     Dim hPen As LongPtr
@@ -670,7 +679,7 @@ Public Function DrawRectangle(ByVal X As Long, ByVal Y As Long, ByVal Width As L
     Call GdipDeleteGraphics(hGraphics)
     
 End Function
-Public Sub DrawEllipse(ByVal X As Long, ByVal Y As Long, ByVal Width As Long, ByVal Height As Long, Optional ByVal lColor As Long = 0, Optional ByVal Alpha As Long = 100, Optional ByVal Smoothing As Boolean = False)
+Private Sub IGDIPlus_DrawEllipse(ByVal X As Long, ByVal Y As Long, ByVal Width As Long, ByVal Height As Long, Optional ByVal lColor As Long = 0, Optional ByVal Alpha As Long = 100, Optional ByVal Smoothing As Boolean = False)
 
     Dim hGraphics As LongPtr
     Dim hPen As LongPtr
@@ -702,7 +711,7 @@ Public Sub DrawEllipse(ByVal X As Long, ByVal Y As Long, ByVal Width As Long, By
     Call GdipDeleteGraphics(hGraphics)
     
 End Sub
-Public Sub DrawString(ByVal X As Long, ByVal Y As Long, ByVal Width As Long, ByVal Height As Long, ByVal strFont As String, ByVal strBuf As String, ByVal Size As Long, Optional ByVal style As DrawStringConstants, Optional ByVal lColor As Long = 0, Optional ByVal Alpha As Long = 100, Optional ByVal Smoothing As Boolean = False)
+Private Sub IGDIPlus_DrawString(ByVal X As Long, ByVal Y As Long, ByVal Width As Long, ByVal Height As Long, ByVal strFont As String, ByVal strBuf As String, ByVal Size As Long, Optional ByVal style As DrawStringConstants, Optional ByVal lColor As Long = 0, Optional ByVal Alpha As Long = 100, Optional ByVal Smoothing As Boolean = False)
 
     Dim hGraphics As LongPtr
     Dim hBrush As LongPtr
@@ -784,7 +793,7 @@ Public Sub DrawString(ByVal X As Long, ByVal Y As Long, ByVal Width As Long, ByV
 End Sub
 
 'ピクチャに変換
-Public Function ToPicture() As IPictureDisp
+Private Function IGDIPlus_ToPicture() As IPictureDisp
     
     Dim uPicInfo As PICTDESC
     Dim hBitmap As LongPtr
@@ -802,13 +811,13 @@ Public Function ToPicture() As IPictureDisp
       .hpal = 0&
     End With
         
-    result = OleCreatePictureIndirect(uPicInfo, ConvGUID(IID_IPictureDisp), BOOL_TRUE, ToPicture)
+    result = OleCreatePictureIndirect(uPicInfo, ConvGUID(IID_IPictureDisp), BOOL_TRUE, IGDIPlus_ToPicture)
     If result <> S_OK Then
         Err.Raise result, TypeName(Me) & ".ToPicture", "OleCreatePictureIndirect error"
     End If
     
 End Function
-Public Sub SaveAsJPEG(ByVal strFile As String, Optional ByVal Quality As Long = 85)
+Private Sub IGDIPlus_SaveAsJPEG(ByVal strFile As String, Optional ByVal Quality As Long = 85)
 
     Dim EncodParameters     As EncoderParameters
     Dim result As Long
@@ -832,7 +841,7 @@ Public Sub SaveAsJPEG(ByVal strFile As String, Optional ByVal Quality As Long = 
     End If
 
 End Sub
-Public Sub SaveAsPNG(ByVal strFile As String)
+Private Sub IGDIPlus_SaveAsPNG(ByVal strFile As String)
 
     Dim result As Long
     

@@ -109,6 +109,36 @@ Public Function ArrayToCollection(Args As Variant) As Collection
 
 End Function
 '-----------------------------------------------------------------------------------------------------
+' 多次元対応Collection or Array ->ArrayList
+'-----------------------------------------------------------------------------------------------------
+Public Sub ArrayToIList(ary As Variant, list As IList)
+
+    Dim v As Variant
+
+    For Each v In ary
+
+        If TypeOf v Is Collection Or IsArray(v) Then
+        
+            Dim NI As INewInstance
+            Set NI = list
+        
+            Dim subAry As IList
+            
+            Set subAry = NI.NewInstance
+        
+            ArrayToIList v, subAry
+            
+            list.Add subAry
+        
+        Else
+            list.Add v
+        
+        End If
+
+    Next
+
+End Sub
+'-----------------------------------------------------------------------------------------------------
 ' VBA 個人的汎用処理 https://qiita.com/nukie_53/items/bde16afd9a6ca789949d
 ' @nukie_53
 ' Set/Letを隠蔽するプロパティ

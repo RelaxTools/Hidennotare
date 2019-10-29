@@ -49,7 +49,7 @@ Attribute VB_Exposed = False
 '>
 '>* StringBuilder
 '>* IWriter
-'>* IFileParameter
+'>* ICsvWriterParam
 '>* TextWriter
 '>
 '>**History**
@@ -62,7 +62,7 @@ Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements IWriter
-Implements IFileParameter
+Implements ICsvWriterParam
 
 Private mIW As IWriter
 
@@ -103,7 +103,7 @@ Private mQuotation As Boolean
 '>
 '>|Name|Data type|Description|
 '>---|---|---
-'>|ret|Object|新しいインスタンス(CsvWriter)|
+'>|ret|Object|新しいインスタンス(IWriter)|
 '>
 '>**Remarks**
 '>
@@ -137,7 +137,7 @@ Public Function CreateObject(ByVal FileName As String, _
                              Optional ByVal Bom As Boolean = False, _
                              Optional ByVal Delimiter As String = ",") As IWriter
     
-    Dim FP As IFileParameter
+    Dim FP As ICsvWriterParam
     Set FP = New CsvWriter
     
     FP.FileName = FileName
@@ -153,38 +153,34 @@ Public Function CreateObject(ByVal FileName As String, _
     
 End Function
 
-Private Property Let IFileParameter_Bom(RHS As Boolean)
+Private Property Let ICsvWriterParam_Bom(RHS As Boolean)
     mBom = RHS
 End Property
 
-Private Property Let IFileParameter_Delimiter(RHS As String)
+Private Property Let ICsvWriterParam_Delimiter(RHS As String)
     mDelimiter = RHS
 End Property
 
-Private Property Let IFileParameter_Encode(RHS As EncodeConstants)
+Private Property Let ICsvWriterParam_Encode(RHS As EncodeConstants)
     mEncode = RHS
 
 End Property
 
-Private Property Let IFileParameter_FileName(RHS As String)
+Private Property Let ICsvWriterParam_FileName(RHS As String)
     mFileName = RHS
 End Property
 
-Private Sub IFileParameter_Init()
+Private Sub ICsvWriterParam_Init()
     'TextWriterに委譲する。
     Set mIW = TextWriter.CreateObject(mFileName, mNewLineCode, mEncode, mMode, mBom)
 End Sub
 
-Private Property Let IFileParameter_Mode(RHS As OpenModeConstants)
+Private Property Let ICsvWriterParam_Mode(RHS As OpenModeConstants)
     mMode = RHS
 End Property
 
-Private Property Let IFileParameter_NewLineCode(RHS As NewLineCodeConstants)
+Private Property Let ICsvWriterParam_NewLineCode(RHS As NewLineCodeConstants)
     mNewLineCode = RHS
-
-End Property
-
-Private Property Let IFileParameter_Quotation(RHS As Boolean)
 
 End Property
 

@@ -46,8 +46,9 @@ Attribute VB_Exposed = False
 '>
 '>**Dependent**
 '>
-'>- IReader クラス
-'>- ICursor クラス
+'>- IReader
+'>- ITextReaderParam
+'>- ICursor
 '>
 '>**History**
 '>
@@ -60,7 +61,7 @@ Attribute VB_Exposed = False
 Option Explicit
 Implements IReader
 Implements ICursor
-Implements IFileParameter
+Implements ITextReaderParam
 
 Private FP As Integer
 Private mOpen As Boolean
@@ -142,7 +143,7 @@ Public Function CreateObject(ByVal FileName As String, _
                             Optional ByVal NewLineCode As NewLineCodeConstants = NewLineCodeConstants.NewLineCodeCRLF, _
                             Optional ByVal Encode As EncodeConstants = EncodeConstants.EncodeCP932) As ICursor
 
-    Dim FA As IFileParameter
+    Dim FA As ITextReaderParam
     
     Set FA = New TextReader
     
@@ -156,35 +157,19 @@ Public Function CreateObject(ByVal FileName As String, _
 
 End Function
 
-Private Property Let IFileParameter_Bom(RHS As Boolean)
-
-End Property
-
-Private Property Let IFileParameter_Delimiter(RHS As String)
-
-End Property
-
-Private Property Let IFileParameter_Encode(RHS As EncodeConstants)
+Private Property Let ITextReaderParam_Encode(RHS As EncodeConstants)
     mEncode = RHS
 End Property
 
-Private Property Let IFileParameter_FileName(RHS As String)
+Private Property Let ITextReaderParam_FileName(RHS As String)
     mFileName = RHS
 End Property
 
-Private Property Let IFileParameter_Mode(RHS As OpenModeConstants)
-
-End Property
-
-Private Property Let IFileParameter_NewLineCode(RHS As NewLineCodeConstants)
+Private Property Let ITextReaderParam_NewLineCode(RHS As NewLineCodeConstants)
     mNewLineCode = RHS
 End Property
 
-Private Property Let IFileParameter_Quotation(RHS As Boolean)
-
-End Property
-
-Private Sub IFileParameter_Init()
+Private Sub ITextReaderParam_Init()
     BulkRead
     ICursor_MoveFirst
 End Sub

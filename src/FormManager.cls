@@ -55,6 +55,8 @@ Attribute VB_Exposed = False
 '>**Dependent**
 '>
 '>* IUsing
+'>* IFormManager
+'>* IFormManagerParam
 '>
 '>**History**
 '>
@@ -66,6 +68,8 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Implements IUsing
+Implements IFormManager
+Implements IFormManagerParam
 
 Private mFrm As UserForm
 Private mlngMax As Long
@@ -83,27 +87,6 @@ Private mstrBeforeName As String
 Private Const C_CANCEL_STR As String = "中断"
 
 Private mcolEnable As Collection
-'--------------------------------------------------------------
-' Initialize
-'--------------------------------------------------------------
-Private Sub Class_Initialize()
-
-    mblnRunning = False
-    mblnCancel = False
-    
-    '規定
-    mstrCancelStr = C_CANCEL_STR
-    
-End Sub
-'--------------------------------------------------------------
-' Terminate
-'--------------------------------------------------------------
-Private Sub Class_Terminate()
-
-    On Error Resume Next
-    mFrm.lblBack.Caption = mstrBackup
-
-End Sub
 '>---
 '>#### コンストラクタ
 '>
@@ -134,7 +117,7 @@ End Sub
 '>
 Public Function CreateObject(frm As UserForm, Optional ByVal ButtonCaption As String = C_CANCEL_STR) As FormManager
 
-    Dim FM As FormManager
+    Dim FM As IFormManagerParam
 
     Set FM = New FormManager
     
@@ -144,10 +127,7 @@ Public Function CreateObject(frm As UserForm, Optional ByVal ButtonCaption As St
     Set CreateObject = FM
 
 End Function
-'--------------------------------------------------------------
-'  フォーム
-'--------------------------------------------------------------
-Property Set Form(frm As UserForm)
+Private Property Set IFormManagerParam_Form(frm As UserForm)
 
     Dim c As control
     
@@ -172,12 +152,30 @@ Property Set Form(frm As UserForm)
     Next
 
 End Property
-'--------------------------------------------------------------
-'  中断ボタンの名称（中断以外にしたい場合設定）
-'--------------------------------------------------------------
-Public Property Let ButtonCaption(ByVal v As String)
+Private Property Let IFormManagerParam_ButtonCaption(ByVal v As String)
     mstrCancelStr = v
 End Property
+'--------------------------------------------------------------
+' Initialize
+'--------------------------------------------------------------
+Private Sub Class_Initialize()
+    
+    mblnRunning = False
+    mblnCancel = False
+    
+    '規定
+    mstrCancelStr = C_CANCEL_STR
+
+End Sub
+'--------------------------------------------------------------
+' Terminate
+'--------------------------------------------------------------
+Private Sub Class_Terminate()
+
+    On Error Resume Next
+    mFrm.lblBack.Caption = mstrBackup
+
+End Sub
 '>---
 '>#### IsCancel
 '>
@@ -212,8 +210,8 @@ End Property
 '>
 '>* None
 '>
-Public Property Get IsCancel() As Boolean
-    IsCancel = mblnCancel
+Private Property Get IFormManager_IsCancel() As Boolean
+    IFormManager_IsCancel = mblnCancel
 End Property
 '>---
 '>#### IsRunning
@@ -249,8 +247,8 @@ End Property
 '>
 '>* None
 '>
-Public Property Get IsRunning() As Boolean
-    IsRunning = mblnRunning
+Private Property Get IFormManager_IsRunning() As Boolean
+    IFormManager_IsRunning = mblnRunning
 End Property
 '>---
 '>#### StartRunning
@@ -285,7 +283,7 @@ End Property
 '>
 '>* None
 '>
-Public Sub StartRunning()
+Private Sub IFormManager_StartRunning()
     IUsing_Begin
 End Sub
 '>---
@@ -321,9 +319,10 @@ End Sub
 '>
 '>* None
 '>
-Public Sub StopRunning()
+Private Sub IFormManager_StopRunning()
     IUsing_Finish
 End Sub
+
 '--------------------------------------------------------------
 '  処理開始(IUsing I/F)
 '--------------------------------------------------------------
@@ -423,7 +422,7 @@ End Sub
 '>
 '>* None
 '>
-Public Sub DispGuidance(ByVal strValue As String)
+Private Sub IFormManager_DispGuidance(ByVal strValue As String)
 
     If Not mobjMessageLabel Is Nothing Then
         mobjMessageLabel.Caption = strValue
@@ -465,7 +464,7 @@ End Sub
 '>
 '>* None
 '>
-Public Sub StartGauge(ByVal lngValue As Long)
+Private Sub IFormManager_StartGauge(ByVal lngValue As Long)
     
     If Not mobjGaugeLabel Is Nothing Then
         mlngMax = lngValue
@@ -504,7 +503,7 @@ End Sub
 '>
 '>* None
 '>
-Public Sub DisplayGauge(ByVal lngValue As Long)
+Private Sub IFormManager_DisplayGauge(ByVal lngValue As Long)
 
     Dim dblValue As Double
     Dim strMessage As String
@@ -558,7 +557,7 @@ End Sub
 '>
 '>* None
 '>
-Public Sub doCancel()
+Private Sub IFormManager_doCancel()
     
     mblnCancel = True
     
@@ -599,7 +598,7 @@ End Sub
 '>
 '>* None
 '>
-Public Function SetHistory(c As ComboBox, ByVal strHistory As String)
+Private Sub IFormManager_SetHistory(c As ComboBox, ByVal strHistory As String)
 
     Dim strFolder() As String
     Dim i As Long
@@ -613,7 +612,7 @@ Public Function SetHistory(c As ComboBox, ByVal strHistory As String)
         c.ListIndex = 0
     End If
 
-End Function
+End Sub
 '>---
 '>#### CreateHistory
 '>
@@ -649,7 +648,7 @@ End Function
 '>
 '>* None
 '>
-Public Function CreateHistory(c As ComboBox, Optional ByVal Max As Long = 10) As String
+Private Function IFormManager_CreateHistory(c As ComboBox, Optional ByVal Max As Long = 10) As String
     
     Dim strBuf As String
     Dim i As Long
@@ -660,8 +659,8 @@ Public Function CreateHistory(c As ComboBox, Optional ByVal Max As Long = 10) As
     '履歴の作成
     cnt = 1
     For i = 0 To c.ListCount - 1
-        If c.List(i) <> c.Text Then
-            strBuf = strBuf & vbTab & c.List(i)
+        If c.list(i) <> c.Text Then
+            strBuf = strBuf & vbTab & c.list(i)
             cnt = cnt + 1
             'リストは最大１０
             If cnt >= Max Then
@@ -684,7 +683,7 @@ Public Function CreateHistory(c As ComboBox, Optional ByVal Max As Long = 10) As
         c.ListIndex = 0
     End If
     
-    CreateHistory = strBuf
+    IFormManager_CreateHistory = strBuf
 
 End Function
 

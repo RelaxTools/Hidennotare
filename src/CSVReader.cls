@@ -49,7 +49,7 @@ Attribute VB_Exposed = False
 '>
 '>* ICursor
 '>* IReader
-'>* IFileParameter
+'>* ICsvReaderParam
 '>* TextReader
 '>
 '>**History**
@@ -63,7 +63,7 @@ Attribute VB_Exposed = False
 Option Explicit
 Implements ICursor
 Implements IReader
-Implements IFileParameter
+Implements ICsvReaderParam
 
 Private mIR As IReader
 
@@ -73,6 +73,7 @@ Private mEncode As EncodeConstants
 
 Private mDelimiter As String
 Private mQuotation As Boolean
+Private mHeader As Boolean
 
 Private mCol As Collection
 Private mIndex As Long
@@ -151,9 +152,10 @@ Public Function CreateObject(ByVal FileName As String, _
                             Optional ByVal NewLineCode As NewLineCodeConstants = NewLineCodeConstants.NewLineCodeCRLF, _
                             Optional ByVal Encode As EncodeConstants = EncodeConstants.EncodeCP932, _
                             Optional ByVal Delimiter As String = ",", _
-                            Optional ByVal Quotation As Boolean = False) As ICursor
+                            Optional ByVal Quotation As Boolean = False, _
+                            Optional ByVal Header As Boolean = False) As ICursor
 
-    Dim FP As IFileParameter
+    Dim FP As ICsvReaderParam
     
     Set FP = New CSVReader
     
@@ -162,30 +164,32 @@ Public Function CreateObject(ByVal FileName As String, _
     FP.Encode = Encode
     FP.Delimiter = Delimiter
     FP.Quotation = Quotation
+    FP.Header = Header
     
     FP.Init
 
     Set CreateObject = FP
 
 End Function
-
-Private Property Let IFileParameter_Bom(RHS As Boolean)
-
-End Property
-
-Private Property Let IFileParameter_Delimiter(RHS As String)
+Private Property Let ICsvReaderParam_Delimiter(RHS As String)
     mDelimiter = RHS
 End Property
-
-Private Property Let IFileParameter_Encode(RHS As EncodeConstants)
+Private Property Let ICsvReaderParam_Encode(RHS As EncodeConstants)
     mEncode = RHS
 End Property
-
-Private Property Let IFileParameter_FileName(RHS As String)
+Private Property Let ICsvReaderParam_FileName(RHS As String)
     mFileName = RHS
 End Property
-
-Private Sub IFileParameter_Init()
+Private Property Let ICsvReaderParam_NewLineCode(RHS As NewLineCodeConstants)
+    mNewLineCode = RHS
+End Property
+Private Property Let ICsvReaderParam_Quotation(RHS As Boolean)
+    mQuotation = RHS
+End Property
+Private Property Let ICsvReaderParam_Header(RHS As Boolean)
+    mHeader = RHS
+End Property
+Private Sub ICsvReaderParam_Init()
     
     'TextReaderに委譲する。改行コードをCsvReader側でパースする。
     Set mIR = TextReader.CreateObject(mFileName, NewLineCodeConstants.NewLineCodeNone, mEncode)
@@ -193,27 +197,16 @@ Private Sub IFileParameter_Init()
     If IsEmpty(mIR.ReadAll) Then
         Set mCol = New Collection
     Else
-        Set mCol = Parser.ParseCsv(mIR.ReadAll(LBound(mIR.ReadAll)), mQuotation, mDelimiter)
+        Set mCol = Parser.ParseCsv(mIR.ReadAll(LBound(mIR.ReadAll)), mQuotation, mDelimiter, mHeader)
     End If
     
     ICursor_MoveFirst
 
 End Sub
-
-Private Property Let IFileParameter_Mode(RHS As OpenModeConstants)
-
-End Property
-
-Private Property Let IFileParameter_NewLineCode(RHS As NewLineCodeConstants)
-    mNewLineCode = RHS
-End Property
-
-Private Property Let IFileParameter_Quotation(RHS As Boolean)
-    mQuotation = RHS
-End Property
 Private Sub Class_Terminate()
     Set mIR = Nothing
 End Sub
+
 '>---
 '>#### ReadAll(IReader I/F)
 '>
@@ -253,176 +246,6 @@ Private Function IReader_ReadAll() As Variant
     Set IReader_ReadAll = mCol
 
 End Function
-'>---
-'>#### Paste(CSvReader)
-'>
-'>**Syntax**
-'>
-'>```
-'>expression.Paste(TopLeft, Fields , [Header = None])
-'>```
-'>
-'>**Parameters**
-'>
-'>|Name|Required/Optional|Data type|Description|
-'>---|---|---|---
-'>|expression|必須|CsvReader|CsvReaderのインスタンスを指定|
-'>|TopLeft|必須|Range|基準となる左上のセルを指定|
-'>|Fields|必須|IDictionary|フィールド名を設定したIDictionary I/F に対応したクラスを指定|
-'>|Header|省略可|CsvReaderHeaderConstants|AddHedder:ヘッダを追加/UseFirstRow:1行目をヘッダにする/None:ヘッダ無し<br>デフォルトNone|
-'>
-'>**Return Value**
-'>
-'>* None
-'>
-'>**Remarks**
-'>
-'>シート貼り付け<br>
-'>読み込んだCSVをシートに貼り付けます。<br>
-'>
-'>**Example**
-'>
-'>* None
-'>
-'>**See also**
-'>
-'>* None
-'>
-Public Sub Paste(ByRef TopLeft As Range, ByRef Fields As IDictionary, Optional ByVal Header As CsvReaderHeaderConstants = CsvReaderHeaderConstants.HeaderNone)
-
-    Dim lngCol As Long
-    Dim lngRow As Long
-    Dim i As Long
-    Dim j As Long
-    Dim Key As Variant
-    Const DEFAULT_FIELD As String = "Field"
-    
-    lngCol = 0
-    lngRow = mCol.Count
-    
-    '列数がまちまちの場合があるので最大列数を調べる。
-    For i = 1 To mCol.Count
-        If lngCol < mCol(i).Count Then
-            lngCol = mCol(i).Count
-        End If
-    Next
-    
-    '設定したフィールドの個数が一致しない場合エラー
-    If lngCol <> Fields.Count Then
-        Err.Raise 512 + 1, TypeName(Me) & ".Paste", "not match fields count. "
-    End If
-    
-    Dim var() As Variant
-    
-    Select Case Header
-        'ヘッダの追加
-        Case CsvReaderHeaderConstants.AddHedder
-            
-            ReDim var(1 To lngRow + 1, 1 To lngCol)
-            
-            For j = 1 To lngCol
-                If j <= Fields.Count Then
-                    var(1, j) = Fields.Keys(j - 1)
-                Else
-                    var(1, j) = Default & Format$(j, "00")
-                End If
-            Next
-            
-            For i = 1 To mCol.Count
-                For j = 1 To mCol(i).Count
-                    var(i + 1, j) = mCol(i)(j)
-                Next
-            Next
-        
-        Case Else
-            
-            ReDim var(1 To lngRow, 1 To lngCol)
-            
-            For i = 1 To mCol.Count
-                For j = 1 To mCol(i).Count
-                    var(i, j) = mCol(i)(j)
-                Next
-            Next
-    
-    End Select
-    
-    Dim r As Range
-    Set r = TopLeft.resize(lngRow, lngCol)
-    
-    Select Case Header
-        '１行目をヘッダにする
-        Case CsvReaderHeaderConstants.UseFirstRow
-            
-            For j = 1 To lngCol
-                Key = var(j, 1)
-                If Fields.ContainsKey(Key) Then
-                    r.Columns(i).NumberFormatLocal = Fields(Key)
-                End If
-            Next
-        
-        'ヘッダを追加する
-        Case CsvReaderHeaderConstants.AddHedder
-            
-            For j = 1 To lngCol
-                If j <= Fields.Count Then
-                    Key = Fields.Keys(j - 1)
-                    If Fields.ContainsKey(Key) Then
-                        r.Columns(j).NumberFormatLocal = Fields(Key)
-                    End If
-                End If
-            Next
-        
-        'ヘッダ無し
-        Case CsvReaderHeaderConstants.HeaderNone
-            
-            For j = 1 To lngCol
-                Key = DEFAULT_FIELD & Format(j, "00")
-                If Fields.ContainsKey(Key) Then
-                    r.Columns(i).NumberFormatLocal = Fields(Key)
-                End If
-            Next
-    End Select
-    
-    r.Value = var
-    
-End Sub
-''>---
-''>#### GetCursor(CsvReader)
-''>
-''>**Syntax**
-''>
-''>```
-''>Set var = expression.GetCursor()
-''>```
-''>
-''>**Parameters**
-''>
-''>|Name|Required/Optional|Data type|Description|
-''>---|---|---|---
-''>|expression|必須|CsvReader|CsvReaderを指定します。|
-''>
-''>**Return Value**
-''>
-''>|Name|Data type|Description|
-''>---|---|---
-''>|var|ICursor|ICursor I/F を返却|
-''>
-''>**Remarks**
-''>
-''>CsvReaderのメソッドです。<br>
-''>ICursor インターフェースを取得
-''>
-''>**Example**
-''>
-''>* None
-''>
-''>**See also**
-''>
-''>* ICursor
-''>
-'Public Property Get GetCursor() As ICursor
-'    Set GetCursor = Me
-'End Property
 '>---
 '>#### Eof(ICursor I/F)
 '>

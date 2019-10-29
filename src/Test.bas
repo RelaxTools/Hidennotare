@@ -2,34 +2,9 @@ Attribute VB_Name = "Test"
 Option Explicit
 Option Private Module
 
-' 全テストコマンド
-Sub Test_All()
-
-    Call Test_ArrayList
-    Call Test_LinkedList
-    Call Test_ICursor_SheetCursor
-    Call Test_CollectionCursor
-    Call Test_LineCursor
-    Call Test_StringBuilder
-    Call Test_Serialize
-    Call Test_desirialize
-    Call Test_SortedDictionary
-    Call Test_OrderedDictionary
-    Call Test_CsvParser
-    Call Test_IsDictionary
-    Call Test_MCommand
-    Call Test_TextWriter
-    Call Test_CsvWriter
-    Call Test_Compress
-    Call Test_PlaceHolder
-    
-    
-    Call Test_TaskTrayView
-
-'    Message.Information "正常終了!"
-
+Sub Show_Test()
+    frmTest.Show
 End Sub
-
 
 Sub Test_ArrayList()
 
@@ -361,9 +336,9 @@ Sub Test_Serialize()
     Dim Row As IList
     Dim col As IDictionary
     
-    Set Row = New ArrayList
+    Set Row = ArrayList.CreateObject()
     
-    Set col = New Dictionary
+    Set col = Dictionary.CreateObject
     
     col.Add "Field01", 10
     col.Add "Field02", 20
@@ -371,7 +346,7 @@ Sub Test_Serialize()
 
     Row.Add col
 
-    Set col = New Dictionary
+    Set col = Dictionary.CreateObject()
     col.Add "Field01", 40
     col.Add "Field02", 50
     col.Add "Field03", 60
@@ -426,7 +401,7 @@ Sub Test_OrderedDictionary()
 
     Dim d As IDictionary
     Dim v As Variant
-    Set d = New OrderedDictionary
+    Set d = OrderedDictionary.CreateObject
     
     d.Add "10", "10"
     d.Add "1", "1"
@@ -703,6 +678,7 @@ Sub Test_CsvWriter()
 
     With CsvWriter.CreateObject(strFile, NewLineCodeLF, EncodeUTF16LE, OpenModeOutput, True, ",")
 
+        .WriteLine Array("Name", "Key")
         .WriteLine Array("あい,うえお", Core.PlaceHolder("かきく\nけこ"))
 
     End With
@@ -720,10 +696,26 @@ Sub Test_CsvWriter()
 
     End With
     
-    FileIO.DeleteFile strFile
-
     Debug.Assert strBuf1 = "あい,うえお"
     Debug.Assert strBuf2 = "かきく" & vbLf & "けこ"
+    
+    With CSVReader.CreateObject(strFile, NewLineCodeLF, EncodeUTF16LE, ",", True, True)
+
+        Do Until .Eof
+
+            strBuf1 = .Item("name")
+            strBuf2 = .Item("key")
+
+            .MoveNext
+        Loop
+
+    End With
+    
+    Debug.Assert strBuf1 = "あい,うえお"
+    Debug.Assert strBuf2 = "かきく" & vbLf & "けこ"
+    
+    FileIO.DeleteFile strFile
+
 
 End Sub
 Sub Test_Compress()
@@ -769,12 +761,29 @@ Sub Test_TaskTrayView()
     Dim TV As TaskTrayView
     
     With TaskTrayView.CreateObject("テストです。")
-        .ShowBalloon "おしらせ", "正常終了です。", 5
+        .ShowBalloon "おしらせ", "バルーン表示", 5
     End With
     
 End Sub
+Sub Test_RegExp()
 
-Sub a()
+    Dim col As Collection
 
+    Set col = RegExp.Execute("12AB56", "[A-Z]{2}")
+
+    Debug.Assert col(1).Index = 3
+    Debug.Assert col(1).Length = 2
+    Debug.Assert col(1).Value = "AB"
+
+End Sub
+Sub Test_StrSch()
+
+    Dim col As Collection
+
+    Set col = StrSch.Execute("12AB56", "AB")
+
+    Debug.Assert col(1).Index = 3
+    Debug.Assert col(1).Length = 2
+    Debug.Assert col(1).Value = "AB"
 
 End Sub

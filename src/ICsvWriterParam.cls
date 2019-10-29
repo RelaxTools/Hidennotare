@@ -2,7 +2,7 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "IFileParameter"
+Attribute VB_Name = "ICsvWriterParam"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
@@ -36,11 +36,11 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-'>### IFileParameter インターフェイス
+'>### ICsvWriterParam インターフェイス
 '>
 '>**Remarks**
 '>
-'>ファイル操作に関するパラメータを受け渡すインターフェイス
+'>CsvWriter のクラス内部のパラメータ受け渡しを隠蔽するインターフェイス
 '>
 '>**Definition**
 '>
@@ -51,7 +51,6 @@ Attribute VB_Exposed = False
 '>Public Property Let Mode(v As OpenModeConstants)
 '>Public Property Let Bom(v As Boolean)
 '>Public Property Let Delimiter(v As String)
-'>Public Property Let Quotation(v As Boolean)
 '>Public Sub Init()
 '>```
 '>
@@ -78,9 +77,6 @@ Public Property Let Bom(v As Boolean)
 
 End Property
 Public Property Let Delimiter(v As String)
-
-End Property
-Public Property Let Quotation(v As Boolean)
 
 End Property
 Public Sub Init()

@@ -239,8 +239,8 @@ Public Function Execute(ByVal strText As String, ByVal strExp As String, Optiona
 
     Dim col As Collection
     Dim lngPos As Long
-    Dim r As MatchBean
     Dim strResult As String
+    Dim MB As MatchBean
     
     Set col = New Collection
     
@@ -263,14 +263,29 @@ Public Function Execute(ByVal strText As String, ByVal strExp As String, Optiona
     If blnWhole Then
     
         If strCmp1 = strCmp2 Then
-            col.Add MatchBean.CreateObject(1, Len(strCmp1), strCmp1)
+        
+            Set MB = New MatchBean
+            
+            MB.Index = 1
+            MB.Length = Len(strCmp1)
+            MB.Value = strCmp1
+        
+            col.Add MB
+        
         End If
     
     Else
     
         'パターンが空白の場合、全一致とする。
         If strCmp2 = "" Then
-            col.Add MatchBean.CreateObject(1, 0, strCmp1)
+        
+            Set MB = New MatchBean
+            
+            MB.Index = 1
+            MB.Length = 0
+            MB.Value = strCmp1
+        
+            col.Add MB
         Else
     
             lngPos = InStr(strCmp1, strCmp2)
@@ -279,7 +294,13 @@ Public Function Execute(ByVal strText As String, ByVal strExp As String, Optiona
                 
                 strResult = Mid$(strText, lngPos, Len(strExp))
                 
-                col.Add MatchBean.CreateObject(lngPos, Len(strResult), strResult)
+                Set MB = New MatchBean
+                
+                MB.Index = lngPos
+                MB.Length = Len(strResult)
+                MB.Value = strResult
+            
+                col.Add MB
             
                 lngPos = InStr(lngPos + 1, strCmp1, strCmp2)
             Loop

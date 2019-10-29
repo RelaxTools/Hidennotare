@@ -1,47 +1,64 @@
 VERSION 5.00
-Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} frmFormManagerSample 
-   Caption         =   "UserForm1"
+Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} frmTest 
+   Caption         =   "Hdennotare Test"
    ClientHeight    =   3705
    ClientLeft      =   45
    ClientTop       =   330
-   ClientWidth     =   8445.001
-   OleObjectBlob   =   "frmFormManagerSample.frx":0000
+   ClientWidth     =   8310.001
+   OleObjectBlob   =   "frmTest.frx":0000
    StartUpPosition =   1  'オーナー フォームの中央
 End
-Attribute VB_Name = "frmFormManagerSample"
+Attribute VB_Name = "frmTest"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-
 Option Explicit
 Dim FM As IFormManager
 
-'FormManagerサンプル
-
 Private Sub UserForm_Initialize()
 
-'--------------------------------------------------------------------
-    'わかりやすくコードで書いていますが、プロパティで
-    '設定してしまってかまいません。
-    
-    'メッセージ及びプログレスバーの背景を表示するラベルのTagに"m"を設定する。
     lblBack.Tag = "m"
-    
-    'プログレスバーを表示するラベルのTagに"g"を設定する。
     lblGauge.Tag = "g"
-    
-    'キャンセルボタンのTagに"c"を設定する。
     cmdOk.Tag = "c"
-    
-    '実行中でも非活性にしないコントロールのTagに"e"を設定する。
-    lblEnabled.Tag = "e"
-    
-'--------------------------------------------------------------------
 
     Set FM = FormManager.CreateObject(Me)
 
-    FM.DispGuidance "開始しました。"
+    Dim i As Long
+    Dim strBuf As String
+
+    With lvTest
+        .View = lvwReport           ''表示
+        .LabelEdit = lvwManual      ''ラベルの編集
+        .HideSelection = False      ''選択の自動解除
+        .AllowColumnReorder = True  ''列幅の変更を許可
+        .FullRowSelect = True       ''行全体を選択
+        .Gridlines = True           ''グリッド線
+ 
+        .ColumnHeaders.Add , "_Name", "メソッド"
+        .ColumnHeaders(1).Width = 375
+  
+    End With
+  
+    With ThisWorkbook.VBProject.VBComponents("Test").CodeModule
+            
+        For i = 1 To .CountOfLines
+            
+            '指定位置から１行取得
+            strBuf = .Lines(i, 1)
+            
+            If RegExp.Test(strBuf, "^Sub Test.*\)$") Then
+            
+                With lvTest.ListItems.Add
+                    .Text = Replace(Mid$(strBuf, 5), "()", "")
+                End With
+            
+            End If
+    
+        Next
+    End With
+
+    FM.DispGuidance "テストを読み込みました。"
 
 End Sub
 
@@ -73,11 +90,9 @@ Private Sub cmdOk_Click()
     Dim lngMax As Long
     Dim i As Long
     
-    '処理中を表す。以下メソッドを呼ぶかUsingクラスを使用する。
-    'FM.StartRunning
     With Using.CreateObject(FM, New OneTimeSpeedBooster)
         
-        lngMax = 10000
+        lngMax = lvTest.ListItems.Count
     
         'ゲージの最大を設定
         FM.StartGauge lngMax
@@ -91,22 +106,23 @@ Private Sub cmdOk_Click()
             End If
         
         
-            '処理を記述
-        
+            '実行
+            lvTest.ListItems(i).Selected = True
+            lvTest.ListItems(i).EnsureVisible
+            
+            Application.Run "Test." & lvTest.ListItems(i).Text
         
             'ゲージの現在値を設定
             FM.DisplayGauge i
         Next
     
     End With
-    '処理終了を表す
-    'FM.StopRunning
     
     'キャンセルか？
     If FM.IsCancel Then
-        Message.Error "処理は中断されました。"
+        FM.DispGuidance "テストは中断されました。"
     Else
-        Message.Information "完了しました。"
+        FM.DispGuidance "テストが完了しました。"
     End If
 
 End Sub

@@ -67,7 +67,7 @@ Attribute VB_Exposed = False
 '>**Sample**
 '>```
 '> Dim list As IList
-'> Set list = New ArrayList
+'> Set list = ArrayList.CreateObject()
 '>
 '> Dim list As IList
 '> Set list = ArrayList.CreateObject(コレクション)
@@ -99,13 +99,6 @@ Private mCol As Collection
 Private mArray As Variant
 Private mCount As Long
 Private mIndex As Long
-Private Sub Class_Initialize()
-    Call IList_Clear
-    mIndex = 0
-End Sub
-Private Sub Class_Terminate()
-    Call IList_Clear
-End Sub
 '>---
 '>#### コンストラクタ(1) Collection
 '>
@@ -209,20 +202,10 @@ Public Function CreateObject(ParamArray Args() As Variant) As IList
         
             Select Case True
                 
-                'コレクションからの変換
-                Case TypeOf Args(0) Is Collection
+                'コレクションまたは配列からの変換
+                Case TypeOf Args(0) Is Collection, IsArray(Args(0))
                     
-                    IL.Clear
-                    For Each v In Args(0)
-                        IL.Add v
-                    Next
-                
-                '１次元配列からの変換
-                Case IsArray(Args(0))
-                
-                    For Each v In Args(0)
-                        IL.Add v
-                    Next
+                    Core.ArrayToIList Args(0), IL
                 
                 Case Else
                 
@@ -239,9 +222,15 @@ Public Function CreateObject(ParamArray Args() As Variant) As IList
     End Select
 
     Set CreateObject = IL
-
+    
 End Function
-
+Private Sub Class_Initialize()
+    Call IList_Clear
+    mIndex = 0
+End Sub
+Private Sub Class_Terminate()
+    Call IList_Clear
+End Sub
 '>---
 '>#### Add(IList I/F)
 '>
@@ -1036,272 +1025,4 @@ Private Function INewInstance_NewInstance() As Object
     
     Set INewInstance_NewInstance = lst
 
-End Function
-'>---
-'>#### CopyToListbox(ArrayList)
-'>
-'>**Syntax**
-'>
-'>```
-'>ArrayList.CopyToListbox objList
-'>```
-'>
-'>**Parameters**
-'>
-'>|Name|Required/Optional|Data type|Description|
-'>---|---|---|---
-'>|objList|必須|Object|copyする ListBox or ComboBox を指定|
-'>
-'>**Return Value**
-'>
-'>* None
-'>
-'>**Remarks**
-'>
-'>ListBox/ComboBox へコピー<br>
-'>ArrayListの内容をListBox/ComboBoxにコピーする。<br>
-'>ListBox/ComboBoxのTagにArrayListのレコードを対応づけるフィールド名リスト（カンマ区切り）が必須。<br>
-'>レコードに使用するオブジェクトは INewInstance と ICompatibleProperty を Implements したクラスであること。
-'>
-'>**Example**
-'>
-'>```
-'>    'これはコードではなくプロパティウィンドウで設定しても良い
-'>    lstFavorite.Tag = "No,Name,Address"
-'>
-'>    ArrayList.CopyToListbox lstFavorite
-'>
-'>```
-'>
-'>**See also**
-'>
-'>* ArrayList.ParseFromListbox
-'>* Dictionary
-'>* INewInstance
-'>* ICompatibleProperty
-'>
-Public Sub CopyToListbox(objList As Object)
-
-    Dim ary As IList
-    Dim objRec As Object
-    Dim Fields As Variant
-    Dim v As Variant
-
-    'Tagにフィールド情報が無い場合
-    If objList.Tag = "" Then
-        Err.Raise 512 + 1, TypeName(Me) & ".CopyToListbox", "Item name is not set in tag"
-    End If
-
-    '配列に変換
-    Fields = Split(objList.Tag, ",")
-
-    '1次元目はArrayList固定
-    Set ary = Me
-
-    'リストボックスのクリア
-    objList.Clear
-
-    Dim i As Long
-    Dim j As Long
-    i = 0
-    For Each objRec In ary
-        j = 0
-        objList.AddItem
-        For Each v In Fields
-
-            '設定されているフィールドのみコピーする。
-            If v <> "" Then
-                objList.List(i, j) = CoreEx.CastICompatibleProperty(objRec).GetProperty(v)
-            End If
-            j = j + 1
-        Next
-        i = i + 1
-    Next
-
-End Sub
-'>---
-'>#### CopyToListObject(ArrayList)
-'>
-'>**Syntax**
-'>
-'>```
-'>ArrayList.CopyToListObject objList
-'>```
-'>
-'>**Parameters**
-'>
-'>|Name|Required/Optional|Data type|Description|
-'>---|---|---|---
-'>|objList|必須|Object|copyする ListBox or ComboBox を指定|
-'>
-'>**Return Value**
-'>
-'>* None
-'>
-'>**Remarks**
-'>
-'>ListObject(テーブル機能)へコピー<br>
-'>ArrayListの内容をListobjectにコピーする。<br>
-'>ListobjectにArrayListのレコードを対応づける列名が必須。<br>
-'>レコードに使用するオブジェクトは INewInstance と ICompatibleProperty を Implements したクラスであること。
-'>
-'>**Example**
-'>
-'>```
-'>Sub ArrayList_ParseFromListObject_Sample()
-'>
-'>    Dim lst As IList
-'>    Dim dic As IDictionary
-'>    Dim Key As Variant
-'>
-'>    Set lst = ArrayList.ParseFromListObject(ActiveSheet.ListObjects(1))
-'>
-'>    For Each dic In lst
-'>
-'>        For Each Key In dic.Keys
-'>
-'>            Debug.Print dic.Item(Key)
-'>
-'>        Next
-'>
-'>    Next
-'>
-'>    Dim a As ArrayList
-'>
-'>    Set a = lst
-'>
-'>    a.CopyToListObject ActiveSheet.ListObjects(2)
-'>
-'>End Sub
-'>```
-'>
-'>**See also**
-'>
-'>* ArrayList.ParseFromListbox
-'>* Dictionary
-'>* INewInstance
-'>* ICompatibleProperty
-'>
-Public Sub CopyToListObject(LO As ListObject)
-
-    Dim lst As IList
-    Dim objRec As Object
-    Dim Fields As Variant
-    Dim v As Variant
-
-    '1次元目はArrayList固定
-    Set lst = Me
-
-    'リストオブジェクトのクリア
-    If Not LO.DataBodyRange Is Nothing Then
-        LO.DataBodyRange.ClearContents
-        LO.DataBodyRange.Delete
-    End If
-    
-    Dim i As Long
-    Dim j As Long
-    
-    i = 1
-    For Each objRec In lst
-        
-        LO.ListRows.Add
-        For j = 1 To LO.HeaderRowRange.Columns.Count
-
-            LO.DataBodyRange.Cells(i, j).Value = CoreEx.CastICompatibleProperty(objRec).GetProperty(LO.HeaderRowRange(, j).Value)
-        
-        Next
-        i = i + 1
-    Next
-
-End Sub
-'>---
-'>#### CopyToRange(ArrayList)
-'>
-'>**Syntax**
-'>
-'>```
-'>ArrayList.CopyToRange objct
-'>```
-'>
-'>**Parameters**
-'>
-'>|Name|Required/Optional|Data type|Description|
-'>---|---|---|---
-'>|object|必須|Range|copyするシートの範囲(Range)の左上を指定|
-'>
-'>**Return Value**
-'>
-'>* None
-'>
-'>**Remarks**
-'>
-'>ArrayListをシートへ貼り付ける<br>
-'>指定されたRangeを起点にArrayListの内容を貼り付ける<br>
-'>ListobjectにArrayListのレコードを対応づける列名が必須。<br>
-'>レコードに使用するオブジェクトは INewInstance と ICompatibleProperty を Implements したクラスであること。
-'>
-'>**Example**
-'>
-'>* None
-'>
-'>**See also**
-'>
-'>* ArrayList.ParseFromListbox
-'>* Dictionary
-'>* INewInstance
-'>* ICompatibleProperty
-'>
-Public Sub CopyToRange(TopLeft As Range)
-
-    Dim v As Variant
-    Dim lngRow As Long
-    Dim lngCol As Long
-    
-    v = mArray
-    
-    If Not Core.TryUBound(v, lngRow, 1) Then
-        Exit Sub
-    End If
-    If Not Core.TryUBound(v, lngCol, 2) Then
-        Exit Sub
-    End If
-
-    TopLeft.resize(lngRow + 1, lngCol + 1).Value = v
-
-End Sub
-'>---
-'>#### GetIList(ArrayList)
-'>
-'>**Syntax**
-'>
-'>```
-'> Set obj = ArrayList.GetIList()
-'>```
-'>
-'>**Parameters**
-'>
-'>|Name|Required/Optional|Data type|Description|
-'>---|---|---|---
-'>|object|必須|Object|IList I/F に対応するクラス|
-'>
-'>**Return Value**
-'>
-'>|Name|Data type|Description|
-'>---|---|---
-'>|obj|IList|現在のインスタンス(IList I/F)|
-'>
-'>**Remarks**
-'>
-'>IList I/F を取得する。
-'>
-'>**Example**
-'>
-'>* None
-'>
-'>**See also**
-'>
-'>* IList
-'>
-Public Function GetIList() As IList
-    Set GetIList = Me
 End Function

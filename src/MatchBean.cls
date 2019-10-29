@@ -5,7 +5,7 @@ END
 Attribute VB_Name = "MatchBean"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = True
+Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 '
@@ -42,7 +42,6 @@ Attribute VB_Exposed = False
 '>
 '>Executeメソッド結果保持クラス
 '>RegExpクラスとStdSchクラスのExecuteメソッドの戻り値を保持します。<br>
-'>**このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。**
 '>
 '>**Dependent**
 '>
@@ -60,57 +59,7 @@ Option Explicit
 Private m_index As Long
 Private m_Length As Long
 Private m_Value As String
-'>---
-'>#### コンストラクタ
-'>
-'>**Syntax**
-'>
-'>```
-'>Set ret = MatchBean.CreateObject(
-'>                      index,
-'>                      length,
-'>                      value)
-'>```
-'>
-'>**Parameters**
-'>
-'>|Name|Required/Optional|Data type|Description|
-'>---|---|---|---
-'>|index|必須|Long|開始場所を指定|
-'>|length|必須|Long|文字数を指定|
-'>|value|必須|String|検索結果を指定|
-'>
-'>**Return Value**
-'>
-'>|Name|Data type|Description|
-'>---|---|---
-'>|ret|Object|新しいインスタンス(MatchBean)|
-'>
-'>**Remarks**
-'>
-'>** このクラスはコンストラクタを使用しないと実行できません。**
-'>
-'>**Example**
-'>
-'>* None
-'>
-'>**See also**
-'>
-'>* None
-'>
-'>
-Public Function CreateObject(Index As Long, Length As Long, Value As String) As MatchBean
-    
-    Dim MB As MatchBean
-    Set MB = New MatchBean
-    
-    MB.Index = Index
-    MB.Length = Length
-    MB.Value = Value
-    
-    Set CreateObject = MB
-    
-End Function
+
 Public Property Let Index(v As Long)
     m_index = v
 End Property
