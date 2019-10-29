@@ -36,25 +36,8 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-'>### ITextReaderParam インターフェイス
-'>
-'>**Remarks**
-'>
-'>TextReader のクラス内部のパラメータ受け渡しを隠蔽するインターフェイス
-'>
-'>**Definition**
-'>
-'>```
-'>Public Property Let FileName(v As String)
-'>Public Property Let NewLineCode(v As NewLineCodeConstants)
-'>Public Property Let Encode(v As EncodeConstants)
-'>Public Sub Init()
-'>```
-'>
-'>**Sample**
-'>
-'>* None
-'>
+' ITextReaderParam インターフェイス
+' TextReader のクラス内部のパラメータ受け渡しを隠蔽するインターフェイス
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 

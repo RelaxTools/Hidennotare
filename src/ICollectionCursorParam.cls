@@ -36,22 +36,8 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-'>### ICollectionCursorParam インターフェイス
-'>
-'>**Remarks**
-'>
-'>CollectionCursor のクラス内部のパラメータ受け渡しを隠蔽するインターフェイス
-'>
-'>**Definition**
-'>
-'>```
-'>Public Property Set Source(v As Collection)
-'>```
-'>
-'>**Sample**
-'>
-'>* None
-'>
+' ICollectionCursorParam インターフェイス
+' CollectionCursor のクラス内部のパラメータ受け渡しを隠蔽するインターフェイス
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 

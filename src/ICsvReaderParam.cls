@@ -36,28 +36,8 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-'>### ICsvReaderParam インターフェイス
-'>
-'>**Remarks**
-'>
-'>CsvReader のクラス内部のパラメータ受け渡しを隠蔽するインターフェイス
-'>
-'>**Definition**
-'>
-'>```
-'>Public Property Let FileName(v As String)
-'>Public Property Let NewLineCode(v As NewLineCodeConstants)
-'>Public Property Let Encode(v As EncodeConstants)
-'>Public Property Let Delimiter(v As String)
-'>Public Property Let Quotation(v As Boolean)
-'>Public Property Let Header(v As Boolean)
-'>Public Sub Init()
-'>```
-'>
-'>**Sample**
-'>
-'>* None
-'>
+' ICsvReaderParam インターフェイス
+' CsvReader のクラス内部のパラメータ受け渡しを隠蔽するインターフェイス
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 
