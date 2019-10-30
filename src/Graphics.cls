@@ -6,7 +6,7 @@ Attribute VB_Name = "Graphics"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
-Attribute VB_Exposed = False
+Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 '
 ' [Hidennotare] v2
@@ -55,6 +55,53 @@ Attribute VB_Exposed = False
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
+
+Private Declare PtrSafe Function ExtractIconExW Lib "Shell32" (ByVal lpszFile As LongPtr, ByVal nIconIndex As Long, phiconLarge As LongPtr, phiconSmall As LongPtr, ByVal nIcons As Long) As Long
+
+Private Const MAX_PATH                  As Long = 260 * 2 - 1
+Private Const MAX_TYPE                  As Long = 80 * 2 - 1
+
+Private Type SHFILEINFO
+    hIcon As LongPtr
+    iIcon As Long
+    dwAttributes As Long
+    szDisplayName(0 To MAX_PATH) As Byte
+    szTypeName(0 To MAX_TYPE) As Byte
+End Type
+
+Const FILE_ATTRIBUTE_ARCHIVE = &H20
+Const FILE_ATTRIBUTE_COMPRESSED = &H800
+Const FILE_ATTRIBUTE_DIRECTORY = &H10
+Const FILE_ATTRIBUTE_HIDDEN = &H2
+Const FILE_ATTRIBUTE_NORMAL = &H0
+Const FILE_ATTRIBUTE_READONLY = &H1
+Const FILE_ATTRIBUTE_SYSTEM = &H4
+Const SHGFI_ATTRIBUTES = &H800
+Const SHGFI_DISPLAYNAME = &H200
+Const SHGFI_EXETYPE = &H2000
+Const SHGFI_ICON = &H100
+Const SHGFI_ICONLOCATION = &H1000
+Const SHGFI_LARGEICON = &H0
+Const SHGFI_LINKOVERLAY = &H8000
+Const SHGFI_OPENICON = &H2
+Const SHGFI_PIDL = &H8
+Const SHGFI_SELECTED = &H10000
+Const SHGFI_SHELLICONSIZE = &H4
+Const SHGFI_SMALLICON = &H1
+Const SHGFI_SYSICONINDEX = &H4000
+Const SHGFI_TYPENAME = &H400
+Const SHGFI_USEFILEATTRIBUTES = &H10
+
+Private Declare PtrSafe Function SHGetFileInfoW Lib "Shell32" (ByVal pszPath As LongPtr, ByVal dwFileAttributes As Long, ByRef psfi As SHFILEINFO, ByVal cbFileInfo As Long, ByVal uFlags As Long) As LongPtr
+
+Private Declare PtrSafe Function ExtractAssociatedIconW Lib "Shell32" (ByVal hInst As LongPtr, ByVal lpIconPath As LongPtr, lpiIcon As Long) As LongPtr
+Private Declare PtrSafe Function DestroyIcon Lib "USER32" (ByVal hIcon As LongPtr) As Long
+
+Public Enum IconConstants
+    IconSmall = 1
+    IconLarge
+End Enum
+
 '>---
 '>#### LoadPicture(Graphics)
 '>
@@ -143,20 +190,61 @@ Public Sub SavePicture(Picture As IPictureDisp, FileName As String)
 
     If FileIO.FileExists(FileName) Then
     
-        If Message.Question("ファイルが存在します。上書きしますか？") Then
-            Exit Sub
-        End If
-    
         Call FileIO.DeleteFile(FileName)
     
     End If
 
-    With GDIPlus.CreateObjectFromIPictureDisp(Picture)
-        Call .SaveAsPNG(FileName)
-    End With
+    Call GDIPlus.CreateObjectFromIPictureDisp(Picture).SaveAsPNG(FileName)
     
 End Sub
 
+Public Function LoadIcon(ByVal FileName As String, Optional ByVal Size As IconConstants = IconConstants.IconSmall) As IPictureDisp
 
+    Dim hIconLarge As LongPtr
+    Dim hIconSmall As LongPtr
+    
+    Dim hIcon As LongPtr
+    
+    If UCase(Right$(FileName, 4)) = ".EXE" Then
+        
+        ExtractIconExW StrPtr(FileName), 1, hIconLarge, hIconSmall, 1
 
+        Select Case Size
+            Case IconConstants.IconSmall
+                hIcon = hIconSmall
+            
+            Case IconConstants.IconLarge
+                hIcon = hIconLarge
+            
+            Case Else
+                hIcon = 0
+        
+        End Select
+    
+    End If
 
+    Dim info  As SHFILEINFO
+    Dim ret As LongPtr
+
+    If hIcon = 0 Then
+        
+        If Size = IconConstants.IconSmall Then
+            ret = SHGetFileInfoW(StrPtr(FileName), FILE_ATTRIBUTE_NORMAL, info, Len(info), SHGFI_USEFILEATTRIBUTES Or SHGFI_TYPENAME Or SHGFI_ICON Or SHGFI_SMALLICON)
+        Else
+            ret = SHGetFileInfoW(StrPtr(FileName), FILE_ATTRIBUTE_NORMAL, info, Len(info), SHGFI_USEFILEATTRIBUTES Or SHGFI_TYPENAME Or SHGFI_ICON)
+        End If
+        
+        hIcon = info.hIcon
+    End If
+
+    If hIcon = 0 Then
+        Err.Raise 512 + 1, TypeName(Me) & ".LoadIcon", "hIcon = null "
+    End If
+    
+    Set LoadIcon = GDIPlus.CreateObjectFromIconHandle(hIcon).ToPicture
+
+    If hIcon <> 0 Then
+        Call DestroyIcon(hIcon)
+    End If
+
+End Function

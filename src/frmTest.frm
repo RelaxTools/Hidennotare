@@ -14,7 +14,17 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
+
+
 Dim FM As IFormManager
+
+Private Sub IList_Add(obj As Variant)
+
+End Sub
+
+Private Sub IList_Clear()
+
+End Sub
 
 Private Sub UserForm_Initialize()
 
@@ -28,15 +38,15 @@ Private Sub UserForm_Initialize()
     Dim strBuf As String
 
     With lvTest
+        
         .View = lvwReport           ''表示
         .LabelEdit = lvwManual      ''ラベルの編集
         .HideSelection = False      ''選択の自動解除
-        .AllowColumnReorder = True  ''列幅の変更を許可
+        .AllowColumnReorder = False  ''列幅の変更を許可
         .FullRowSelect = True       ''行全体を選択
         .Gridlines = True           ''グリッド線
  
-        .ColumnHeaders.Add , "_Name", "メソッド"
-        .ColumnHeaders(1).Width = 375
+        .ColumnHeaders.Add , "_Name", "メソッド", .width - 16
   
     End With
   

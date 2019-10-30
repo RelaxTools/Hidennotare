@@ -6,7 +6,7 @@ Attribute VB_Name = "Clipboard"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
-Attribute VB_Exposed = False
+Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 '
 ' [Hidennotare] v2
@@ -78,8 +78,8 @@ Private Declare PtrSafe Function GlobalSize Lib "kernel32" (ByVal hMem As LongPt
 Private Declare PtrSafe Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (destination As Any, Source As Any, ByVal Length As LongPtr)
 
 Private Type POINTAPI
-    X As Long
-    Y As Long
+    x As Long
+    y As Long
 End Type
 
 Private Type DROPFILES

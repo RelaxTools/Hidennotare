@@ -5,8 +5,8 @@ END
 Attribute VB_Name = "MRecord"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = False
-Attribute VB_Exposed = False
+Attribute VB_PredeclaredId = True
+Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 '
 ' [MLangBuilder] v1
@@ -84,8 +84,48 @@ End Sub
 Private Sub Class_Terminate()
     Set mDic = Nothing
 End Sub
+'>---
+'>#### コンストラクタ
+'>
+'>**Syntax**
+'>
+'>```
+'>Set obj = MRecord.CreateObject()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|MRecord|必須|MRecord|MRecordを指定|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|obj|IDictionary|新しいインスタンス(IDictionary)|
+'>
+'>**Remarks**
+'>
+'> MRecord を生成する場合
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* None
+'>
+'>---
+Public Function CreateObject() As IDictionary
 
-
+    Set CreateObject = New MRecord
+    
+    
+    
+    Call Class_Terminate
+End Function
 '--------------------------------------------------------------
 ' For Each 用
 '--------------------------------------------------------------

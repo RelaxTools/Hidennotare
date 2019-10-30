@@ -5,8 +5,8 @@ END
 Attribute VB_Name = "MList"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = False
-Attribute VB_Exposed = False
+Attribute VB_PredeclaredId = True
+Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 '
 ' [MLangBuilder] v1
@@ -52,7 +52,7 @@ Attribute VB_Exposed = False
 '>
 '>```
 '>Dim lst As IList
-'>Set lst = New MList
+'>Set lst = MList.CreateObject()
 '>
 '>lst.Add Value
 '>```
@@ -77,6 +77,132 @@ Implements IList
 Private mCol As IList
 Private v() As Variant
 Private mIndex As Long
+'>---
+'>#### コンストラクタ(1) Collection
+'>
+'>**Syntax**
+'>
+'>```
+'>Set ret = MList.CreateObject(collection)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|collection|必須|Collection|生成したコレクションをArrayListの初期値として設定|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|ret|Object|新しいインスタンス(IList)|
+'>
+'>**Remarks**
+'>
+'>コレクションから MList を生成する場合
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* None
+'>
+'>---
+'>#### コンストラクタ(2) Array
+'>
+'>**Syntax**
+'>
+'>```
+'>Set ret = MList.CreateObject(Array)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|Array|必須|配列|配列を元にArrayListの初期値として設定|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|ret|Object|新しいインスタンス(IList)|
+'>
+'>**Remarks**
+'>
+'>配列から MList を生成する場合
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* None
+'>
+Public Function CreateObject(ParamArray Args() As Variant) As IList
+
+    Dim cnt As Long
+    Dim lngValue As Long
+    Dim lngMin As Long
+    Dim lngMax As Long
+    Dim lngCount As Long
+    Dim var As Variant
+    Dim v As Variant
+    Dim i As Long
+    
+    var = Args
+    
+    lngMin = 0
+    lngMax = -1
+    
+    Dim IL As IList
+    
+    If Core.TryLBound(var, lngValue) Then
+        lngMin = lngValue
+    End If
+    
+    If Core.TryUBound(var, lngValue) Then
+        lngMax = lngValue
+    End If
+    
+    lngCount = lngMax + 1
+
+    Set IL = New MList
+    IL.Clear
+    
+    Select Case lngCount
+        Case 0
+        Case 1
+        
+            Select Case True
+                
+                'コレクションまたは配列からの変換
+                Case TypeOf Args(0) Is Collection, IsArray(Args(0))
+                    
+                    Core.ArrayToIList Args(0), IL
+                
+                Case Else
+                
+                    IL.Add Args(0)
+            
+            End Select
+            
+        Case Else
+            
+            For i = lngMin To lngMax
+                IL.Add Args(i)
+            Next
+    
+    End Select
+
+    Set CreateObject = IL
+    
+End Function
+
 '--------------------------------------------------------------
 '  Initialize
 '--------------------------------------------------------------

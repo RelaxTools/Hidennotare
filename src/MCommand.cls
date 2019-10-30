@@ -5,8 +5,8 @@ END
 Attribute VB_Name = "MCommand"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = False
-Attribute VB_Exposed = False
+Attribute VB_PredeclaredId = True
+Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 '
 ' [MLangBuilder] v1
@@ -48,6 +48,7 @@ Attribute VB_Exposed = False
 '>
 '>* StringBuilder
 '>* MTable
+'>* IMCommand
 '>
 '>**History**
 '>
@@ -57,6 +58,7 @@ Attribute VB_Exposed = False
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
+Implements IMCommand
 
 'テーブルの別名のデフォルト値
 Const TABLE_NAME As String = "Source"
@@ -71,6 +73,48 @@ Private mLast As MTable
 
 '別名
 Private mAliasName As String
+'>---
+'>#### コンストラクタ
+'>
+'>**Syntax**
+'>
+'>```
+'>Set obj = MCommand.CreateObject()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|MCommand|必須|MCommand|MCommandを指定|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|obj|MCommand|新しいインスタンス(IMCommand)|
+'>
+'>**Remarks**
+'>
+'> MCommand を生成する場合
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* None
+'>
+'>---
+Public Function CreateObject() As IMCommand
+
+    Set CreateObject = New MCommand
+    
+    
+    
+    Call Class_Terminate
+End Function
 '---------------------------------------
 ' Initialize
 '---------------------------------------
@@ -86,7 +130,7 @@ Private Sub Class_Terminate()
     Set mSb = Nothing
 End Sub
 '>---
-'>#### AliasName(MCommand)
+'>#### AliasName(IMCommand I/F)
 '>
 '>**Syntax**
 '>
@@ -113,11 +157,11 @@ End Sub
 '>
 '>* None
 '>
-Public Property Let AliasName(v As String)
+Private Property Let IMCommand_AliasName(v As String)
     mAliasName = v
 End Property
 '>---
-'>#### Append(MCommand)
+'>#### Append(IMCommand I/F)
 '>
 '>**Syntax**
 '>
@@ -150,7 +194,7 @@ End Property
 '>
 '>* None
 '>
-Public Sub Append(m As MTable, Optional ByVal optName As String = "")
+Private Sub IMCommand_Append(m As MTable, Optional ByVal optName As String = "")
 
     If optName = "" Then
         If m.Name = "" Then
@@ -166,7 +210,7 @@ Public Sub Append(m As MTable, Optional ByVal optName As String = "")
 
 End Sub
 '>---
-'>#### Table(MCommand)
+'>#### Table(IMCommand I/F)
 '>
 '>**Syntax**
 '>
@@ -195,11 +239,11 @@ End Sub
 '>
 '>* None
 '>
-Public Property Get Table() As MTable
-    Set Table = mLast
+Private Property Get IMCommand_Table() As MTable
+    Set IMCommand_Table = mLast
 End Property
 '>---
-'>#### ToString(MCommand)
+'>#### ToString(IMCommand I/F)
 '>
 '>**Syntax**
 '>
@@ -228,9 +272,9 @@ End Property
 '>
 '>* None
 '>
-Public Function ToString()
+Private Function IMCommand_ToString()
 
-    ToString = "let " & vbCrLf & mSb.ToString(", " & vbCrLf) & " " & vbCrLf & "in " & mLast.Name
+    IMCommand_ToString = "let " & vbCrLf & mSb.ToString(", " & vbCrLf) & " " & vbCrLf & "in " & mLast.Name
 
 End Function
 

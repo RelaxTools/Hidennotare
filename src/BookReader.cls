@@ -6,7 +6,7 @@ Attribute VB_Name = "BookReader"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
-Attribute VB_Exposed = False
+Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 '
 ' [Hidennotare] v2
@@ -84,9 +84,9 @@ End Sub
 '>**Syntax**
 '>
 '>```
-'>Set ret = BookReader.CreateObject(FileName,
-'>                                 [Readonly = True],
-'>                                 [Application = Excel.Application])
+'>Set objct = BookReader.CreateObject(FileName,
+'>                                   [Readonly = True],
+'>                                   [Application = Excel.Application])
 '>```
 '>
 '>**Parameters**
@@ -101,7 +101,7 @@ End Sub
 '>
 '>|Name|Data type|Description|
 '>---|---|---
-'>|ret|BookReader|新しいインスタンス(BookReader)|
+'>|objct|IBookReader|新しいインスタンス(IBookReader)|
 '>
 '>**Remarks**
 '>
@@ -131,7 +131,7 @@ End Sub
 '>
 '>* None
 '>
-Public Function CreateObject(ByVal BookName As String, Optional ByVal ReadOnly As Boolean = True, Optional App As Application = Nothing) As BookReader
+Public Function CreateObject(ByVal BookName As String, Optional ByVal ReadOnly As Boolean = True, Optional App As Application = Nothing) As IBookReader
     
     Dim BR As IBookReaderParam
     

@@ -105,7 +105,7 @@ End Sub
 Public Sub StartGauge(ByVal lngValue As Long)
     
     mlngMax = lngValue
-    lblBar.Width = 0
+    lblBar.width = 0
     lblBar.visible = True
 
 End Sub
@@ -121,9 +121,9 @@ Public Sub DisplayGauge(ByVal lngValue As Long)
         lngValue = mlngMax
     End If
     dblValue = (CDbl(lngValue) / mlngMax)
-    lblBar.Width = lblStatus.Width * dblValue
+    lblBar.width = lblStatus.width * dblValue
     
-    strMessage = Space$(Fix(lblStatus.Width * 0.16)) & Format$(Fix(dblValue * 100), "0") & "%"
+    strMessage = Space$(Fix(lblStatus.width * 0.16)) & Format$(Fix(dblValue * 100), "0") & "%"
     lblBar.Caption = strMessage
     lblStatus.Caption = strMessage
     DoEvents

@@ -241,6 +241,8 @@ Sub Test_ICursor_SheetCursor()
 End Sub
 Sub Test_CollectionCursor()
 
+    'CollectionCursorは廃止、同機能のArrayListを使用のこと。
+
     Dim col As Collection
     Set col = New Collection
     
@@ -251,7 +253,7 @@ Sub Test_CollectionCursor()
 
     Dim IC As ICursor
 
-    Set IC = CollectionCursor.CreateObject(col)
+    Set IC = ArrayList.CreateObject(col)
     Dim i As Long
     i = 0
     Do Until IC.Eof
@@ -274,7 +276,6 @@ End Sub
 Sub Test_LineCursor()
 
     'LineCursorは廃止、同機能のArrayListを使用のこと。
-
 
     Dim v As Variant
     
@@ -508,8 +509,8 @@ Sub Test_MCommand()
     Set t2 = MTable.Skip(t1, 2)
     Set t3 = MTable.PromoteHeaders(t2, "[PromoteAllScalars=true]")
 
-    Dim m1 As MCommand
-    Set m1 = New MCommand
+    Dim m1 As IMCommand
+    Set m1 = MCommand.CreateObject
     
     m1.Append t3
     
@@ -530,8 +531,8 @@ Sub Test_MCommand()
     '-----------------------------------
     ' MCommandに代入して作成する場合
     '-----------------------------------
-    Dim m2 As MCommand
-    Set m2 = New MCommand
+    Dim m2 As IMCommand
+    Set m2 = MCommand.CreateObject
     
     m2.Append MCsv.Document(MFile.Contents("C:\Test.csv"), _
                             "[Delimiter="","", Columns=5, Encoding=65001, QuoteStyle=QuoteStyle.Csv]")
@@ -556,11 +557,11 @@ Sub Test_MCommand()
     '-----------------------------------
     ' MRecord/MListを用いたサンプル
     '-----------------------------------
-    Dim m3 As MCommand
+    Dim m3 As IMCommand
     
     'MRecord(M言語のRecord) は DictionaryをWrapしたもの。使用方法はDictionary同等。
     Dim rec As IDictionary
-    Set rec = New MRecord
+    Set rec = MRecord.CreateObject()
             
     rec.Add "Column1", """No."""
     rec.Add "Column2", """NAME"""
@@ -568,12 +569,12 @@ Sub Test_MCommand()
     rec.Add "Column4", """ADDRESS"""
     rec.Add "Column5", """TEL"""
     
-    'MList(M言語のList) は CollectionをWrapしたもの。使用方法はCollectionと同等。
+    'MList(M言語のList) は ArrayListをWrapしたもの。使用方法はCollectionと同等。
     Dim lst As IList
-    Set lst = New MList
+    Set lst = MList.CreateObject()
     lst.Add rec
     
-    Set m3 = New MCommand
+    Set m3 = MCommand.CreateObject
 
     m3.Append MCsv.Document(MFile.Contents("C:\Test.csv"), _
                             "[Delimiter="","", Columns=5, Encoding=65001, QuoteStyle=QuoteStyle.Csv]")
@@ -785,5 +786,33 @@ Sub Test_StrSch()
     Debug.Assert col(1).Index = 3
     Debug.Assert col(1).Length = 2
     Debug.Assert col(1).Value = "AB"
+
+End Sub
+Sub Test_Graphics()
+
+    Dim IP As IPictureDisp
+    Dim strFile As String
+    
+    'アイコン取得
+    Set IP = Graphics.LoadIcon(Application.Path & "\EXCEL.EXE")
+    
+    '保存
+    strFile = FileIO.BuildPath(ThisWorkbook.Path, "Test.png")
+    Call Graphics.SavePicture(IP, strFile)
+
+    Debug.Assert FileIO.FileExists(strFile)
+
+    FileIO.DeleteFile strFile
+    
+    'ImageMso保存
+    Call Graphics.SavePicture(CommandBars.GetImageMso("Paste", 32, 32), strFile)
+    
+    Debug.Assert FileIO.FileExists(strFile)
+    
+    Set IP = Graphics.LoadPicture(strFile)
+    
+    FileIO.DeleteFile strFile
+    
+    Debug.Assert Not IP Is Nothing
 
 End Sub

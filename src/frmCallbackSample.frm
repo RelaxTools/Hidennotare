@@ -34,7 +34,7 @@ Private Sub UserForm_Terminate()
     Set CB = Nothing
 End Sub
 ' 右クリックメニュー表示
-Private Sub UserForm_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+Private Sub UserForm_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal y As Single)
     
     '右クリック
     If Button <> 2 Then

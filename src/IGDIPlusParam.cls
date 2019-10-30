@@ -6,7 +6,7 @@ Attribute VB_Name = "IGDIPlusParam"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
-Attribute VB_Exposed = False
+Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 '
 ' [Hidennotare] v2
@@ -50,16 +50,16 @@ End Property
 Public Property Let hIcon(v As LongPtr)
 
 End Property
-Public Property Let Width(v As Long)
+Public Property Let width(v As Long)
 
 End Property
-Public Property Let Height(v As Long)
+Public Property Let height(v As Long)
 
 End Property
 Public Property Let Color(v As Long)
 
 End Property
-Public Property Set Pic(v As IPictureDisp)
+Public Property Set pic(v As IPictureDisp)
 
 End Property
 Public Property Set Shape(v As Object)

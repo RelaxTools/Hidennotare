@@ -6,7 +6,7 @@ Attribute VB_Name = "IFormManager"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
-Attribute VB_Exposed = False
+Attribute VB_Exposed = True
 Option Explicit
 
 Public Property Get IsCancel() As Boolean

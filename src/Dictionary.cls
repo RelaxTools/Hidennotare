@@ -6,7 +6,7 @@ Attribute VB_Name = "Dictionary"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
-Attribute VB_Exposed = False
+Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 '
 ' [Hidennotare] v2
@@ -90,6 +90,40 @@ Implements ICompatibleProperty
 Private mCol As Collection
 Private mDic As Object
 Private mIndex As Long
+'>---
+'>#### コンストラクタ
+'>
+'>**Syntax**
+'>
+'>```
+'>Set obj = Dictionary.CreateObject()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|Dictionary|必須|Dictionary|Dictionaryを指定|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|obj|IDictionary|新しいインスタンス(IDictionary)|
+'>
+'>**Remarks**
+'>
+'> Dictionary を生成する場合
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* None
+'>
+'>---
 Public Function CreateObject() As IDictionary
 
     Set CreateObject = New Dictionary
