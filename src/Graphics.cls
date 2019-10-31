@@ -153,7 +153,7 @@ Public Function LoadPicture(ByVal FileName As String) As IPictureDisp
             Err.Raise 512 + 1, TypeName(Me) & "LoadPicture", "Not Support Type "
     End Select
 
-    Set LoadPicture = GDIPlus.CreateObjectFromFile(FileName).ToPicture
+    Set LoadPicture = gdiplus.CreateObjectFromFile(FileName).ToPicture
 
 End Function
 '>---
@@ -194,7 +194,7 @@ Public Sub SavePicture(Picture As IPictureDisp, FileName As String)
     
     End If
 
-    Call GDIPlus.CreateObjectFromIPictureDisp(Picture).SaveAsPNG(FileName)
+    Call gdiplus.CreateObjectFromIPictureDisp(Picture).SaveAsPNG(FileName)
     
 End Sub
 
@@ -241,7 +241,7 @@ Public Function LoadIcon(ByVal FileName As String, Optional ByVal Size As IconCo
         Err.Raise 512 + 1, TypeName(Me) & ".LoadIcon", "hIcon = null "
     End If
     
-    Set LoadIcon = GDIPlus.CreateObjectFromIconHandle(hIcon).ToPicture
+    Set LoadIcon = gdiplus.CreateObjectFromIconHandle(hIcon).ToPicture
 
     If hIcon <> 0 Then
         Call DestroyIcon(hIcon)

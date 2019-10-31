@@ -68,19 +68,19 @@ End Enum
 
 Option Explicit
 
-Public Sub DrawFillRectangle(ByVal x As Long, ByVal y As Long, ByVal width As Long, ByVal height As Long, Optional ByVal lColor As Long = 0, Optional ByVal Alpha As Long = 100, Optional ByVal Smoothing As Boolean = False)
+Public Sub DrawFillRectangle(ByVal x As Long, ByVal y As Long, ByVal Width As Long, ByVal Height As Long, Optional ByVal lColor As Long = 0, Optional ByVal Alpha As Long = 100, Optional ByVal Smoothing As Boolean = False)
     
 End Sub
-Public Sub DrawFillEllipse(ByVal x As Long, ByVal y As Long, ByVal width As Long, ByVal height As Long, Optional ByVal lColor As Long = 0, Optional ByVal Alpha As Long = 100, Optional ByVal Smoothing As Boolean = False)
+Public Sub DrawFillEllipse(ByVal x As Long, ByVal y As Long, ByVal Width As Long, ByVal Height As Long, Optional ByVal lColor As Long = 0, Optional ByVal Alpha As Long = 100, Optional ByVal Smoothing As Boolean = False)
     
 End Sub
-Public Function DrawRectangle(ByVal x As Long, ByVal y As Long, ByVal width As Long, ByVal height As Long, Optional ByVal lColor As Long = 0, Optional ByVal Alpha As Long = 100, Optional ByVal Smoothing As Boolean = False) As Boolean
+Public Function DrawRectangle(ByVal x As Long, ByVal y As Long, ByVal Width As Long, ByVal Height As Long, Optional ByVal lColor As Long = 0, Optional ByVal Alpha As Long = 100, Optional ByVal Smoothing As Boolean = False) As Boolean
     
 End Function
-Public Sub DrawEllipse(ByVal x As Long, ByVal y As Long, ByVal width As Long, ByVal height As Long, Optional ByVal lColor As Long = 0, Optional ByVal Alpha As Long = 100, Optional ByVal Smoothing As Boolean = False)
+Public Sub DrawEllipse(ByVal x As Long, ByVal y As Long, ByVal Width As Long, ByVal Height As Long, Optional ByVal lColor As Long = 0, Optional ByVal Alpha As Long = 100, Optional ByVal Smoothing As Boolean = False)
     
 End Sub
-Public Sub DrawString(ByVal x As Long, ByVal y As Long, ByVal width As Long, ByVal height As Long, ByVal strFont As String, ByVal strBuf As String, ByVal Size As Long, Optional ByVal style As DrawStringConstants, Optional ByVal lColor As Long = 0, Optional ByVal Alpha As Long = 100, Optional ByVal Smoothing As Boolean = False)
+Public Sub DrawString(ByVal x As Long, ByVal y As Long, ByVal Width As Long, ByVal Height As Long, ByVal strFont As String, ByVal strBuf As String, ByVal Size As Long, Optional ByVal style As DrawStringConstants, Optional ByVal lColor As Long = 0, Optional ByVal Alpha As Long = 100, Optional ByVal Smoothing As Boolean = False)
 
 End Sub
 Public Function ToPicture() As IPictureDisp

@@ -46,7 +46,7 @@ Private Sub UserForm_Initialize()
         .FullRowSelect = True       ''行全体を選択
         .Gridlines = True           ''グリッド線
  
-        .ColumnHeaders.Add , "_Name", "メソッド", .width - 16
+        .ColumnHeaders.Add , "_Name", "メソッド", .Width - 16
   
     End With
   

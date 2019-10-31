@@ -50,13 +50,13 @@ End Property
 Public Property Let hIcon(v As LongPtr)
 
 End Property
-Public Property Let width(v As Long)
+Public Property Let Width(v As Long)
 
 End Property
-Public Property Let height(v As Long)
+Public Property Let Height(v As Long)
 
 End Property
-Public Property Let Color(v As Long)
+Public Property Let color(v As Long)
 
 End Property
 Public Property Set pic(v As IPictureDisp)

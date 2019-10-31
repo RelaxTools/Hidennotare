@@ -78,15 +78,15 @@ Private Type GUID
     Data4(7)       As Byte
 End Type
     
-Private Declare PtrSafe Function GdiplusStartup Lib "GDIPlus" (token As LongPtr, inputbuf As GdiplusStartupInput, Optional ByVal outputbuf As LongPtr = 0) As Long
-Private Declare PtrSafe Sub GdiplusShutdown Lib "GDIPlus" (ByVal token As LongPtr)
-Private Declare PtrSafe Function GdipCreateBitmapFromFile Lib "GDIPlus" (ByVal FileName As LongPtr, BITMAP As LongPtr) As Long
-Private Declare PtrSafe Function GdipCreateHBITMAPFromBitmap Lib "GDIPlus" (ByVal BITMAP As LongPtr, hbmReturn As LongPtr, ByVal background As Long) As Long
-Private Declare PtrSafe Function GdipCreateBitmapFromHBITMAP Lib "GDIPlus" (ByVal hBitmap As LongPtr, ByVal hPalet As LongPtr, ByRef BITMAP As LongPtr) As Long
+Private Declare PtrSafe Function GdiplusStartup Lib "gdiplus" (token As LongPtr, inputbuf As GdiplusStartupInput, Optional ByVal outputbuf As LongPtr = 0) As Long
+Private Declare PtrSafe Sub GdiplusShutdown Lib "gdiplus" (ByVal token As LongPtr)
+Private Declare PtrSafe Function GdipCreateBitmapFromFile Lib "gdiplus" (ByVal FileName As LongPtr, bitmap As LongPtr) As Long
+Private Declare PtrSafe Function GdipCreateHBITMAPFromBitmap Lib "gdiplus" (ByVal bitmap As LongPtr, hbmReturn As LongPtr, ByVal background As Long) As Long
+Private Declare PtrSafe Function GdipCreateBitmapFromHBITMAP Lib "gdiplus" (ByVal hBitmap As LongPtr, ByVal hPalet As LongPtr, ByRef bitmap As LongPtr) As Long
 
-Private Declare PtrSafe Function GdipCreateBitmapFromHICON Lib "GDIPlus" (ByVal hIcon As LongPtr, ByRef BITMAP As LongPtr) As Long
+Private Declare PtrSafe Function GdipCreateBitmapFromHICON Lib "gdiplus" (ByVal hIcon As LongPtr, ByRef bitmap As LongPtr) As Long
 
-Private Declare PtrSafe Function GdipDisposeImage Lib "GDIPlus" (ByVal Image As LongPtr) As Long
+Private Declare PtrSafe Function GdipDisposeImage Lib "gdiplus" (ByVal image As LongPtr) As Long
 Private Declare PtrSafe Function IIDFromString Lib "ole32" (ByVal lpsz As LongPtr, ByRef lpiid As GUID) As Long
 Private Declare PtrSafe Function OleCreatePictureIndirect Lib "oleaut32.dll" (PicDesc As PICTDESC, ByRef refiid As GUID, ByVal fPictureOwnsHandle As Long, obj As Any) As Long
 
@@ -116,23 +116,23 @@ Private Type EncoderParameters
     Parameter(15) As EncoderParameter
 End Type
 
-Private Declare PtrSafe Function GdipCreateSolidFill Lib "GDIPlus" (ByVal pColor As Long, ByRef brush As LongPtr) As Long
-Private Declare PtrSafe Function GdipGetImageGraphicsContext Lib "GDIPlus" (ByVal Image As LongPtr, Graphics As LongPtr) As Long
-Private Declare PtrSafe Function GdipFillRectangle Lib "GDIPlus" (ByVal Graphics As LongPtr, ByVal brush As LongPtr, ByVal x As Single, ByVal y As Single, ByVal nWidth As Single, ByVal nHeight As Single) As Long
-Private Declare PtrSafe Function GdipSetSmoothingMode Lib "GDIPlus" (ByVal mGraphics As LongPtr, ByVal mSmoothingMode As Long) As Long
-Private Declare PtrSafe Function GdipDeleteBrush Lib "GDIPlus" (ByVal mBrush As LongPtr) As Long
-Private Declare PtrSafe Function GdipDeleteGraphics Lib "GDIPlus" (ByVal Graphics As LongPtr) As Long
+Private Declare PtrSafe Function GdipCreateSolidFill Lib "gdiplus" (ByVal pColor As Long, ByRef brush As LongPtr) As Long
+Private Declare PtrSafe Function GdipGetImageGraphicsContext Lib "gdiplus" (ByVal image As LongPtr, Graphics As LongPtr) As Long
+Private Declare PtrSafe Function GdipFillRectangle Lib "gdiplus" (ByVal Graphics As LongPtr, ByVal brush As LongPtr, ByVal x As Single, ByVal y As Single, ByVal nWidth As Single, ByVal nHeight As Single) As Long
+Private Declare PtrSafe Function GdipSetSmoothingMode Lib "gdiplus" (ByVal mGraphics As LongPtr, ByVal mSmoothingMode As Long) As Long
+Private Declare PtrSafe Function GdipDeleteBrush Lib "gdiplus" (ByVal mBrush As LongPtr) As Long
+Private Declare PtrSafe Function GdipDeleteGraphics Lib "gdiplus" (ByVal Graphics As LongPtr) As Long
 Private Declare PtrSafe Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (destination As Any, Source As Any, ByVal Length As LongPtr)
 
-Private Declare PtrSafe Function GdipCreatePen1 Lib "GDIPlus" (ByVal pColor As Long, ByVal width As Long, ByVal unit As Long, ByRef hPen As LongPtr) As Long
-Private Declare PtrSafe Function GdipDrawRectangle Lib "GDIPlus" (ByVal hGraphics As LongPtr, ByVal hPen As LongPtr, ByVal x As Single, ByVal y As Single, ByVal nWidth As Single, ByVal nHeight As Single) As Long
-Private Declare PtrSafe Function GdipDeletePen Lib "GDIPlus" (ByVal hPen As LongPtr) As Long
+Private Declare PtrSafe Function GdipCreatePen1 Lib "gdiplus" (ByVal pColor As Long, ByVal Width As Long, ByVal unit As Long, ByRef hPen As LongPtr) As Long
+Private Declare PtrSafe Function GdipDrawRectangle Lib "gdiplus" (ByVal hGraphics As LongPtr, ByVal hPen As LongPtr, ByVal x As Single, ByVal y As Single, ByVal nWidth As Single, ByVal nHeight As Single) As Long
+Private Declare PtrSafe Function GdipDeletePen Lib "gdiplus" (ByVal hPen As LongPtr) As Long
 Private Declare PtrSafe Function ExtractIconExW Lib "Shell32" (ByVal lpszFile As LongPtr, ByVal nIconIndex As Long, phiconLarge As LongPtr, phiconSmall As LongPtr, ByVal nIcons As Long) As Long
 
-Private Declare PtrSafe Function GdipFillEllipse Lib "GDIPlus" (ByVal hGraphics As LongPtr, ByVal brush As LongPtr, ByVal x As Single, ByVal y As Single, ByVal nWidth As Single, ByVal nHeight As Single) As Long
-Private Declare PtrSafe Function GdipDrawEllipse Lib "GDIPlus" (ByVal hGraphics As LongPtr, ByVal hPen As LongPtr, ByVal x As Single, ByVal y As Single, ByVal nWidth As Single, ByVal nHeight As Single) As Long
+Private Declare PtrSafe Function GdipFillEllipse Lib "gdiplus" (ByVal hGraphics As LongPtr, ByVal brush As LongPtr, ByVal x As Single, ByVal y As Single, ByVal nWidth As Single, ByVal nHeight As Single) As Long
+Private Declare PtrSafe Function GdipDrawEllipse Lib "gdiplus" (ByVal hGraphics As LongPtr, ByVal hPen As LongPtr, ByVal x As Single, ByVal y As Single, ByVal nWidth As Single, ByVal nHeight As Single) As Long
 
-Private Declare PtrSafe Function GdipSaveImageToFile Lib "GDIPlus" (ByVal Image As LongPtr, ByVal FileName As LongPtr, ByRef clsidEncoder As GUID, ByVal encoderParams As LongPtr) As Long
+Private Declare PtrSafe Function GdipSaveImageToFile Lib "gdiplus" (ByVal image As LongPtr, ByVal FileName As LongPtr, ByRef clsidEncoder As GUID, ByVal encoderParams As LongPtr) As Long
     
 Private Type RECTF
     Left As Single
@@ -142,11 +142,11 @@ Private Type RECTF
 End Type
 
     
-Private Declare PtrSafe Function GdipCreateFromHDC Lib "GDIPlus" (ByVal hDc As LongPtr, ByRef Graphics As LongPtr) As Long
+Private Declare PtrSafe Function GdipCreateFromHDC Lib "gdiplus" (ByVal hDc As LongPtr, ByRef Graphics As LongPtr) As Long
     
-Private Declare PtrSafe Function GdipCreateFontFamilyFromName Lib "GDIPlus" (ByVal FontName As LongPtr, ByVal fontCollection As Long, fontFamily As LongPtr) As Long
-Private Declare PtrSafe Function GdipCreateFont Lib "GDIPlus" (ByVal fontFamily As LongPtr, ByVal emSize As Single, ByVal style As Integer, ByVal unit As Integer, font As LongPtr) As Long
-Private Declare PtrSafe Function GdipDrawString Lib "GDIPlus" (ByVal Graphics As LongPtr, ByVal str As LongPtr, ByVal Length As Long, ByVal font As LongPtr, layoutRect As RECTF, ByVal StringFormat As LongPtr, ByVal brush As LongPtr) As Long
+Private Declare PtrSafe Function GdipCreateFontFamilyFromName Lib "gdiplus" (ByVal FontName As LongPtr, ByVal fontCollection As Long, fontFamily As LongPtr) As Long
+Private Declare PtrSafe Function GdipCreateFont Lib "gdiplus" (ByVal fontFamily As LongPtr, ByVal emSize As Single, ByVal style As Integer, ByVal unit As Integer, font As LongPtr) As Long
+Private Declare PtrSafe Function GdipDrawString Lib "gdiplus" (ByVal Graphics As LongPtr, ByVal str As LongPtr, ByVal Length As Long, ByVal font As LongPtr, layoutRect As RECTF, ByVal StringFormat As LongPtr, ByVal brush As LongPtr) As Long
     
 Enum StringAlignment
     StringAlignmentNear = 0
@@ -156,11 +156,11 @@ End Enum
 
 Private Const LANG_NEUTRAL As Integer = 0
     
-Private Declare PtrSafe Function GdipSetStringFormatAlign Lib "GDIPlus" (ByVal hFormat As LongPtr, ByVal align As Long) As Long
-Private Declare PtrSafe Function GdipSetStringFormatLineAlign Lib "GDIPlus" (ByVal hFormat As LongPtr, ByVal align As Long) As Long
+Private Declare PtrSafe Function GdipSetStringFormatAlign Lib "gdiplus" (ByVal hFormat As LongPtr, ByVal align As Long) As Long
+Private Declare PtrSafe Function GdipSetStringFormatLineAlign Lib "gdiplus" (ByVal hFormat As LongPtr, ByVal align As Long) As Long
 
-Private Declare PtrSafe Function GdipCreateStringFormat Lib "GDIPlus" (ByVal formatAttributes As Long, ByVal LANGID As Integer, ByRef hFormat As LongPtr) As Long
-Private Declare PtrSafe Function GdipDeleteStringFormat Lib "GDIPlus" (ByVal hFormat As LongPtr) As Long
+Private Declare PtrSafe Function GdipCreateStringFormat Lib "gdiplus" (ByVal formatAttributes As Long, ByVal LANGID As Integer, ByRef hFormat As LongPtr) As Long
+Private Declare PtrSafe Function GdipDeleteStringFormat Lib "gdiplus" (ByVal hFormat As LongPtr) As Long
 
 Private hGdiPlus As LongPtr
 Private hGdiImage As LongPtr
@@ -291,13 +291,13 @@ Private Type RGBQUAD
     rgbReserved As Byte
 End Type
 
-Private Type BITMAP
+Private Type bitmap
     bmType As Long
     bmWidth As Long
     bmHeight As Long
     bmWidthBytes As Long
-    bmPlanes As Long
-    bmBitsPixel As Long
+    bmPlanes As Integer
+    bmBitsPixel As Integer
     bmBits As LongPtr
 End Type
 
@@ -316,7 +316,7 @@ Private Type BITMAPINFOHEADER
 End Type
 
 Private Type DIBSECTION
-    dsBm As BITMAP
+    dsBm As bitmap
     dsBmih As BITMAPINFOHEADER
     dsBitField1 As Long
     dsBitField2 As Long
@@ -325,11 +325,15 @@ Private Type DIBSECTION
     dsOffset As Long
 End Type
 
+Private Const PixelFormat32bppARGB = &H26200A
 
 
 Private Declare PtrSafe Function GetObjectW Lib "gdi32" (ByVal hObject As LongPtr, ByVal nCount As Long, lpObject As DIBSECTION) As Long
-
-
+Private Declare PtrSafe Function GdipBitmapGetPixel Lib "gdiplus" (ByVal bitmap As LongPtr, ByVal x As Long, ByVal y As Long, color As Long) As Long
+Private Declare PtrSafe Function GdipBitmapSetPixel Lib "gdiplus" (ByVal bitmap As LongPtr, ByVal x As Long, ByVal y As Long, ByVal color As Long) As Long
+Private Declare PtrSafe Function GdipGetImageHeight Lib "gdiplus" (ByVal image As LongPtr, Height As Long) As Long
+Private Declare PtrSafe Function GdipGetImageWidth Lib "gdiplus" (ByVal image As LongPtr, Width As Long) As Long
+Private Declare PtrSafe Function GdipCreateBitmapFromScan0 Lib "gdiplus.dll" (ByVal nWidth As Long, ByVal Height As Long, ByVal stride As Long, ByVal PixelFormat As Long, scan0 As Any, nBitmap As LongPtr) As Long
 '>---
 '>#### コンストラクタ
 '>
@@ -384,7 +388,7 @@ Public Function CreateObjectFromFile(ByVal FileName As String) As IGDIPlus
                 
     Dim GP As IGDIPlusParam
                 
-    Set GP = New GDIPlus
+    Set GP = New gdiplus
     
     GP.Initialize
     
@@ -400,7 +404,7 @@ Public Function CreateObjectFromIconHandle(ByVal hIcon As LongPtr) As IGDIPlus
                 
     Dim GP As IGDIPlusParam
                 
-    Set GP = New GDIPlus
+    Set GP = New gdiplus
     
     GP.Initialize
     
@@ -416,7 +420,7 @@ Public Function CreateObjectFromShape(obj As Object) As IGDIPlus
                 
     Dim GP As IGDIPlusParam
                 
-    Set GP = New GDIPlus
+    Set GP = New gdiplus
     
     GP.Initialize
     
@@ -431,7 +435,7 @@ Public Function CreateObjectFromIPictureDisp(pic As IPictureDisp) As IGDIPlus
 
     Dim GP As IGDIPlusParam
                 
-    Set GP = New GDIPlus
+    Set GP = New gdiplus
     
     GP.Initialize
     
@@ -443,24 +447,27 @@ Public Function CreateObjectFromIPictureDisp(pic As IPictureDisp) As IGDIPlus
     Set CreateObjectFromIPictureDisp = GP
 
 End Function
-Public Function CreateObject(ByVal width As Long, ByVal height As Long, Optional ByVal Color As Long = 0) As IGDIPlus
+Public Function CreateObject(ByVal Width As Long, ByVal Height As Long, Optional ByVal color As Long = 0) As IGDIPlus
                     
     Dim GP As IGDIPlusParam
                 
-    Set GP = New GDIPlus
+    Set GP = New gdiplus
     
     GP.Initialize
     
     GP.EditType = GDIPlusConstants.GDIPlusCreateImage
-    GP.width = width
-    GP.height = height
-    GP.Color = Color
+    GP.Width = Width
+    GP.Height = Height
+    GP.color = color
     
     GP.Run
                 
     Set CreateObject = GP
 
 End Function
+
+
+
 Private Property Let IGDIPlusParam_EditType(v As GDIPlusConstants)
     mEditType = v
 End Property
@@ -639,7 +646,7 @@ Private Sub Class_Terminate()
 
 End Sub
 'alpha は %
-Private Sub IGDIPlus_DrawFillRectangle(ByVal x As Long, ByVal y As Long, ByVal width As Long, ByVal height As Long, Optional ByVal lColor As Long = 0, Optional ByVal Alpha As Long = 100, Optional ByVal Smoothing As Boolean = False)
+Private Sub IGDIPlus_DrawFillRectangle(ByVal x As Long, ByVal y As Long, ByVal Width As Long, ByVal Height As Long, Optional ByVal lColor As Long = 0, Optional ByVal Alpha As Long = 100, Optional ByVal Smoothing As Boolean = False)
 
     Dim hGraphics As LongPtr
     Dim hBrush As LongPtr
@@ -662,7 +669,7 @@ Private Sub IGDIPlus_DrawFillRectangle(ByVal x As Long, ByVal y As Long, ByVal w
         End If
     End If
     
-    result = GdipFillRectangle(hGraphics, hBrush, x, y, width, height)
+    result = GdipFillRectangle(hGraphics, hBrush, x, y, Width, Height)
     If result <> Status.ok Then
         Err.Raise 512 + result, TypeName(Me) & ".DrawFillRectangle", "GdipFillRectangle error"
     End If
@@ -671,7 +678,7 @@ Private Sub IGDIPlus_DrawFillRectangle(ByVal x As Long, ByVal y As Long, ByVal w
     Call GdipDeleteGraphics(hGraphics)
     
 End Sub
-Private Sub IGDIPlus_DrawFillEllipse(ByVal x As Long, ByVal y As Long, ByVal width As Long, ByVal height As Long, Optional ByVal lColor As Long = 0, Optional ByVal Alpha As Long = 100, Optional ByVal Smoothing As Boolean = False)
+Private Sub IGDIPlus_DrawFillEllipse(ByVal x As Long, ByVal y As Long, ByVal Width As Long, ByVal Height As Long, Optional ByVal lColor As Long = 0, Optional ByVal Alpha As Long = 100, Optional ByVal Smoothing As Boolean = False)
 
     Dim hGraphics As LongPtr
     Dim hBrush As LongPtr
@@ -694,7 +701,7 @@ Private Sub IGDIPlus_DrawFillEllipse(ByVal x As Long, ByVal y As Long, ByVal wid
         End If
     End If
     
-    result = GdipFillEllipse(hGraphics, hBrush, x, y, width, height)
+    result = GdipFillEllipse(hGraphics, hBrush, x, y, Width, Height)
     If result <> Status.ok Then
         Err.Raise 512 + result, TypeName(Me) & ".DrawFillRectangle", "GdipFillEllipse error"
     End If
@@ -703,7 +710,7 @@ Private Sub IGDIPlus_DrawFillEllipse(ByVal x As Long, ByVal y As Long, ByVal wid
     Call GdipDeleteGraphics(hGraphics)
     
 End Sub
-Private Function IGDIPlus_DrawRectangle(ByVal x As Long, ByVal y As Long, ByVal width As Long, ByVal height As Long, Optional ByVal lColor As Long = 0, Optional ByVal Alpha As Long = 100, Optional ByVal Smoothing As Boolean = False) As Boolean
+Private Function IGDIPlus_DrawRectangle(ByVal x As Long, ByVal y As Long, ByVal Width As Long, ByVal Height As Long, Optional ByVal lColor As Long = 0, Optional ByVal Alpha As Long = 100, Optional ByVal Smoothing As Boolean = False) As Boolean
 
     Dim hGraphics As LongPtr
     Dim hPen As LongPtr
@@ -726,7 +733,7 @@ Private Function IGDIPlus_DrawRectangle(ByVal x As Long, ByVal y As Long, ByVal 
         End If
     End If
     
-    result = GdipDrawRectangle(hGraphics, hPen, x, y, width, height)
+    result = GdipDrawRectangle(hGraphics, hPen, x, y, Width, Height)
     If result <> Status.ok Then
         Err.Raise 512 + result, TypeName(Me) & ".DrawRectangle", "GdipDrawRectangle error"
     End If
@@ -735,7 +742,7 @@ Private Function IGDIPlus_DrawRectangle(ByVal x As Long, ByVal y As Long, ByVal 
     Call GdipDeleteGraphics(hGraphics)
     
 End Function
-Private Sub IGDIPlus_DrawEllipse(ByVal x As Long, ByVal y As Long, ByVal width As Long, ByVal height As Long, Optional ByVal lColor As Long = 0, Optional ByVal Alpha As Long = 100, Optional ByVal Smoothing As Boolean = False)
+Private Sub IGDIPlus_DrawEllipse(ByVal x As Long, ByVal y As Long, ByVal Width As Long, ByVal Height As Long, Optional ByVal lColor As Long = 0, Optional ByVal Alpha As Long = 100, Optional ByVal Smoothing As Boolean = False)
 
     Dim hGraphics As LongPtr
     Dim hPen As LongPtr
@@ -758,7 +765,7 @@ Private Sub IGDIPlus_DrawEllipse(ByVal x As Long, ByVal y As Long, ByVal width A
         End If
     End If
     
-    result = GdipDrawEllipse(hGraphics, hPen, x, y, width, height)
+    result = GdipDrawEllipse(hGraphics, hPen, x, y, Width, Height)
     If result <> Status.ok Then
         Err.Raise 512 + result, TypeName(Me) & ".DrawRectangle", "GdipDrawEllipse error"
     End If
@@ -767,7 +774,7 @@ Private Sub IGDIPlus_DrawEllipse(ByVal x As Long, ByVal y As Long, ByVal width A
     Call GdipDeleteGraphics(hGraphics)
     
 End Sub
-Private Sub IGDIPlus_DrawString(ByVal x As Long, ByVal y As Long, ByVal width As Long, ByVal height As Long, ByVal strFont As String, ByVal strBuf As String, ByVal Size As Long, Optional ByVal style As DrawStringConstants, Optional ByVal lColor As Long = 0, Optional ByVal Alpha As Long = 100, Optional ByVal Smoothing As Boolean = False)
+Private Sub IGDIPlus_DrawString(ByVal x As Long, ByVal y As Long, ByVal Width As Long, ByVal Height As Long, ByVal strFont As String, ByVal strBuf As String, ByVal Size As Long, Optional ByVal style As DrawStringConstants, Optional ByVal lColor As Long = 0, Optional ByVal Alpha As Long = 100, Optional ByVal Smoothing As Boolean = False)
 
     Dim hGraphics As LongPtr
     Dim hBrush As LongPtr
@@ -810,8 +817,8 @@ Private Sub IGDIPlus_DrawString(ByVal x As Long, ByVal y As Long, ByVal width As
     
     rect.Top = y
     rect.Left = x
-    rect.Right = x + width
-    rect.Bottom = y + height
+    rect.Right = x + Width
+    rect.Bottom = y + Height
     
 
     
@@ -908,15 +915,33 @@ Private Sub IGDIPlus_SaveAsPNG(ByVal strFile As String)
     End If
 
 End Sub
-Private Function ConvertColor(Color As Long, Opacity As Long) As Long
+Private Function ConvertColor(color As Long, Opacity As Long) As Long
     Dim BGRA(0 To 3) As Byte
  
     BGRA(3) = CByte((Abs(Opacity) / 100) * 255)
-    BGRA(0) = ((Color \ &H10000) And &HFF)
-    BGRA(1) = ((Color \ &H100) And &HFF)
-    BGRA(2) = (Color And &HFF)
+    BGRA(0) = ((color \ &H10000) And &HFF)
+    BGRA(1) = ((color \ &H100) And &HFF)
+    BGRA(2) = (color And &HFF)
     
     CopyMemory ConvertColor, BGRA(0), 4&
+
+End Function
+Private Function GetColorFromARGB(ByVal lngARGB As Long) As Long
+
+    Dim BGRA(0 To 3) As Byte
+    
+    CopyMemory BGRA(0), lngARGB, 4&
+    
+    GetColorFromARGB = BGRA(0) * &H10000 + BGRA(1) * &H100 + BGRA(2)
+
+End Function
+Private Function GetOpacityFromARGB(ByVal lngARGB As Long) As Long
+
+    Dim BGRA(0 To 3) As Byte
+    
+    CopyMemory BGRA(0), lngARGB, 4&
+    
+    GetOpacityFromARGB = BGRA(3) * 100 / 255
 
 End Function
 Private Function ConvGUID(ByVal strGUID As String) As GUID
@@ -932,70 +957,143 @@ Private Sub CopyClipboardSleep(pic As IPictureDisp)
     Sleep Val(Registry.GetSetting("Option", "ClipboardSleep", 10))
 End Sub
 
-'Private Function ConvertPixelByPixel(ipd As IPictureDisp) As BITMAP
+'Public Function ConvertPixelByPixel(ipd As IPictureDisp) As IPictureDisp
 '
-'    Dim dib As DIBSECTION
+'    Dim result As Long
+'    Dim lngWidth As Long
+'    Dim lngHeight As Long
+'    Dim lngARGB As Long
+'    Dim pDstBitmap As LongPtr
 '
+'    result = GdipCreateBitmapFromHBITMAP(ipd.Handle, ipd.hpal, hGdiImage)
 '
-'    Call GetObjectDIBSection(pic.Handle, Len(dib), dib)
+'    result = GdipGetImageWidth(hGdiImage, lngWidth)
+'    result = GdipGetImageHeight(hGdiImage, lngHeight)
 '
-'    Dim width As Long
-'    Dim height As Long
-'
-'    width = dib.dsBm.bmWidth
-'    height = dib.dsBm.bmHeight
-'
-'    dim
-'
-'
-'    // create the destination Bitmap object
-'    Bitmap bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
-'
-'                '作業用hDC取得
-'                Dim hDc As LongPtr
-'                Dim hBitmap As LongPtr
-'
-'                Dim lngWidth As Long
-'                Dim lngHeight As Long
-'
-'                lngWidth = mWidth
-'                lngHeight = mHeight
-'
-'                hDc = GetDC(Application.hWnd)
-'
-'                hBitmap = CreateCompatibleBitmap(hDc, lngWidth, lngHeight)
-'
-'                ReleaseDC Application.hWnd, hDc
-'
-'                result = GdipCreateBitmapFromHBITMAP(hBitmap, 0&, hGdiImage)
-'                If result <> Status.ok Then
-'                    Err.Raise 512 + result, TypeName(Me) & ".Run", "GdipCreateBitmapFromHBITMAP error"
-'                End If
-'
-'    {
-'        // get a pointer to the raw bits
-'        RGBQUAD* pBits = dib.dsBm.bmBits;
-'
+'    result = GdipCreateBitmapFromScan0(lngWidth, lngHeight, 0, PixelFormat32bppARGB, ByVal 0&, pDstBitmap)
 '
 '    Dim x As Long
 '    Dim y As Long
+'    Dim lngOpacity As Long
 '
-'    For x = 0 To DIBSECTION.dsBmih.biWidth - 1
-'        For y = 0 To DIBSECTION.dsBmih.biHeigh - 1
+'    For y = 0 To lngHeight - 1
+'        For x = 0 To lngWidth - 1
+'            result = GdipBitmapGetPixel(hGdiImage, x, y, lngARGB)
+'
+'            lngOpacity = GetOpacityFromARGB(lngARGB)
+'
+'            If lngOpacity <> 0 Then
+'                result = GdipBitmapSetPixel(pDstBitmap, x, y, lngARGB)
+'            End If
+'        Next
+'    Next
+'
+'
+'    Dim uPicInfo As PICTDESC
+'    Dim hBitmap As LongPtr
+'
+'    result = GdipCreateHBITMAPFromBitmap(pDstBitmap, hBitmap, 0&)
+'    If result <> Status.ok Then
+'        Err.Raise 512 + result, TypeName(Me) & ".ToPicture", "GdipCreateHBITMAPFromBitmap error"
+'    End If
+'
+'    With uPicInfo
+'      .Size = LenB(uPicInfo)
+'      .Type = PICTYPE_BITMAP
+'      .hPic = hBitmap
+'      .hpal = 0&
+'    End With
+'
+'    result = OleCreatePictureIndirect(uPicInfo, ConvGUID(IID_IPictureDisp), BOOL_TRUE, ConvertPixelByPixel)
+'    If result <> S_OK Then
+'        Err.Raise result, TypeName(Me) & ".ToPicture", "OleCreatePictureIndirect error"
+'    End If
+'
+'
+'
+'
+'End Function
+'
+'Public Function ConvertPixelByPixel2(ipd As IPictureDisp) As IPictureDisp
+'
+'    Dim dib As DIBSECTION
+'    Dim result As Long
+'
+'    Dim lngWidth As Long
+'    Dim lngHeight As Long
+'
+'    Dim pDstBitmap As LongPtr
+'    Dim hGdiImage As LongPtr
+'
+'    result = GdipCreateBitmapFromHBITMAP(ipd.Handle, ipd.hpal, hGdiImage)
+''    result = GdipGetImageWidth(hGdiImage, lngWidth)
+''    result = GdipGetImageHeight(hGdiImage, lngHeight)
+'    result = GetObjectW(ipd.Handle, Len(dib), dib)
+'
+'    lngWidth = dib.dsBm.bmWidth
+'    lngHeight = dib.dsBm.bmHeight
+'
+'
+'    result = GdipCreateBitmapFromScan0(lngWidth, lngHeight, 0, PixelFormat32bppARGB, ByVal 0&, pDstBitmap)
+'
+'    Dim x As Long
+'    Dim y As Long
+'    Dim lngARGB As Long
+'    Dim lngColor As Long
+'
+'    Dim rgba As RGBQUAD
+'
+'    For x = 0 To lngWidth - 1
+'        For y = 0 To lngHeight - 1
+'
+'            result = GdipBitmapGetPixel(hGdiImage, x, y, lngColor)
+''            Debug.Print "GdipBitmapGetPixel=" & lngARGB
 '
 '            Dim offset As Long
 '
-'            offset = y * y * DIBSECTION.dsBmih.biWidth + x
+'            offset = y * lngWidth * Len(rgba) + x * Len(rgba)
 '
-'                if (pBits[offset].rgbReserved != 0)
-'                {
-'                    bitmap.SetPixel(x, y, Color.FromArgb(pBits[offset].rgbReserved, pBits[offset].rgbRed, pBits[offset].rgbGreen, pBits[offset].rgbBlue));
-'                }
+'            CopyMemory rgba, ByVal dib.dsBm.bmBits + offset, Len(rgba)
+'
+''            If rgba.rgbReserved <> 0 Then
+'
+'                'CopyMemory lngARGB, rgba, Len(rgba)
+'
+''                lngARGB = ConvertColor(CLng(rgba.rgbBlue) * &H10000 + CLng(rgba.rgbGreen) * &H100 + CLng(rgba.rgbRed), rgba.rgbReserved / 255 * 100)
 '
 '
+''                If lngColor <> lngARGB Then
+''
+''                    Debug.Print "lngColor=" & Hex(lngColor)
+''                    Debug.Print "lngARGB=" & Hex(lngARGB)
+''
+''                End If
+'
+'
+'                result = GdipBitmapSetPixel(pDstBitmap, x, y, lngColor)
+''            End If
 '
 '        Next
 '    Next
 '
+'    Dim uPicInfo As PICTDESC
+'    Dim hBitmap As LongPtr
+'
+'    result = GdipCreateHBITMAPFromBitmap(pDstBitmap, hBitmap, 0&)
+'    If result <> Status.ok Then
+'        Err.Raise 512 + result, TypeName(Me) & ".ToPicture", "GdipCreateHBITMAPFromBitmap error"
+'    End If
+'
+'    With uPicInfo
+'      .Size = LenB(uPicInfo)
+'      .Type = PICTYPE_BITMAP
+'      .hPic = hBitmap
+'      .hpal = 0&
+'    End With
+'
+'    result = OleCreatePictureIndirect(uPicInfo, ConvGUID(IID_IPictureDisp), BOOL_TRUE, ConvertPixelByPixel2)
+'    If result <> S_OK Then
+'        Err.Raise result, TypeName(Me) & ".ToPicture", "OleCreatePictureIndirect error"
+'    End If
+'
 'End Function
-

@@ -140,7 +140,7 @@ Private Property Set IFormManagerParam_Form(frm As UserForm)
         Select Case c.Tag
             Case "g"
                 Set mobjGaugeLabel = c
-                mobjGaugeLabel.width = 0
+                mobjGaugeLabel.Width = 0
                 mobjGaugeLabel.ForeColor = vbWhite
 
             Case "m"
@@ -382,7 +382,7 @@ Private Sub IUsing_Finish()
 
     If Not mobjGaugeLabel Is Nothing Then
         mobjGaugeLabel.Caption = ""
-        mobjGaugeLabel.width = 0
+        mobjGaugeLabel.Width = 0
     End If
     
     If Not mobjMessageLabel Is Nothing Then
@@ -514,9 +514,9 @@ Private Sub IFormManager_DisplayGauge(ByVal lngValue As Long)
             lngValue = mlngMax
         End If
         dblValue = (CDbl(lngValue) / mlngMax)
-        mobjGaugeLabel.width = mobjMessageLabel.width * dblValue
+        mobjGaugeLabel.Width = mobjMessageLabel.Width * dblValue
         
-        strMessage = Space$(Fix(mobjMessageLabel.width * 0.16)) & Format$(Fix(dblValue * 100), "0") & "%"
+        strMessage = Space$(Fix(mobjMessageLabel.Width * 0.16)) & Format$(Fix(dblValue * 100), "0") & "%"
         mobjMessageLabel.Caption = strMessage
         mobjGaugeLabel.Caption = strMessage
         
