@@ -393,7 +393,7 @@ Private Function GetStaticContents(ByVal strFile As String) As String
     
     GetStaticContents = ""
     
-    Set SB = StringBuilder.CreateObject
+    Set SB = StringBuilder.CreateObject()
     
     Set IC = TextReader.CreateObject(strFile, _
                                      NewLineCodeConstants.NewLineCodeLF, _

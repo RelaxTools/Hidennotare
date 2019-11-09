@@ -277,13 +277,13 @@ End Function
 '>
 '>**Return Value**
 '>
-'>Scripting.FileSystemObject の FolderObject
+'>|Name|Data type|Description|
+'>---|---|---
+'>|ret|Object|Scripting.FileSystemObject の FolderObject|
 '>
 '>**Remarks**
 '>
-'>|Name|Data type|Description|
-'>---|---|---
-'>|ret|Object|フォルダーオブジェクト取得|
+'>フォルダオブジェクト取得
 '>
 '>**Example**
 '>
@@ -333,11 +333,47 @@ End Function
 '>
 Public Property Get TempFolder() As String
 
+    TempFolder = FSO.GetSpecialFolder(2).Path
+
+End Property
+'>---
+'>#### PrivateTempFolder(FileIO)
+'>
+'>**Syntax**
+'>
+'>```
+'>ret = FileIO.PrivateTempFolder()
+'>```
+'>
+'>**Parameters**
+'>
+'>* None
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|ret|String|テンポラリフォルダのパス|
+'>
+'>**Remarks**
+'>
+'>テンポラリフォルダ取得
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* FileIO.AppDataFolder
+'>
+Public Property Get PrivateTempFolder() As String
+
     On Error Resume Next
     
     Dim strFolder As String
     
-    TempFolder = ""
+    PrivateTempFolder = ""
     
     With FSO
     
@@ -348,7 +384,7 @@ Public Property Get TempFolder() As String
             .CreateFolder strFolder
         End If
         
-        TempFolder = .BuildPath(strFolder, "\")
+        PrivateTempFolder = .BuildPath(strFolder, "\")
         
     End With
     
@@ -987,12 +1023,12 @@ Public Sub ClearFolder(ByVal strPath As String)
 
 End Sub
 '>---
-'>#### ClearTemmpFolder(FileIO)
+'>#### ClearPrivateTempFolder(FileIO)
 '>
 '>**Syntax**
 '>
 '>```
-'>FileIO.ClearTempFolder()
+'>FileIO.ClearPrivateTempFolder()
 '>```
 '>
 '>**Parameters**
@@ -1014,9 +1050,9 @@ End Sub
 '>
 '>**See also**
 '>
-'>* FileIO.TempFolder
+'>* FileIO.PrivateTempFolder
 '>
-Public Sub ClearTempFolder()
+Public Sub ClearPrivateTempFolder()
     
     Dim fld As Object
     Dim f As Object

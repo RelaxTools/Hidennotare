@@ -98,7 +98,7 @@ Private mlngInitCount As Long
 '>**Example**
 '>
 '>```
-'>Dim SB As StringBuilder
+'>Dim SB As IStringBuilder
 '>
 '>Set SB = StringBuilder.CreateObject(3000)
 '>

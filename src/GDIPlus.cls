@@ -280,10 +280,6 @@ Private mColor As Long
 Private mPic As IPictureDisp
 Private mShape As Object
 
-
-
-
-
 Private Type RGBQUAD
     rgbBlue As Byte
     rgbGreen As Byte
@@ -326,7 +322,6 @@ Private Type DIBSECTION
 End Type
 
 Private Const PixelFormat32bppARGB = &H26200A
-
 
 Private Declare PtrSafe Function GetObjectW Lib "gdi32" (ByVal hObject As LongPtr, ByVal nCount As Long, lpObject As DIBSECTION) As Long
 Private Declare PtrSafe Function GdipBitmapGetPixel Lib "gdiplus" (ByVal bitmap As LongPtr, ByVal x As Long, ByVal y As Long, color As Long) As Long
@@ -465,9 +460,6 @@ Public Function CreateObject(ByVal Width As Long, ByVal Height As Long, Optional
     Set CreateObject = GP
 
 End Function
-
-
-
 Private Property Let IGDIPlusParam_EditType(v As GDIPlusConstants)
     mEditType = v
 End Property
@@ -492,7 +484,6 @@ End Property
 Private Property Set IGDIPlusParam_Shape(v As Object)
     Set mShape = v
 End Property
-
 Private Sub IGDIPlusParam_Run()
 
         Dim result As Long
