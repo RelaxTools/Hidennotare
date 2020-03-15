@@ -2,7 +2,7 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "Using"
+Attribute VB_Name = "SystemInfo"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
@@ -36,19 +36,16 @@ Attribute VB_Exposed = True
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-'>### Using クラス
+'>### SystemInfo クラス
 '>
 '>**Remarks**
 '>
-'>開始／終了(With～End With)管理クラス<br>
-'>コンストラクタに指定されたオブジェクトのIUsing I/F を呼び出す。<br>
+'>SystemInfoクラス<br>
 '>**このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。**
 '>
 '>**Dependent**
 '>
-'>* IUsing
-'>* IUsingParam
-'>* IUsingArgs
+'>* None
 '>
 '>**History**
 '>
@@ -58,83 +55,42 @@ Attribute VB_Exposed = True
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
-Implements IUsingParam
-Implements IUsingArgs
 
-Private m_col As Collection
-'--------------------------------
-' With 時点で実行
-'--------------------------------
-Public Function NewInstance(ParamArray args() As Variant) As IUsingArgs
+Public Enum OSVersion
+    OSVersionWindowsXP = 1
+    OSVersionWindowsVista
+    OSVersionWindows7
+    OSVersionWindows8
+    OSVersionWindows10
+End Enum
 
-    Dim us As IUsingParam
-    Dim v As Variant
-    
-    v = args
-    
-    Set us = New Using
-    
-    Set us.Source = Arrays.ToCollection(v)
-    us.Init
-    
-    Set NewInstance = us
-
-End Function
-Private Property Set IUsingParam_Source(RHS As Collection)
-    Set m_col = RHS
-End Property
-'--------------------------------
-'With 時点で実行
-'--------------------------------
-Private Sub IUsingParam_Init()
-    
-    Dim v As IUsing
-    
-    For Each v In m_col
-        v.Begin
-    Next
-
-End Sub
-'--------------------------------
-'End With 時点で実行
-'--------------------------------
-Private Sub Class_Terminate()
-
-    Dim v As IUsing
-    Dim i As Long
-    
-    'IUsingI/F同士に関連があるとアレなので、逆順に実行
-    For i = m_col.Count To 1 Step -1
-        Set v = m_col(i)
-        v.Finish
-    Next
-    
-    Set m_col = Nothing
-
-End Sub
+Public Enum OSArchitecture
+    OSArchitecture32bit = 1
+    OSArchitecture64bit
+End Enum
 '>---
-'>#### Args(IUsingArgs I/F)
+'>#### GetOSArchitecture(SystemInfo)
 '>
 '>**Syntax**
 '>
 '>```
-'>Set col = obj.Args()
+'>ret = SystemInfo.GetOSArchitecture()
 '>```
 '>
 '>**Parameters**
 '>
-'>* None
+'>なし
 '>
 '>**Return Value**
 '>
 '>|Name|Data type|Description|
 '>---|---|---
-'>|col|Collection|引数に渡されたオブジェクトのコレクション|
+'>|ret|OSArchitecture|OSのアーキテクチャ(32bit/64bit)の定数を返却|
+'>
 '>
 '>**Remarks**
 '>
-'>CreteObjectに指定したオブジェクトを参照するためのコレクション<br>
-'>Collectionなので1開始です。<br>
+'>OSBit数取得<br>
 '>
 '>**Example**
 '>
@@ -142,9 +98,81 @@ End Sub
 '>
 '>**See also**
 '>
+'>* SystemInfo.GetOSVersion
+'>
+Public Function GetOSArchitecture() As OSArchitecture
+    
+    Dim v As Variant
+    
+    v = Split(Application.OperatingSystem)
+
+    If Arrays.Length(v) >= 4 Then
+        Select Case v(1)
+            Case "(32-bit)"
+                GetOSArchitecture = OSArchitecture32bit
+            Case "(64-bit)"
+                GetOSArchitecture = OSArchitecture64bit
+            Case Else
+        End Select
+    Else
+        Err.Raise 512 + 1, TypeName(Me) & ".GetOSArchitecture"
+    End If
+
+End Function
+'>---
+'>#### GetOSVersion(SystemInfo)
+'>
+'>**Syntax**
+'>
+'>```
+'>ret = SystemInfo.GetOSVersion()
+'>```
+'>
+'>**Parameters**
+'>
+'>なし
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|ret|OSArchitecture|OSの種類/バージョン(WindowsXP,Vista,7,8,10)の定数を返却|
+'>
+'>
+'>**Remarks**
+'>
+'>OSVersion取得<br>
+'>
+'>**Example**
+'>
 '>* None
 '>
-Private Property Get IUsingArgs_Args() As Collection
-    Set IUsingArgs_Args = m_col
-End Property
+'>**See also**
+'>
+'>* SystemInfo.GetOSArchitecture
+'>
+Public Function GetOSVersion() As OSVersion
 
+    Dim v As Variant
+    
+    v = Split(Application.OperatingSystem)
+
+    If Arrays.Length(v) >= 4 Then
+        Select Case v(3)
+            Case "5.01"
+                GetOSVersion = OSVersionWindowsXP
+            Case "6.00"
+                GetOSVersion = OSVersionWindowsVista
+            Case "6.01"
+                GetOSVersion = OSVersionWindows7
+            Case "6.02"
+                GetOSVersion = OSVersionWindows8
+            Case "10.00"
+                GetOSVersion = OSVersionWindows10
+            Case Else
+        End Select
+    Else
+        Err.Raise 512 + 1, TypeName(Me) & ".GetOSVersion"
+    End If
+
+End Function

@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v2
+' [Hidennotare] v2.5
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -77,7 +77,7 @@ Private mFirst As Boolean
 '>**Syntax**
 '>
 '>```
-'>Set ret = TextWriter.CreateObject(
+'>Set ret = TextWriter.NewInstance(
 '>                      FileName,
 '>                      [NewLineCode = NewLineCodeConstants.CRLF],
 '>                      [Encode = EncodeConstants.CP932],
@@ -114,7 +114,7 @@ Private mFirst As Boolean
 '>
 '>strFile = "C:\Test.txt"
 '>
-'>Set IW = TextWriter.CreateObject(strFile)
+'>Set IW = TextWriter.NewInstance(strFile)
 '>
 '>IW.Append "Hello World!"
 '>IW.Flash
@@ -125,11 +125,11 @@ Private mFirst As Boolean
 '>
 '>* None
 '>
-Public Function CreateObject(ByVal FileName As String, _
-                             Optional ByVal NewLineCode As NewLineCodeConstants = NewLineCodeCRLF, _
-                             Optional ByVal Encode As EncodeConstants = EncodeCP932, _
-                             Optional ByVal Mode As OpenModeConstants = OpenModeOutput, _
-                             Optional ByVal Bom As Boolean = False) As IWriter
+Public Function NewInstance(ByVal FileName As String, _
+                            Optional ByVal NewLineCode As NewLineCodeConstants = NewLineCodeCRLF, _
+                            Optional ByVal Encode As EncodeConstants = EncodeCP932, _
+                            Optional ByVal Mode As OpenModeConstants = OpenModeOutput, _
+                            Optional ByVal Bom As Boolean = False) As IWriter
     
     Dim FP As ITextWriterParam
     Set FP = New TextWriter
@@ -142,7 +142,7 @@ Public Function CreateObject(ByVal FileName As String, _
     
     FP.Init
     
-    Set CreateObject = FP
+    Set NewInstance = FP
     
 End Function
 
@@ -203,7 +203,7 @@ End Sub
 '>
 '>* TextWriter.Flush
 '>
-Private Sub IWriter_WriteData(ByVal Args As Variant)
+Private Sub IWriter_WriteData(ByVal args As Variant)
     
     Dim strLine As String
     Dim bytBuf() As Byte
@@ -243,7 +243,7 @@ Private Sub IWriter_WriteData(ByVal Args As Variant)
 '        Case NewLineCodeConstants.LF
 '            strLine = Args & vbLf
 '        Case NewLineCodeConstants.None
-            strLine = Args
+            strLine = args
 '    End Select
         
     'エンコード
@@ -251,7 +251,7 @@ Private Sub IWriter_WriteData(ByVal Args As Variant)
         Case EncodeConstants.EncodeCP932  'SJIS
             bytBuf = VBA.StrConv(strLine, vbFromUnicode)
         Case EncodeConstants.EncodeUTF8
-            bytBuf = Convert.ToUTF8(strLine)
+            bytBuf = StringUtils.ToUTF8(strLine)
         Case EncodeConstants.EncodeUTF16LE
             bytBuf = strLine
     End Select
@@ -293,7 +293,7 @@ End Sub
 '>
 '>* TextWriter.Flush
 '>
-Private Sub IWriter_WriteLine(ByVal Args As Variant)
+Private Sub IWriter_WriteLine(ByVal args As Variant)
     
     Dim strLine As String
     Dim bytBuf() As Byte
@@ -329,11 +329,11 @@ Private Sub IWriter_WriteLine(ByVal Args As Variant)
     '改行
     Select Case mNewLineCode
         Case NewLineCodeConstants.NewLineCodeCRLF
-            strLine = Args & vbCrLf
+            strLine = args & vbCrLf
         Case NewLineCodeConstants.NewLineCodeLF
-            strLine = Args & vbLf
+            strLine = args & vbLf
         Case NewLineCodeConstants.NewLineCodeNone
-            strLine = Args
+            strLine = args
     End Select
         
     'エンコード
@@ -341,7 +341,7 @@ Private Sub IWriter_WriteLine(ByVal Args As Variant)
         Case EncodeConstants.EncodeCP932  'SJIS
             bytBuf = VBA.StrConv(strLine, vbFromUnicode)
         Case EncodeConstants.EncodeUTF8
-            bytBuf = Convert.ToUTF8(strLine)
+            bytBuf = StringUtils.ToUTF8(strLine)
         Case EncodeConstants.EncodeUTF16LE
             bytBuf = strLine
     End Select

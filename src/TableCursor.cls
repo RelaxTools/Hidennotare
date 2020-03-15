@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v2
+' [Hidennotare] v2.5
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -60,7 +60,7 @@ Attribute VB_Exposed = True
 '>```
 '>Dim IC Ad ICursor
 '
-'>Set IC = TableCursor.CreateObject(WS.ListObjects(1))
+'>Set IC = TableCursor.NewInstance(WS.ListObjects(1))
 '
 '>Do Until IC.Eof
 '
@@ -94,7 +94,7 @@ End Sub
 '>**Syntax**
 '>
 '>```
-'>Set return = TableCursor.CreateObject(listobject)
+'>Set return = TableCursor.NewInstance(listobject)
 '>```
 '>
 '>**Parameters**
@@ -121,7 +121,7 @@ End Sub
 '>
 '>* None
 '>
-Public Function CreateObject(LO As ListObject) As ICursor
+Public Function NewInstance(LO As ListObject) As ICursor
     
     Dim TC As ITableCursorParam
     
@@ -129,9 +129,9 @@ Public Function CreateObject(LO As ListObject) As ICursor
     
     Set TC.ListObject = LO
     
-    Set CreateObject = TC
+    Set NewInstance = TC
     
-    CreateObject.MoveFirst
+    NewInstance.MoveFirst
     
 End Function
 Private Property Set ITableCursorParam_ListObject(RHS As ListObject)

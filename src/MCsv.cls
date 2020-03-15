@@ -102,7 +102,7 @@ Public Function Document(f As String, Optional m As Variant) As MTable
         End If
     End If
     
-    Set Document = MTable.CreateObject(GetClassName & "Document(" & f & strMFunc & ")")
+    Set Document = MTable.NewInstance(GetClassName & "Document(" & f & strMFunc & ")")
 
 End Function
 '---------------------------------------

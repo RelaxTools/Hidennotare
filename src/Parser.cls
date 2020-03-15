@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v2
+' [Hidennotare] v2.5
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -53,7 +53,7 @@ Attribute VB_Exposed = True
 '>* IList
 '>* IDictionary
 '>* INewInstance
-'>* ICompatibleProperty
+'>* IValueObject
 '>* StringHelper
 '>* Convert
 '>* ICursor
@@ -96,8 +96,8 @@ Option Explicit
 '>    Dim col As Collection
 '>    Set col = new Collection
 '>
-'>    col.Add New OrderdDictionary  'ネストの1レベル目に使用されるオブジェクト
-'>    col.Add New ArrayList         'ネストの2レベル目に使用されるオブジェクト
+'>    col.Add OrderdDictionary.NewInstance  'ネストの1レベル目に使用されるオブジェクト
+'>    col.Add ArrayList.NewInstance         'ネストの2レベル目に使用されるオブジェクト
 '>    col.Add New CustomPerson      'ネストの3レベル目に使用されるオブジェクト
 '>
 '>    Set dic = JSON.ParseJSON(strJSON, col)
@@ -118,8 +118,6 @@ Option Explicit
 '>
 Public Function ParseJSON(ByVal strJSON As String, Optional ByRef obj As Object = Nothing) As Object
 
-    Dim PL As PairLoggerInfo: Set PL = PairLoggerInfo.CreateObject(TypeName(Me) & ".ParseJSON")
-    
     Dim Level As Long
     
     Level = 0
@@ -145,7 +143,7 @@ Private Function ParseObject(ByVal strJSON As String, obj As Object, ByVal Level
     Dim lineBreak As Boolean
     Dim SB As IStringBuilder
     
-    If Not Core.StartsWith(strJSON, "{") Or Not Core.EndsWith(strJSON, "}") Then
+    If Not StringUtils.StartsWith(strJSON, "{") Or Not StringUtils.EndsWith(strJSON, "}") Then
         Err.Raise 512 + 1, TypeName(Me) & ".ParseObject", "JSONFormatError"
     End If
     
@@ -156,42 +154,42 @@ Private Function ParseObject(ByVal strJSON As String, obj As Object, ByVal Level
         
         'Default
         Case obj Is Nothing
-            Set objJObj = CoreEx.GetNewInstance(New Dictionary)
+            Set objJObj = Dictionary.NewInstance
         
         'ネストレベル指定
         Case TypeOf obj Is Collection
-            Set objJObj = CoreEx.GetNewInstance(obj(Level))
+            Set objJObj = Objects.AsINewInstance(obj(Level)).NewInstance
         
         '直接指定
         Case Else
-            Set objJObj = CoreEx.GetNewInstance(obj)
+            Set objJObj = Objects.AsINewInstance(obj).NewInstance
     
     End Select
     
     strJSON = Mid$(strJSON, 2, Len(strJSON) - 2)
     
-    Dim IC As ICursor
-    Set IC = CharCursor.CreateObject(strJSON)
+    Dim ic As ICursor
+    Set ic = CharCursor.NewInstance(strJSON)
     
-    Do Until IC.Eof
+    Do Until ic.Eof
         
         propertyName = ""
-        Set SB = StringBuilder.CreateObject()
+        Set SB = StringBuilder.NewInstance
         lineBreak = False
         
         '終了または行の終わり
-        Do Until IC.Eof Or lineBreak
+        Do Until ic.Eof Or lineBreak
         
-            Select Case IC.Item
+            Select Case ic.Item
                 Case """"
                     
                     If Len(propertyName) > 0 Then
                         
-                        CoreEx.CastICompatibleProperty(objJObj).SetProperty propertyName, ParseString(StringExtraction(IC))
+                        Objects.AsIValueObject(objJObj).Fields(propertyName) = ParseString(StringExtraction(ic))
                         propertyName = ""
                     
                     Else
-                        propertyName = ParseString(StringExtraction(IC))
+                        propertyName = ParseString(StringExtraction(ic))
                     End If
                     
                 Case ":"
@@ -204,13 +202,13 @@ Private Function ParseObject(ByVal strJSON As String, obj As Object, ByVal Level
                 Case "["
                     
                     '下位レベルのパース（Array)
-                    CoreEx.CastICompatibleProperty(objJObj).SetProperty propertyName, ParseArray(ElementExtraction(IC), obj, Level)
+                   Objects.AsIValueObject(objJObj).Fields(propertyName) = ParseArray(ElementExtraction(ic), obj, Level)
                     propertyName = ""
                     
                 Case "{"
                     
                     '下位レベルのパース（Object)
-                    CoreEx.CastICompatibleProperty(objJObj).SetProperty propertyName, ParseObject(ElementExtraction(IC), obj, Level)
+                    Objects.AsIValueObject(objJObj).Fields(propertyName) = ParseObject(ElementExtraction(ic), obj, Level)
                     propertyName = ""
                 
                 Case " ", vbTab, vbCr, vbLf, vbCrLf
@@ -221,10 +219,10 @@ Private Function ParseObject(ByVal strJSON As String, obj As Object, ByVal Level
                 
                 Case Else
                     
-                    SB.Append IC.Item
+                    SB.Append ic.Item
             
             End Select
-            IC.MoveNext
+            ic.MoveNext
         Loop
     
         If SB.Length > 0 Then
@@ -234,7 +232,7 @@ Private Function ParseObject(ByVal strJSON As String, obj As Object, ByVal Level
                 Exit Function
             End If
             
-            CoreEx.CastICompatibleProperty(objJObj).SetProperty propertyName, ParseValue(SB.ToString)
+            Objects.AsIValueObject(objJObj).Fields(propertyName) = ParseValue(SB.ToString)
             
         End If
     
@@ -252,7 +250,7 @@ Private Function ParseArray(strJSON As String, obj As Object, ByVal Level As Lon
     Dim lineBreak As Boolean
     Dim SB As IStringBuilder
     
-    If Not Core.StartsWith(strJSON, "[") Or Not Core.EndsWith(strJSON, "]") Then
+    If Not StringUtils.StartsWith(strJSON, "[") Or Not StringUtils.EndsWith(strJSON, "]") Then
         Err.Raise 512 + 1, TypeName(Me) & ".ParseArray", "JSONFormatError"
         Exit Function
     End If
@@ -262,43 +260,43 @@ Private Function ParseArray(strJSON As String, obj As Object, ByVal Level As Lon
     Select Case True
         
         Case obj Is Nothing
-            Set objAry = CoreEx.GetNewInstance(New ArrayList)
+            Set objAry = ArrayList.NewInstance
         
         Case TypeOf obj Is Collection
-            Set objAry = CoreEx.GetNewInstance(obj(Level))
+            Set objAry = Objects.AsINewInstance(obj(Level)).NewInstance
         
         Case Else
-            Set objAry = CoreEx.GetNewInstance(obj)
+            Set objAry = Objects.AsINewInstance(obj).NewInstance
     
     End Select
     
     
     strJSON = Mid$(strJSON, 2, Len(strJSON) - 2)
     
-    Dim IC As ICursor
-    Set IC = CharCursor.CreateObject(strJSON)
+    Dim ic As ICursor
+    Set ic = CharCursor.NewInstance(strJSON)
     
-    Do Until IC.Eof
+    Do Until ic.Eof
     
-        Set SB = StringBuilder.CreateObject()
+        Set SB = StringBuilder.NewInstance
         lineBreak = False
         
-        Do Until IC.Eof Or lineBreak
+        Do Until ic.Eof Or lineBreak
         
-            Select Case IC.Item
+            Select Case ic.Item
                 Case """"
                     
-                    objAry.Add ParseString(StringExtraction(IC))
+                    objAry.Add ParseString(StringExtraction(ic))
                     
                 Case "["
                     
                     '下位レベルのパース（Array)
-                    objAry.Add ParseArray(ElementExtraction(IC), obj, Level)
+                    objAry.Add ParseArray(ElementExtraction(ic), obj, Level)
                     
                 Case "{"
                     
                     '下位レベルのパース（Object)
-                    objAry.Add ParseObject(ElementExtraction(IC), obj, Level)
+                    objAry.Add ParseObject(ElementExtraction(ic), obj, Level)
                 
                 Case " ", vbTab, vbCr, vbLf, vbCrLf
                     
@@ -307,11 +305,11 @@ Private Function ParseArray(strJSON As String, obj As Object, ByVal Level As Lon
                 
                 Case Else
                     
-                    SB.Append IC.Item
+                    SB.Append ic.Item
             
             End Select
             
-            IC.MoveNext
+            ic.MoveNext
         
         Loop
     
@@ -327,27 +325,27 @@ End Function
 '-------------------------------------------------
 ' ダブルコーテーションの範囲取得
 '-------------------------------------------------
-Private Function StringExtraction(ByRef IC As ICursor) As String
+Private Function StringExtraction(ByRef ic As ICursor) As String
     
     Dim Buffer As String
     Dim doubleQuat As Long
     
     Dim SB As IStringBuilder
-    Set SB = StringBuilder.CreateObject
+    Set SB = StringBuilder.NewInstance
     
     doubleQuat = 0
-    Do Until IC.Eof
+    Do Until ic.Eof
     
-        SB.Append IC.Item
+        SB.Append ic.Item
         
-        If IC.Item = """" And IC.Item(-1) <> "\" Then
+        If ic.Item = """" And ic.Item(-1) <> "\" Then
             doubleQuat = doubleQuat + 1
         End If
         If doubleQuat = 2 Then
             Exit Do
         End If
         
-        IC.MoveNext
+        ic.MoveNext
     
     Loop
     
@@ -361,7 +359,7 @@ End Function
 '-------------------------------------------------
 ' 角カッコまたは波カッコの範囲取得
 '-------------------------------------------------
-Private Function ElementExtraction(ByRef IC As ICursor) As String
+Private Function ElementExtraction(ByRef ic As ICursor) As String
     
     Dim squareBrackets As Long
     Dim curlyBraces As Long
@@ -370,19 +368,19 @@ Private Function ElementExtraction(ByRef IC As ICursor) As String
     Dim SB As IStringBuilder
     
     sw = False
-    Set SB = StringBuilder.CreateObject()
+    Set SB = StringBuilder.NewInstance
     
-    Do Until IC.Eof
+    Do Until ic.Eof
         
-        SB.Append IC.Item
+        SB.Append ic.Item
         
-        If IC.Item = """" And IC.Item(-1) <> "\" Then
+        If ic.Item = """" And ic.Item(-1) <> "\" Then
             sw = Not sw
         End If
         
         If Not sw Then
             
-            Select Case IC.Item
+            Select Case ic.Item
                 Case "["
                     squareBrackets = squareBrackets + 1
                 
@@ -404,7 +402,7 @@ Private Function ElementExtraction(ByRef IC As ICursor) As String
             Exit Function
         End If
         
-        IC.MoveNext
+        ic.MoveNext
     Loop
     
     Err.Raise 512 + 1, TypeName(Me) & ".ElementExtraction", "JSONFormatError"
@@ -414,7 +412,7 @@ End Function
 '---------------------------------------------------------------------
 Private Function ParseString(strJSON As String) As String
     
-    If Not Core.StartsWith(strJSON, """") Or Not Core.EndsWith(strJSON, """") Then
+    If Not StringUtils.StartsWith(strJSON, """") Or Not StringUtils.EndsWith(strJSON, """") Then
         Err.Raise 512 + 1, TypeName(Me) & ".ParseString", "JSONFormatError"
         Exit Function
     End If
@@ -423,7 +421,7 @@ Private Function ParseString(strJSON As String) As String
     strJSON = Mid$(strJSON, 2, Len(strJSON) - 2)
     
     '文字列のUnEscape
-    ParseString = Core.Unescape(strJSON)
+    ParseString = StringUtils.Unescape(strJSON)
 
 End Function
 '---------------------------------------------------------------------
@@ -442,7 +440,7 @@ Private Function ParseValue(ByVal strJSON As String) As Variant
         
         Case IsNumeric(strJSON)
             
-            ParseValue = Val(strJSON)
+            ParseValue = val(strJSON)
         
         Case Else
             
@@ -520,12 +518,12 @@ Public Function ParseFromListbox(objList As Object, Optional obj As Object = Not
     '引数によりインスタンス化するオブジェクトを判定
     Select Case True
         Case obj Is Nothing
-            Set ary = New ArrayList
+            Set ary = ArrayList.NewInstance()
         Case Else
             If TypeOf obj Is Collection Then
-                Set ary = CoreEx.GetNewInstance(obj(1))
+                Set ary = Objects.AsINewInstance(obj(1)).NewInstance
             Else
-                Set ary = New ArrayList
+                Set ary = ArrayList.NewInstance()
             End If
     End Select
         
@@ -534,12 +532,12 @@ Public Function ParseFromListbox(objList As Object, Optional obj As Object = Not
         '引数によりインスタンス化するオブジェクトを判定
         Select Case True
             Case obj Is Nothing
-                Set objRec = New Dictionary
+                Set objRec = Dictionary.NewInstance
             Case Else
                 If TypeOf obj Is Collection Then
-                    Set objRec = CoreEx.GetNewInstance(obj(2))
+                    Set objRec = Objects.AsINewInstance(obj(2)).NewInstance
                 Else
-                    Set objRec = CoreEx.GetNewInstance(obj)
+                    Set objRec = Objects.AsINewInstance(obj).NewInstance
                 End If
         End Select
         
@@ -547,7 +545,7 @@ Public Function ParseFromListbox(objList As Object, Optional obj As Object = Not
         
             '設定されているフィールドのみコピーする。
             If Fields(j) <> "" Then
-                CoreEx.CastICompatibleProperty(objRec).SetProperty Fields(j), objList.list(i, j)
+                Objects.AsIValueObject(objRec).Fields(Fields(j)) = objList.list(i, j)
             End If
         Next
             
@@ -635,12 +633,12 @@ Public Function ParseFromListObject(LO As ListObject, Optional obj As Object = N
     '引数によりインスタンス化するオブジェクトを判定
     Select Case True
         Case obj Is Nothing
-            Set lst = New ArrayList
+            Set lst = ArrayList.NewInstance()
         Case Else
             If TypeOf obj Is Collection Then
-                Set lst = CoreEx.GetNewInstance(obj(1))
+                Set lst = Objects.AsINewInstance(obj(1)).NewInstance
             Else
-                Set lst = New ArrayList
+                Set lst = ArrayList.NewInstance()
             End If
     End Select
         
@@ -649,18 +647,18 @@ Public Function ParseFromListObject(LO As ListObject, Optional obj As Object = N
         '引数によりインスタンス化するオブジェクトを判定
         Select Case True
             Case obj Is Nothing
-                Set objRec = New Dictionary
+                Set objRec = Dictionary.NewInstance
             Case Else
                 If TypeOf obj Is Collection Then
-                    Set objRec = CoreEx.GetNewInstance(obj(2))
+                    Set objRec = Objects.AsINewInstance(obj(2)).NewInstance
                 Else
-                    Set objRec = CoreEx.GetNewInstance(obj)
+                    Set objRec = Objects.AsINewInstance(obj).NewInstance
                 End If
         End Select
         
         For j = 1 To LO.HeaderRowRange.Columns.Count
         
-            CoreEx.CastICompatibleProperty(objRec).SetProperty LO.HeaderRowRange(, j).Value, LO.DataBodyRange.Cells(i, j).Value
+            Objects.AsIValueObject(objRec).Fields(LO.HeaderRowRange(, j).Value) = LO.DataBodyRange.Cells(i, j).Value
         Next
     
         lst.Add objRec
@@ -677,7 +675,7 @@ End Function
 Public Function ParseCsv(ByVal strBuf As String, Optional ByVal Quatation As Boolean = False, Optional ByVal Delimiter As String = ",", Optional ByVal Header As Boolean = False) As Collection
 
     Const C_QUAT As String = """"
-    Dim IC As ICursor
+    Dim ic As ICursor
     Dim sw As Boolean
     Dim blnLineBreak As Boolean
     Dim blnItemBreak As Boolean
@@ -699,83 +697,84 @@ Public Function ParseCsv(ByVal strBuf As String, Optional ByVal Quatation As Boo
     
     Set Row = New Collection
     
-    Set IC = CharCursor.CreateObject(strBuf)
-    Do Until IC.Eof
+    Set ic = CharCursor.NewInstance(strBuf)
+    Do Until ic.Eof
         
         '初期化
         Set col = New Collection
         blnLineBreak = False
 
-        Do Until IC.Eof Or blnLineBreak
-        
-            '初期化
-            Dim SB As IStringBuilder
-            Set SB = StringBuilder.CreateObject()
-            blnItemBreak = False
+        Do Until ic.Eof Or blnLineBreak
             
-            Do Until IC.Eof Or blnLineBreak Or blnItemBreak
-
-                Select Case IC.Item
-                    Case C_QUAT
-
-                        'コーテーションありの場合
-                        If Quatation Then
-
-                            lngQuot = lngQuot + 1
-
-                            If sw Then
-
-                                '次の文字がQuatation
-                                If IC.Item(1) = C_QUAT Then
-                                    lngQuot = lngQuot + 1
-                                    SB.Append C_QUAT
-                                    IC.MoveNext
+            With StringBuilder.NewInstance
+                
+                blnItemBreak = False
+                
+                Do Until ic.Eof Or blnLineBreak Or blnItemBreak
+    
+                    Select Case ic.Item
+                        Case C_QUAT
+    
+                            'コーテーションありの場合
+                            If Quatation Then
+    
+                                lngQuot = lngQuot + 1
+    
+                                If sw Then
+    
+                                    '次の文字がQuatation
+                                    If ic.Item(1) = C_QUAT Then
+                                        lngQuot = lngQuot + 1
+                                        .Append C_QUAT
+                                        ic.MoveNext
+                                    Else
+                                        sw = False
+                                    End If
+    
                                 Else
-                                    sw = False
+                                    sw = True
                                 End If
-
-                            Else
-                                sw = True
                             End If
-                        End If
-
-                    Case vbCr
-
-                        If sw Then
-                            SB.Append IC.Item
-                        End If
-
-                    Case vbLf
-
-                        If sw Then
-                            SB.Append IC.Item
-                        Else
-                            blnLineBreak = True
-                        End If
-
-                    Case Delimiter
-
-                        If sw Then
-                            SB.Append IC.Item
-                        Else
-                            blnItemBreak = True
-                        End If
-
-                    Case Else
-
-                        SB.Append IC.Item
-
-                End Select
+    
+                        Case vbCr
+    
+                            If sw Then
+                                .Append ic.Item
+                            End If
+    
+                        Case vbLf
+    
+                            If sw Then
+                                .Append ic.Item
+                            Else
+                                blnLineBreak = True
+                            End If
+    
+                        Case Delimiter
+    
+                            If sw Then
+                                .Append ic.Item
+                            Else
+                                blnItemBreak = True
+                            End If
+    
+                        Case Else
+    
+                            .Append ic.Item
+    
+                    End Select
+                
+                    ic.MoveNext
+                Loop
             
-                IC.MoveNext
-            Loop
+                '列追加処理
+                If Header And Not first Then
+                    col.Add .ToString, Head(col.Count + 1)
+                Else
+                    col.Add .ToString
+                End If
             
-            '列追加処理
-            If Header And Not first Then
-                col.Add SB.ToString, Head(col.Count + 1)
-            Else
-                col.Add SB.ToString
-            End If
+            End With
             
         Loop
         
@@ -797,4 +796,3 @@ Public Function ParseCsv(ByVal strBuf As String, Optional ByVal Quatation As Boo
     Set ParseCsv = Row
     
 End Function
-

@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v2
+' [Hidennotare] v2.5
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -72,10 +72,10 @@ Attribute VB_Exposed = True
 '> Set list = New LinkedList
 '>
 '> Dim list As IList
-'> Set list = LinkedList.CreateObject(コレクション)
+'> Set list = LinkedList.NewInstance(コレクション)
 '>
 '> Dim list As IList
-'> Set list = LinkedList.CreateObject(１次元配列)
+'> Set list = LinkedList.NewInstance(１次元配列)
 '>```
 '>**Dependent**
 '>
@@ -104,7 +104,7 @@ Private mIndex As Long
 '>**Syntax**
 '>
 '>```
-'>Set ret = LinkedList.CreateObject(collection)
+'>Set ret = LinkedList.NewInstance(collection)
 '>```
 '>
 '>**Parameters**
@@ -137,7 +137,7 @@ Private mIndex As Long
 '>**Syntax**
 '>
 '>```
-'>Set ret = LinkedList.CreateObject(Array)
+'>Set ret = LinkedList.NewInstance(Array)
 '>```
 '>
 '>**Parameters**
@@ -164,77 +164,63 @@ Private mIndex As Long
 '>
 '>* None
 '>
-Public Function CreateObject(ParamArray Args() As Variant) As IList
+Public Function NewInstance(ParamArray args() As Variant) As IList
 
-    Dim cnt As Long
-    Dim lngValue As Long
-    Dim lngMin As Long
-    Dim lngMax As Long
-    Dim lngCount As Long
+    Dim IL As IList
     Dim var As Variant
     Dim v As Variant
-    Dim i As Long
     
-    var = Args
+    var = args
     
-    lngMin = 0
-    lngMax = -1
-    
-    Dim IL As IList
-    
-    If Core.TryLBound(var, lngValue) Then
-        lngMin = lngValue
-    End If
-    
-    If Core.TryUBound(var, lngValue) Then
-        lngMax = lngValue
-    End If
-    
-    lngCount = lngMax + 1
-
     Set IL = New LinkedList
     IL.Clear
     
-    Select Case lngCount
+    Select Case Arrays.Length(var)
         Case 0
         Case 1
         
             Select Case True
                 
                 'コレクションまたは配列からの変換
-                Case TypeOf Args(0) Is Collection, IsArray(Args(0))
+                Case TypeOf args(0) Is Collection, IsArray(args(0))
                     
-                    Core.ArrayToIList Args(0), IL
+                    For Each v In args(0)
+                        IL.Add v
+                    Next
                 
                 Case Else
                 
-                    IL.Add Args(0)
+                    IL.Add args(0)
             
             End Select
             
         Case Else
             
-            For i = lngMin To lngMax
-                IL.Add Args(i)
+            For Each v In args
+                IL.Add v
             Next
     
     End Select
 
-    Set CreateObject = IL
+    Set NewInstance = IL
 
 End Function
 '--------------------------------------------------------------
 ' Initialize
 '--------------------------------------------------------------
 Private Sub Class_Initialize()
+    
     Set mCol = New Collection
     mIndex = 0
+
 End Sub
 '--------------------------------------------------------------
 ' Terminate
 '--------------------------------------------------------------
 Private Sub Class_Terminate()
+    
     Set mCol = Nothing
+
 End Sub
 '>---
 '>#### Clear(IList I/F)
@@ -396,7 +382,9 @@ End Function
 '>* IList
 '>
 Private Property Get IList_Count() As Long
+    
     IList_Count = mCol.Count
+
 End Property
 '>---
 '>#### Item(IList I/F)
@@ -439,7 +427,7 @@ Private Property Get IList_Item(idx As Long) As Variant
         Err.Raise 512 + 1, TypeName(Me) & ".Item", "IndexOutOfRangeException"
     End If
 
-    Core.SetVar(IList_Item) = mCol.Item(idx + 1)
+    Objects.SetVar(IList_Item) = mCol.Item(idx + 1)
     
 End Property
 '>---
@@ -601,6 +589,7 @@ End Sub
 '>
 Private Function IList_ToArray() As Variant
 
+    
     Dim v As Variant
     Dim s As Variant
     Dim lngRow As Long
@@ -610,20 +599,39 @@ Private Function IList_ToArray() As Variant
     Dim result As Variant
     Dim lst As IList
     
-    result = Array()
+    Dim IB As IValueObject
+    Dim ID As IDictionary
+    Dim IL As IList
     
-    lngRow = mCol.Count
-    lngCol = 0
     
     Set lst = Me
     
-    'Dictionary or LinkedList の２次元を想定
+    lngRow = lst.Count
+    lngCol = 0
+    
+    result = Array()
+    
+    'IDictionary or IList の２次元を想定
     For Each v In lst
-        If Core.IsDictionary(v) Or Core.IsList(v) Then
-            If lngCol < v.Count Then
-                lngCol = v.Count
-            End If
-        End If
+        
+        Select Case True
+            Case Objects.InstanceOfIDictionary(v)
+                Set ID = v
+                If lngCol < ID.Count Then
+                    lngCol = ID.Count
+                End If
+            Case Objects.InstanceOfIList(v)
+                Set IL = v
+                If lngCol < IL.Count Then
+                    lngCol = IL.Count
+                End If
+            Case Objects.InstanceOfIValueObject(v)
+                Set IB = v
+                If lngCol < IB.Count Then
+                    lngCol = IB.Count
+                End If
+        End Select
+    
     Next
 
     Select Case True
@@ -637,7 +645,7 @@ Private Function IList_ToArray() As Variant
             ReDim result(0 To lngRow - 1)
         
             For i = 0 To lst.Count - 1
-                Core.SetVar(result(i)) = lst(i)
+                Objects.SetVar(result(i)) = lst(i)
             Next
     
             IList_ToArray = result
@@ -651,21 +659,35 @@ Private Function IList_ToArray() As Variant
             
                 Select Case True
                     'List系の場合
-                    Case Core.IsList(lst(i))
-                        For j = 0 To lst(i).Count - 1
-                            Core.SetVar(result(i, j)) = lst(i)(j)
+                    Case Objects.InstanceOfIList(lst(i))
+                    
+                        Set IL = lst(i)
+                        
+                        For j = 0 To IL.Count - 1
+                            Objects.SetVar(result(i, j)) = IL(j)
                         Next
                     
                     'Dictionary系の場合
-                    Case Core.IsDictionary(lst(i))
-                        Dim dic As Object
-                        Dim Key As Variant
+                    Case Objects.InstanceOfIDictionary(lst(i))
                         
-                        Set dic = lst(i)
+                        Dim key As Variant
+                        
+                        Set ID = lst(i)
                         
                         j = 0
-                        For Each Key In dic.Keys
-                            Core.SetVar(result(i, j)) = dic.Item(Key)
+                        For Each key In ID.Keys
+                            Objects.SetVar(result(i, j)) = ID.Item(key)
+                            j = j + 1
+                        Next
+                    
+                    'ValueObject系の場合
+                    Case Objects.InstanceOfIValueObject(lst(i))
+                        
+                        Set IB = lst(i)
+                        
+                        j = 0
+                        For Each key In IB.FieldNames
+                            Objects.SetVar(result(i, j)) = IB.Fields(key)
                             j = j + 1
                         Next
                 
@@ -753,50 +775,61 @@ End Function
 Private Function IList_ToString() As String
 
     Dim v As Variant
-    Dim SB As IStringBuilder
-    Set SB = StringBuilder.CreateObject
     
-    For Each v In mCol
+    With StringBuilder.NewInstance
     
-        Select Case True
-            Case IsObject(v)
-                
-                SB.Append v.ToString
-            
-            Case IsEmpty(v)
-                
-                SB.Append "null"
-            
-            Case Else
-                Select Case VarType(v)
-                    
-                    Case vbBoolean
+        For Each v In mCol
         
-                        SB.Append LCase(CStr(v))
-        
-                    Case vbString
+            Select Case True
+                Case Objects.InstanceOfIDictionary(v)
                     
-                        SB.Append """" & Escape(v) & """"
+                    .Append Objects.AsIDictionary(v).ToString
+                
+                Case Objects.InstanceOfIList(v)
                     
+                    .Append Objects.AsIList(v).ToString
+                
+                Case Objects.InstanceOfIValueObject(v)
+                    
+                    .Append Objects.AsIValueObject(v).ToString
+                
+                Case IsEmpty(v)
+                    
+                    .Append "null"
+                
+                Case Else
+                    
+                    Select Case VarType(v)
+                        
+                        Case vbBoolean
+            
+                            .Append LCase(CStr(v))
+            
+                        Case vbString
+                        
+                            .Append """" & StringUtils.Escape(v) & """"
+                        
 #If Win64 Then
-                    Case vbByte, vbInteger, vbLong, vbSingle, vbDouble, vbCurrency, vbDecimal, vbLongLong
+                        Case vbByte, vbInteger, vbLong, vbSingle, vbDouble, vbCurrency, vbDecimal, vbLongLong
 #Else
-                    Case vbByte, vbInteger, vbLong, vbSingle, vbDouble, vbCurrency, vbDecimal
+                        Case vbByte, vbInteger, vbLong, vbSingle, vbDouble, vbCurrency, vbDecimal
 #End If
-                        SB.Append CStr(v)
-        
-                    Case Else
-        
-                        'エラー
-                        Err.Raise 512 + 1, TypeName(Me) & ".ToString", "don't cast type (" & TypeName(v) & ")"
-        
-                End Select
-        End Select
-        
-    Next
+                            .Append CStr(v)
+            
+                        Case Else
+            
+                            'エラー
+                            Err.Raise 512 + 1, TypeName(Me) & ".ToString", "don't cast type (" & TypeName(v) & ")"
+            
+                    End Select
+            End Select
+            
+        Next
+    
+        IList_ToString = .ToString(", ", "[", "]")
 
-    IList_ToString = SB.ToString(", ", "[", "]")
-
+    End With
+    
 End Function
 '>---
 '>#### GetCursor(IList I/F)
@@ -910,9 +943,9 @@ End Property
 Private Property Get ICursor_Item(Optional ByVal opt As Variant) As Variant
     
     If mIndex >= mCol.Count Then
-        Core.SetVar(ICursor_Item) = mCol(mCol.Count)
+        Objects.SetVar(ICursor_Item) = mCol(mCol.Count)
     Else
-        Core.SetVar(ICursor_Item) = mCol.Item(mIndex + 1)
+        Objects.SetVar(ICursor_Item) = mCol.Item(mIndex + 1)
     End If
     
 End Property
@@ -1035,43 +1068,43 @@ Private Function INewInstance_NewInstance() As Object
     Set INewInstance_NewInstance = lst
 
 End Function
-Private Function Escape(ByVal v As String) As String
-
-    Dim strChr As String
-    Dim SB As IStringBuilder
-    Dim i As Long
-    
-    Set SB = StringBuilder.CreateObject
-    
-    For i = 1 To Len(v)
-        
-        strChr = Mid$(v, i, 1)
-        
-        Select Case AscW(strChr)
-            Case &H0 To &H7, &HB, &HE To &H1F, &H7F
-                SB.Append "\u" & Hex$(AscW(strChr))
-            Case &H8
-                SB.Append "\b"
-            Case &H9
-                SB.Append "\t"
-            Case &HA
-                SB.Append "\n"
-            Case &HC
-                SB.Append "\f"
-            Case &HD
-                SB.Append "\r"
-            Case &H22
-                SB.Append "\"""
-            Case &H2F
-                SB.Append "\/"
-            Case &H5C
-                SB.Append "\\"
-            Case Else
-                SB.Append strChr
-        End Select
-
-    Next
-    
-    Escape = SB.ToString
-
-End Function
+'Private Function Escape(ByVal v As String) As String
+'
+'    Dim strChr As String
+'    Dim SB As IStringBuilder
+'    Dim i As Long
+'
+'    Set SB = StringBuilder.NewInstance
+'
+'    For i = 1 To Len(v)
+'
+'        strChr = Mid$(v, i, 1)
+'
+'        Select Case AscW(strChr)
+'            Case &H0 To &H7, &HB, &HE To &H1F, &H7F
+'                SB.Append "\u" & Hex$(AscW(strChr))
+'            Case &H8
+'                SB.Append "\b"
+'            Case &H9
+'                SB.Append "\t"
+'            Case &HA
+'                SB.Append "\n"
+'            Case &HC
+'                SB.Append "\f"
+'            Case &HD
+'                SB.Append "\r"
+'            Case &H22
+'                SB.Append "\"""
+'            Case &H2F
+'                SB.Append "\/"
+'            Case &H5C
+'                SB.Append "\\"
+'            Case Else
+'                SB.Append strChr
+'        End Select
+'
+'    Next
+'
+'    Escape = SB.ToString
+'
+'End Function

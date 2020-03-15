@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v2
+' [Hidennotare] v2.5
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -43,40 +43,277 @@ Attribute VB_Exposed = True
 ' ブックのプロパティ[タイトル]を設定してください。
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
+Private mTitle As String
 '---------------------------------------
-' 情報メッセージ
+' 初期化処理
 '---------------------------------------
+Private Sub Class_Initialize()
+    mTitle = "Message"
+End Sub
+'>---
+'>#### Title(Message)
+'>
+'>**Syntax**
+'>
+'>```
+'>Message.Title = title
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|title|必須|String|メッセージタイトル|
+'>
+'>**Return Value**
+'>
+'>* なし
+'>
+'>**Remarks**
+'>
+'>メッセージボックスに表示する文字列を設定<br>
+'>
+'>**Example**
+'>
+'>```
+'>Debug.Print Message.Information("あなたは{0}座です。", "いて")
+'>```
+'>
+'>**See also**
+'>
+'>* Message.Information
+'>* Message.Error
+'>* Message.Critical
+'>* Message.Question
+'>
+Public Property Let Title(v As String)
+    mTitle = v
+End Property
+'>---
+'>#### Information(Message)
+'>
+'>**Syntax**
+'>
+'>```
+'>Message.Information(message, parameter)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|message|必須|String|プレースホルダを含むメッセージ|
+'>|parameter|必須|String|置換文字列|
+'>
+'>**Return Value**
+'>
+'>* なし
+'>
+'>**Remarks**
+'>
+'>情報メッセージ<br>
+'>情報アイコンのメッセージを表示します。プレースホルダ{0}が使用可能です。<br>
+'>
+'>**Example**
+'>
+'>```
+'>Debug.Print Message.Information("あなたは{0}座です。", "いて")
+'>```
+'>
+'>**See also**
+'>
+'>* Message.Error
+'>* Message.Critical
+'>* Message.Question
+'>
 Public Sub Information(ByVal strMsg As String, ParamArray p())
-    VBA.MsgBox PrivatePlaceHolder(strMsg, p), vbOKOnly + vbInformation, Core.GetTitleName
+    VBA.MsgBox PrivatePlaceHolder(strMsg, p), vbOKOnly + vbInformation, mTitle
 End Sub
-'---------------------------------------
-' 警告メッセージ
-'---------------------------------------
+'>---
+'>#### Error(Message)
+'>
+'>**Syntax**
+'>
+'>```
+'>Message.Error(message, parameter)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|message|必須|String|プレースホルダを含むメッセージ|
+'>|parameter|必須|String|置換文字列|
+'>
+'>**Return Value**
+'>
+'>* なし
+'>
+'>**Remarks**
+'>
+'>警告メッセージ<br>
+'>警告アイコンのメッセージを表示します。プレースホルダ{0}が使用可能です。<br>
+'>
+'>**Example**
+'>
+'>```
+'>Debug.Print Message.Error("あなたは{0}座です。", "いて")
+'>```
+'>
+'>**See also**
+'>
+'>* Message.Information
+'>* Message.Critical
+'>* Message.Question
+'>
 Public Sub Error(ByVal strMsg As String, ParamArray p())
-    VBA.MsgBox PrivatePlaceHolder(strMsg, p), vbOKOnly + vbExclamation, Core.GetTitleName
+    VBA.MsgBox PrivatePlaceHolder(strMsg, p), vbOKOnly + vbExclamation, mTitle
 End Sub
-'---------------------------------------
-' 異常終了メッセージ
-'---------------------------------------
+'>---
+'>#### Critical(Message)
+'>
+'>**Syntax**
+'>
+'>```
+'>Message.Critical(message, parameter)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|message|必須|String|プレースホルダを含むメッセージ|
+'>|parameter|必須|String|置換文字列|
+'>
+'>**Return Value**
+'>
+'>* なし
+'>
+'>**Remarks**
+'>
+'>異常終了メッセージ<br>
+'>異常終了アイコンのメッセージを表示します。プレースホルダ{0}が使用可能です。<br>
+'>
+'>**Example**
+'>
+'>```
+'>Debug.Print Message.Critical("あなたは{0}座です。", "いて")
+'>```
+'>
+'>**See also**
+'>
+'>* Message.Information
+'>* Message.Error
+'>* Message.Question
+'>
 Public Sub Critical(ByVal strMsg As String, ParamArray p())
-    VBA.MsgBox PrivatePlaceHolder(strMsg, p), vbOKOnly + vbCritical, Core.GetTitleName
+    VBA.MsgBox PrivatePlaceHolder(strMsg, p), vbOKOnly + vbCritical, mTitle
 End Sub
-'---------------------------------------
-' 応答メッセージ
-'---------------------------------------
+'>---
+'>#### Question(Message)
+'>
+'>**Syntax**
+'>
+'>```
+'>Message.Question(message, parameter)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|message|必須|String|プレースホルダを含むメッセージ|
+'>|parameter|必須|String|置換文字列|
+'>
+'>**Return Value**
+'>
+'>* なし
+'>
+'>**Remarks**
+'>
+'>ステータスメッセージ<br>
+'>ステータスバーにメッセージを表示します。プレースホルダ{0}が使用可能です。<br>
+'>
+'>**Example**
+'>
+'>```
+'>Message.Question("あなたは{0}座です。", "いて")
+'>```
+'>
+'>**See also**
+'>
+'>* Message.Information
+'>* Message.Error
+'>* Message.Critical
+'>
 Public Function Question(ByVal strMsg As String, ParamArray p()) As Boolean
-    Question = VBA.MsgBox(PrivatePlaceHolder(strMsg, p), vbOKCancel + vbQuestion, Core.GetTitleName) <> vbOK
+    Question = VBA.MsgBox(PrivatePlaceHolder(strMsg, p), vbOKCancel + vbQuestion, mTitle) <> vbOK
 End Function
-'---------------------------------------
-' ステータスバーメッセージ
-'---------------------------------------
+'>---
+'>#### StatusBar(Message)
+'>
+'>**Syntax**
+'>
+'>```
+'>Message.StatusBar(message, parameter)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|message|必須|String|プレースホルダを含むメッセージ|
+'>|parameter|必須|String|置換文字列|
+'>
+'>**Return Value**
+'>
+'>* なし
+'>
+'>**Remarks**
+'>
+'>ステータスメッセージ<br>
+'>ステータスバーにメッセージを表示します。プレースホルダ{0}が使用可能です。<br>
+'>
+'>**Example**
+'>
+'>```
+'>Message.StatusBar("あなたは{0}座です。", "いて")
+'>```
+'>
+'>**See also**
+'>
+'>* Message.StatusBarClear
+'>
 Public Sub StatusBar(ByVal strMsg As String, ParamArray p())
     Application.StatusBar = PrivatePlaceHolder(strMsg, p)
     DoEvents
 End Sub
-'---------------------------------------
-' ステータスバークリア
-'---------------------------------------
+'>---
+'>#### StatusBarClear(Message)
+'>
+'>**Syntax**
+'>
+'>```
+'>Message.StatusBarClear()
+'>```
+'>
+'>**Parameters**
+'>
+'>* なし
+'>
+'>**Return Value**
+'>
+'>* なし
+'>
+'>**Remarks**
+'>
+'>ステータスメッセージのクリア<br>
+'>ステータスバーのメッセージをクリアします。<br>
+'>
+'>**See also**
+'>
+'>* Message.StatusBarClear
+'>
 Public Sub StatusBarClear()
     Application.StatusBar = False
     DoEvents
@@ -85,16 +322,17 @@ End Sub
 ' プレースホルダ変換
 '---------------------------------------
 Private Function PrivatePlaceHolder(ByVal strMsg As String, ByVal p As Variant) As String
-    
-    strMsg = Core.Unescape(strMsg)
-    
+
+    strMsg = StringUtils.Unescape(strMsg)
+
     If UBound(p) >= 0 Then
         Dim i As Long
         For i = 0 To UBound(p)
-            strMsg = Replace(strMsg, "{" & CStr(i) & "}", p(i))
+            strMsg = VBA.Replace(strMsg, "{" & CStr(i) & "}", p(i))
         Next
     End If
 
     PrivatePlaceHolder = strMsg
 
 End Function
+

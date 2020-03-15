@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v2
+' [Hidennotare] v2.5
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -75,11 +75,11 @@ Public Function Sanitizing(ByVal strBuf As String) As String
 
     Dim strRep As String
 
-    strRep = Replace(strRep, "&", "&amp;")
-    strRep = Replace(strBuf, """", "&quot;")
-    strRep = Replace(strRep, "<", "&lt;")
-    strRep = Replace(strRep, ">", "&gt;")
-    strRep = Replace(strRep, "'", "&#39;")
+    strRep = VBA.Replace(strRep, "&", "&amp;")
+    strRep = VBA.Replace(strBuf, """", "&quot;")
+    strRep = VBA.Replace(strRep, "<", "&lt;")
+    strRep = VBA.Replace(strRep, ">", "&gt;")
+    strRep = VBA.Replace(strRep, "'", "&#39;")
     Sanitizing = strRep
 
 End Function

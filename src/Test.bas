@@ -9,9 +9,9 @@ End Sub
 Sub Test_ArrayList()
 
     Dim IL As IList
-    Dim IC As ICursor
+    Dim ic As ICursor
     
-    Set IL = New ArrayList
+    Set IL = ArrayList.NewInstance()
     
     Debug.Assert IL.Count = 0
     
@@ -44,29 +44,29 @@ Sub Test_ArrayList()
     col.Add 1
     col.Add 3.14159
     
-    Set IC = ArrayList.CreateObject(col)
+    Set ic = ArrayList.NewInstance(col)
     Dim i As Long
     
     i = 0
-    Do Until IC.Eof
+    Do Until ic.Eof
     
         Select Case i
             Case 0
-                Debug.Assert IC.Item = "a"
+                Debug.Assert ic.Item = "a"
             Case 1
-                Debug.Assert IC.Item = 1
+                Debug.Assert ic.Item = 1
             Case 2
-                Debug.Assert IC.Item = 3.14159
+                Debug.Assert ic.Item = 3.14159
         End Select
         
         i = i + 1
-        IC.MoveNext
+        ic.MoveNext
     
     Loop
     
     Debug.Assert i = 3
     
-    Set IL = IC
+    Set IL = ic
     
     Debug.Assert IL.Count = 3
     
@@ -78,14 +78,14 @@ Sub Test_ArrayList()
     
     v = Array("a", 1, 3.14159)
     
-    Set IL = ArrayList.CreateObject(v)
+    Set IL = ArrayList.NewInstance(v)
     
     'JSON
     Debug.Assert IL.ToString = "[""a"", 1, 3.14159]"
     
     Debug.Assert Join(IL.ToArray(), "/") = "a/1/3.14159"
 
-    IL.Sort
+    IL.sort
 
     Debug.Assert IL.Item(0) = 1
     Debug.Assert IL.Item(1) = 3.14159
@@ -102,15 +102,36 @@ Sub Test_ArrayList()
     
     Debug.Assert IL.Count = 4
     
+    Set IL = ArrayList.NewInstance(Array("a", "b", "c"))
 
+    Debug.Assert IL.Item(0) = "a"
+    
+    
+    Set IL = ArrayList.NewInstance
+    Dim ID As SampleVO
+    
+'    Dim j As Long
+    For i = 1 To 10
+'        For i = 1 To 10
+        
+            Set ID = New SampleVO
+            ID.Name = i & "さん"
+            ID.Age = i
+            ID.Address = i & "番地"
+            
+            IL.Add ID
+'        Next
+    Next
+    
+    Arrays.CopyToRange IL, Sheets("テスト").Range("B18")
 
 End Sub
 Sub Test_LinkedList()
 
     Dim IL As IList
-    Dim IC As ICursor
+    Dim ic As ICursor
     
-    Set IL = New LinkedList
+    Set IL = LinkedList.NewInstance()
     
     Debug.Assert IL.Count = 0
     
@@ -143,29 +164,29 @@ Sub Test_LinkedList()
     col.Add 1
     col.Add 3.14159
     
-    Set IC = LinkedList.CreateObject(col)
+    Set ic = LinkedList.NewInstance(col)
     Dim i As Long
     
     i = 0
-    Do Until IC.Eof
+    Do Until ic.Eof
     
         Select Case i
             Case 0
-                Debug.Assert IC.Item = "a"
+                Debug.Assert ic.Item = "a"
             Case 1
-                Debug.Assert IC.Item = 1
+                Debug.Assert ic.Item = 1
             Case 2
-                Debug.Assert IC.Item = 3.14159
+                Debug.Assert ic.Item = 3.14159
         End Select
         
         i = i + 1
-        IC.MoveNext
+        ic.MoveNext
     
     Loop
     
     Debug.Assert i = 3
     
-    Set IL = IC
+    Set IL = ic
     
     Debug.Assert IL.Count = 3
     
@@ -177,14 +198,14 @@ Sub Test_LinkedList()
     
     v = Array("a", 1, 3.14159)
     
-    Set IL = LinkedList.CreateObject(v)
+    Set IL = LinkedList.NewInstance(v)
     
     'JSON
     Debug.Assert IL.ToString = "[""a"", 1, 3.14159]"
     
     Debug.Assert Join(IL.ToArray(), "/") = "a/1/3.14159"
 
-    IL.Sort
+    IL.sort
 
     Debug.Assert IL.Item(0) = 1
     Debug.Assert IL.Item(1) = 3.14159
@@ -208,34 +229,34 @@ End Sub
 Sub Test_ICursor_SheetCursor()
 
     'ICursor インターフェースを使用する
-    Dim IC As ICursor
+    Dim ic As ICursor
 
     '3行目から↓に向かって読む。
     'B列が空文字列("")になったら終了。
-    Set IC = SheetCursor.CreateObject(Sheet1, 3, "B")
+    Set ic = SheetCursor.NewInstance(Sheet1, 3, "B")
 
     Dim i As Long
     i = 0
-    Do Until IC.Eof
+    Do Until ic.Eof
 
         '引数は列を表す文字か列番号を指定する。
         'IC.Item("C").Value でも IC.Item(3).Value でも良い。Rangeを返却。
         Select Case i
             Case 0
-                Debug.Assert IC("C") = "A1"
-                Debug.Assert IC("D") = "B1"
-                Debug.Assert IC("E") = "C1"
+                Debug.Assert ic("C") = "A1"
+                Debug.Assert ic("D") = "B1"
+                Debug.Assert ic("E") = "C1"
             Case 1
-                Debug.Assert IC("C") = "A2"
-                Debug.Assert IC("D") = "B2"
-                Debug.Assert IC("E") = "C2"
+                Debug.Assert ic("C") = "A2"
+                Debug.Assert ic("D") = "B2"
+                Debug.Assert ic("E") = "C2"
             Case 2
-                Debug.Assert IC("C") = "A3"
-                Debug.Assert IC("D") = "B3"
-                Debug.Assert IC("E") = "C3"
+                Debug.Assert ic("C") = "A3"
+                Debug.Assert ic("D") = "B3"
+                Debug.Assert ic("E") = "C3"
         End Select
         i = i + 1
-        IC.MoveNext
+        ic.MoveNext
     Loop
 
 End Sub
@@ -251,25 +272,25 @@ Sub Test_CollectionCursor()
     col.Add "c"
     col.Add "D"
 
-    Dim IC As ICursor
+    Dim ic As ICursor
 
-    Set IC = ArrayList.CreateObject(col)
+    Set ic = ArrayList.NewInstance(col)
     Dim i As Long
     i = 0
-    Do Until IC.Eof
+    Do Until ic.Eof
     
         Select Case i
             Case 0
-                Debug.Assert IC.Item = "a"
+                Debug.Assert ic.Item = "a"
             Case 1
-                Debug.Assert IC.Item = "b"
+                Debug.Assert ic.Item = "b"
             Case 2
-                Debug.Assert IC.Item = "c"
+                Debug.Assert ic.Item = "c"
             Case 3
-                Debug.Assert IC.Item = "D"
+                Debug.Assert ic.Item = "D"
         End Select
         i = i + 1
-        IC.MoveNext
+        ic.MoveNext
     Loop
 
 End Sub
@@ -282,24 +303,24 @@ Sub Test_LineCursor()
     v = Array("a", "b", "c")
 
 
-    Dim IC As ICursor
+    Dim ic As ICursor
 
-    Set IC = ArrayList.CreateObject(v)
+    Set ic = ArrayList.NewInstance(v)
 
     Dim i As Long
     i = 0
-    Do Until IC.Eof
+    Do Until ic.Eof
     
         Select Case i
             Case 0
-                Debug.Assert IC.Item = "a"
+                Debug.Assert ic.Item = "a"
             Case 1
-                Debug.Assert IC.Item = "b"
+                Debug.Assert ic.Item = "b"
             Case 2
-                Debug.Assert IC.Item = "c"
+                Debug.Assert ic.Item = "c"
         End Select
         i = i + 1
-        IC.MoveNext
+        ic.MoveNext
     Loop
 
 End Sub
@@ -307,7 +328,7 @@ Sub Test_StringBuilder()
 
     Dim SB As IStringBuilder
     
-    Set SB = StringBuilder.CreateObject
+    Set SB = StringBuilder.NewInstance
     
     SB.Append "A"
     SB.Append "B"
@@ -320,7 +341,7 @@ Sub Test_StringBuilder()
     
     Dim S2 As IStringBuilder
     
-    Set S2 = StringBuilder.CreateObject
+    Set S2 = StringBuilder.NewInstance
     
     'Trueをつけるとダブルコーテーションで囲む
     S2.Append "red", True
@@ -329,7 +350,7 @@ Sub Test_StringBuilder()
 
     '文字列の連結（カンマ区切り）
     Debug.Assert S2.ToString(",", "[", "]") = "[""red"",""green"",""blue""]"
-
+    
 End Sub
 
 Sub Test_Serialize()
@@ -337,9 +358,9 @@ Sub Test_Serialize()
     Dim Row As IList
     Dim col As IDictionary
     
-    Set Row = ArrayList.CreateObject()
+    Set Row = ArrayList.NewInstance()
     
-    Set col = Dictionary.CreateObject
+    Set col = Dictionary.NewInstance
     
     col.Add "Field01", 10
     col.Add "Field02", 20
@@ -347,7 +368,7 @@ Sub Test_Serialize()
 
     Row.Add col
 
-    Set col = Dictionary.CreateObject()
+    Set col = Dictionary.NewInstance
     col.Add "Field01", 40
     col.Add "Field02", 50
     col.Add "Field03", 60
@@ -375,7 +396,7 @@ Sub Test_SortedDictionary()
     Dim d As IDictionary
     Dim v As Variant
     
-    Set d = SortedDictionary.CreateObject()
+    Set d = SortedDictionary.NewInstance
     
     d.Add "10", "10"
     d.Add "1", "1"
@@ -385,7 +406,7 @@ Sub Test_SortedDictionary()
     Debug.Assert d.Keys(1) = "10"
     Debug.Assert d.Keys(2) = "2"
 
-    Set d = SortedDictionary.CreateObject(New ExplorerComparer)
+    Set d = SortedDictionary.NewInstance(New ExplorerComparer)
     
     d.Add "10", "10"
     d.Add "1", "1"
@@ -402,7 +423,7 @@ Sub Test_OrderedDictionary()
 
     Dim d As IDictionary
     Dim v As Variant
-    Set d = OrderedDictionary.CreateObject
+    Set d = OrderedDictionary.NewInstance
     
     d.Add "10", "10"
     d.Add "1", "1"
@@ -417,7 +438,7 @@ Sub Test_OrderedDictionary()
     Debug.Assert d.Keys(0) = "10"
     Debug.Assert d.Keys(1) = "2"
     
-    d.Key("2") = "3"
+    d.key("2") = "3"
 
     Debug.Assert d.Keys(0) = "10"
     Debug.Assert d.Keys(1) = "3"
@@ -468,27 +489,29 @@ Sub Test_IsDictionary()
 
     Dim dic As Object
     
-    Set dic = New Dictionary
+    Set dic = Dictionary.NewInstance
     
-    Debug.Assert Core.IsDictionary(dic)
+    Debug.Assert Objects.InstanceOfIDictionary(dic)
 
-    Set dic = New OrderedDictionary
+    Set dic = OrderedDictionary.NewInstance()
     
-    Debug.Assert Core.IsDictionary(dic)
+    Debug.Assert Objects.InstanceOfIDictionary(dic)
 
-    Set dic = New SortedDictionary
+    Set dic = SortedDictionary.NewInstance
     
-    Debug.Assert Core.IsDictionary(dic)
+    Debug.Assert Objects.InstanceOfIDictionary(dic)
 
     Set dic = VBA.CreateObject("Scripting.Dictionary")
     
-    Debug.Assert Core.IsDictionary(dic)
+'    Debug.Assert Objects.InstanceOfIDictionary(dic)
 
-    Debug.Assert Core.IsDictionary("") = False
+    Debug.Assert Objects.InstanceOfIDictionary("") = False
 
-    Dim lst As New ArrayList
+    Dim lst As IList
 
-    Debug.Assert Core.IsDictionary(lst) = False
+    Set lst = ArrayList.NewInstance()
+
+    Debug.Assert Objects.InstanceOfIDictionary(lst) = False
 
 
 End Sub
@@ -510,7 +533,7 @@ Sub Test_MCommand()
     Set t3 = MTable.PromoteHeaders(t2, "[PromoteAllScalars=true]")
 
     Dim m1 As IMCommand
-    Set m1 = MCommand.CreateObject
+    Set m1 = New MCommand
     
     m1.Append t3
     
@@ -532,7 +555,7 @@ Sub Test_MCommand()
     ' MCommandに代入して作成する場合
     '-----------------------------------
     Dim m2 As IMCommand
-    Set m2 = MCommand.CreateObject
+    Set m2 = New MCommand
     
     m2.Append MCsv.Document(MFile.Contents("C:\Test.csv"), _
                             "[Delimiter="","", Columns=5, Encoding=65001, QuoteStyle=QuoteStyle.Csv]")
@@ -561,7 +584,7 @@ Sub Test_MCommand()
     
     'MRecord(M言語のRecord) は DictionaryをWrapしたもの。使用方法はDictionary同等。
     Dim rec As IDictionary
-    Set rec = MRecord.CreateObject()
+    Set rec = New MRecord
             
     rec.Add "Column1", """No."""
     rec.Add "Column2", """NAME"""
@@ -571,10 +594,10 @@ Sub Test_MCommand()
     
     'MList(M言語のList) は ArrayListをWrapしたもの。使用方法はCollectionと同等。
     Dim lst As IList
-    Set lst = MList.CreateObject()
+    Set lst = New MList
     lst.Add rec
     
-    Set m3 = MCommand.CreateObject
+    Set m3 = New MCommand
 
     m3.Append MCsv.Document(MFile.Contents("C:\Test.csv"), _
                             "[Delimiter="","", Columns=5, Encoding=65001, QuoteStyle=QuoteStyle.Csv]")
@@ -585,7 +608,7 @@ Sub Test_MCommand()
     strBuf = "let " & vbCrLf
     strBuf = strBuf & "Source1 = Csv.Document(File.Contents(""C:\Test.csv""), [Delimiter="","", Columns=5, Encoding=65001, QuoteStyle=QuoteStyle.Csv]), " & vbCrLf
     strBuf = strBuf & "Source2 = Table.Skip(Source1, 2), " & vbCrLf
-    strBuf = strBuf & "Source3 = Table.InsertRows(Source2, 0, {Column1, Column2, Column3, Column4, Column5}), " & vbCrLf
+    strBuf = strBuf & "Source3 = Table.InsertRows(Source2, 0, {[Column1=""No."", Column2=""NAME"", Column3=""AGE"", Column4=""ADDRESS"", Column5=""TEL""]}), " & vbCrLf
     strBuf = strBuf & "Source4 = Table.PromoteHeaders(Source3, [PromoteAllScalars=true]) " & vbCrLf
     strBuf = strBuf & "in Source4"
 
@@ -608,13 +631,13 @@ Sub Test_TextWriter()
     strFile = FileIO.BuildPath(ThisWorkbook.Path, "testxx.txt")
 
     '空ファイル
-    With TextWriter.CreateObject(strFile, NewLineCodeLF, EncodeUTF8, OpenModeOutput, False)
+    With TextWriter.NewInstance(strFile, NewLineCodeLF, EncodeUTF8, OpenModeOutput, False)
     End With
 
     Dim blnFind As Boolean
     blnFind = False
 
-    With TextReader.CreateObject(strFile, NewLineCodeLF, EncodeUTF8)
+    With TextReader.NewInstance(strFile, NewLineCodeLF, EncodeUTF8)
 
         Do Until .Eof
 
@@ -628,14 +651,14 @@ Sub Test_TextWriter()
     Debug.Assert blnFind = False
     
     
-    With TextWriter.CreateObject(strFile, NewLineCodeLF, EncodeUTF8, OpenModeOutput, False)
+    With TextWriter.NewInstance(strFile, NewLineCodeLF, EncodeUTF8, OpenModeOutput, False)
 
         .WriteLine "あいうえお"
 
     End With
 
 
-    With TextReader.CreateObject(strFile, NewLineCodeLF, EncodeUTF8)
+    With TextReader.NewInstance(strFile, NewLineCodeLF, EncodeUTF8)
 
         Do Until .Eof
 
@@ -660,13 +683,13 @@ Sub Test_CsvWriter()
     strFile = FileIO.BuildPath(ThisWorkbook.Path, "testxx.csv")
     
     '空ファイル
-    With CsvWriter.CreateObject(strFile, NewLineCodeLF, EncodeUTF16LE, OpenModeOutput, True, ",")
+    With CsvWriter.NewInstance(strFile, NewLineCodeLF, EncodeUTF16LE, OpenModeOutput, True, ",")
     End With
 
     Dim blnFind As Boolean
     blnFind = False
     
-    With CSVReader.CreateObject(strFile, NewLineCodeLF, EncodeUTF16LE, ",", True)
+    With CSVReader.NewInstance(strFile, NewLineCodeLF, EncodeUTF16LE, ",", True)
         Do Until .Eof
             blnFind = True
             .MoveNext
@@ -677,15 +700,15 @@ Sub Test_CsvWriter()
     Debug.Assert blnFind = False
 
 
-    With CsvWriter.CreateObject(strFile, NewLineCodeLF, EncodeUTF16LE, OpenModeOutput, True, ",")
+    With CsvWriter.NewInstance(strFile, NewLineCodeLF, EncodeUTF16LE, OpenModeOutput, True, ",")
 
         .WriteLine Array("Name", "Key")
-        .WriteLine Array("あい,うえお", Core.PlaceHolder("かきく\nけこ"))
+        .WriteLine Array("あい,うえお", StringUtils.PlaceHolder("かきく\nけこ"))
 
     End With
 
 
-    With CSVReader.CreateObject(strFile, NewLineCodeLF, EncodeUTF16LE, ",", True)
+    With CSVReader.NewInstance(strFile, NewLineCodeLF, EncodeUTF16LE, ",", True)
 
         Do Until .Eof
 
@@ -700,7 +723,7 @@ Sub Test_CsvWriter()
     Debug.Assert strBuf1 = "あい,うえお"
     Debug.Assert strBuf2 = "かきく" & vbLf & "けこ"
     
-    With CSVReader.CreateObject(strFile, NewLineCodeLF, EncodeUTF16LE, ",", True, True)
+    With CSVReader.NewInstance(strFile, NewLineCodeLF, EncodeUTF16LE, ",", True, True)
 
         Do Until .Eof
 
@@ -729,12 +752,12 @@ Sub Test_Compress()
     strFile = FileIO.BuildPath(strTmp, "aaa.txt")
     strZip = FileIO.BuildPath(strTmp, "aaa.zip")
 
-    TextWriter.CreateObject(strFile).WriteLine ("ああああ")
+    TextWriter.NewInstance(strFile).WriteLine ("ああああ")
 
 
     Dim lst As IList
     
-    Set lst = New ArrayList
+    Set lst = ArrayList.NewInstance()
     
     lst.Add strFile
 
@@ -754,14 +777,14 @@ Sub Test_Compress()
 End Sub
 Sub Test_PlaceHolder()
 
-    Debug.Assert Core.PlaceHolder("これはテストです。\n{0}", 10) = "これはテストです。" & vbLf & "10"
+    Debug.Assert StringUtils.PlaceHolder("これはテストです。\n{0}", 10) = "これはテストです。" & vbLf & "10"
 
 End Sub
 Sub Test_TaskTrayView()
 
     Dim TV As TaskTrayView
     
-    With TaskTrayView.CreateObject("テストです。")
+    With TaskTrayView.NewInstance("テストです。")
         .ShowBalloon "おしらせ", "バルーン表示", 5
     End With
     
@@ -816,3 +839,104 @@ Sub Test_Graphics()
     Debug.Assert Not IP Is Nothing
 
 End Sub
+Sub Test_StringEx()
+
+    Dim s As StringEx
+    
+    Set s = StringEx.NewInstance()
+    
+    
+    s = "abcdefg"
+    
+    Debug.Assert s = "abcdefg"
+
+    Debug.Assert s.Length = 7
+    
+    s = " aaa　"
+
+    Debug.Assert s.Trim = "aaa"
+    
+    s = "123あ#"
+    
+    Debug.Assert s.StartsWith("123")
+    Debug.Assert s.EndsWith("あ#")
+    
+'    Debug.Assert s.SJISLength = 6
+    
+    
+'    Debug.Assert s.SJISLeft(5) = "123あ"
+    
+    s = "\"
+    Debug.Assert s.Escape = "\\"
+
+    s = "\\"
+    Debug.Assert s.Unescape = "\"
+    
+    s = "あなたは{0}か{1}です。"
+
+    Debug.Assert s.PlaceHolder("天才", "あほ") = "あなたは天才かあほです。"
+    
+    Debug.Assert s.ToKatakana = "アナタハ{0}カ{1}デス。"
+    
+    s = "カタカナ"
+
+    Debug.Assert s.ToHiragana = "かたかな"
+    
+    
+    Debug.Assert s.SubString(0, 2) = "カタ"
+    
+    Debug.Assert s.SubString(0, 2).ToHiragana = "かた"
+    
+    Debug.Assert StringEx.NewInstance("あなたは{0}です。").PlaceHolder("にゃん") = "あなたはにゃんです。"
+
+
+
+
+
+End Sub
+
+Sub Test_Arrays()
+
+    Call SubText_Arrays("1", "2", "3")
+
+    Dim v As Variant
+    
+    v = Array("1", "2", "3")
+    
+    Dim col As Collection
+    
+    Set col = Arrays.ToCollection(v)
+    
+    Debug.Assert col.Count = 3
+
+
+End Sub
+
+Private Sub SubText_Arrays(ParamArray args() As Variant)
+
+
+    Dim col As Collection
+    
+    Dim v As Variant
+    
+    v = args()
+    
+    
+    Set col = Arrays.ToCollection(v)
+    
+    Debug.Assert col.Count = 3
+
+
+
+End Sub
+
+
+'Sub a()
+'
+'    Dim b As IList
+'
+'    Set b = Dictionary.NewInstance
+'
+'
+'
+'End Sub

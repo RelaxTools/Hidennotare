@@ -1,10 +1,10 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} frmTest 
    Caption         =   "Hdennotare Test"
-   ClientHeight    =   3705
-   ClientLeft      =   45
-   ClientTop       =   330
-   ClientWidth     =   8310.001
+   ClientHeight    =   3696
+   ClientLeft      =   48
+   ClientTop       =   336
+   ClientWidth     =   8304.001
    OleObjectBlob   =   "frmTest.frx":0000
    StartUpPosition =   1  'オーナー フォームの中央
 End
@@ -32,7 +32,7 @@ Private Sub UserForm_Initialize()
     lblGauge.Tag = "g"
     cmdOk.Tag = "c"
 
-    Set FM = FormManager.CreateObject(Me)
+    Set FM = FormManager.NewInstance(Me)
 
     Dim i As Long
     Dim strBuf As String
@@ -100,7 +100,7 @@ Private Sub cmdOk_Click()
     Dim lngMax As Long
     Dim i As Long
     
-    With Using.CreateObject(FM, New OneTimeSpeedBooster)
+    With Using.NewInstance(FM, New OneTimeSpeedBooster)
         
         lngMax = lvTest.ListItems.Count
     

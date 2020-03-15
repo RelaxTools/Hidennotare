@@ -1,7 +1,7 @@
 Attribute VB_Name = "CallbackHelper"
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v2
+' [Hidennotare] v2.5
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -45,38 +45,38 @@ Private mCallback As IDictionary
 '---------------------------------------------------------------------------------------------------
 Public Function InstallCallback(MH As Callback) As String
 
-    Dim Key As String
+    Dim key As String
 
     If mCallback Is Nothing Then
-        Set mCallback = New Dictionary
+        Set mCallback = Dictionary.NewInstance
     End If
     
-    Key = CStr(ObjPtr(MH))
+    key = CStr(ObjPtr(MH))
     
-    mCallback.Add Key, MH
+    mCallback.Add key, MH
     
-    InstallCallback = Key
+    InstallCallback = key
     
 End Function
 '---------------------------------------------------------------------------------------------------
 '　Callbackの際のUnInstallメソッド
 '---------------------------------------------------------------------------------------------------
-Public Sub UninstallCallback(ByVal Key As String)
+Public Sub UninstallCallback(ByVal key As String)
 
-    If mCallback.ContainsKey(Key) Then
-        mCallback.Remove Key
+    If mCallback.ContainsKey(key) Then
+        mCallback.Remove key
     End If
     
 End Sub
 '---------------------------------------------------------------------------------------------------
 '　Callbackの際に呼び出されるメソッド
 '---------------------------------------------------------------------------------------------------
-Public Function OnActionCallback(ByVal Key As String, ByVal lngEvent As Long, ByVal opt As String)
+Public Function OnActionCallback(ByVal key As String, ByVal lngEvent As Long, ByVal opt As String)
 
     Dim MH As Callback
     
-    If mCallback.ContainsKey(Key) Then
-        Set MH = mCallback(Key)
+    If mCallback.ContainsKey(key) Then
+        Set MH = mCallback(key)
         Call MH.OnActionCallback(lngEvent, opt)
     End If
 

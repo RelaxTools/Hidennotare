@@ -2,14 +2,14 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "ICollectionCursorParam"
+Attribute VB_Name = "IValueObject"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
-Attribute VB_Exposed = False
+Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v2
+' [Hidennotare] v2.5
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -36,11 +36,37 @@ Attribute VB_Exposed = False
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-' ICollectionCursorParam インターフェイス
-' CollectionCursor のクラス内部のパラメータ受け渡しを隠蔽するインターフェイス
+'>### IValueObject インターフェイス
+'>
+'>**Remarks**
+'>
+'>Value Objectの操作を行うインターフェイス
+'>
+'>**Definition**
+'>
+'>```
+'>Public Function GetProperty(prop As Variant) As Variant
+'>Public Sub SetProperty(prop As Variant, Val As Variant)
+'>```
+'>
+'>**Sample**
+'>
+'>* None
+'>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 
-Public Property Set Source(v As Collection)
+Public Property Get Fields(key As Variant) As Variant
 
 End Property
+Public Property Let Fields(key As Variant, val As Variant)
+
+End Property
+Public Property Get Count() As Long
+
+End Property
+Public Property Get FieldNames() As Variant
+
+End Property
+Public Function ToString() As String
+End Function

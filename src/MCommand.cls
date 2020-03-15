@@ -79,7 +79,7 @@ Private mAliasName As String
 '>**Syntax**
 '>
 '>```
-'>Set obj = MCommand.CreateObject()
+'>Set obj = MCommand.NewInstance()
 '>```
 '>
 '>**Parameters**
@@ -107,9 +107,9 @@ Private mAliasName As String
 '>* None
 '>
 '>---
-Public Function CreateObject() As IMCommand
+Public Function NewInstance() As IMCommand
 
-    Set CreateObject = New MCommand
+    Set NewInstance = New MCommand
     
     
     
@@ -119,7 +119,7 @@ End Function
 ' Initialize
 '---------------------------------------
 Private Sub Class_Initialize()
-    Set mSb = StringBuilder.CreateObject()
+    Set mSb = StringBuilder.NewInstance
     mSeq = 1
     mAliasName = TABLE_NAME
 End Sub

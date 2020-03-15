@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v2
+' [Hidennotare] v2.5
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -55,27 +55,40 @@ Attribute VB_Exposed = True
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
+Private mAppName As String
 '--------------------------------------------------------------
-'レジストリ読み込み
+' 初期化処理
 '--------------------------------------------------------------
-Public Function GetSetting(ByVal Section As String, ByVal Key As String, Optional ByVal Default As String = "") As String
-    GetSetting = VBA.GetSetting(Core.GetTitleName, Section, Key, Default)
+Private Sub Class_Initialize()
+    mAppName = "Default"
+End Sub
+'--------------------------------------------------------------
+' アプリケーション名
+'--------------------------------------------------------------
+Public Property Let AppName(v As String)
+    mAppName = v
+End Property
+'--------------------------------------------------------------
+' レジストリ読み込み
+'--------------------------------------------------------------
+Public Function GetSetting(ByVal Section As String, ByVal key As String, Optional ByVal Default As String = "") As String
+    GetSetting = VBA.GetSetting(mAppName, Section, key, Default)
 End Function
 '--------------------------------------------------------------
-'レジストリ書き込み
+' レジストリ書き込み
 '--------------------------------------------------------------
-Public Sub SaveSetting(ByVal Section As String, ByVal Key As String, ByVal Value As String)
-    VBA.SaveSetting Core.GetTitleName, Section, Key, Value
+Public Sub SaveSetting(ByVal Section As String, ByVal key As String, ByVal Value As String)
+    VBA.SaveSetting mAppName, Section, key, Value
 End Sub
 '--------------------------------------------------------------
 'レジストリ削除
 '--------------------------------------------------------------
-Public Sub DeleteSetting(ByVal Section As String, Optional ByVal Key As String = "")
+Public Sub DeleteSetting(ByVal Section As String, Optional ByVal key As String = "")
     On Error Resume Next
-    If Len(Key) = 0 Then
-        VBA.DeleteSetting Core.GetTitleName, Section
+    If Len(key) = 0 Then
+        VBA.DeleteSetting mAppName, Section
     Else
-        VBA.DeleteSetting Core.GetTitleName, Section, Key
+        VBA.DeleteSetting mAppName, Section, key
     End If
 End Sub
 '--------------------------------------------------------------
@@ -89,21 +102,21 @@ Public Sub Export()
     Const C_FE As Byte = &HFE
     Dim FileName As Variant
     Dim strReg As String
-    Dim Key As String
+    Dim key As String
     
     Dim Reg, Locator, Service, SubKey, RegName, RegType
     Dim i As Long, j As Long, buf As String, RegData As String
     
     Dim FP As Integer
     
-    FileName = Application.GetSaveAsFilename(InitialFileName:=Core.GetTitleName & ".reg", fileFilter:="登録ファイル,*.reg")
+    FileName = Application.GetSaveAsFilename(InitialFileName:=mAppName & ".reg", fileFilter:="登録ファイル,*.reg")
     If FileName = False Then
         Exit Sub
     End If
     
     On Error GoTo err_Handle
 
-    strReg = "HKEY_CURRENT_USER\Software\VB and VBA Program Settings\" & Core.GetTitleName
+    strReg = "HKEY_CURRENT_USER\Software\VB and VBA Program Settings\" & mAppName
 
     Set Locator = VBA.CreateObject("WbemScripting.SWbemLocator")
     Set Service = Locator.ConnectServer(vbNullString, "root\default")
@@ -112,9 +125,9 @@ Public Sub Export()
     Const HKEY_CURRENT_USER = &H80000001
     
     Const ROOT = "HKEY_CURRENT_USER\"
-    Key = "Software\VB and VBA Program Settings\" & Core.GetTitleName
+    key = "Software\VB and VBA Program Settings\" & mAppName
     
-    Reg.EnumKey HKEY_CURRENT_USER, Key, SubKey
+    Reg.EnumKey HKEY_CURRENT_USER, key, SubKey
     
     FP = FreeFile()
     Open FileName For Output As FP
@@ -131,23 +144,23 @@ Public Sub Export()
     strBuf = "Windows Registry Editor Version 5.00" & vbCrLf & vbCrLf
     Put FP, , strBuf
     
-    strBuf = "[" & ROOT & Key & "]" & vbCrLf
+    strBuf = "[" & ROOT & key & "]" & vbCrLf
     Put FP, , strBuf
     
     For i = 0 To UBound(SubKey)
         
-        Reg.EnumValues HKEY_CURRENT_USER, Key & "\" & SubKey(i), RegName, RegType
+        Reg.EnumValues HKEY_CURRENT_USER, key & "\" & SubKey(i), RegName, RegType
             
-        strBuf = vbCrLf & "[" & ROOT & Key & "\" & SubKey(i) & "]" & vbCrLf
+        strBuf = vbCrLf & "[" & ROOT & key & "\" & SubKey(i) & "]" & vbCrLf
         Put FP, , strBuf
         
         For j = 0 To UBound(RegName)
         
             Select Case RegType(j)
                 Case 1
-                    Reg.GetStringValue HKEY_CURRENT_USER, Key & "\" & SubKey(i), RegName(j), RegData
+                    Reg.GetStringValue HKEY_CURRENT_USER, key & "\" & SubKey(i), RegName(j), RegData
                 Case Else
-                    Reg.GetMultiStringValue HKEY_CURRENT_USER, Key & "\" & SubKey(i), RegName(j), RegData
+                    Reg.GetMultiStringValue HKEY_CURRENT_USER, key & "\" & SubKey(i), RegName(j), RegData
                 
             End Select
         
@@ -175,4 +188,5 @@ Public Sub Export()
 err_Handle:
     Message.Information "登録ファイルの保存に失敗しました。"
 End Sub
+
 

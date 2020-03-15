@@ -2,9 +2,9 @@ VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} frmFormManagerSample 
    Caption         =   "UserForm1"
    ClientHeight    =   3705
-   ClientLeft      =   45
-   ClientTop       =   330
-   ClientWidth     =   8445.001
+   ClientLeft      =   48
+   ClientTop       =   336
+   ClientWidth     =   8448.001
    OleObjectBlob   =   "frmFormManagerSample.frx":0000
    StartUpPosition =   1  'オーナー フォームの中央
 End
@@ -39,7 +39,7 @@ Private Sub UserForm_Initialize()
     
 '--------------------------------------------------------------------
 
-    Set FM = FormManager.CreateObject(Me)
+    Set FM = FormManager.NewInstance(Me)
 
     FM.DispGuidance "開始しました。"
 
@@ -75,7 +75,7 @@ Private Sub cmdOk_Click()
     
     '処理中を表す。以下メソッドを呼ぶかUsingクラスを使用する。
     'FM.StartRunning
-    With Using.CreateObject(FM, New OneTimeSpeedBooster)
+    With Using.NewInstance(FM, New OneTimeSpeedBooster)
         
         lngMax = 10000
     

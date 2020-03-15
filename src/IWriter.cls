@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v2
+' [Hidennotare] v2.5
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -56,10 +56,10 @@ Attribute VB_Exposed = True
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
-Sub WriteData(ByVal Args As Variant)
+Sub WriteData(ByVal args As Variant)
 
 End Sub
-Sub WriteLine(ByVal Args As Variant)
+Sub WriteLine(ByVal args As Variant)
 
 End Sub
 Sub Flush()

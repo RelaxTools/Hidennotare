@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v2
+' [Hidennotare] v2.5
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -93,7 +93,7 @@ Private mcolEnable As Collection
 '>**Syntax**
 '>
 '>```
-'>Set ret = FormManager.CreateObject(
+'>Set ret = FormManager.NewInstance(
 '>                    frm,
 '>                    [ButtonCaption])
 '>```
@@ -115,7 +115,7 @@ Private mcolEnable As Collection
 '>
 '>**このクラスはコンストラクタを使用しないと実行できません。**
 '>
-Public Function CreateObject(frm As UserForm, Optional ByVal ButtonCaption As String = C_CANCEL_STR) As FormManager
+Public Function NewInstance(frm As UserForm, Optional ByVal ButtonCaption As String = C_CANCEL_STR) As FormManager
 
     Dim FM As IFormManagerParam
 
@@ -124,7 +124,7 @@ Public Function CreateObject(frm As UserForm, Optional ByVal ButtonCaption As St
     Set FM.Form = frm
     FM.ButtonCaption = ButtonCaption
 
-    Set CreateObject = FM
+    Set NewInstance = FM
 
 End Function
 Private Property Set IFormManagerParam_Form(frm As UserForm)

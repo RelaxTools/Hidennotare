@@ -20,7 +20,7 @@ Sub Message_Sample()
 
     
     'リプレースホルダの文字列を返却
-    Debug.Print Core.PlaceHolder("サンプルです。{0}のだけでなく{1}もある", "金", "名誉")
+    Debug.Print StringUtils.PlaceHolder("サンプルです。{0}のだけでなく{1}もある", "金", "名誉")
 
 
 End Sub
@@ -35,13 +35,13 @@ Sub Using_Sample()
     '                       停止・再開を行う。
     
     'Withで開始処理、End Withで終了処理を行う。C#でのUsing句のような動作を行う。
-    With Using.CreateObject(New NewExcel, New OneTimeSpeedBooster)
+    With Using.NewInstance(New NewExcel, New OneTimeSpeedBooster)
     
         'この間で処理を行う。
         Debug.Print "Application.ScreenUpdating:" & Application.ScreenUpdating
     
         'Using クラスの引数１つ目のインスタンスを返す。
-        Debug.Print .Args(1).GetInstance.Caption
+        Debug.Print .args(1).GetInstance.Caption
         
 
     End With
@@ -94,7 +94,7 @@ Sub BookReader_Sample()
 
     Dim BR As BookReader
     
-    Set BR = BookReader.CreateObject("Sample.xlsx")
+    Set BR = BookReader.NewInstance("Sample.xlsx")
     
     Set BR = Nothing
 

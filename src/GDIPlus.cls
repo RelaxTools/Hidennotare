@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v2
+' [Hidennotare] v2.5
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -91,7 +91,7 @@ Private Declare PtrSafe Function IIDFromString Lib "ole32" (ByVal lpsz As LongPt
 Private Declare PtrSafe Function OleCreatePictureIndirect Lib "oleaut32.dll" (PicDesc As PICTDESC, ByRef refiid As GUID, ByVal fPictureOwnsHandle As Long, obj As Any) As Long
 
 Private Type PICTDESC
-    Size As Long
+    size As Long
     Type As Long
     hPic As LongPtr
     hpal As LongPtr
@@ -335,7 +335,7 @@ Private Declare PtrSafe Function GdipCreateBitmapFromScan0 Lib "gdiplus.dll" (By
 '>**Syntax**
 '>
 '>```
-'>Set ret = GDIPlus.CreateObject(GDIPlusConstants.GDIPlusCreateFile,
+'>Set ret = GDIPlus.NewInstance(GDIPlusConstants.GDIPlusCreateFile,
 '>                               FileName)
 '>```
 '>
@@ -365,7 +365,7 @@ Private Declare PtrSafe Function GdipCreateBitmapFromScan0 Lib "gdiplus.dll" (By
 '>
 '>strFile = "C:\image.png"
 '>
-'>Set GP = GDIPlus.CreateObject(
+'>Set GP = GDIPlus.NewInstance(
 '>                     GDIPlusConstants.GDIPlusCreateFile,
 '>                     strFile)
 '>
@@ -442,7 +442,7 @@ Public Function CreateObjectFromIPictureDisp(pic As IPictureDisp) As IGDIPlus
     Set CreateObjectFromIPictureDisp = GP
 
 End Function
-Public Function CreateObject(ByVal Width As Long, ByVal Height As Long, Optional ByVal color As Long = 0) As IGDIPlus
+Public Function NewInstance(ByVal Width As Long, ByVal Height As Long, Optional ByVal color As Long = 0) As IGDIPlus
                     
     Dim GP As IGDIPlusParam
                 
@@ -457,7 +457,7 @@ Public Function CreateObject(ByVal Width As Long, ByVal Height As Long, Optional
     
     GP.Run
                 
-    Set CreateObject = GP
+    Set NewInstance = GP
 
 End Function
 Private Property Let IGDIPlusParam_EditType(v As GDIPlusConstants)
@@ -765,7 +765,7 @@ Private Sub IGDIPlus_DrawEllipse(ByVal x As Long, ByVal y As Long, ByVal Width A
     Call GdipDeleteGraphics(hGraphics)
     
 End Sub
-Private Sub IGDIPlus_DrawString(ByVal x As Long, ByVal y As Long, ByVal Width As Long, ByVal Height As Long, ByVal strFont As String, ByVal strBuf As String, ByVal Size As Long, Optional ByVal style As DrawStringConstants, Optional ByVal lColor As Long = 0, Optional ByVal Alpha As Long = 100, Optional ByVal Smoothing As Boolean = False)
+Private Sub IGDIPlus_DrawString(ByVal x As Long, ByVal y As Long, ByVal Width As Long, ByVal Height As Long, ByVal strFont As String, ByVal strBuf As String, ByVal size As Long, Optional ByVal style As DrawStringConstants, Optional ByVal lColor As Long = 0, Optional ByVal Alpha As Long = 100, Optional ByVal Smoothing As Boolean = False)
 
     Dim hGraphics As LongPtr
     Dim hBrush As LongPtr
@@ -799,7 +799,7 @@ Private Sub IGDIPlus_DrawString(ByVal x As Long, ByVal y As Long, ByVal Width As
     Dim hFont As LongPtr
     Const Pixel As Long = 2
     
-    GdipCreateFont hFontFamily, Size, style, Pixel, hFont
+    GdipCreateFont hFontFamily, size, style, Pixel, hFont
     If result <> Status.ok Then
         Err.Raise 512 + result, TypeName(Me) & ".DrawString", "GdipCreateFont error"
     End If
@@ -859,7 +859,7 @@ Private Function IGDIPlus_ToPicture() As IPictureDisp
     End If
     
     With uPicInfo
-      .Size = LenB(uPicInfo)
+      .size = LenB(uPicInfo)
       .Type = PICTYPE_BITMAP
       .hPic = hBitmap
       .hpal = 0&
@@ -945,7 +945,7 @@ End Function
 '------------------------------------------------------------------------------------------------------------------------
 Private Sub CopyClipboardSleep(pic As IPictureDisp)
     DoEvents
-    Sleep Val(Registry.GetSetting("Option", "ClipboardSleep", 10))
+    Sleep val(Registry.GetSetting("Option", "ClipboardSleep", 10))
 End Sub
 
 'Public Function ConvertPixelByPixel(ipd As IPictureDisp) As IPictureDisp

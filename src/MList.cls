@@ -52,7 +52,7 @@ Attribute VB_Exposed = True
 '>
 '>```
 '>Dim lst As IList
-'>Set lst = MList.CreateObject()
+'>Set lst = MList.NewInstance()
 '>
 '>lst.Add Value
 '>```
@@ -83,7 +83,7 @@ Private mIndex As Long
 '>**Syntax**
 '>
 '>```
-'>Set ret = MList.CreateObject(collection)
+'>Set ret = MList.NewInstance(collection)
 '>```
 '>
 '>**Parameters**
@@ -116,7 +116,7 @@ Private mIndex As Long
 '>**Syntax**
 '>
 '>```
-'>Set ret = MList.CreateObject(Array)
+'>Set ret = MList.NewInstance(Array)
 '>```
 '>
 '>**Parameters**
@@ -143,7 +143,7 @@ Private mIndex As Long
 '>
 '>* None
 '>
-Public Function CreateObject(ParamArray Args() As Variant) As IList
+Public Function NewInstance(ParamArray args() As Variant) As IList
 
     Dim cnt As Long
     Dim lngValue As Long
@@ -154,18 +154,18 @@ Public Function CreateObject(ParamArray Args() As Variant) As IList
     Dim v As Variant
     Dim i As Long
     
-    var = Args
+    var = args
     
     lngMin = 0
     lngMax = -1
     
     Dim IL As IList
     
-    If Core.TryLBound(var, lngValue) Then
+    If Arrays.TryLBound(var, lngValue) Then
         lngMin = lngValue
     End If
     
-    If Core.TryUBound(var, lngValue) Then
+    If Arrays.TryUBound(var, lngValue) Then
         lngMax = lngValue
     End If
     
@@ -181,25 +181,25 @@ Public Function CreateObject(ParamArray Args() As Variant) As IList
             Select Case True
                 
                 'コレクションまたは配列からの変換
-                Case TypeOf Args(0) Is Collection, IsArray(Args(0))
+                Case TypeOf args(0) Is Collection, IsArray(args(0))
                     
-                    Core.ArrayToIList Args(0), IL
+                    Set IL = Arrays.ToList(args(0))
                 
                 Case Else
                 
-                    IL.Add Args(0)
+                    IL.Add args(0)
             
             End Select
             
         Case Else
             
             For i = lngMin To lngMax
-                IL.Add Args(i)
+                IL.Add args(i)
             Next
     
     End Select
 
-    Set CreateObject = IL
+    Set NewInstance = IL
     
 End Function
 
@@ -207,7 +207,7 @@ End Function
 '  Initialize
 '--------------------------------------------------------------
 Private Sub Class_Initialize()
-    Set mCol = New ArrayList
+    Set mCol = ArrayList.NewInstance()
 End Sub
 '--------------------------------------------------------------
 '  Terminate
@@ -231,13 +231,13 @@ Private Property Get IList_Count() As Long
     IList_Count = mCol.Count
 End Property
 Private Property Get IList_Item(idx As Long) As Variant
-    Core.SetVar(IList_Item) = mCol.Item(idx)
+    Objects.SetVar(IList_Item) = mCol.Item(idx)
 End Property
 Private Sub IList_RemoveAt(idx As Long)
     mCol.RemoveAt idx
 End Sub
 Private Sub IList_Sort(Optional ByVal CP As IComparer = Nothing)
-    mCol.Sort CP
+    mCol.sort CP
 End Sub
 Private Function IList_ToArray() As Variant
     IList_ToArray = mCol.ToArray
@@ -252,7 +252,7 @@ Private Function IList_ToString() As String
     
     Dim v As Variant
     Dim SB As IStringBuilder
-    Set SB = StringBuilder.CreateObject
+    Set SB = StringBuilder.NewInstance
     
     For Each v In mCol
     

@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v2
+' [Hidennotare] v2.5
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -79,7 +79,7 @@ Private mIndex As Long
 '>**Syntax**
 '>
 '>```
-'>Set IC = TextReader.CreateObject(FileName,
+'>Set IC = TextReader.NewInstance(FileName,
 '>                                 [NewLineCode = NewLineCodeConstants.CRLF],
 '>                                 [Encode = EncodeConstants.CP932])
 '>```
@@ -113,7 +113,7 @@ Private mIndex As Long
 '>
 '>strFile = "C:\Test.txt"
 '>
-'>Set IC = TextReader.CreateObject(strFile)
+'>Set IC = TextReader.NewInstance(strFile)
 '>
 '>Do Until IC.Eof
 '>
@@ -130,7 +130,7 @@ Private mIndex As Long
 '>
 '>strFile = "C:\Test.txt"
 '>
-'>Set IR = TextReader.CreateObject(strFile)
+'>Set IR = TextReader.NewInstance(strFile)
 '>
 '>Debug.Print IR.ReadAll '改行を指定した場合は配列、指定しなかった場合は文字列
 '>```
@@ -139,7 +139,7 @@ Private mIndex As Long
 '>
 '>* None
 '>
-Public Function CreateObject(ByVal FileName As String, _
+Public Function NewInstance(ByVal FileName As String, _
                             Optional ByVal NewLineCode As NewLineCodeConstants = NewLineCodeConstants.NewLineCodeCRLF, _
                             Optional ByVal Encode As EncodeConstants = EncodeConstants.EncodeCP932) As ICursor
 
@@ -153,7 +153,7 @@ Public Function CreateObject(ByVal FileName As String, _
     
     FA.Init
 
-    Set CreateObject = FA
+    Set NewInstance = FA
 
 End Function
 
@@ -209,9 +209,9 @@ Private Sub BulkRead()
             
                 'BOMがある場合取り除く
                 If StartWith(Buffer, &HEF, &HBB, &HBF) Then
-                    strBuf = Convert.FromUTF8(MidB$(Buffer, 4))
+                    strBuf = StringUtils.FromUTF8(MidB$(Buffer, 4))
                 Else
-                    strBuf = Convert.FromUTF8(Buffer)
+                    strBuf = StringUtils.FromUTF8(Buffer)
                 End If
         
             Case EncodeConstants.EncodeUTF16LE
@@ -261,13 +261,13 @@ End Sub
 '--------------------------------------------------------------
 ' BOMチェック
 '--------------------------------------------------------------
-Private Function StartWith(bytBuf, ParamArray Args() As Variant) As Boolean
+Private Function StartWith(bytBuf, ParamArray args() As Variant) As Boolean
 
     Dim v As Variant
     Dim i As Long
     
     i = 0
-    For Each v In Args
+    For Each v In args
             
         If i > UBound(bytBuf) Then
             StartWith = False

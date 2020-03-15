@@ -49,10 +49,22 @@ Attribute VB_Exposed = True
 '>- Orderd なので追加順を維持するため削除のパフォーマンスは悪いので注意。
 '>
 '>**Implements**
+'>
 '>* ICursor
 '>* IDictionary
 '>* ICompatibleProperty
 '>* INewInstance
+'>
+'>**Dependent**
+'>
+'>* Message
+'>* StringBuilder
+'>* ArrayList
+'>* IDictionary
+'>* INewInstance
+'>* ICompatibleProperty
+'>* StringUtils
+'>* ICursor
 '>
 '>**Sample**
 '>
@@ -68,7 +80,7 @@ Option Explicit
 Implements ICursor
 Implements IDictionary
 Implements INewInstance
-Implements ICompatibleProperty
+Implements IValueObject
 
 'VBAでは「継承」ができないため「委譲」する。
 Private mCol As Collection
@@ -93,7 +105,7 @@ End Sub
 '>**Syntax**
 '>
 '>```
-'>Set obj = OrderdDictionary.CreateObject()
+'>Set obj = OrderdDictionary.NewInstance()
 '>```
 '>
 '>**Parameters**
@@ -121,16 +133,15 @@ End Sub
 '>* None
 '>
 '>---
-Public Function CreateObject() As IDictionary
+Public Function NewInstance() As IDictionary
 
-    Set CreateObject = New OrderedDictionary
-
-
-
+    Set NewInstance = New OrderedDictionary
 
     Call Class_Terminate
 
 End Function
+
+
 
 
 
@@ -139,7 +150,7 @@ End Function
 '--------------------------------------------------------------
 Private Function IDictionary_NewEnum() As stdole.IUnknown
 
-    Set mCol = Core.ArrayToCollection(mKeys)
+    Set mCol = Arrays.ToCollection(mKeys)
     Set IDictionary_NewEnum = mCol.[_NewEnum]
 
 End Function
@@ -171,7 +182,7 @@ Private Property Get IDictionary_Count() As Long
 End Property
 Private Property Get IDictionary_Item(KeyValue As Variant) As Variant
     
-    Core.SetVar(IDictionary_Item) = mDic.Item(KeyValue)
+    Objects.SetVar(IDictionary_Item) = mDic.Item(KeyValue)
     
 End Property
 Private Property Let IDictionary_Item(KeyValue As Variant, NewItem As Variant)
@@ -182,7 +193,7 @@ Private Property Set IDictionary_Item(KeyValue As Variant, NewItem As Variant)
 End Property
 Private Property Let IDictionary_Key(OldKey As Variant, NewKey As Variant)
     
-    mDic.Key(OldKey) = NewKey
+    mDic.key(OldKey) = NewKey
     
     Dim i As Long
     For i = LBound(mKeys) To UBound(mKeys)
@@ -240,16 +251,24 @@ Private Function ToString() As String
     Dim v  As Variant
     
     Dim SB As IStringBuilder
-    Set SB = StringBuilder.CreateObject
+    Set SB = StringBuilder.NewInstance()
     
     For Each KeyValue In mDic.Keys
     
-        Core.SetVar(v) = mDic.Item(KeyValue)
+        Objects.SetVar(v) = mDic.Item(KeyValue)
     
         Select Case True
-            Case IsObject(v)
+            Case Objects.InstanceOfIDictionary(v)
                 
-                SB.Append """" & KeyValue & """:" & v.ToString
+                SB.Append """" & KeyValue & """:" & Objects.AsIDictionary(v).ToString
+            
+            Case Objects.InstanceOfIList(v)
+                
+                SB.Append """" & KeyValue & """:" & Objects.AsIList(v).ToString
+            
+            Case Objects.InstanceOfIValueObject(v)
+                
+                SB.Append """" & KeyValue & """:" & Objects.AsIValueObject(v).ToString
             
             Case IsEmpty(v)
                 
@@ -264,7 +283,7 @@ Private Function ToString() As String
         
                     Case vbString
                     
-                        SB.Append """" & KeyValue & """:""" & Core.Escape(v) & """"
+                        SB.Append """" & KeyValue & """:""" & StringUtils.Escape(v) & """"
                     
 #If Win64 Then
                     Case vbByte, vbInteger, vbLong, vbSingle, vbDouble, vbCurrency, vbDecimal, vbLongLong
@@ -342,13 +361,20 @@ Private Function INewInstance_NewInstance() As Object
 
 End Function
 '--------------------------------------------------------------
-' ICompatibleProperty I/F
+' IValueObject I/F
 '--------------------------------------------------------------
-Private Sub ICompatibleProperty_SetProperty(prop As Variant, Val As Variant)
-    Self.Add prop, Val
-End Sub
-Private Function ICompatibleProperty_GetProperty(prop As Variant) As Variant
-    
-    Core.SetVar(ICompatibleProperty_GetProperty) = Self.Item(prop)
-
+Private Property Let IValueObject_Fields(key As Variant, RHS As Variant)
+    Self.Add key, RHS
+End Property
+Private Property Get IValueObject_Fields(key As Variant) As Variant
+    Objects.SetVar(IValueObject_Fields) = Self.Item(key)
+End Property
+Private Property Get IValueObject_Count() As Long
+    IValueObject_Count = Self.Count
+End Property
+Private Property Get IValueObject_FieldNames() As Variant
+    IValueObject_FieldNames = Self.Keys
+End Property
+Private Function IValueObject_ToString() As String
+    IValueObject_ToString = Self.ToString
 End Function

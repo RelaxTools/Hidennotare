@@ -65,7 +65,7 @@ Private mParent As MTable
 '---------------------------------------
 ' コンストラクタ
 '---------------------------------------
-Public Function CreateObject(Value As String, Optional ByRef Parent As MTable = Nothing) As MTable
+Public Function NewInstance(Value As String, Optional ByRef Parent As MTable = Nothing) As MTable
     
     Dim m As MTable
     
@@ -74,7 +74,7 @@ Public Function CreateObject(Value As String, Optional ByRef Parent As MTable = 
     m.Value = Value
     Set m.Parent = Parent
     
-    Set CreateObject = m
+    Set NewInstance = m
 
 End Function
 Public Property Let Value(v As String)
@@ -135,7 +135,7 @@ Public Function PromoteHeaders(t As MTable, Optional m As Variant) As MTable
         strName = t.Name
     End If
     
-    Set PromoteHeaders = MTable.CreateObject(GetClassName & "PromoteHeaders(" & strName & strMFunc & ")", t)
+    Set PromoteHeaders = MTable.NewInstance(GetClassName & "PromoteHeaders(" & strName & strMFunc & ")", t)
 
 End Function
 '>---
@@ -187,7 +187,7 @@ Public Function InsertRows(t As MTable, offset As Long, lst As Variant) As MTabl
         strName = t.Name
     End If
     
-    Set InsertRows = MTable.CreateObject(GetClassName & "InsertRows(" & strName & ", " & offset & ", " & strMFunc & ")", t)
+    Set InsertRows = MTable.NewInstance(GetClassName & "InsertRows(" & strName & ", " & offset & ", " & strMFunc & ")", t)
 
 End Function
 '>---
@@ -238,7 +238,7 @@ Public Function TransformColumnTypes(t As MTable, lst As Variant) As MTable
         strName = t.Name
     End If
     
-    Set TransformColumnTypes = MTable.CreateObject(GetClassName & "TransformColumnTypes(" & strName & ", " & strMFunc & ")", t)
+    Set TransformColumnTypes = Me.NewInstance(GetClassName & "TransformColumnTypes(" & strName & ", " & strMFunc & ")", t)
 
 End Function
 '>---
@@ -281,7 +281,7 @@ Public Function Skip(t As MTable, countOrCondition As Long) As MTable
         strBuf = t.Name
     End If
     
-    Set Skip = MTable.CreateObject(GetClassName & "Skip(" & strBuf & ", " & countOrCondition & ")", t)
+    Set Skip = Me.NewInstance(GetClassName & "Skip(" & strBuf & ", " & countOrCondition & ")", t)
     
 End Function
 '>---

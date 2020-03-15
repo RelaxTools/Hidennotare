@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v2
+' [Hidennotare] v2.5
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -135,7 +135,7 @@ Private Function getObjectLink() As String
 
     Const MAXSIZE = 4096
     Dim MyString As String
-    Dim Size As Long
+    Dim size As Long
     Dim data() As Byte
     Dim i As Long
   
@@ -146,17 +146,17 @@ Private Function getObjectLink() As String
         
         If hMem <> 0 Then
         
-            Size = CLng(GlobalSize(hMem))
+            size = CLng(GlobalSize(hMem))
             p = GlobalLock(hMem)
             
             If p <> 0 Then
                 
-                ReDim data(0 To Size - 1)
-                Call CopyMemory(data(0), ByVal p, Size)
+                ReDim data(0 To size - 1)
+                Call CopyMemory(data(0), ByVal p, size)
                 
                 Call GlobalUnlock(hMem)
                 
-                For i = 0 To Size - 1
+                For i = 0 To size - 1
                     If data(i) = 0 Then
                         data(i) = &H9
                     End If
@@ -262,7 +262,7 @@ Public Function GetCopyClipText() As String
     Dim ret As String
     Dim SB As IStringBuilder
     
-    Set SB = StringBuilder.CreateObject
+    Set SB = StringBuilder.NewInstance
     
     If OpenClipboard(0) <> 0 Then
    

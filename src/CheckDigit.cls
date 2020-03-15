@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v2
+' [Hidennotare] v2.5
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -90,11 +90,11 @@ Function IsLuhn(ByVal strNo As String) As Boolean
     
         If (i Mod 2) = 1 Then
             '奇数桁のみを加算（チェックディジットを除く）
-            lngOdd = lngOdd + Val(Mid$(strNo, lngLen - i + 1, 1))
+            lngOdd = lngOdd + val(Mid$(strNo, lngLen - i + 1, 1))
         Else
             '偶数桁のみを加算
             Dim lngWork As Long
-            lngWork = Val(Mid$(strNo, lngLen - i + 1, 1)) * 2
+            lngWork = val(Mid$(strNo, lngLen - i + 1, 1)) * 2
             lngEvn = lngEvn + Fix(lngWork / 10) + lngWork Mod 10
         End If
     
@@ -133,7 +133,7 @@ Function IsMyNumber(ByVal strNo As String) As Boolean
 
     For i = 0 To 11
     
-        c = Val(Mid$(strNo, 11 - i + 1, 1))
+        c = val(Mid$(strNo, 11 - i + 1, 1))
         
         Select Case i
             Case 1 To 6
@@ -182,7 +182,7 @@ Function IsCorpNumber(ByVal strNo As String) As Boolean
 
     For i = 1 To 13
     
-        c = Val(Mid$(strNo, 13 - i + 1, 1))
+        c = val(Mid$(strNo, 13 - i + 1, 1))
         
         Select Case i
             Case 1 To 12
@@ -234,14 +234,14 @@ Function IsModulus10(ByVal strNo As String) As Boolean
     For i = 1 To lngLen
     
         If i = 1 Then
-            lngCheckDigit = Val(Mid$(strNo, lngLen - i + 1, 1))
+            lngCheckDigit = val(Mid$(strNo, lngLen - i + 1, 1))
         Else
             If (i Mod 2) = 1 Then
                 '奇数桁のみを加算（チェックディジットを除く）
-                lngOdd = lngOdd + Val(Mid$(strNo, lngLen - i + 1, 1))
+                lngOdd = lngOdd + val(Mid$(strNo, lngLen - i + 1, 1))
             Else
                 '偶数桁のみを加算
-                lngEvn = lngEvn + Val(Mid$(strNo, lngLen - i + 1, 1))
+                lngEvn = lngEvn + val(Mid$(strNo, lngLen - i + 1, 1))
             End If
         End If
     Next
@@ -304,7 +304,7 @@ Function IsModulus11_10_2(ByVal strNo As String) As Boolean
                 Case 1
                     lngWeight = 10
             End Select
-            lngWork = lngWork + (Val(Mid$(strNo, lngLen - i + 1, 1)) * i)
+            lngWork = lngWork + (val(Mid$(strNo, lngLen - i + 1, 1)) * i)
         End If
     Next
 
@@ -325,7 +325,7 @@ Private Function xVal(ByVal strNo) As Long
     If LCase(strNo) = "x" Then
         xVal = 10
     Else
-        xVal = Val(strNo)
+        xVal = val(strNo)
     End If
 End Function
 '--------------------------------------------------------------
@@ -360,7 +360,7 @@ Function IsModulus11_2_7(ByVal strNo As String) As Boolean
     For i = 1 To lngLen
     
         If i = 1 Then
-            lngCheckDigit = Val(Mid$(strNo, lngLen - i + 1, 1))
+            lngCheckDigit = val(Mid$(strNo, lngLen - i + 1, 1))
         Else
             Select Case (i Mod 6)
                 Case 2
@@ -376,7 +376,7 @@ Function IsModulus11_2_7(ByVal strNo As String) As Boolean
                 Case 1
                     lngWeight = 7
             End Select
-            lngWork = lngWork + (Val(Mid$(strNo, lngLen - i + 1, 1)) * lngWeight)
+            lngWork = lngWork + (val(Mid$(strNo, lngLen - i + 1, 1)) * lngWeight)
         End If
     Next
 
@@ -421,9 +421,9 @@ Function IsModulus11_Pref(ByVal strNo As String) As Boolean
     For i = 1 To lngLen
     
         If i = 1 Then
-            lngCheckDigit = Val(Mid$(strNo, lngLen - i + 1, 1))
+            lngCheckDigit = val(Mid$(strNo, lngLen - i + 1, 1))
         Else
-            lngWork = lngWork + (Val(Mid$(strNo, lngLen - i + 1, 1)) * i)
+            lngWork = lngWork + (val(Mid$(strNo, lngLen - i + 1, 1)) * i)
         End If
     Next
 

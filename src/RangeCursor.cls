@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v2
+' [Hidennotare] v2.5
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -60,7 +60,7 @@ Attribute VB_Exposed = True
 '>
 '>```
 '>Dim IC As ICursor
-'>Set IC = RangeCursor.CreateObject(Selection)
+'>Set IC = RangeCursor.NewInstance(Selection)
 '>
 '>Do Until IC.Eof
 '>
@@ -88,7 +88,7 @@ Private mRow As Long
 '>**Syntax**
 '>
 '>```
-'>Set return = RangeCursor.CreateObject(range)
+'>Set return = RangeCursor.NewInstance(range)
 '>```
 '>
 '>**Parameters**
@@ -115,16 +115,16 @@ Private mRow As Long
 '>
 '>* None
 '>
-Public Function CreateObject(rng As Range) As ICursor
+Public Function NewInstance(rng As Range) As ICursor
     
     Dim RC As IRangeCursorParam
     Set RC = New RangeCursor
     
     Set RC.Source = rng
     
-    Set CreateObject = RC
+    Set NewInstance = RC
 
-    CreateObject.MoveFirst
+    NewInstance.MoveFirst
 
 End Function
 Private Property Set IRangeCursorParam_Source(RHS As Range)

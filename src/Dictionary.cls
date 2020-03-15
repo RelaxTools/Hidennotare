@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v2
+' [Hidennotare] v2.5
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -64,7 +64,7 @@ Attribute VB_Exposed = True
 '>
 '>```
 '>Dim dic As IDictionary
-'>Set dic = New Dictionary
+'>Set dic = Dictionary.NewInstance
 '>
 '>dic.Add Key, Value
 '>```
@@ -77,7 +77,7 @@ Attribute VB_Exposed = True
 '>* IDictionary
 '>* INewInstance
 '>* ICompatibleProperty
-'>* Convert
+'>* StringUtils
 '>* ICursor
 '>
 '-----------------------------------------------------------------------------------------------------
@@ -85,7 +85,7 @@ Option Explicit
 Implements ICursor
 Implements IDictionary
 Implements INewInstance
-Implements ICompatibleProperty
+Implements IValueObject
 
 Private mCol As Collection
 Private mDic As Object
@@ -96,7 +96,7 @@ Private mIndex As Long
 '>**Syntax**
 '>
 '>```
-'>Set obj = Dictionary.CreateObject()
+'>Set obj = Dictionary.NewInstance()
 '>```
 '>
 '>**Parameters**
@@ -124,36 +124,39 @@ Private mIndex As Long
 '>* None
 '>
 '>---
-Public Function CreateObject() As IDictionary
+Public Function NewInstance() As IDictionary
 
-    Set CreateObject = New Dictionary
-    
-    
-    
-    
-    
+    Set NewInstance = New Dictionary
     Call Class_Terminate
+
 End Function
 '--------------------------------------------------------------
 '  Initialize
 '--------------------------------------------------------------
 Private Sub Class_Initialize()
+    
     Set mDic = VBA.CreateObject("Scripting.Dictionary")
     mDic.CompareMode = vbBinaryCompare
     mIndex = 0
+
 End Sub
 '--------------------------------------------------------------
 '  Terminate
 '--------------------------------------------------------------
 Private Sub Class_Terminate()
+    
     Set mDic = Nothing
+
 End Sub
+
+
+
 '--------------------------------------------------------------
 ' For Each 用
 '--------------------------------------------------------------
 Private Function IDictionary_NewEnum() As stdole.IUnknown
 
-    Set mCol = Core.ArrayToCollection(mDic.Keys)
+    Set mCol = Arrays.ToCollection(mDic.Keys)
     Set IDictionary_NewEnum = mCol.[_NewEnum]
 
 End Function
@@ -192,7 +195,9 @@ End Function
 '>* IDictionary
 '>
 Private Sub IDictionary_Add(KeyValue As Variant, obj As Variant)
+    
     mDic.Add KeyValue, obj
+
 End Sub
 '>---
 '>#### ContainsKey(IDictionary I/F)
@@ -230,7 +235,9 @@ End Sub
 '>* IDictionary
 '>
 Private Function IDictionary_ContainsKey(KeyValue As Variant) As Boolean
+    
     IDictionary_ContainsKey = mDic.Exists(KeyValue)
+
 End Function
 '>---
 '>#### Keys(IDictionary I/F)
@@ -267,7 +274,9 @@ End Function
 '>* IDictionary
 '>
 Private Function IDictionary_Keys() As Variant
+    
     IDictionary_Keys = mDic.Keys
+
 End Function
 '>---
 '>#### Count(IDictionary I/F)
@@ -304,7 +313,9 @@ End Function
 '>* IDictionary
 '>
 Private Property Get IDictionary_Count() As Long
+    
     IDictionary_Count = mDic.Count
+
 End Property
 '>---
 '>#### Item(IDictionary I/F)
@@ -342,7 +353,9 @@ End Property
 '>* IDictionary
 '>
 Private Property Get IDictionary_Item(KeyValue As Variant) As Variant
-    Core.SetVar(IDictionary_Item) = mDic.Item(KeyValue)
+    
+    Objects.SetVar(IDictionary_Item) = mDic.Item(KeyValue)
+
 End Property
 '>---
 '>#### Item(IDictionary I/F)
@@ -380,7 +393,9 @@ End Property
 '>* IDictionary
 '>
 Private Property Let IDictionary_Item(KeyValue As Variant, NewItem As Variant)
+    
     mDic.Item(KeyValue) = NewItem
+
 End Property
 '>---
 '>#### Item(IDictionary I/F)
@@ -418,13 +433,17 @@ End Property
 '>* IDictionary
 '>
 Private Property Set IDictionary_Item(KeyValue As Variant, NewItem As Variant)
+    
     Set mDic.Item(KeyValue) = NewItem
+
 End Property
 '--------------------------------------------------------------
 '  キー設定
 '--------------------------------------------------------------
 Private Property Let IDictionary_Key(OldKey As Variant, NewKey As Variant)
-    mDic.Key(OldKey) = NewKey
+    
+    mDic.key(OldKey) = NewKey
+
 End Property
 '>---
 '>#### Remove(IDictionary I/F)
@@ -460,7 +479,9 @@ End Property
 '>* IDictionary
 '>
 Private Sub IDictionary_Remove(KeyValue As Variant)
+    
     mDic.Remove KeyValue
+
 End Sub
 '>---
 '>#### Clear(IDictionary I/F)
@@ -495,8 +516,10 @@ End Sub
 '>* IDictionary
 '>
 Private Sub IDictionary_Clear()
+    
     mDic.RemoveAll
     mIndex = 0
+
 End Sub
 '>---
 '>#### ToString(IDictionary I/F)
@@ -533,65 +556,70 @@ End Sub
 '>* IDictionary
 '>
 Private Function IDictionary_ToString() As String
-    IDictionary_ToString = ToString()
-End Function
-Private Function ToString() As String
-
+    
     Dim Item  As Variant
     Dim KeyValue As Variant
     
     Dim v  As Variant
     
-    Dim SB As IStringBuilder
-    Set SB = StringBuilder.CreateObject
+    With StringBuilder.NewInstance
     
-    For Each KeyValue In mDic.Keys
-    
-        Core.SetVar(v) = mDic.Item(KeyValue)
-    
-        Select Case True
-            Case IsObject(v)
-                
-                SB.Append """" & KeyValue & """:" & v.ToString
-            
-            Case IsEmpty(v)
-                
-                SB.Append """" & KeyValue & """:" & "null"
-            
-            Case Else
-                Select Case VarType(v)
-                    
-                    Case vbBoolean
+        For Each KeyValue In mDic.Keys
         
-                        SB.Append """" & KeyValue & """:" & LCase(CStr(v))
+            Objects.SetVar(v) = mDic.Item(KeyValue)
         
-                    Case vbString
+            Select Case True
+                Case Objects.InstanceOfIDictionary(v)
                     
-                        SB.Append """" & KeyValue & """:""" & Core.Escape(v) & """"
+                    .Append """" & KeyValue & """:" & Objects.AsIDictionary(v).ToString
+                
+                Case Objects.InstanceOfIList(v)
                     
+                    .Append """" & KeyValue & """:" & Objects.AsIList(v).ToString
+                
+                Case Objects.InstanceOfIValueObject(v)
+                    
+                    .Append """" & KeyValue & """:" & Objects.AsIValueObject(v).ToString
+                
+                Case IsEmpty(v)
+                    
+                    .Append """" & KeyValue & """:" & "null"
+                
+                Case Else
+                    Select Case VarType(v)
+                        
+                        Case vbBoolean
+            
+                            .Append """" & KeyValue & """:" & LCase(CStr(v))
+            
+                        Case vbString
+                        
+                            .Append """" & KeyValue & """:""" & StringUtils.Escape(v) & """"
+                        
 #If Win64 Then
-                    Case vbByte, vbInteger, vbLong, vbSingle, vbDouble, vbCurrency, vbDecimal, vbLongLong
+                        Case vbByte, vbInteger, vbLong, vbSingle, vbDouble, vbCurrency, vbDecimal, vbLongLong
 #Else
-                    Case vbByte, vbInteger, vbLong, vbSingle, vbDouble, vbCurrency, vbDecimal
+                        Case vbByte, vbInteger, vbLong, vbSingle, vbDouble, vbCurrency, vbDecimal
 #End If
-        
-                        SB.Append """" & KeyValue & """:" & CStr(v)
-        
-                    Case Else
-        
-                        'エラー
-                        Err.Raise 512 + 1, TypeName(Me) & ".ToString", "not cast type (" & TypeName(v) & ")"
-        
-                End Select
-
-        End Select
+            
+                            .Append """" & KeyValue & """:" & CStr(v)
+            
+                        Case Else
+            
+                            'エラー
+                            Err.Raise 512 + 1, TypeName(Me) & ".ToString", "not cast type (" & TypeName(v) & ")"
+            
+                    End Select
     
-    Next
-
-    ToString = SB.ToString(", ", "{", "}")
+            End Select
+        
+        Next
+    
+        IDictionary_ToString = .ToString(", ", "{", "}")
+    
+    End With
 
 End Function
-
 '>---
 '>#### GetCursor(IDictionary I/F)
 '>
@@ -631,7 +659,9 @@ Private Property Get IDictionary_GetCursor() As ICursor
     Set IDictionary_GetCursor = Me
 End Property
 Private Property Set IDictionary_Comparer(RHS As IComparer)
+    
     Err.Raise 512 + 1, TypeName(Me) & ".Comparer", "Not Support Property"
+
 End Property
 '>---
 '>#### Eof(ICursor I/F)
@@ -668,7 +698,9 @@ End Property
 '>* ICursor
 '>
 Private Property Get ICursor_Eof() As Boolean
+    
     ICursor_Eof = mIndex > mDic.Count - 1
+
 End Property
 '>---
 '>#### Item(ICursor I/F)
@@ -705,6 +737,7 @@ End Property
 '>* ICursor
 '>
 Private Property Get ICursor_Item(Optional ByVal opt As Variant) As Variant
+    
     Dim v As Variant
     
     v = IDictionary_Keys
@@ -749,7 +782,9 @@ End Property
 '>* ICursor
 '>
 Private Sub ICursor_MoveFirst()
+    
     mIndex = 0
+
 End Sub
 '>---
 '>#### MoveNext(ICursor I/F)
@@ -828,10 +863,7 @@ End Sub
 '>
 Private Function INewInstance_NewInstance() As Object
     
-    Dim d As IDictionary
-    Set d = New Dictionary
-    
-    Set INewInstance_NewInstance = d
+    Set INewInstance_NewInstance = Me.NewInstance
 
 End Function
 '>---
@@ -871,15 +903,15 @@ End Function
 '>* IDictionary
 '>* ICompatibleProperty
 '>
-Private Sub ICompatibleProperty_SetProperty(prop As Variant, Val As Variant)
-    
-    If Self.ContainsKey(prop) Then
-        Core.SetVar(Self.Item(prop)) = Val
-    Else
-        Self.Add prop, Val
-    End If
-    
-End Sub
+'Private Sub ICompatibleProperty_SetProperty(prop As Variant, val As Variant)
+'
+'    If Self.ContainsKey(prop) Then
+'        Objects.SetVar(Self.Item(prop)) = val
+'    Else
+'        Self.Add prop, val
+'    End If
+'
+'End Sub
 '>---
 '>#### GetProperty(ICompatibleProperty I/F)
 '>
@@ -915,12 +947,41 @@ End Sub
 '>* IDictionary
 '>* ICompatibleProperty
 '>
-Private Function ICompatibleProperty_GetProperty(prop As Variant) As Variant
-
-    Core.SetVar(ICompatibleProperty_GetProperty) = Self.Item(prop)
-    
-End Function
+'Private Function ICompatibleProperty_GetProperty(prop As Variant) As Variant
+'
+'    Objects.SetVar(ICompatibleProperty_GetProperty) = Self.Item(prop)
+'
+'End Function
 
 Private Function Self() As IDictionary
+
     Set Self = Me
+
+End Function
+Private Property Let IValueObject_Fields(key As Variant, RHS As Variant)
+    
+    If Self.ContainsKey(key) Then
+        Objects.SetVar(Self.Item(key)) = RHS
+    Else
+        Self.Add key, RHS
+    End If
+
+End Property
+
+Private Property Get IValueObject_Fields(key As Variant) As Variant
+
+    Objects.SetVar(IValueObject_Fields) = Self.Item(key)
+
+End Property
+
+Private Property Get IValueObject_Count() As Long
+    IValueObject_Count = Self.Count
+End Property
+
+Private Property Get IValueObject_FieldNames() As Variant
+    IValueObject_FieldNames = Self.Keys
+End Property
+
+Private Function IValueObject_ToString() As String
+    IValueObject_ToString = Self.ToString()
 End Function

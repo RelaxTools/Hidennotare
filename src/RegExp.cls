@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v2
+' [Hidennotare] v2.5
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -117,7 +117,7 @@ Function Test(ByVal strText As String, ByVal strExp As String, Optional ByVal bl
 
     With RE
         .Pattern = strExp
-        .IgnoreCase = blnIgnoreCase
+        .ignorecase = blnIgnoreCase
         .Global = False '１つでもマッチすれば終了
         Test = .Test(strText)
     End With
@@ -160,11 +160,11 @@ End Function
 '>
 Function Replace(ByVal strText As String, ByVal strExp As String, ByVal strReplace As String, Optional ByVal blnIgnoreCase As Boolean = False) As String
 
-    strReplace = Core.Escape(strReplace)
+    strReplace = StringUtils.Escape(strReplace)
     
     With RE
         .Pattern = strExp
-        .IgnoreCase = blnIgnoreCase
+        .ignorecase = blnIgnoreCase
         .Global = True '全体を検索
         Replace = .Replace(strText, strReplace)
     End With
@@ -220,7 +220,7 @@ End Function
 Function Execute(ByVal strText As String, ByVal strExp As String, Optional ByVal blnIgnoreCase As Boolean = False) As Collection
 
     Dim col As Collection
-    Dim matches As Object
+    Dim Matches As Object
     Dim m As Object
     Dim r As MatchBean
     
@@ -229,14 +229,14 @@ Function Execute(ByVal strText As String, ByVal strExp As String, Optional ByVal
     With RE
         
         .Pattern = strExp
-        .IgnoreCase = blnIgnoreCase
+        .ignorecase = blnIgnoreCase
         .Global = True  '全体を検索
         
-        Set matches = .Execute(strText)
+        Set Matches = .Execute(strText)
     
     End With
         
-    For Each m In matches
+    For Each m In Matches
     
         'FirstIndexは0からなので+1
         
@@ -294,7 +294,7 @@ Function Check(ByVal strExp As String)
 
     With RE
         .Pattern = strExp
-        .IgnoreCase = False
+        .ignorecase = False
         .Global = False
         .Execute ""
     End With

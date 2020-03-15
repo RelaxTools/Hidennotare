@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v2
+' [Hidennotare] v2.5
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -198,7 +198,7 @@ Public Sub SavePicture(Picture As IPictureDisp, FileName As String)
     
 End Sub
 
-Public Function LoadIcon(ByVal FileName As String, Optional ByVal Size As IconConstants = IconConstants.IconSmall) As IPictureDisp
+Public Function LoadIcon(ByVal FileName As String, Optional ByVal size As IconConstants = IconConstants.IconSmall) As IPictureDisp
 
     Dim hIconLarge As LongPtr
     Dim hIconSmall As LongPtr
@@ -209,7 +209,7 @@ Public Function LoadIcon(ByVal FileName As String, Optional ByVal Size As IconCo
         
         ExtractIconExW StrPtr(FileName), 1, hIconLarge, hIconSmall, 1
 
-        Select Case Size
+        Select Case size
             Case IconConstants.IconSmall
                 hIcon = hIconSmall
             
@@ -228,7 +228,7 @@ Public Function LoadIcon(ByVal FileName As String, Optional ByVal Size As IconCo
 
     If hIcon = 0 Then
         
-        If Size = IconConstants.IconSmall Then
+        If size = IconConstants.IconSmall Then
             ret = SHGetFileInfoW(StrPtr(FileName), FILE_ATTRIBUTE_NORMAL, info, Len(info), SHGFI_USEFILEATTRIBUTES Or SHGFI_TYPENAME Or SHGFI_ICON Or SHGFI_SMALLICON)
         Else
             ret = SHGetFileInfoW(StrPtr(FileName), FILE_ATTRIBUTE_NORMAL, info, Len(info), SHGFI_USEFILEATTRIBUTES Or SHGFI_TYPENAME Or SHGFI_ICON)

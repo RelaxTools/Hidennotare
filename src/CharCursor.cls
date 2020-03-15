@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v2
+' [Hidennotare] v2.5
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -63,7 +63,7 @@ Attribute VB_Exposed = True
 '>strBuf ="123"
 '>
 '>Dim IC As ICursor
-'>Set IC = CharCursor.CreateObject(strBuf)
+'>Set IC = CharCursor.NewInstance(strBuf)
 '>
 '>Do Until IC.Eof
 '>
@@ -83,6 +83,7 @@ Attribute VB_Exposed = True
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
+
 Implements ICursor
 Implements ICharCursorParam
 
@@ -97,7 +98,7 @@ End Sub
 '>**Syntax**
 '>
 '>```
-'>Set ret = CharCursor.CreateObject(Source)
+'>Set ret = CharCursor.NewInstance(Source)
 '>```
 '>
 '>**Parameters**
@@ -124,7 +125,7 @@ End Sub
 '>
 '>* None
 '>
-Public Function CreateObject(ByVal Source As String) As ICursor
+Public Function NewInstance(ByVal Source As String) As ICursor
 
     Dim CC As ICharCursorParam
     
@@ -132,11 +133,14 @@ Public Function CreateObject(ByVal Source As String) As ICursor
     
     CC.Source = Source
     
-    Set CreateObject = CC
+    Set NewInstance = CC
 
-    CreateObject.MoveFirst
+    NewInstance.MoveFirst
 
 End Function
+
+
+
 Private Property Let ICharCursorParam_Source(RHS As String)
     mBuf = RHS
 End Property

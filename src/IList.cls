@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v2
+' [Hidennotare] v2.5
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -65,7 +65,7 @@ Attribute VB_Exposed = True
 '>```
 '>Dim lst As IList
 '>
-'>Set lst = New ArrayList
+'>Set lst = ArrayList.NewInstance()
 '>
 '>lst.Add "Data"
 '>
@@ -90,7 +90,7 @@ Attribute Item.VB_UserMemId = 0
 End Property
 Public Sub RemoveAt(idx As Long)
 End Sub
-Public Sub Sort(Optional ByVal CP As IComparer = Nothing)
+Public Sub sort(Optional ByVal CP As IComparer = Nothing)
 End Sub
 Public Function ToArray() As Variant
 End Function

@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v2
+' [Hidennotare] v2.5
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -65,7 +65,7 @@ Attribute VB_Exposed = True
 '>```
 '>Dim dic As IDictionary
 '>
-'>Set dic = New Dictionary
+'>Set dic = Dictionary.NewInstance
 '>
 '>dic.Add Key, Data
 '>```
@@ -73,7 +73,7 @@ Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 
-Public Sub Add(Key As Variant, Item As Variant)
+Public Sub Add(key As Variant, Item As Variant)
 
 End Sub
 Public Function NewEnum() As stdole.IUnknown
@@ -84,24 +84,24 @@ Public Property Get Count() As Long
 
 End Property
 
-Public Function ContainsKey(Key As Variant) As Boolean
+Public Function ContainsKey(key As Variant) As Boolean
 
 End Function
 
-Public Property Let Item(Key As Variant, RHS As Variant)
+Public Property Let Item(key As Variant, RHS As Variant)
 Attribute Item.VB_UserMemId = 0
     'Attribute Item.VB_UserMemId = 0
 End Property
 
-Public Property Get Item(Key As Variant) As Variant
+Public Property Get Item(key As Variant) As Variant
 
 End Property
 
-Public Property Set Item(Key As Variant, RHS As Variant)
+Public Property Set Item(key As Variant, RHS As Variant)
 
 End Property
 
-Public Property Let Key(Key As Variant, RHS As Variant)
+Public Property Let key(key As Variant, RHS As Variant)
 
 End Property
 
@@ -109,7 +109,7 @@ Public Function Keys() As Variant
 
 End Function
 
-Public Sub Remove(Key As Variant)
+Public Sub Remove(key As Variant)
 
 End Sub
 

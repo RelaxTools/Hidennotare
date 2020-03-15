@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v2
+' [Hidennotare] v2.5
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -46,7 +46,7 @@ Attribute VB_Exposed = True
 '>**Example**
 '>
 '>```
-'>With Using.CreateObject(New PowerPoint)
+'>With Using.NewInstance(New PowerPoint)
 '>   .Args(1).GetInstance
 '>End With
 '>```

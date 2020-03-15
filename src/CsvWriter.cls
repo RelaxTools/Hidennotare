@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v2
+' [Hidennotare] v2.5
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -80,7 +80,7 @@ Private mQuotation As Boolean
 '>**Syntax**
 '>
 '>```
-'>Set ret = CsvWriter.CreateObject(FileName,
+'>Set ret = CsvWriter.NewInstance(FileName,
 '>                                 [NewLineCode = NewLineCodeConstants.CRLF],
 '>                                 [Encode = EncodeConstants.CP932],
 '>                                 [Mode = OpenModeConstants.デフォルトOutput],
@@ -118,7 +118,7 @@ Private mQuotation As Boolean
 '>
 '>strFile = "C:\Test.csv"
 '>
-'>Set IW = CsvWriter.CreateObject(strFile)
+'>Set IW = CsvWriter.NewInstance(strFile)
 '>
 '>IW.Append Array("a", "b", "c")
 '>IW.Flash
@@ -130,7 +130,7 @@ Private mQuotation As Boolean
 '>* None
 '>
 '--------------------------------------------------------------
-Public Function CreateObject(ByVal FileName As String, _
+Public Function NewInstance(ByVal FileName As String, _
                              Optional ByVal NewLineCode As NewLineCodeConstants = NewLineCodeConstants.NewLineCodeCRLF, _
                              Optional ByVal Encode As EncodeConstants = EncodeConstants.EncodeCP932, _
                              Optional ByVal Mode As OpenModeConstants = OpenModeConstants.OpenModeOutput, _
@@ -149,7 +149,7 @@ Public Function CreateObject(ByVal FileName As String, _
     
     FP.Init
     
-    Set CreateObject = FP
+    Set NewInstance = FP
     
 End Function
 
@@ -172,7 +172,7 @@ End Property
 
 Private Sub ICsvWriterParam_Init()
     'TextWriterに委譲する。
-    Set mIW = TextWriter.CreateObject(mFileName, mNewLineCode, mEncode, mMode, mBom)
+    Set mIW = TextWriter.NewInstance(mFileName, mNewLineCode, mEncode, mMode, mBom)
 End Sub
 
 Private Property Let ICsvWriterParam_Mode(RHS As OpenModeConstants)
@@ -188,7 +188,7 @@ Private Sub Class_Terminate()
     Set mIW = Nothing
 End Sub
 
-Private Sub IWriter_WriteData(ByVal Args As Variant)
+Private Sub IWriter_WriteData(ByVal args As Variant)
     Err.Raise 512 + 1, TypeName(Me) & ".IWriter_WriteData", "Not Support Method"
 End Sub
 
@@ -226,21 +226,21 @@ End Sub
 '>
 '>* CsvWriter.Flush
 '>
-Private Sub IWriter_WriteLine(ByVal Args As Variant)
+Private Sub IWriter_WriteLine(ByVal args As Variant)
     
     Dim c As Variant
     Dim SB As IStringBuilder
-    Set SB = StringBuilder.CreateObject
+    Set SB = StringBuilder.NewInstance
 
-    If IsArray(Args) Then
-        For Each c In Args
+    If IsArray(args) Then
+        For Each c In args
             SB.Append AddQuot(c)
         Next
         'TextWriterに委譲する。
         mIW.WriteLine SB.ToString(mDelimiter)
     Else
         'TextWriterに委譲する。
-        mIW.WriteLine AddQuot(Args)
+        mIW.WriteLine AddQuot(args)
     End If
 
 End Sub

@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v2
+' [Hidennotare] v2.5
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -43,7 +43,7 @@ Attribute VB_Exposed = True
 '>ブック参照／編集クラス<br>
 '>With で使用しブックのオープン。End With でクローズ。<br>
 '>別プロセスのExcelで使用する場合はApplicationオブジェクトを渡す。<br>
-'>With BookReader.CreateObject(ファイル名, 読み取り専用, Applicationオブジェクト)<br>
+'>With BookReader.NewInstance(ファイル名, 読み取り専用, Applicationオブジェクト)<br>
 '>**このクラスは Staticクラス(Attribute VB_PredeclaredId = True) です。**
 '>
 '>**Dependent**
@@ -84,7 +84,7 @@ End Sub
 '>**Syntax**
 '>
 '>```
-'>Set objct = BookReader.CreateObject(FileName,
+'>Set objct = BookReader.NewInstance(FileName,
 '>                                   [Readonly = True],
 '>                                   [Application = Excel.Application])
 '>```
@@ -116,7 +116,7 @@ End Sub
 '>
 '>strFile = "C:\Test.xlsx"
 '>
-'>With BookReader.CreateObject(strFile)
+'>With BookReader.NewInstance(strFile)
 '>
 '>    For Each WS In .VisibleSheets
 '>
@@ -131,7 +131,7 @@ End Sub
 '>
 '>* None
 '>
-Public Function CreateObject(ByVal BookName As String, Optional ByVal ReadOnly As Boolean = True, Optional App As Application = Nothing) As IBookReader
+Public Function NewInstance(ByVal BookName As String, Optional ByVal ReadOnly As Boolean = True, Optional App As Application = Nothing) As IBookReader
     
     Dim BR As IBookReaderParam
     
@@ -148,7 +148,7 @@ Public Function CreateObject(ByVal BookName As String, Optional ByVal ReadOnly A
     
     BR.Init
     
-    Set CreateObject = BR
+    Set NewInstance = BR
 
 End Function
 Private Property Set IBookReaderParam_Application(RHS As Application)

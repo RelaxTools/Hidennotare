@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v2
+' [Hidennotare] v2.5
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -90,6 +90,8 @@ Private mLogType As Long
 Private mlngHistory As Long
 Private mLevelStr As Variant
 Private mFSO As Object
+
+Private mAppName As String
 '--------------------------------------------------------------
 '　Class_Initialize
 '--------------------------------------------------------------
@@ -102,13 +104,13 @@ Private Sub Class_Initialize()
     mLevelStr = Array("Trace", "Info", "Warn", "Fatal", "None")
     
     '規定のログレベル
-    mLevel = GetSetting(Core.GetTitleName, "Log", "Level", LogLevel.info)
+    mLevel = GetSetting(mAppName, "Log", "Level", LogLevel.info)
     
     'ログ出力先
-    mLogType = CLng(GetSetting(Core.GetTitleName, "Log", "LogType", LogType.Logfile))
+    mLogType = CLng(GetSetting(mAppName, "Log", "LogType", LogType.Logfile))
     
     'ヒストリ数
-    mlngHistory = CLng(GetSetting(Core.GetTitleName, "Log", "History", 5))
+    mlngHistory = CLng(GetSetting(mAppName, "Log", "History", 5))
 
     If mLogType And LogType.Logfile Then
         Call OpenLog
@@ -123,6 +125,12 @@ Private Sub Class_Terminate()
     Close FP
     Set mFSO = Nothing
 End Sub
+'--------------------------------------------------------------
+' アプリケーション名
+'--------------------------------------------------------------
+Public Property Let AppName(v As String)
+    mAppName = v
+End Property
 '>---
 '>#### LogTrace(Logger)
 '>
@@ -419,7 +427,7 @@ Private Sub ReportLog(ByVal l As LogLevel, ByVal strMsg As String)
     On Error GoTo e
 
     If l >= mLevel Then
-        strLog = Core.GetTitleName & "," & Format$(Now, "yyyy-mm-dd,hh:nn:ss") & "." & getMSec & "," & mLevelStr(l) & "," & strMsg
+        strLog = mAppName & "," & Format$(Now, "yyyy-mm-dd,hh:nn:ss") & "." & getMSec & "," & mLevelStr(l) & "," & strMsg
         If mLogType And LogType.DebugWindow Then
             Debug.Print strLog
         End If
@@ -520,7 +528,7 @@ Private Property Get AppDataFolder() As String
     
     With mFSO
     
-        strFolder = .BuildPath(VBA.CreateObject("Wscript.Shell").SpecialFolders("AppData"), Core.GetTitleName & "\Log")
+        strFolder = .BuildPath(VBA.CreateObject("Wscript.Shell").SpecialFolders("AppData"), mAppName & "\Log")
         
         If .FolderExists(strFolder) Then
         Else
@@ -555,7 +563,7 @@ End Sub
 '----------------------------------------------------------------------------------
 Private Function PlaceHolder(ByVal strMsg As String, ByVal p As Variant) As String
 
-    strMsg = Core.Unescape(strMsg)
+    strMsg = StringUtils.Unescape(strMsg)
 
     If UBound(p) >= 0 Then
         Dim i As Long

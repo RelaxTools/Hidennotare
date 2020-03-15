@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v2
+' [Hidennotare] v2.5
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -55,6 +55,29 @@ Attribute VB_Exposed = True
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
+
+Public Enum NewLineCodeConstants
+    NewLineCodeCRLF
+    NewLineCodeLF
+    NewLineCodeNone
+End Enum
+
+Public Enum EncodeConstants
+    EncodeCP932
+    EncodeUTF8
+    EncodeUTF16LE
+End Enum
+
+Public Enum OpenModeConstants
+    OpenModeOutput
+    OpenModeAppend
+End Enum
+
+Public Enum CsvReaderHeaderConstants
+    UseFirstRow
+    AddHedder
+    HeaderNone
+End Enum
 
 Private Declare PtrSafe Function FindFirstFileExW Lib "kernel32" (ByVal lpFileName As LongPtr, ByVal fInfoLevelId As Long, ByRef lpFindFileData As WIN32_FIND_DATA, ByVal fSearchOp As Long, ByVal lpSearchFilter As LongPtr, ByVal dwAdditionalFlags As Long) As LongPtr
 Private Declare PtrSafe Function FindFirstFileW Lib "kernel32" (ByVal lpFileName As LongPtr, lpFindFileData As WIN32_FIND_DATA) As LongPtr
@@ -615,7 +638,7 @@ Public Sub FileSearchEx(ByVal strPath As String, _
                Optional ByVal NaturalSort As Boolean = True, _
                Optional ByVal varExcludedFolder As Variant = "")
 
-'    Dim PL As PairLogger: Set PL = PairLogger.CreateObject(TypeName(Me) & ".FileSearchEx")
+'    Dim PL As PairLogger: Set PL = PairLogger.NewInstance(TypeName(Me) & ".FileSearchEx")
 
     Dim v As Variant
     Dim udtWin32FindData        As WIN32_FIND_DATA      '[WIN32_FIND_DATA]ç\ë¢ëÃ(åüçıåãâ )

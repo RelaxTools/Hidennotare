@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v2
+' [Hidennotare] v2.5
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -186,12 +186,12 @@ Function ExecPowerShell(ByVal strCommand As String) As Long
     strFile = FileIO.BuildPath(FileIO.TempFolder, FileIO.GetTempName & ".ps1")
     
     'テキスト出力
-    TextWriter.CreateObject(strFile).WriteData strCommand
+    TextWriter.NewInstance(strFile).WriteData strCommand
     
     On Error GoTo e
     
     'PowerShell を実行
-    Set SB = StringBuilder.CreateObject
+    Set SB = StringBuilder.NewInstance
     
     SB.Append "powershell"
     SB.Append "-ExecutionPolicy"

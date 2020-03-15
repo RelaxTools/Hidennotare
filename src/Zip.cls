@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v2
+' [Hidennotare] v2.5
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -91,7 +91,6 @@ Option Explicit
 '>
 Public Sub CompressArchive(ByVal ary As Variant, ByVal strDest As String)
 
-    Dim SB As IStringBuilder
     Dim PH As IStringBuilder
     Dim v As Variant
     
@@ -115,29 +114,32 @@ Public Sub CompressArchive(ByVal ary As Variant, ByVal strDest As String)
         End If
     Next
     
-    Set SB = StringBuilder.CreateObject
+    With StringBuilder.NewInstance
     
-    'コマンド
-    SB.Append "Compress-Archive"
+        'コマンド
+        .Append "Compress-Archive"
+        
+        '圧縮するファイル
+        .Append "-Path"
+        
+        Set PH = StringBuilder.NewInstance
+        For Each v In ary
+        
+            PH.Append v, True
+        
+        Next
+        .Append PH.ToString(",")
+        
+        '出力パス
+        .Append "-DestinationPath"
+        .Append strDest, True
     
-    '圧縮するファイル
-    SB.Append "-Path"
-    Set PH = StringBuilder.CreateObject
-    For Each v In ary
-    
-        PH.Append v, True
-    
-    Next
-    SB.Append PH.ToString(",")
-    
-    '出力パス
-    SB.Append "-DestinationPath"
-    SB.Append strDest, True
+        .Append "-Force"
+        
+        'PowerShell を実行する
+        Process.ExecPowerShell .ToString(" ")
 
-    SB.Append "-Force"
-    
-    'PowerShell を実行する
-    Process.ExecPowerShell SB.ToString(" ")
+    End With
 
 End Sub
 '>---
@@ -186,24 +188,24 @@ Public Sub ExpandArchive(ByVal strArchive As String, ByVal strPath As String)
         Err.Raise 512 + 1, TypeName(Me) & ".ExpandArchive", "folder not exists"
     End If
     
-    Dim SB As IStringBuilder
+    With StringBuilder.NewInstance
     
-    Set SB = StringBuilder.CreateObject
+        'コマンド
+        .Append "Expand-Archive"
+        
+        'ZIPファイル
+        .Append "-LiteralPath"
+        .Append strArchive, True
+        
+        '出力パス
+        .Append "-DestinationPath"
+        .Append strPath, True
     
-    'コマンド
-    SB.Append "Expand-Archive"
-    
-    'ZIPファイル
-    SB.Append "-LiteralPath"
-    SB.Append strArchive, True
-    
-    '出力パス
-    SB.Append "-DestinationPath"
-    SB.Append strPath, True
+        .Append "-Force"
+        
+        'PowerShell を実行する
+        Process.ExecPowerShell .ToString(" ")
 
-    SB.Append "-Force"
-    
-    'PowerShell を実行する
-    Process.ExecPowerShell SB.ToString(" ")
+    End With
 
 End Sub

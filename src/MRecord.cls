@@ -90,7 +90,7 @@ End Sub
 '>**Syntax**
 '>
 '>```
-'>Set obj = MRecord.CreateObject()
+'>Set obj = MRecord.NewInstance()
 '>```
 '>
 '>**Parameters**
@@ -118,9 +118,9 @@ End Sub
 '>* None
 '>
 '>---
-Public Function CreateObject() As IDictionary
+Public Function NewInstance() As IDictionary
 
-    Set CreateObject = New MRecord
+    Set NewInstance = New MRecord
     
     
     
@@ -131,7 +131,7 @@ End Function
 '--------------------------------------------------------------
 Private Function IDictionary_NewEnum() As stdole.IUnknown
 
-    Set mCol = Core.ArrayToCollection(mDic.Keys)
+    Set mCol = Arrays.ToCollection(mDic.Keys)
     Set IDictionary_NewEnum = mCol.[_NewEnum]
 
 End Function
@@ -148,7 +148,7 @@ Private Property Get IDictionary_Count() As Long
     IDictionary_Count = mDic.Count
 End Property
 Private Property Get IDictionary_Item(KeyValue As Variant) As Variant
-    Core.SetVar(IDictionary_Item) = mDic.Item(KeyValue)
+    Objects.SetVar(IDictionary_Item) = mDic.Item(KeyValue)
 End Property
 Private Property Let IDictionary_Item(KeyValue As Variant, NewItem As Variant)
     mDic.Item(KeyValue) = NewItem
@@ -157,7 +157,7 @@ Private Property Set IDictionary_Item(KeyValue As Variant, NewItem As Variant)
     Set mDic.Item(KeyValue) = NewItem
 End Property
 Private Property Let IDictionary_Key(OldKey As Variant, NewKey As Variant)
-    mDic.Key(OldKey) = NewKey
+    mDic.key(OldKey) = NewKey
 End Property
 Private Sub IDictionary_Remove(KeyValue As Variant)
     mDic.Remove KeyValue
@@ -176,11 +176,11 @@ Private Function IDictionary_ToString() As String
     Dim v  As Variant
     
     Dim SB As IStringBuilder
-    Set SB = StringBuilder.CreateObject
+    Set SB = StringBuilder.NewInstance
     
     For Each KeyValue In mDic.Keys
     
-        Core.SetVar(v) = mDic.Item(KeyValue)
+        Objects.SetVar(v) = mDic.Item(KeyValue)
     
         Select Case True
             

@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v2
+' [Hidennotare] v2.5
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -58,7 +58,7 @@ Attribute VB_Exposed = True
 '>**Sample**
 '>
 '>```
-'>Set IC = SheetCursor.CreateObject(ActiveSheet, 10, "B")
+'>Set IC = SheetCursor.NewInstance(ActiveSheet, 10, "B")
 '>
 '>Do Until IC.Eof
 '>
@@ -101,7 +101,7 @@ Private mDirection As SheetCursorConstants
 '>**Syntax**
 '>
 '>```
-'>Set return = SheetCursor.CreateObject(
+'>Set return = SheetCursor.NewInstance(
 '>                         worksheet,
 '>                         StartRow/Column,
 '>                         EOF Row/Column,
@@ -137,7 +137,7 @@ Private mDirection As SheetCursorConstants
 '>
 '>* None
 '>
-Public Function CreateObject(ByRef WS As Worksheet, _
+Public Function NewInstance(ByRef WS As Worksheet, _
                             ByVal StartNum As Variant, _
                             ByVal EofNum As Variant, _
                             Optional ByVal Direction As SheetCursorConstants = SheetCursorConstants.DirectionDown, _
@@ -152,9 +152,9 @@ Public Function CreateObject(ByRef WS As Worksheet, _
     SC.StartNum = StartNum
     SC.EofNum = EofNum
 
-    Set CreateObject = SC
+    Set NewInstance = SC
     
-    CreateObject.MoveFirst
+    NewInstance.MoveFirst
 
 End Function
 Private Property Let ISheetCursorParam_Direction(ByVal RHS As SheetCursorConstants)

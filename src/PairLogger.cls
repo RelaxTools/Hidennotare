@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v2
+' [Hidennotare] v2.5
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -50,7 +50,7 @@ Attribute VB_Exposed = True
 '>
 '>```
 '>Dim PL As PairLogger
-'>Set PL = PairLogger.CreateObject(TypeName(Me) & ".FileSearchEx")
+'>Set PL = PairLogger.NewInstance(TypeName(Me) & ".FileSearchEx")
 '>```
 '>
 '>**Dependent**
@@ -73,14 +73,14 @@ Dim mMsg As String
 '----------------------------------------------------
 ' コンストラクタ
 '----------------------------------------------------
-Public Function CreateObject(Message As String) As PairLogger
+Public Function NewInstance(Message As String) As PairLogger
     
     Dim PL As IPairLoggerParam
     
     Set PL = New PairLogger
     PL.Message = Message
     
-    Set CreateObject = PL
+    Set NewInstance = PL
 
 End Function
 Private Property Let IPairLoggerParam_Message(RHS As String)

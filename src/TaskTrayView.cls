@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v2
+' [Hidennotare] v2.5
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -122,7 +122,7 @@ Private mMessage As String
 '---------------------------------------------------------------
 ' コンストラクタ
 '---------------------------------------------------------------
-Public Function CreateObject(ByVal Message As String, Optional Window As Object = Nothing) As TaskTrayView
+Public Function NewInstance(ByVal Message As String, Optional Window As Object = Nothing) As TaskTrayView
     
     Dim TV As TaskTrayView
     
@@ -132,7 +132,7 @@ Public Function CreateObject(ByVal Message As String, Optional Window As Object 
     TV.Message = Message
     TV.Init
     
-    Set CreateObject = TV
+    Set NewInstance = TV
     
 End Function
 Public Property Set Window(v As Object)

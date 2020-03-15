@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v2
+' [Hidennotare] v2.5
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -84,7 +84,7 @@ Private mIndex As Long
 '>**Syntax**
 '>
 '>```
-'>Set ret = CsvReader.CreateObject(
+'>Set ret = CsvReader.NewInstance(
 '>                    FileName,
 '>                    [NewLineCode = NewLineCodeConstants.CRLF],
 '>                    [Encode = EncodeConstants.CP932],
@@ -122,7 +122,7 @@ Private mIndex As Long
 '>
 '>strFile = "C:\Test.csv"
 '>
-'>Set IC = CsvReader.CreateObject(strFile)
+'>Set IC = CsvReader.NewInstance(strFile)
 '>
 '>Do Until IC.Eof
 '>
@@ -139,7 +139,7 @@ Private mIndex As Long
 '>
 '>strFile = "C:\Test.csv"
 '>
-'>Set IR = CsvReader.CreateObject(strFile)
+'>Set IR = CsvReader.NewInstance(strFile)
 '>
 '>Debug.Print IR.ReadAll '改行を指定した場合は配列、指定しなかった場合は文字列
 '>```
@@ -148,7 +148,7 @@ Private mIndex As Long
 '>
 '>* None
 '>
-Public Function CreateObject(ByVal FileName As String, _
+Public Function NewInstance(ByVal FileName As String, _
                             Optional ByVal NewLineCode As NewLineCodeConstants = NewLineCodeConstants.NewLineCodeCRLF, _
                             Optional ByVal Encode As EncodeConstants = EncodeConstants.EncodeCP932, _
                             Optional ByVal Delimiter As String = ",", _
@@ -168,7 +168,7 @@ Public Function CreateObject(ByVal FileName As String, _
     
     FP.Init
 
-    Set CreateObject = FP
+    Set NewInstance = FP
 
 End Function
 Private Property Let ICsvReaderParam_Delimiter(RHS As String)
@@ -192,7 +192,7 @@ End Property
 Private Sub ICsvReaderParam_Init()
     
     'TextReaderに委譲する。改行コードをCsvReader側でパースする。
-    Set mIR = TextReader.CreateObject(mFileName, NewLineCodeConstants.NewLineCodeNone, mEncode)
+    Set mIR = TextReader.NewInstance(mFileName, NewLineCodeConstants.NewLineCodeNone, mEncode)
     
     If IsEmpty(mIR.ReadAll) Then
         Set mCol = New Collection
@@ -328,9 +328,9 @@ Private Property Get ICursor_Item(Optional ByVal opt As Variant) As Variant
 
     'EOF後は最後の値を返す
     If ICursor_Eof Then
-        Core.SetVar(ICursor_Item) = mCol.Item(mCol.Count)(opt)
+        Objects.SetVar(ICursor_Item) = mCol.Item(mCol.Count)(opt)
     Else
-        Core.SetVar(ICursor_Item) = mCol.Item(mIndex)(opt)
+        Objects.SetVar(ICursor_Item) = mCol.Item(mIndex)(opt)
     End If
 
 End Property

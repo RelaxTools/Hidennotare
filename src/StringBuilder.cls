@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v2
+' [Hidennotare] v2.5
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -51,7 +51,7 @@ Attribute VB_Exposed = True
 '>
 '>```
 '>Dim SB As IStringBuilder
-'>Set SB = StringBuilder.CreateObject
+'>Set SB = StringBuilder.NewInstance
 '>
 '>SB.Append "A"
 '>SB.Append "B"
@@ -75,7 +75,7 @@ Private mlngInitCount As Long
 '>**Syntax**
 '>
 '>```
-'>Set SB = StringBuilder.CreateObject(Number)
+'>Set SB = StringBuilder.NewInstance(Number)
 '>```
 '>
 '>**Parameters**
@@ -100,7 +100,7 @@ Private mlngInitCount As Long
 '>```
 '>Dim SB As IStringBuilder
 '>
-'>Set SB = StringBuilder.CreateObject(3000)
+'>Set SB = StringBuilder.NewInstance(3000)
 '>
 '>For i = 1 To 3000
 '>
@@ -113,18 +113,23 @@ Private mlngInitCount As Long
 '>
 '>* None
 '>
-Public Function CreateObject(Optional ByVal Size As Long = 25) As IStringBuilder
+Public Function NewInstance(Optional ByVal size As Long = 25) As IStringBuilder
 
     Dim obj As IStringBuilderParam
     
     Set obj = New StringBuilder
 
-    obj.Size = Size
-    Set CreateObject = obj
+    obj.size = size
+    Set NewInstance = obj
 
-    CreateObject.Clear
+    NewInstance.Clear
 
 End Function
+
+Private Sub Class_Initialize()
+    Call IStringBuilder_Clear
+End Sub
+
 Private Property Let IStringBuilderParam_Size(RHS As Long)
     mlngInitCount = RHS
 End Property
@@ -210,7 +215,7 @@ End Sub
 '>Dim SB As StringBuilder
 '>Dim strBuf As String
 '>
-'>Set SB = New StringBuilder
+'>Set SB = StringBuilder.NewInstance
 '>
 '>strBuf = "A"
 '>
@@ -283,7 +288,7 @@ End Sub
 '>
 '>```
 '>Dim SB As StringBuilder
-'>Set SB = New StringBuilder
+'>Set SB = StringBuilder.NewInstance
 '>
 '>SB.Append "A"
 '>SB.Append "B"
@@ -302,7 +307,7 @@ End Sub
 '>
 '>```
 '>Dim SB As StringBuilder
-'>Set SB = New StringBuilder
+'>Set SB = StringBuilder.NewInstance
 '>
 '>SB.Append "A"
 '>SB.Append "B"
@@ -323,7 +328,7 @@ End Sub
 '>
 '>* None
 '>
-Private Function IStringBuilder_ToString(Optional ByVal Delimiter As String = "", Optional ByVal Header As String = "", Optional ByVal Footer As String = "")
+Private Function IStringBuilder_ToString(Optional ByVal Delimiter As String = "", Optional ByVal Header As String = "", Optional ByVal Footer As String = "") As String
 
     Call resize
     IStringBuilder_ToString = Header & Join(mstrBuf, Delimiter) & Footer
@@ -357,7 +362,7 @@ End Function
 '>
 '>```
 '>Dim SB As StringBuilder
-'>Set SB = New StringBuilder
+'>Set SB = StringBuilder.NewInstance
 '>
 '>SB.Append "A"
 '>SB.Append "B"
@@ -412,7 +417,7 @@ End Function
 '>
 '>```
 '>Dim SB As StringBuilder
-'>Set SB = New StringBuilder
+'>Set SB = StringBuilder.NewInstance
 '>
 '>SB.Append "A"
 '>SB.Append "B"
@@ -465,7 +470,7 @@ End Property
 '>
 '>```
 '>Dim SB As StringBuilder
-'>Set SB = New StringBuilder
+'>Set SB = StringBuilder.NewInstance
 '>
 '>SB.Append "A"
 '>SB.Append "B"
@@ -509,5 +514,4 @@ Private Sub resize()
     End Select
 
 End Sub
-
 

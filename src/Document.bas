@@ -1,7 +1,7 @@
 Attribute VB_Name = "Document"
 '-----------------------------------------------------------------------------------------------------
 '
-' [Hidennotare] v2
+' [Hidennotare] v2.5
 '
 ' Copyright (c) 2019 Yasuhiro Watanabe
 ' https://github.com/RelaxTools/Hidennotare
@@ -112,7 +112,7 @@ Sub OutputMarkDown()
     On Error GoTo e
     
     '目次作成用
-    Set TC = New ArrayList
+    Set TC = ArrayList.NewInstance
     
     '章番号を付加するレベル
     Const Level As Long = 4
@@ -150,23 +150,23 @@ Sub OutputMarkDown()
     
     'VBComponents の取得順が アルファベット順ではないので、SortedDictionary を使用。
     Dim dic As IDictionary
-    Set dic = New SortedDictionary
+    Set dic = SortedDictionary.NewInstance
     
     For Each obj In ThisWorkbook.VBProject.VBComponents
         dic.Add obj.Name, obj
     Next
     
-    Dim Key As Variant
-    For Each Key In dic.Keys
+    Dim key As Variant
+    For Each key In dic.Keys
         
-        Set obj = dic.Item(Key)
+        Set obj = dic.Item(key)
         
         'モジュール名.md を作成する。
         strFile = FileIO.BuildPath(strFolder, obj.Name & ".md")
         
         With obj.CodeModule
             
-            Set SB = StringBuilder.CreateObject
+            Set SB = StringBuilder.NewInstance
             
             For i = 1 To .CountOfLines
                 
@@ -205,7 +205,7 @@ Sub OutputMarkDown()
                 FileIO.TruncateFile strFile
                 
                 'UTF8 & LF で保存
-                With TextWriter.CreateObject(strFile, _
+                With TextWriter.NewInstance(strFile, _
                                              NewLineCodeConstants.NewLineCodeNone, _
                                              EncodeConstants.EncodeUTF8, _
                                              OpenModeConstants.OpenModeOutput, _
@@ -237,19 +237,19 @@ Sub OutputMarkDown()
         strStatic = GetStaticContents(strFile)
         
         'ソート
-        TC.Sort New ExplorerComparer
+        TC.sort New ExplorerComparer
         
         '目次作成
         TC.Insert 0, "#### 2 リファレンス"
         TC.Insert 1, "##### 2.1 標準モジュール"
         For i = 0 To TC.Count - 1
-            If Core.StartsWith(TC.Item(i), "[2.2") Then
+            If StringUtils.StartsWith(TC.Item(i), "[2.2") Then
                 TC.Insert i, "##### 2.2 インターフェイス"
                 Exit For
             End If
         Next
         For i = 0 To TC.Count - 1
-            If Core.StartsWith(TC.Item(i), "[2.3") Then
+            If StringUtils.StartsWith(TC.Item(i), "[2.3") Then
                 TC.Insert i, "##### 2.3 クラス"
                 Exit For
             End If
@@ -259,7 +259,7 @@ Sub OutputMarkDown()
         FileIO.TruncateFile strFile
         
         '静的コンテンツと生成した目次をUTF8 & LF にて出力。
-        With TextWriter.CreateObject(strFile, _
+        With TextWriter.NewInstance(strFile, _
                                      NewLineCodeConstants.NewLineCodeNone, _
                                      EncodeConstants.EncodeUTF8, _
                                      OpenModeConstants.OpenModeOutput, _
@@ -324,7 +324,7 @@ Private Function LevelNo(ByVal strBuf As String, _
             Next
 
             '章番号の生成
-            Set SB = StringBuilder.CreateObject
+            Set SB = StringBuilder.NewInstance
             For i = 1 To lngLen
                 SB.Append CStr(No(i))
             Next
@@ -389,25 +389,25 @@ End Function
 Private Function GetStaticContents(ByVal strFile As String) As String
 
     Dim SB As IStringBuilder
-    Dim IC As ICursor
+    Dim ic As ICursor
     
     GetStaticContents = ""
     
-    Set SB = StringBuilder.CreateObject()
+    Set SB = StringBuilder.NewInstance
     
-    Set IC = TextReader.CreateObject(strFile, _
+    Set ic = TextReader.NewInstance(strFile, _
                                      NewLineCodeConstants.NewLineCodeLF, _
                                      EncodeConstants.EncodeUTF8)
 
-    Do Until IC.Eof
+    Do Until ic.Eof
     
-        If Core.StartsWith(IC, "#### 2") Then
+        If StringUtils.StartsWith(ic, "#### 2") Then
             Exit Do
         End If
         
-        SB.Append IC
+        SB.Append ic
         
-        IC.MoveNext
+        ic.MoveNext
     Loop
 
     If SB.Length > 0 Then
