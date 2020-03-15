@@ -44,13 +44,14 @@ Attribute VB_Exposed = True
 '>
 '>**Dependent**
 '>
+'>* StringUtils
 '>* StringBuilder
 '>
 '>**History**
 '>
 '>|Date|Version|Note|
 '>|---|---|---|
-'>|2019-01-01|Ver.1.0.0|V‹Kì¬|
+'>|2020-03-15|Ver.1.0.0|V‹Kì¬|
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
