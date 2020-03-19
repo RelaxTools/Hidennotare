@@ -427,7 +427,7 @@ Private Property Get IList_Item(idx As Long) As Variant
         Err.Raise 512 + 1, TypeName(Me) & ".Item", "IndexOutOfRangeException"
     End If
 
-    Objects.SetVar(IList_Item) = mCol.Item(idx + 1)
+    Objects.SetWith(IList_Item) = mCol.Item(idx + 1)
     
 End Property
 '>---
@@ -645,7 +645,7 @@ Private Function IList_ToArray() As Variant
             ReDim result(0 To lngRow - 1)
         
             For i = 0 To lst.Count - 1
-                Objects.SetVar(result(i)) = lst(i)
+                Objects.SetWith(result(i)) = lst(i)
             Next
     
             IList_ToArray = result
@@ -664,7 +664,7 @@ Private Function IList_ToArray() As Variant
                         Set IL = lst(i)
                         
                         For j = 0 To IL.Count - 1
-                            Objects.SetVar(result(i, j)) = IL(j)
+                            Objects.SetWith(result(i, j)) = IL(j)
                         Next
                     
                     'DictionaryŒn‚Ìê‡
@@ -676,7 +676,7 @@ Private Function IList_ToArray() As Variant
                         
                         j = 0
                         For Each key In ID.Keys
-                            Objects.SetVar(result(i, j)) = ID.Item(key)
+                            Objects.SetWith(result(i, j)) = ID.Item(key)
                             j = j + 1
                         Next
                     
@@ -687,7 +687,7 @@ Private Function IList_ToArray() As Variant
                         
                         j = 0
                         For Each key In IB.FieldNames
-                            Objects.SetVar(result(i, j)) = IB.Fields(key)
+                            Objects.SetWith(result(i, j)) = IB.Fields(key)
                             j = j + 1
                         Next
                 
@@ -943,9 +943,9 @@ End Property
 Private Property Get ICursor_Item(Optional ByVal opt As Variant) As Variant
     
     If mIndex >= mCol.Count Then
-        Objects.SetVar(ICursor_Item) = mCol(mCol.Count)
+        Objects.SetWith(ICursor_Item) = mCol(mCol.Count)
     Else
-        Objects.SetVar(ICursor_Item) = mCol.Item(mIndex + 1)
+        Objects.SetWith(ICursor_Item) = mCol.Item(mIndex + 1)
     End If
     
 End Property

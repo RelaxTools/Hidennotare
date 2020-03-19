@@ -328,9 +328,9 @@ Private Property Get ICursor_Item(Optional ByVal opt As Variant) As Variant
 
     'EOFå„ÇÕç≈å„ÇÃílÇï‘Ç∑
     If ICursor_Eof Then
-        Objects.SetVar(ICursor_Item) = mCol.Item(mCol.Count)(opt)
+        Objects.SetWith(ICursor_Item) = mCol.Item(mCol.Count)(opt)
     Else
-        Objects.SetVar(ICursor_Item) = mCol.Item(mIndex)(opt)
+        Objects.SetWith(ICursor_Item) = mCol.Item(mIndex)(opt)
     End If
 
 End Property

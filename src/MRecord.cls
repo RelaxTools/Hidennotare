@@ -148,7 +148,7 @@ Private Property Get IDictionary_Count() As Long
     IDictionary_Count = mDic.Count
 End Property
 Private Property Get IDictionary_Item(KeyValue As Variant) As Variant
-    Objects.SetVar(IDictionary_Item) = mDic.Item(KeyValue)
+    Objects.SetWith(IDictionary_Item) = mDic.Item(KeyValue)
 End Property
 Private Property Let IDictionary_Item(KeyValue As Variant, NewItem As Variant)
     mDic.Item(KeyValue) = NewItem
@@ -180,7 +180,7 @@ Private Function IDictionary_ToString() As String
     
     For Each KeyValue In mDic.Keys
     
-        Objects.SetVar(v) = mDic.Item(KeyValue)
+        Objects.SetWith(v) = mDic.Item(KeyValue)
     
         Select Case True
             

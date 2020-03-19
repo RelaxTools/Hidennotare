@@ -74,7 +74,7 @@ Function Pop() As Variant
     If mCol.Count = 0 Then
         Pop = ""
     Else
-        Objects.SetVar(Pop) = mCol(mCol.Count)
+        Objects.SetWith(Pop) = mCol(mCol.Count)
         mCol.Remove mCol.Count
     End If
 End Function
@@ -85,7 +85,7 @@ Function Peek() As Variant
     If mCol.Count = 0 Then
         Peek = ""
     Else
-        Objects.SetVar(Peek) = mCol(mCol.Count)
+        Objects.SetWith(Peek) = mCol(mCol.Count)
     End If
 End Function
 '----------------------------------------

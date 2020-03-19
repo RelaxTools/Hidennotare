@@ -182,7 +182,7 @@ Private Property Get IDictionary_Count() As Long
 End Property
 Private Property Get IDictionary_Item(KeyValue As Variant) As Variant
     
-    Objects.SetVar(IDictionary_Item) = mDic.Item(KeyValue)
+    Objects.SetWith(IDictionary_Item) = mDic.Item(KeyValue)
     
 End Property
 Private Property Let IDictionary_Item(KeyValue As Variant, NewItem As Variant)
@@ -255,7 +255,7 @@ Private Function ToString() As String
     
     For Each KeyValue In mDic.Keys
     
-        Objects.SetVar(v) = mDic.Item(KeyValue)
+        Objects.SetWith(v) = mDic.Item(KeyValue)
     
         Select Case True
             Case Objects.InstanceOfIDictionary(v)
@@ -367,7 +367,7 @@ Private Property Let IValueObject_Fields(key As Variant, RHS As Variant)
     Self.Add key, RHS
 End Property
 Private Property Get IValueObject_Fields(key As Variant) As Variant
-    Objects.SetVar(IValueObject_Fields) = Self.Item(key)
+    Objects.SetWith(IValueObject_Fields) = Self.Item(key)
 End Property
 Private Property Get IValueObject_Count() As Long
     IValueObject_Count = Self.Count

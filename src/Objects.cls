@@ -57,12 +57,12 @@ Attribute VB_Exposed = False
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 '>---
-'>#### SetVar(Objects)
+'>#### SetWith(Objects)
 '>
 '>**Syntax**
 '>
 '>```
-'>Objects.SetVar(inObj) = obj
+'>Objects.SetWith(inObj) = obj
 '>```
 '>
 '>**Parameters**
@@ -80,7 +80,7 @@ Option Explicit
 '>
 '>**Remarks**
 '>
-'>IValueObject変換<br>
+'>Set/Letプロパティ<br>
 '>VBA 個人的汎用処理 https://qiita.com/nukie_53/items/bde16afd9a6ca789949d<br>
 '>@nukie_53<br>
 '>Set/Letを隠蔽するプロパティ<br>
@@ -93,7 +93,7 @@ Option Explicit
 '>
 '>* IValueObject
 '>
-Public Property Let SetVar(outVariable As Variant, inExpression As Variant)
+Public Property Let SetWith(outVariable As Variant, inExpression As Variant)
     
     Select Case True
         Case VBA.IsObject(inExpression), VBA.VarType(inExpression) = vbDataObject
@@ -272,19 +272,17 @@ End Function
 '>
 Public Function InstanceOfIDictionary(v As Variant) As Boolean
 
+    Dim obj As IDictionary
+    
+    On Error GoTo e
+    
+    Set obj = v
+    
     InstanceOfIDictionary = True
-
-    Err.Clear
-    On Error Resume Next
-
-    Dim ID As IDictionary
+    Exit Function
+e:
+    InstanceOfIDictionary = False
     
-    Set ID = v
-    
-    If Err.Number <> 0 Then
-        InstanceOfIDictionary = False
-    End If
-
 End Function
 '>---
 '>#### InstanceOfIList(Objects)
@@ -319,18 +317,16 @@ End Function
 '>
 Public Function InstanceOfIList(v As Variant) As Boolean
 
+    Dim obj As IList
+    
+    On Error GoTo e
+    
+    Set obj = v
+    
     InstanceOfIList = True
-    
-    Err.Clear
-    On Error Resume Next
-    
-    Dim IL As IList
-
-    Set IL = v
-    
-    If Err.Number <> 0 Then
-        InstanceOfIList = False
-    End If
+    Exit Function
+e:
+    InstanceOfIList = False
 
 End Function
 '>---
@@ -366,17 +362,15 @@ End Function
 '>
 Public Function InstanceOfIValueObject(v As Variant) As Boolean
 
+    Dim obj As IValueObject
+    
+    On Error GoTo e
+    
+    Set obj = v
+    
     InstanceOfIValueObject = True
-    
-    Err.Clear
-    On Error Resume Next
-    
-    Dim IL As IValueObject
-
-    Set IL = v
-    
-    If Err.Number <> 0 Then
-        InstanceOfIValueObject = False
-    End If
+    Exit Function
+e:
+    InstanceOfIValueObject = False
 
 End Function

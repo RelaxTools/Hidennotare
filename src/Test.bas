@@ -123,7 +123,7 @@ Sub Test_ArrayList()
 '        Next
     Next
     
-    Arrays.CopyToRange IL, Sheets("テスト").Range("B18")
+    Arrays.CopyToRange IL, ThisWorkbook.Sheets("テスト").Range("B18")
 
 End Sub
 Sub Test_LinkedList()

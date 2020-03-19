@@ -231,7 +231,7 @@ Private Property Get IList_Count() As Long
     IList_Count = mCol.Count
 End Property
 Private Property Get IList_Item(idx As Long) As Variant
-    Objects.SetVar(IList_Item) = mCol.Item(idx)
+    Objects.SetWith(IList_Item) = mCol.Item(idx)
 End Property
 Private Sub IList_RemoveAt(idx As Long)
     mCol.RemoveAt idx

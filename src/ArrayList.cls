@@ -231,7 +231,7 @@ Private Sub IList_Add(obj As Variant)
 
     ReDim Preserve mArray(0 To mCount)
 
-    Objects.SetVar(mArray(mCount)) = obj
+    Objects.SetWith(mArray(mCount)) = obj
     
     mCount = mCount + 1
 
@@ -392,10 +392,10 @@ Private Sub IList_Insert(idx As Long, v As Variant)
     ReDim Preserve mArray(0 To mCount + 1)
 
     For i = mCount To idx Step -1
-        Objects.SetVar(mArray(i + 1)) = mArray(i)
+        Objects.SetWith(mArray(i + 1)) = mArray(i)
     Next
     
-    Objects.SetVar(mArray(idx)) = v
+    Objects.SetWith(mArray(idx)) = v
     
     mCount = mCount + 1
 
@@ -499,7 +499,7 @@ Private Sub IList_RemoveAt(idx As Long)
     End If
 
     For i = idx To mCount - 1 - 1
-        Objects.SetVar(mArray(i)) = mArray(i + 1)
+        Objects.SetWith(mArray(i)) = mArray(i + 1)
     Next
 
     mCount = mCount - 1
@@ -562,7 +562,7 @@ Private Sub QuickSort(ByRef ary As Variant, ByVal Min As Long, ByVal Max As Long
     Dim base As Variant
     Dim work As Variant
     
-    Objects.SetVar(base) = ary((Min + Max) \ 2)
+    Objects.SetWith(base) = ary((Min + Max) \ 2)
     
     i = Min
     j = Max
@@ -582,9 +582,9 @@ Private Sub QuickSort(ByRef ary As Variant, ByVal Min As Long, ByVal Max As Long
         End If
         
         'ì¸ÇÍë÷Ç¶
-        Objects.SetVar(work) = ary(i)
-        Objects.SetVar(ary(i)) = ary(j)
-        Objects.SetVar(ary(j)) = work
+        Objects.SetWith(work) = ary(i)
+        Objects.SetWith(ary(i)) = ary(j)
+        Objects.SetWith(ary(j)) = work
         
         i = i + 1
         j = j - 1
@@ -691,7 +691,7 @@ Private Function IList_ToArray() As Variant
             ReDim result(0 To lngRow - 1)
         
             For i = 0 To lst.Count - 1
-                Objects.SetVar(result(i)) = lst(i)
+                Objects.SetWith(result(i)) = lst(i)
             Next
     
             IList_ToArray = result
@@ -710,7 +710,7 @@ Private Function IList_ToArray() As Variant
                         Set IL = lst(i)
                         
                         For j = 0 To IL.Count - 1
-                            Objects.SetVar(result(i, j)) = IL(j)
+                            Objects.SetWith(result(i, j)) = IL(j)
                         Next
                     
                     'DictionaryånÇÃèÍçá
@@ -722,7 +722,7 @@ Private Function IList_ToArray() As Variant
                         
                         j = 0
                         For Each key In ID.Keys
-                            Objects.SetVar(result(i, j)) = ID.Item(key)
+                            Objects.SetWith(result(i, j)) = ID.Item(key)
                             j = j + 1
                         Next
                     
@@ -733,7 +733,7 @@ Private Function IList_ToArray() As Variant
                         
                         j = 0
                         For Each key In IB.FieldNames
-                            Objects.SetVar(result(i, j)) = IB.Fields(key)
+                            Objects.SetWith(result(i, j)) = IB.Fields(key)
                             j = j + 1
                         Next
                 
