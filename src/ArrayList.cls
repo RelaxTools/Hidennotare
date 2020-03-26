@@ -389,11 +389,9 @@ Private Sub IList_Insert(idx As Long, v As Variant)
         Err.Raise 512 + 1, TypeName(Me) & ".Insert", "IndexOutOfRangeException"
     End If
     
-    ReDim Preserve mArray(0 To mCount + 1)
-
-    For i = mCount To idx Step -1
-        Objects.SetWith(mArray(i + 1)) = mArray(i)
-    Next
+    ReDim Preserve mArray(0 To mCount)
+    
+    Arrays.ArrayMove mArray, idx, idx + 1, mCount - idx
     
     Objects.SetWith(mArray(idx)) = v
     
@@ -498,10 +496,8 @@ Private Sub IList_RemoveAt(idx As Long)
         Err.Raise 512 + 1, TypeName(Me) & ".RemoveAt", "IndexOutOfRangeException"
     End If
 
-    For i = idx To mCount - 1 - 1
-        Objects.SetWith(mArray(i)) = mArray(i + 1)
-    Next
-
+    Arrays.ArrayMove mArray, idx + 1, idx, mCount - idx - 1
+    
     mCount = mCount - 1
     
     If mCount = 0 Then

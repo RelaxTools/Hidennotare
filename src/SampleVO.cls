@@ -35,12 +35,10 @@ Private Property Get IValueObject_Count() As Long
 End Property
 
 Private Property Get IValueObject_FieldNames() As Variant
-    IValueObject_FieldNames = Array("Name", "Age", "Address")
+    IValueObject_FieldNames = mFields
 End Property
 
 Private Function IValueObject_ToString() As String
-    
-    Dim SB As IStringBuilder
     
     With StringBuilder.NewInstance
     

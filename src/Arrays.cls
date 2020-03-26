@@ -56,6 +56,9 @@ Attribute VB_Exposed = False
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
+Private Declare PtrSafe Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (destination As Any, Source As Any, ByVal Length As LongPtr)
+Private Declare PtrSafe Sub ZeroMemory Lib "kernel32" Alias "RtlZeroMemory" (destination As Any, ByVal Length As LongPtr)
+
 '-----------------------------------------------------------------------------------------------------
 '>---
 '>#### ToCollection
@@ -576,6 +579,29 @@ Public Sub CopyToListView(ary As IList, objList As Object, Fields As Variant)
         Next
         i = i + 1
     Next
+
+End Sub
+Sub ArrayMove(src As Variant, srcPos As Long, dstPos As Long, Length As Long)
+
+#If Win64 Then
+    Const VARIANT_SIZE As Long = 24
+#Else
+    Const VARIANT_SIZE As Long = 16
+#End If
+
+    Dim zeroPos As Long
+    Dim zeroLen As Long
+    
+    If srcPos > dstPos Then
+        zeroPos = dstPos + Length
+        zeroLen = srcPos - dstPos
+    Else
+        zeroPos = srcPos
+        zeroLen = dstPos - srcPos
+    End If
+
+    CopyMemory src(dstPos), src(srcPos), VARIANT_SIZE * Length
+    ZeroMemory src(zeroPos), VARIANT_SIZE * zeroLen
 
 End Sub
 
