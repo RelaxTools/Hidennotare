@@ -581,6 +581,38 @@ Public Sub CopyToListView(ary As IList, objList As Object, Fields As Variant)
     Next
 
 End Sub
+'>---
+'>#### ArrayMove(Arrays)
+'>
+'>**Syntax**
+'>
+'>```
+'>Arrays.ArrayMove src, srcPos, dstPos, length
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|src|必須|処理を行う配列を指定|
+'>|srcPos|必須|コピー元のIndexを指定|
+'>|dstPos|必須|コピー先のIndexを指定|
+'>|length|必須|コピーする配列の数|
+'>
+'>**Return Value**
+'>
+'>* None
+'>
+'>**Remarks**
+'>
+'>配列内のデータ移動<br>
+'>ArrayListのInsertやRemoveAtで配列を詰めなおすときなどに用いる<br>
+'>配列が重なっていても動作。移動して空いた場所にはEmptyが設定される。<br>
+'>
+'>**See also**
+'>
+'>* ArrayList
+'>
 Sub ArrayMove(src As Variant, srcPos As Long, dstPos As Long, Length As Long)
 
 #If Win64 Then
