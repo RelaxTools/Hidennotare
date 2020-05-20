@@ -69,7 +69,7 @@ Public Sub MultiProsess(ByVal strMacro As String)
     On Error Resume Next
     With VBA.CreateObject("Excel.Application")
         .Workbooks.Open ThisWorkbook.FullName
-        .Run ExcelHelper.BuildOnAction(strMacro)
+        .Run ExcelUtils.BuildOnAction(strMacro)
     End With
     
     If Err.Number <> 0 Then

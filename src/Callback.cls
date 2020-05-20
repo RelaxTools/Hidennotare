@@ -49,7 +49,7 @@ Public Event OnAction(ByVal Action As Long, ByVal opt As String)
 Public Tag As String
 Private mKey As String
 Public Function CreateOnAction(ByVal Action As Long, Optional ByVal opt As String = "") As String
-    CreateOnAction = ExcelHelper.BuildOnAction("'CallbackHelper.OnActionCallback """ & mKey & """, """ & Action & """, """ & opt & """ '")
+    CreateOnAction = ExcelUtils.BuildOnAction("'CallbackHelper.OnActionCallback """ & mKey & """, """ & Action & """, """ & opt & """ '")
 End Function
 Public Sub OnActionCallback(ByVal Action As Long, ByVal opt As String)
     RaiseEvent OnAction(Action, opt)

@@ -6,7 +6,7 @@ Attribute VB_Name = "StringUtils"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
-Attribute VB_Exposed = False
+Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 '
 ' [Hidennotare] v2.5
@@ -46,6 +46,12 @@ Attribute VB_Exposed = False
 '>**Dependent**
 '>
 '>* StringBuilder
+'>
+'>**History**
+'>
+'>|Date|Version|Note|
+'>|---|---|---|
+'>|2019-01-01|Ver.1.0.0|V‹Kì¬|
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit

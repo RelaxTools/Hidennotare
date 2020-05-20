@@ -68,6 +68,7 @@ Attribute VB_Exposed = True
 '>|Date|Version|Note|
 '>|---|---|---|
 '>|2019-01-01|Ver.1.0.0|新規作成|
+'>|2020-05-20|Ver.1.0.1|NewEnumの実装をコレクションを作成するのではなく、CallByNameで取得する方法に修正|
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
@@ -75,7 +76,7 @@ Implements ICursor
 Implements IDictionary
 
 'VBAでは「継承」ができないため「委譲」する。
-Private mCol As Collection
+'Private mCol As Collection
 Private mDic As Object
 Private Sub Class_Initialize()
     Set mDic = VBA.CreateObject("Scripting.Dictionary")
@@ -131,8 +132,10 @@ End Function
 '--------------------------------------------------------------
 Private Function IDictionary_NewEnum() As stdole.IUnknown
 
-    Set mCol = Arrays.ToCollection(mDic.Keys)
-    Set IDictionary_NewEnum = mCol.[_NewEnum]
+'    Set mCol = Arrays.ToCollection(mDic.Keys)
+'    Set IDictionary_NewEnum = mCol.[_NewEnum]
+    'Dictionary の列挙子、オブジェクトブラウザには表示されないが『_NewEnum』Twitter @nukie_53
+    Set IDictionary_NewEnum = CallByName(mDic, "_NewEnum", VbMethod)
 
 End Function
 Private Sub IDictionary_Add(KeyValue As Variant, obj As Variant)

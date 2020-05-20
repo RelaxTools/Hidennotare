@@ -52,12 +52,51 @@ Attribute VB_Exposed = True
 '>|Date|Version|Note|
 '>|---|---|---|
 '>|2019-01-01|Ver.1.0.0|新規作成|
+'>|2020-05-20|Ver.1.0.1|ShowFileDialogでフィルタを省略時エラーになるのを修正|
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
-'--------------------------------------------------------------
-'　カラーダイアログ表示
-'--------------------------------------------------------------
+'>---
+'>#### ShowColorDialog(Dialog)
+'>
+'>**Syntax**
+'>
+'>```
+'>ret = Dialog.ShowColorDialog(color)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|color|必須|Long|ダイアログ選択時、色を返却する変数|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|ret|Boolean|ダイアログで選択された場合Trueを返す。キャンセルした場合はFalse|
+'>
+'>**Remarks**
+'>
+'>カラーダイアログ選択<br>
+'>ダイアログを表示して選択された色を返却する<br>
+'>
+'>**Example**
+'>
+'>```
+'>Dim color As long
+'>
+'>If Dialog.ShowColorDialog(color) Then
+'>    lblName.BackColor = color
+'>End IF
+'>
+'>```
+'>
+'>**See also**
+'>
+'>* None
+'>
 Public Function ShowColorDialog(lngDefColor As Long) As Boolean
 
     Dim lngBackColor As Long
@@ -85,17 +124,65 @@ Public Function ShowColorDialog(lngDefColor As Long) As Boolean
     End If
 
 End Function
-'-------------------------------------------
-' フォルダ選択
-'-------------------------------------------
+'>---
+'>#### ShowFolderDialog(Dialog)
+'>
+'>**Syntax**
+'>
+'>```
+'>ret = Dialog.ShowFolderDialog(folder)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|folder|必須|String|ダイアログ選択時、フォルダ名を返却する変数|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|ret|Boolean|ダイアログで選択された場合Trueを返す。キャンセルした場合はFalse|
+'>
+'>**Remarks**
+'>
+'>フォルダ選択<br>
+'>ダイアログを表示して選択されたフォルダ名を返却する<br>
+'>
+'>**Example**
+'>
+'>```
+'>Dim folder As String
+'>
+'>'初期表示時のフォルダも指定可能
+'>folder = "C:\test"
+'>
+'>If Dialog.ShowFolderDialog(folder) Then
+'>    lblName.text = folder
+'>End IF
+'>
+'>```
+'>
+'>**See also**
+'>
+'>* None
+'>
 Public Function ShowFolderDialog(ByRef strFile As String) As Boolean
     
     ShowFolderDialog = False
     
     With Application.FileDialog(msoFileDialogFolderPicker)
         If strFile <> "" Then
-            .InitialFileName = strFile
+            .InitialFileName = FileIO.GetParentFolderName(strFile)
         End If
+       
+       'タイトルバーの表示文字列の設定
+        .Title = "フォルダ選択"
+       
+       'ボタンの表示文字列の設定
+        .ButtonName = "選択"
+        
         If .Show Then
             ShowFolderDialog = True
             strFile = .SelectedItems(1)
@@ -103,9 +190,53 @@ Public Function ShowFolderDialog(ByRef strFile As String) As Boolean
     End With
 
 End Function
-'-------------------------------------------
-' ファイル選択
-'-------------------------------------------
+'>---
+'>#### ShowFileDialog(Dialog)
+'>
+'>**Syntax**
+'>
+'>```
+'>ret = Dialog.ShowFileDialog(file, [filter])
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|file|必須|String|ダイアログ選択時、ファイル名を返却する変数|
+'>|file|任意|Variant型|ファイルをフィルタしたい場合、バーレンを区切りとしてファイルの種類とワイルドカードを指定|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|ret|Boolean|ダイアログで選択された場合Trueを返す。キャンセルした場合はFalse|
+'>
+'>**Remarks**
+'>
+'>ファイル選択<br>
+'>ダイアログを表示して選択されたファイル名を返却する<br>
+'>
+'>**Example**
+'>
+'>```
+'>Dim strFile As String
+'>Dim strFilter As Variant
+'>
+'>'初期表示時のファイルも指定可能
+'>strFile = "C:\test.csv"
+'>strFilter = Array("Excel|*.xlsx" ,"Word|*.docx")
+'>
+'>If Dialog.ShowFileDialog(strFile, strFilter) Then
+'>    lblName.text = strFile
+'>End IF
+'>
+'>```
+'>
+'>**See also**
+'>
+'>* None
+'>
 Public Function ShowFileDialog(ByRef strFile As String, Optional ByVal varFilter As Variant) As Boolean
     
     Dim v As Variant
@@ -120,23 +251,25 @@ Public Function ShowFileDialog(ByRef strFile As String, Optional ByVal varFilter
         
         .Filters.Clear
         
-        If Not IsArray(varFilter) Then
-            varFilter = Array(varFilter)
-        End If
-        
-        For Each v In varFilter
-            If InStr(v, "|") > 0 Then
-            
-                Dim s As Variant
-                
-                s = Split(v, "|")
-                .Filters.Add CStr(s(0)), CStr(s(1))
-            Else
-                .Filters.Add "", CStr(v)
+        If IsMissing(varFilter) Then
+            .Filters.Add "すべてのファイル", "*.*"
+        Else
+            If Not IsArray(varFilter) Then
+                varFilter = Array(varFilter)
             End If
-        Next
-        
-'        .Filters.Add "すべてのファイル", "*.*"
+            
+            For Each v In varFilter
+                If InStr(v, "|") > 0 Then
+                
+                    Dim s As Variant
+                    
+                    s = Split(v, "|")
+                    .Filters.Add CStr(s(0)), CStr(s(1))
+                Else
+                    .Filters.Add "", CStr(v)
+                End If
+            Next
+        End If
        
        '初期選択フィルタの設定
         .FilterIndex = 1
@@ -148,7 +281,7 @@ Public Function ShowFileDialog(ByRef strFile As String, Optional ByVal varFilter
         .Title = "ファイル選択"
        
        'ボタンの表示文字列の設定
-        .ButtonName = "参照"
+        .ButtonName = "選択"
         
         If .Show Then
             ShowFileDialog = True

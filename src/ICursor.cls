@@ -40,7 +40,8 @@ Attribute VB_Exposed = True
 '>
 '>**Remarks**
 '>
-'>SheetCursor, TableCursor, CharCursor等 Cursor 系の動作を定義したインターフェイス
+'>SheetCursor, TableCursor, CharCursor等 Cursor 系の動作を定義したインターフェイス<br>
+'>コントロールブレイク　アルゴリズムに向く。
 '>
 '>**Definition**
 '>

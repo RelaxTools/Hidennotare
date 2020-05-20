@@ -47,6 +47,12 @@ Attribute VB_Exposed = True
 '>
 '>* ‚È‚µ
 '>
+'>**History**
+'>
+'>|Date|Version|Note|
+'>|---|---|---|
+'>|2019-01-01|Ver.1.0.0|V‹Kì¬|
+'>
 '>**Sample**
 '>
 '>```

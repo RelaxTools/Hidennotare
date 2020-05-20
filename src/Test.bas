@@ -365,6 +365,11 @@ Sub Test_Serialize()
     col.Add "Field01", 10
     col.Add "Field02", 20
     col.Add "Field03", 30
+    
+    Dim v As Variant
+    For Each v In col
+        Debug.Print v
+    Next
 
     Row.Add col
 
