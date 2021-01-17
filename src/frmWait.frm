@@ -3,7 +3,7 @@ Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} frmWait
    Caption         =   "UserForm1"
    ClientHeight    =   1620
    ClientLeft      =   120
-   ClientTop       =   468
+   ClientTop       =   465
    ClientWidth     =   9540.001
    OleObjectBlob   =   "frmWait.frx":0000
    ShowModal       =   0   'False

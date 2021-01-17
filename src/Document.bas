@@ -389,25 +389,25 @@ End Function
 Private Function GetStaticContents(ByVal strFile As String) As String
 
     Dim SB As IStringBuilder
-    Dim ic As ICursor
+    Dim IC As ICursor
     
     GetStaticContents = ""
     
     Set SB = StringBuilder.NewInstance
     
-    Set ic = TextReader.NewInstance(strFile, _
+    Set IC = TextReader.NewInstance(strFile, _
                                      NewLineCodeConstants.NewLineCodeLF, _
                                      EncodeConstants.EncodeUTF8)
 
-    Do Until ic.Eof
+    Do Until IC.Eof
     
-        If StringUtils.StartsWith(ic, "#### 2") Then
+        If StringUtils.StartsWith(IC, "#### 2") Then
             Exit Do
         End If
         
-        SB.Append ic
+        SB.Append IC
         
-        ic.MoveNext
+        IC.MoveNext
     Loop
 
     If SB.Length > 0 Then

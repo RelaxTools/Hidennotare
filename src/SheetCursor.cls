@@ -175,7 +175,7 @@ Private Property Let ISheetCursorParam_StartNum(ByVal RHS As Variant)
         If IsNumeric(RHS) Then
             mStartCol = RHS
         Else
-            mStartCol = mWS.Columns(RHS).Column
+            mStartCol = mWS.Columns(RHS).column
         End If
     
     End If

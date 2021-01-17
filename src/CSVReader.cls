@@ -74,8 +74,9 @@ Private mEncode As EncodeConstants
 Private mDelimiter As String
 Private mQuotation As Boolean
 Private mHeader As Boolean
+Private mSkip As Long
 
-Private mCol As Collection
+Private MList As IList
 Private mIndex As Long
 
 '>---
@@ -89,7 +90,9 @@ Private mIndex As Long
 '>                    [NewLineCode = NewLineCodeConstants.CRLF],
 '>                    [Encode = EncodeConstants.CP932],
 '>                    [Delimiter = ","],
-'>                    [Quotation = False])
+'>                    [Quotation = False],)
+'>                    [Header = False],)
+'>                    [Skip = 0])
 '>```
 '>
 '>**Parameters**
@@ -100,7 +103,9 @@ Private mIndex As Long
 '>|NewLineCode|省略可|String|改行コードを指定。<br>デフォルト(CRLF)|
 '>|Encode|省略可|String|文字コードを指定。<br>デフォルトCP932(SJIS)|
 '>|Delimiter|省略可|String|区切り文字を指定。<br>デフォルト","|
-'>|Quotation|省略可|String|コーテーションの有無を指定。<br>デフォルトFalse|
+'>|Quotation|省略可|Boolean|コーテーションの有無を指定。<br>デフォルトFalse|
+'>|Header|省略可|Boolean|ヘッダの有無を指定。指定すると列名が使える<br>デフォルトFalse|
+'>|Skip|省略可|long|先頭から指定行分行をスキップする<br>デフォルト0|
 '>
 '>**Return Value**
 '>
@@ -153,7 +158,8 @@ Public Function NewInstance(ByVal FileName As String, _
                             Optional ByVal Encode As EncodeConstants = EncodeConstants.EncodeCP932, _
                             Optional ByVal Delimiter As String = ",", _
                             Optional ByVal Quotation As Boolean = False, _
-                            Optional ByVal Header As Boolean = False) As ICursor
+                            Optional ByVal Header As Boolean = False, _
+                            Optional ByVal Skip As Long = 0) As ICursor
 
     Dim FP As ICsvReaderParam
     
@@ -165,6 +171,7 @@ Public Function NewInstance(ByVal FileName As String, _
     FP.Delimiter = Delimiter
     FP.Quotation = Quotation
     FP.Header = Header
+    FP.Skip = Skip
     
     FP.Init
 
@@ -189,15 +196,18 @@ End Property
 Private Property Let ICsvReaderParam_Header(RHS As Boolean)
     mHeader = RHS
 End Property
+Private Property Let ICsvReaderParam_Skip(RHS As Long)
+    mSkip = RHS
+End Property
 Private Sub ICsvReaderParam_Init()
     
     'TextReaderに委譲する。改行コードをCsvReader側でパースする。
     Set mIR = TextReader.NewInstance(mFileName, NewLineCodeConstants.NewLineCodeNone, mEncode)
     
     If IsEmpty(mIR.ReadAll) Then
-        Set mCol = New Collection
+        Set MList = ArrayList.NewInstance()
     Else
-        Set mCol = Parser.ParseCsv(mIR.ReadAll(LBound(mIR.ReadAll)), mQuotation, mDelimiter, mHeader)
+        Set MList = Parser.ParseCsv(mIR.ReadAll(LBound(mIR.ReadAll)), mQuotation, mDelimiter, mHeader, mSkip)
     End If
     
     ICursor_MoveFirst
@@ -243,7 +253,7 @@ End Sub
 '>
 Private Function IReader_ReadAll() As Variant
 
-    Set IReader_ReadAll = mCol
+    Set IReader_ReadAll = MList
 
 End Function
 '>---
@@ -282,12 +292,12 @@ End Function
 '>
 Private Property Get ICursor_Eof() As Boolean
     
-    If mCol Is Nothing Then
+    If MList Is Nothing Then
         ICursor_Eof = True
         Exit Sub
     End If
     
-    ICursor_Eof = mCol.Count < mIndex
+    ICursor_Eof = MList.Count <= mIndex
 
 End Property
 '>---
@@ -326,13 +336,56 @@ End Property
 '>
 Private Property Get ICursor_Item(Optional ByVal opt As Variant) As Variant
 
-    'EOF後は最後の値を返す
-    If ICursor_Eof Then
-        Objects.SetWith(ICursor_Item) = mCol.Item(mCol.Count)(opt)
+    
+    'ヘッダー無の場合、IList/IList
+    If Not mHeader Then
+    
+        Dim col As IList
+        
+        'EOF後は最後の値を返す
+        If ICursor_Eof Then
+            Set col = MList.Item(MList.Count - 1)
+        Else
+            Set col = MList.Item(mIndex)
+        End If
+    
+        Objects.SetWith(ICursor_Item) = col.Item(CLng(opt))
+    
+    'ヘッダー有の場合、IList/IDictionary
     Else
-        Objects.SetWith(ICursor_Item) = mCol.Item(mIndex)(opt)
-    End If
+        Dim pos As Long
+        
+        If ICursor_Eof Then
+            pos = MList.Count - 1
+        Else
+            pos = mIndex
+        End If
+        
+        Dim dic As IDictionary
 
+
+        Set dic = MList.Item(pos)
+    
+        Select Case VarType(opt)
+            '文字列
+            Case vbString
+                If dic.ContainsKey(opt) Then
+                    Objects.SetWith(ICursor_Item) = dic(opt)
+                Else
+                    Err.Raise 512 + 1, TypeName(Me) & ".CSVReader", StringUtils.PlaceHolder("Invalid Name({0})", opt)
+                End If
+            '整数
+            Case vbInteger, vbLong
+                Select Case opt
+                    Case LBound(dic.Keys) To UBound(dic.Keys)
+                    Case Else
+                        Err.Raise 512 + 1, TypeName(Me) & ".CSVReader", StringUtils.PlaceHolder("Invalid Index({0})", opt)
+                End Select
+            '上記以外
+            Case Else
+                Err.Raise 512 + 1, TypeName(Me) & ".CSVReader", "Invalid Type"
+        End Select
+    End If
 End Property
 '>---
 '>#### MoveFirst(ICursor I/F)
@@ -367,7 +420,7 @@ End Property
 '>* ICursor
 '>
 Private Sub ICursor_MoveFirst()
-    mIndex = 1
+    mIndex = 0
 End Sub
 '>---
 '>#### MoveNext(ICursor I/F)

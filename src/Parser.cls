@@ -168,28 +168,28 @@ Private Function ParseObject(ByVal strJSON As String, obj As Object, ByVal Level
     
     strJSON = Mid$(strJSON, 2, Len(strJSON) - 2)
     
-    Dim ic As ICursor
-    Set ic = CharCursor.NewInstance(strJSON)
+    Dim IC As ICursor
+    Set IC = CharCursor.NewInstance(strJSON)
     
-    Do Until ic.Eof
+    Do Until IC.Eof
         
         propertyName = ""
         Set SB = StringBuilder.NewInstance
         lineBreak = False
         
         '終了または行の終わり
-        Do Until ic.Eof Or lineBreak
+        Do Until IC.Eof Or lineBreak
         
-            Select Case ic.Item
+            Select Case IC.Item
                 Case """"
                     
                     If Len(propertyName) > 0 Then
                         
-                        Objects.AsIValueObject(objJObj).Fields(propertyName) = ParseString(StringExtraction(ic))
+                        Objects.AsIValueObject(objJObj).Fields(propertyName) = ParseString(StringExtraction(IC))
                         propertyName = ""
                     
                     Else
-                        propertyName = ParseString(StringExtraction(ic))
+                        propertyName = ParseString(StringExtraction(IC))
                     End If
                     
                 Case ":"
@@ -202,13 +202,13 @@ Private Function ParseObject(ByVal strJSON As String, obj As Object, ByVal Level
                 Case "["
                     
                     '下位レベルのパース（Array)
-                   Objects.AsIValueObject(objJObj).Fields(propertyName) = ParseArray(ElementExtraction(ic), obj, Level)
+                   Objects.AsIValueObject(objJObj).Fields(propertyName) = ParseArray(ElementExtraction(IC), obj, Level)
                     propertyName = ""
                     
                 Case "{"
                     
                     '下位レベルのパース（Object)
-                    Objects.AsIValueObject(objJObj).Fields(propertyName) = ParseObject(ElementExtraction(ic), obj, Level)
+                    Objects.AsIValueObject(objJObj).Fields(propertyName) = ParseObject(ElementExtraction(IC), obj, Level)
                     propertyName = ""
                 
                 Case " ", vbTab, vbCr, vbLf, vbCrLf
@@ -219,10 +219,10 @@ Private Function ParseObject(ByVal strJSON As String, obj As Object, ByVal Level
                 
                 Case Else
                     
-                    SB.Append ic.Item
+                    SB.Append IC.Item
             
             End Select
-            ic.MoveNext
+            IC.MoveNext
         Loop
     
         If SB.Length > 0 Then
@@ -273,30 +273,30 @@ Private Function ParseArray(strJSON As String, obj As Object, ByVal Level As Lon
     
     strJSON = Mid$(strJSON, 2, Len(strJSON) - 2)
     
-    Dim ic As ICursor
-    Set ic = CharCursor.NewInstance(strJSON)
+    Dim IC As ICursor
+    Set IC = CharCursor.NewInstance(strJSON)
     
-    Do Until ic.Eof
+    Do Until IC.Eof
     
         Set SB = StringBuilder.NewInstance
         lineBreak = False
         
-        Do Until ic.Eof Or lineBreak
+        Do Until IC.Eof Or lineBreak
         
-            Select Case ic.Item
+            Select Case IC.Item
                 Case """"
                     
-                    objAry.Add ParseString(StringExtraction(ic))
+                    objAry.Add ParseString(StringExtraction(IC))
                     
                 Case "["
                     
                     '下位レベルのパース（Array)
-                    objAry.Add ParseArray(ElementExtraction(ic), obj, Level)
+                    objAry.Add ParseArray(ElementExtraction(IC), obj, Level)
                     
                 Case "{"
                     
                     '下位レベルのパース（Object)
-                    objAry.Add ParseObject(ElementExtraction(ic), obj, Level)
+                    objAry.Add ParseObject(ElementExtraction(IC), obj, Level)
                 
                 Case " ", vbTab, vbCr, vbLf, vbCrLf
                     
@@ -305,11 +305,11 @@ Private Function ParseArray(strJSON As String, obj As Object, ByVal Level As Lon
                 
                 Case Else
                     
-                    SB.Append ic.Item
+                    SB.Append IC.Item
             
             End Select
             
-            ic.MoveNext
+            IC.MoveNext
         
         Loop
     
@@ -325,7 +325,7 @@ End Function
 '-------------------------------------------------
 ' ダブルコーテーションの範囲取得
 '-------------------------------------------------
-Private Function StringExtraction(ByRef ic As ICursor) As String
+Private Function StringExtraction(ByRef IC As ICursor) As String
     
     Dim Buffer As String
     Dim doubleQuat As Long
@@ -334,18 +334,18 @@ Private Function StringExtraction(ByRef ic As ICursor) As String
     Set SB = StringBuilder.NewInstance
     
     doubleQuat = 0
-    Do Until ic.Eof
+    Do Until IC.Eof
     
-        SB.Append ic.Item
+        SB.Append IC.Item
         
-        If ic.Item = """" And ic.Item(-1) <> "\" Then
+        If IC.Item = """" And IC.Item(-1) <> "\" Then
             doubleQuat = doubleQuat + 1
         End If
         If doubleQuat = 2 Then
             Exit Do
         End If
         
-        ic.MoveNext
+        IC.MoveNext
     
     Loop
     
@@ -359,7 +359,7 @@ End Function
 '-------------------------------------------------
 ' 角カッコまたは波カッコの範囲取得
 '-------------------------------------------------
-Private Function ElementExtraction(ByRef ic As ICursor) As String
+Private Function ElementExtraction(ByRef IC As ICursor) As String
     
     Dim squareBrackets As Long
     Dim curlyBraces As Long
@@ -370,17 +370,17 @@ Private Function ElementExtraction(ByRef ic As ICursor) As String
     sw = False
     Set SB = StringBuilder.NewInstance
     
-    Do Until ic.Eof
+    Do Until IC.Eof
         
-        SB.Append ic.Item
+        SB.Append IC.Item
         
-        If ic.Item = """" And ic.Item(-1) <> "\" Then
+        If IC.Item = """" And IC.Item(-1) <> "\" Then
             sw = Not sw
         End If
         
         If Not sw Then
             
-            Select Case ic.Item
+            Select Case IC.Item
                 Case "["
                     squareBrackets = squareBrackets + 1
                 
@@ -402,7 +402,7 @@ Private Function ElementExtraction(ByRef ic As ICursor) As String
             Exit Function
         End If
         
-        ic.MoveNext
+        IC.MoveNext
     Loop
     
     Err.Raise 512 + 1, TypeName(Me) & ".ElementExtraction", "JSONFormatError"
@@ -672,47 +672,41 @@ End Function
 ' CSVパーサー RFC4180準拠
 ' コーテーションの有無, デリミタ指定あり
 '--------------------------------------------------------------
-Public Function ParseCsv(ByVal strBuf As String, Optional ByVal Quatation As Boolean = False, Optional ByVal Delimiter As String = ",", Optional ByVal Header As Boolean = False) As Collection
+Public Function ParseCsv(ByVal strBuf As String, Optional ByVal Quatation As Boolean = False, Optional ByVal Delimiter As String = ",", Optional ByVal Header As Boolean = False, Optional ByVal Skip As Long = 0) As IList
 
     Const C_QUAT As String = """"
-    Dim ic As ICursor
+    Dim IC As ICursor
     Dim sw As Boolean
     Dim blnLineBreak As Boolean
     Dim blnItemBreak As Boolean
-    Dim col As Collection
-    Dim Row As Collection
-    Dim Head As Collection
-    Dim first As Boolean
+    Dim col As IList
+    Dim Row As IList
+    
     
     Dim lngQuot As Long
     
     lngQuot = 0
     
     sw = False
-    first = True
     
-    If Header Then
-        Set Head = New Collection
-    End If
+    Set Row = ArrayList.NewInstance()
     
-    Set Row = New Collection
-    
-    Set ic = CharCursor.NewInstance(strBuf)
-    Do Until ic.Eof
+    Set IC = CharCursor.NewInstance(strBuf)
+    Do Until IC.Eof
         
         '初期化
-        Set col = New Collection
+        Set col = ArrayList.NewInstance()
         blnLineBreak = False
 
-        Do Until ic.Eof Or blnLineBreak
+        Do Until IC.Eof Or blnLineBreak
             
             With StringBuilder.NewInstance
                 
                 blnItemBreak = False
                 
-                Do Until ic.Eof Or blnLineBreak Or blnItemBreak
+                Do Until IC.Eof Or blnLineBreak Or blnItemBreak
     
-                    Select Case ic.Item
+                    Select Case IC.Item
                         Case C_QUAT
     
                             'コーテーションありの場合
@@ -723,10 +717,10 @@ Public Function ParseCsv(ByVal strBuf As String, Optional ByVal Quatation As Boo
                                 If sw Then
     
                                     '次の文字がQuatation
-                                    If ic.Item(1) = C_QUAT Then
+                                    If IC.Item(1) = C_QUAT Then
                                         lngQuot = lngQuot + 1
                                         .Append C_QUAT
-                                        ic.MoveNext
+                                        IC.MoveNext
                                     Else
                                         sw = False
                                     End If
@@ -739,13 +733,13 @@ Public Function ParseCsv(ByVal strBuf As String, Optional ByVal Quatation As Boo
                         Case vbCr
     
                             If sw Then
-                                .Append ic.Item
+                                .Append IC.Item
                             End If
     
                         Case vbLf
     
                             If sw Then
-                                .Append ic.Item
+                                .Append IC.Item
                             Else
                                 blnLineBreak = True
                             End If
@@ -753,38 +747,27 @@ Public Function ParseCsv(ByVal strBuf As String, Optional ByVal Quatation As Boo
                         Case Delimiter
     
                             If sw Then
-                                .Append ic.Item
+                                .Append IC.Item
                             Else
                                 blnItemBreak = True
                             End If
     
                         Case Else
     
-                            .Append ic.Item
+                            .Append IC.Item
     
                     End Select
                 
-                    ic.MoveNext
+                    IC.MoveNext
                 Loop
             
-                '列追加処理
-                If Header And Not first Then
-                    col.Add .ToString, Head(col.Count + 1)
-                Else
-                    col.Add .ToString
-                End If
+                col.Add .ToString
             
             End With
             
         Loop
         
-        If Header And first Then
-            Set Head = col
-        Else
-            '行追加処理
-            Row.Add col
-        End If
-        first = False
+        Row.Add col
         
     Loop
     
@@ -793,6 +776,83 @@ Public Function ParseCsv(ByVal strBuf As String, Optional ByVal Quatation As Boo
         Err.Raise 512 + 1, TypeName(Me) & ".CsvParser", "Invalid Format(Quotation)"
     End If
     
-    Set ParseCsv = Row
+    Dim i As Long
+    Dim r As IList
+    Dim c As Variant
+    Dim rec As IList
+    Dim first As Boolean
+    
+    Dim Head As IDictionary
+    Dim column As IDictionary
+    
+    'Skip対応
+    If Skip > 0 Then
+        For i = 1 To Skip
+            Row.RemoveAt 0
+        Next
+    End If
+    
+    'Head対応
+    If Header Then
+        Set Head = OrderedDictionary.NewInstance()
+        Set rec = ArrayList.NewInstance
+        
+        first = True
+        
+        For Each r In Row
+        
+            'ヘッダ行のみ
+            If first Then
+        
+                Dim line_no As Long
+                Dim uniq_no As Long
+                Dim key_origin As String
+                Dim key As String
+                line_no = 1
+                
+                For Each c In r
+                    
+                    '空の場合、FieldXの名前にする
+                    If c = "" Then
+                        key_origin = "Field" & line_no
+                    Else
+                        key_origin = c
+                    End If
+                    
+                    key = key_origin
+                    
+                    uniq_no = 0
+                    
+                    '項目名のダブリがあったらユニークにする
+                    Do While True
+                        If Head.ContainsKey(key) Then
+                            uniq_no = uniq_no + 1
+                            key = key_origin & "(" & uniq_no & ")"
+                        Else
+                            Head.Add key, key
+                            Exit Do
+                        End If
+                    Loop
+                    line_no = line_no + 1
+                Next
+                first = False
+                
+            Else
+            
+                Set column = OrderedDictionary.NewInstance()
+                
+                For i = 0 To r.Count - 1
+                    column.Add Head.Keys(i), r(i)
+                Next
+                rec.Add column
+            
+            End If
+        
+        Next
+        Set ParseCsv = rec
+    
+    Else
+        Set ParseCsv = Row
+    End If
     
 End Function

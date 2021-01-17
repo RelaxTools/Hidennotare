@@ -9,7 +9,7 @@ End Sub
 Sub Test_ArrayList()
 
     Dim IL As IList
-    Dim ic As ICursor
+    Dim IC As ICursor
     
     Set IL = ArrayList.NewInstance()
     
@@ -44,29 +44,29 @@ Sub Test_ArrayList()
     col.Add 1
     col.Add 3.14159
     
-    Set ic = ArrayList.NewInstance(col)
+    Set IC = ArrayList.NewInstance(col)
     Dim i As Long
     
     i = 0
-    Do Until ic.Eof
+    Do Until IC.Eof
     
         Select Case i
             Case 0
-                Debug.Assert ic.Item = "a"
+                Debug.Assert IC.Item = "a"
             Case 1
-                Debug.Assert ic.Item = 1
+                Debug.Assert IC.Item = 1
             Case 2
-                Debug.Assert ic.Item = 3.14159
+                Debug.Assert IC.Item = 3.14159
         End Select
         
         i = i + 1
-        ic.MoveNext
+        IC.MoveNext
     
     Loop
     
     Debug.Assert i = 3
     
-    Set IL = ic
+    Set IL = IC
     
     Debug.Assert IL.Count = 3
     
@@ -129,7 +129,7 @@ End Sub
 Sub Test_LinkedList()
 
     Dim IL As IList
-    Dim ic As ICursor
+    Dim IC As ICursor
     
     Set IL = LinkedList.NewInstance()
     
@@ -164,29 +164,29 @@ Sub Test_LinkedList()
     col.Add 1
     col.Add 3.14159
     
-    Set ic = LinkedList.NewInstance(col)
+    Set IC = LinkedList.NewInstance(col)
     Dim i As Long
     
     i = 0
-    Do Until ic.Eof
+    Do Until IC.Eof
     
         Select Case i
             Case 0
-                Debug.Assert ic.Item = "a"
+                Debug.Assert IC.Item = "a"
             Case 1
-                Debug.Assert ic.Item = 1
+                Debug.Assert IC.Item = 1
             Case 2
-                Debug.Assert ic.Item = 3.14159
+                Debug.Assert IC.Item = 3.14159
         End Select
         
         i = i + 1
-        ic.MoveNext
+        IC.MoveNext
     
     Loop
     
     Debug.Assert i = 3
     
-    Set IL = ic
+    Set IL = IC
     
     Debug.Assert IL.Count = 3
     
@@ -229,34 +229,34 @@ End Sub
 Sub Test_ICursor_SheetCursor()
 
     'ICursor インターフェースを使用する
-    Dim ic As ICursor
+    Dim IC As ICursor
 
     '3行目から↓に向かって読む。
     'B列が空文字列("")になったら終了。
-    Set ic = SheetCursor.NewInstance(Sheet1, 3, "B")
+    Set IC = SheetCursor.NewInstance(Sheet1, 3, "B")
 
     Dim i As Long
     i = 0
-    Do Until ic.Eof
+    Do Until IC.Eof
 
         '引数は列を表す文字か列番号を指定する。
         'IC.Item("C").Value でも IC.Item(3).Value でも良い。Rangeを返却。
         Select Case i
             Case 0
-                Debug.Assert ic("C") = "A1"
-                Debug.Assert ic("D") = "B1"
-                Debug.Assert ic("E") = "C1"
+                Debug.Assert IC("C") = "A1"
+                Debug.Assert IC("D") = "B1"
+                Debug.Assert IC("E") = "C1"
             Case 1
-                Debug.Assert ic("C") = "A2"
-                Debug.Assert ic("D") = "B2"
-                Debug.Assert ic("E") = "C2"
+                Debug.Assert IC("C") = "A2"
+                Debug.Assert IC("D") = "B2"
+                Debug.Assert IC("E") = "C2"
             Case 2
-                Debug.Assert ic("C") = "A3"
-                Debug.Assert ic("D") = "B3"
-                Debug.Assert ic("E") = "C3"
+                Debug.Assert IC("C") = "A3"
+                Debug.Assert IC("D") = "B3"
+                Debug.Assert IC("E") = "C3"
         End Select
         i = i + 1
-        ic.MoveNext
+        IC.MoveNext
     Loop
 
 End Sub
@@ -272,25 +272,25 @@ Sub Test_CollectionCursor()
     col.Add "c"
     col.Add "D"
 
-    Dim ic As ICursor
+    Dim IC As ICursor
 
-    Set ic = ArrayList.NewInstance(col)
+    Set IC = ArrayList.NewInstance(col)
     Dim i As Long
     i = 0
-    Do Until ic.Eof
+    Do Until IC.Eof
     
         Select Case i
             Case 0
-                Debug.Assert ic.Item = "a"
+                Debug.Assert IC.Item = "a"
             Case 1
-                Debug.Assert ic.Item = "b"
+                Debug.Assert IC.Item = "b"
             Case 2
-                Debug.Assert ic.Item = "c"
+                Debug.Assert IC.Item = "c"
             Case 3
-                Debug.Assert ic.Item = "D"
+                Debug.Assert IC.Item = "D"
         End Select
         i = i + 1
-        ic.MoveNext
+        IC.MoveNext
     Loop
 
 End Sub
@@ -303,24 +303,24 @@ Sub Test_LineCursor()
     v = Array("a", "b", "c")
 
 
-    Dim ic As ICursor
+    Dim IC As ICursor
 
-    Set ic = ArrayList.NewInstance(v)
+    Set IC = ArrayList.NewInstance(v)
 
     Dim i As Long
     i = 0
-    Do Until ic.Eof
+    Do Until IC.Eof
     
         Select Case i
             Case 0
-                Debug.Assert ic.Item = "a"
+                Debug.Assert IC.Item = "a"
             Case 1
-                Debug.Assert ic.Item = "b"
+                Debug.Assert IC.Item = "b"
             Case 2
-                Debug.Assert ic.Item = "c"
+                Debug.Assert IC.Item = "c"
         End Select
         i = i + 1
-        ic.MoveNext
+        IC.MoveNext
     Loop
 
 End Sub
@@ -470,24 +470,24 @@ End Sub
 Sub Test_CsvParser()
 
     Dim strBuf As String
-    Dim Row As Collection
-    Dim col As Collection
+    Dim Row As IList
+    Dim col As IList
     Dim v As Variant
     strBuf = "1,Watanabe,Fukushima,36,""カンマがあっても,OK""" & vbCrLf & "2,satoh,chiba,24,""改行があっても" & vbLf & "OKやで"""
 
     Set Row = Parser.ParseCsv(strBuf, True)
 
-    Debug.Assert Row(1)(1) = "1"
-    Debug.Assert Row(1)(2) = "Watanabe"
-    Debug.Assert Row(1)(3) = "Fukushima"
-    Debug.Assert Row(1)(4) = "36"
-    Debug.Assert Row(1)(5) = "カンマがあっても,OK"
+    Debug.Assert Row(0)(0) = "1"
+    Debug.Assert Row(0)(1) = "Watanabe"
+    Debug.Assert Row(0)(2) = "Fukushima"
+    Debug.Assert Row(0)(3) = "36"
+    Debug.Assert Row(0)(4) = "カンマがあっても,OK"
 
-    Debug.Assert Row(2)(1) = "2"
-    Debug.Assert Row(2)(2) = "satoh"
-    Debug.Assert Row(2)(3) = "chiba"
-    Debug.Assert Row(2)(4) = "24"
-    Debug.Assert Row(2)(5) = "改行があっても" & vbLf & "OKやで"
+    Debug.Assert Row(1)(0) = "2"
+    Debug.Assert Row(1)(1) = "satoh"
+    Debug.Assert Row(1)(2) = "chiba"
+    Debug.Assert Row(1)(3) = "24"
+    Debug.Assert Row(1)(4) = "改行があっても" & vbLf & "OKやで"
 
 End Sub
 Sub Test_IsDictionary()
@@ -717,8 +717,8 @@ Sub Test_CsvWriter()
 
         Do Until .Eof
 
-            strBuf1 = .Item(1)
-            strBuf2 = .Item(2)
+            strBuf1 = .Item(0)
+            strBuf2 = .Item(1)
 
             .MoveNext
         Loop
@@ -732,8 +732,8 @@ Sub Test_CsvWriter()
 
         Do Until .Eof
 
-            strBuf1 = .Item("name")
-            strBuf2 = .Item("key")
+            strBuf1 = .Item("Name")
+            strBuf2 = .Item("Key")
 
             .MoveNext
         Loop

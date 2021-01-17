@@ -227,7 +227,7 @@ End Property
 '>* ICursor
 '>
 Private Property Get ICursor_Item(Optional ByVal opt As Variant) As Variant
-    Set ICursor_Item = mWS.Cells(mlngRow, mLO.ListColumns(opt).Range(1).Column)
+    Set ICursor_Item = mWS.Cells(mlngRow, mLO.ListColumns(opt).Range(1).column)
 End Property
 '>---
 '>#### MoveFirst(ICursor I/F)

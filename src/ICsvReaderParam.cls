@@ -59,6 +59,9 @@ End Property
 Public Property Let Header(v As Boolean)
 
 End Property
+Public Property Let Skip(v As Long)
+
+End Property
 Public Sub Init()
 
 End Sub
