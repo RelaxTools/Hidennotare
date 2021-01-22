@@ -102,6 +102,8 @@ Sub Test_ArrayList()
     
     Debug.Assert IL.Count = 4
     
+    IL.RemoveAt IL.Count - 1
+    
     Set IL = ArrayList.NewInstance(Array("a", "b", "c"))
 
     Debug.Assert IL.Item(0) = "a"

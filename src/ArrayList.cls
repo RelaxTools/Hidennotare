@@ -496,7 +496,9 @@ Private Sub IList_RemoveAt(idx As Long)
         Err.Raise 512 + 1, TypeName(Me) & ".RemoveAt", "IndexOutOfRangeException"
     End If
 
-    Arrays.ArrayMove mArray, idx + 1, idx, mCount - idx - 1
+    If idx <> mCount - 1 Then
+        Arrays.ArrayMove mArray, idx + 1, idx, mCount - idx - 1
+    End If
     
     mCount = mCount - 1
     
