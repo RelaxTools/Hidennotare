@@ -151,6 +151,7 @@ Public Function NewInstance(ByRef WS As Worksheet, _
     SC.Direction = Direction
     SC.StartNum = StartNum
     SC.EofNum = EofNum
+    SC.EofStr = EofStr
 
     Set NewInstance = SC
     
@@ -167,6 +168,10 @@ Private Property Let ISheetCursorParam_EofNum(ByVal RHS As Variant)
         mEofRow = CLng(RHS)
     End If
 End Property
+Private Property Let ISheetCursorParam_EofStr(ByVal RHS As String)
+    mEofStr = RHS
+End Property
+
 Private Property Let ISheetCursorParam_StartNum(ByVal RHS As Variant)
     If mDirection = DirectionDown Then
         mStartRow = RHS

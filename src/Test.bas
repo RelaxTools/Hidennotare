@@ -235,7 +235,7 @@ Sub Test_ICursor_SheetCursor()
 
     '3行目から↓に向かって読む。
     'B列が空文字列("")になったら終了。
-    Set IC = SheetCursor.NewInstance(Sheet1, 3, "B")
+    Set IC = SheetCursor.NewInstance(Sheet1, 3, "B", DirectionDown, "END")
 
     Dim i As Long
     i = 0
@@ -696,7 +696,7 @@ Sub Test_CsvWriter()
     Dim blnFind As Boolean
     blnFind = False
     
-    With CSVReader.NewInstance(strFile, NewLineCodeLF, EncodeUTF16LE, ",", True)
+    With CsvReader.NewInstance(strFile, NewLineCodeLF, EncodeUTF16LE, ",", True)
         Do Until .Eof
             blnFind = True
             .MoveNext
@@ -715,7 +715,7 @@ Sub Test_CsvWriter()
     End With
 
 
-    With CSVReader.NewInstance(strFile, NewLineCodeLF, EncodeUTF16LE, ",", True)
+    With CsvReader.NewInstance(strFile, NewLineCodeLF, EncodeUTF16LE, ",", True)
 
         Do Until .Eof
 
@@ -730,7 +730,7 @@ Sub Test_CsvWriter()
     Debug.Assert strBuf1 = "あい,うえお"
     Debug.Assert strBuf2 = "かきく" & vbLf & "けこ"
     
-    With CSVReader.NewInstance(strFile, NewLineCodeLF, EncodeUTF16LE, ",", True, True)
+    With CsvReader.NewInstance(strFile, NewLineCodeLF, EncodeUTF16LE, ",", True, True)
 
         Do Until .Eof
 

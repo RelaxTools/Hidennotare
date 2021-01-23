@@ -53,3 +53,6 @@ End Property
 Public Property Let EofNum(ByVal v As Variant)
 
 End Property
+Public Property Let EofStr(ByVal s As String)
+
+End Property

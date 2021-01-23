@@ -163,7 +163,7 @@ Public Function NewInstance(ByVal FileName As String, _
 
     Dim FP As ICsvReaderParam
     
-    Set FP = New CSVReader
+    Set FP = New CsvReader
     
     FP.FileName = FileName
     FP.NewLineCode = NewLineCode
@@ -174,7 +174,7 @@ Public Function NewInstance(ByVal FileName As String, _
     FP.Skip = Skip
     
     FP.Init
-
+    
     Set NewInstance = FP
 
 End Function
