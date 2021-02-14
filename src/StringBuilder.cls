@@ -126,8 +126,9 @@ Public Function NewInstance(Optional ByVal size As Long = 25) As IStringBuilder
     Set obj = New StringBuilder
 
     obj.size = size
+    
     Set NewInstance = obj
-
+    
     NewInstance.Clear
 
 End Function

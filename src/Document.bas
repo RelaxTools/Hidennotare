@@ -415,3 +415,5 @@ Private Function GetStaticContents(ByVal strFile As String) As String
     End If
     
 End Function
+
+

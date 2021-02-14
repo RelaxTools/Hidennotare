@@ -687,3 +687,6 @@ Private Function IFormManager_CreateHistory(c As ComboBox, Optional ByVal Max As
 
 End Function
 
+Private Function IUsing_GetInstance() As Object
+
+End Function

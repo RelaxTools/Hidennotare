@@ -1,7 +1,6 @@
 Attribute VB_Name = "Test"
 Option Explicit
 Option Private Module
-
 Sub Show_Test()
     frmTest.Show
 End Sub
@@ -802,7 +801,7 @@ Sub Test_RegExp()
 
     Set col = RegExp.Execute("12AB56", "[A-Z]{2}")
 
-    Debug.Assert col(1).Index = 3
+    Debug.Assert col(1).index = 3
     Debug.Assert col(1).Length = 2
     Debug.Assert col(1).Value = "AB"
 
@@ -813,7 +812,7 @@ Sub Test_StrSch()
 
     Set col = StrSch.Execute("12AB56", "AB")
 
-    Debug.Assert col(1).Index = 3
+    Debug.Assert col(1).index = 3
     Debug.Assert col(1).Length = 2
     Debug.Assert col(1).Value = "AB"
 
@@ -919,31 +918,53 @@ Sub Test_Arrays()
 
 End Sub
 
-Private Sub SubText_Arrays(ParamArray args() As Variant)
-
+Private Sub SubText_Arrays(ParamArray Args() As Variant)
 
     Dim col As Collection
     
     Dim v As Variant
     
-    v = args()
-    
+    v = Args()
     
     Set col = Arrays.ToCollection(v)
     
     Debug.Assert col.Count = 3
 
+End Sub
 
+Sub Test_NewExcel()
+
+    Dim o As IUsing
+
+    With Using.NewInstance(NewExcel.NewInstance)
+
+        Debug.Assert .Args(1).GetInstance.Caption = "Excel"
+
+    End With
+
+End Sub
+
+Sub Test_NewWord()
+
+    Dim o As IUsing
+
+    With Using.NewInstance(NewWord.NewInstance)
+
+        Debug.Assert .Args(1).GetInstance.Caption = "Word"
+
+    End With
+
+End Sub
+
+Sub Test_NewPowerPoint()
+
+    With Using.NewInstance(NewPowerPoint.NewInstance)
+
+        Debug.Assert .Args(1).GetInstance.Caption = "PowerPoint"
+
+    End With
 
 End Sub
 
 
-'Sub a()
-'
-'    Dim b As IList
-'
-'    Set b = Dictionary.NewInstance
-'
-'
-'
-'End Sub
+

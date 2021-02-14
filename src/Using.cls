@@ -65,12 +65,12 @@ Private m_col As Collection
 '--------------------------------
 ' With Žž“_‚ÅŽÀs
 '--------------------------------
-Public Function NewInstance(ParamArray args() As Variant) As IUsingArgs
+Public Function NewInstance(ParamArray Args() As Variant) As IUsingArgs
 
     Dim us As IUsingParam
     Dim v As Variant
     
-    v = args
+    v = Args
     
     Set us = New Using
     
@@ -80,6 +80,11 @@ Public Function NewInstance(ParamArray args() As Variant) As IUsingArgs
     Set NewInstance = us
 
 End Function
+
+Private Function IUsingArgs_Args(ByVal index As Long) As Object
+    Set IUsingArgs_Args = m_col(index)
+End Function
+
 Private Property Set IUsingParam_Source(RHS As Collection)
     Set m_col = RHS
 End Property
@@ -144,7 +149,5 @@ End Sub
 '>
 '>* None
 '>
-Private Property Get IUsingArgs_Args() As Collection
-    Set IUsingArgs_Args = m_col
-End Property
+
 

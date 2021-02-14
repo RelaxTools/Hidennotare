@@ -56,10 +56,10 @@ Attribute VB_Exposed = True
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
-Sub WriteData(ByVal args As Variant)
+Sub WriteData(ByVal Args As Variant)
 
 End Sub
-Sub WriteLine(ByVal args As Variant)
+Sub WriteLine(ByVal Args As Variant)
 
 End Sub
 Sub Flush()

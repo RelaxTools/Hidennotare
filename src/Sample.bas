@@ -41,7 +41,7 @@ Sub Using_Sample()
         Debug.Print "Application.ScreenUpdating:" & Application.ScreenUpdating
     
         'Using クラスの引数１つ目のインスタンスを返す。
-        Debug.Print .args(1).GetInstance.Caption
+        Debug.Print .Args(1).GetInstance.Caption
         
 
     End With

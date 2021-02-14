@@ -88,14 +88,14 @@ Private Declare PtrSafe Sub ZeroMemory Lib "kernel32" Alias "RtlZeroMemory" (des
 '>**Example**
 '>
 '-----------------------------------------------------------------------------------------------------
-Public Function ToCollection(args As Variant) As Collection
+Public Function ToCollection(Args As Variant) As Collection
         
     Dim col As Collection
     Dim v As Variant
     
     Set col = New Collection
         
-    For Each v In args
+    For Each v In Args
         col.Add v
     Next
 

@@ -836,7 +836,7 @@ End Function
 '>**Syntax**
 '>
 '>```
-'>ret = FileIO.BuildPath(strPath, strFile)
+'>ret = FileIO.BuildPath(strPath, elements())
 '>```
 '>
 '>**Parameters**
@@ -844,7 +844,7 @@ End Function
 '>|Name|Required/Optional|Data type|Description|
 '>---|---|---|---
 '>|strPath|必須|String|結合するフォルダを指定|
-'>|strFile|必須|String|結合ファイルを指定|
+'>|elements|必須|ParamArray|結合ファイルを指定|
 '>
 '>**Return Value**
 '>
@@ -855,7 +855,7 @@ End Function
 '>**Remarks**
 '>
 '>ファイルパス結合<br>
-'>指定のファイルがファイルが見つかったら即リターンします。<br>
+'>パラメータに指定された文字列をファイルの区切り文字の有無をチェックして結合します。<br>
 '>
 '>**Example**
 '>
@@ -865,10 +865,18 @@ End Function
 '>
 '>* None
 '>
-Public Function BuildPath(ByVal strPath As String, ByVal strFile As String) As String
+Public Function BuildPath(ByVal strPath As String, ParamArray elements()) As String
+    
+    Dim v As Variant
     
     With FSO
-        BuildPath = .BuildPath(strPath, strFile)
+        
+        For Each v In elements
+            strPath = .BuildPath(strPath, v)
+        Next
+        
+        BuildPath = strPath
+    
     End With
 
 End Function

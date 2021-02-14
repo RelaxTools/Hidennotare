@@ -5,7 +5,7 @@ END
 Attribute VB_Name = "NewPowerPoint"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = False
+Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 '
@@ -46,7 +46,7 @@ Attribute VB_Exposed = True
 '>**Example**
 '>
 '>```
-'>With Using.NewInstance(New PowerPoint)
+'>With Using.NewInstance(PowerPoint.NewInstance())
 '>   .Args(1).GetInstance
 '>End With
 '>```
@@ -67,26 +67,26 @@ Implements IUsing
 
 Private mPP As Object
 'Instance を取得時にオブジェクトを生成する。
-Public Property Get GetInstance() As Object
-    If mPP Is Nothing Then
-        Set mPP = VBA.CreateObject("PowerPoint.Application")
-    End If
-    Set GetInstance = mPP
-End Property
+Public Function NewInstance() As NewPowerPoint
+    
+    Set NewInstance = New NewPowerPoint
 
-Private Sub Class_Terminate()
-    Call IUsing_Finish
-End Sub
-
+End Function
 Private Sub IUsing_Begin()
+    
+    Set mPP = VBA.CreateObject("PowerPoint.Application")
 
 End Sub
 
 Private Sub IUsing_Finish()
     
-    If Not mPP Is Nothing Then
-        mPP.Quit
-    End If
+    mPP.Quit
     Set mPP = Nothing
 
 End Sub
+
+Public Function GetInstance() As Object
+    
+    Set GetInstance = mPP
+
+End Function

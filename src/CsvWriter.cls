@@ -188,7 +188,7 @@ Private Sub Class_Terminate()
     Set mIW = Nothing
 End Sub
 
-Private Sub IWriter_WriteData(ByVal args As Variant)
+Private Sub IWriter_WriteData(ByVal Args As Variant)
     Err.Raise 512 + 1, TypeName(Me) & ".IWriter_WriteData", "Not Support Method"
 End Sub
 
@@ -226,21 +226,21 @@ End Sub
 '>
 '>* CsvWriter.Flush
 '>
-Private Sub IWriter_WriteLine(ByVal args As Variant)
+Private Sub IWriter_WriteLine(ByVal Args As Variant)
     
     Dim c As Variant
     Dim SB As IStringBuilder
     Set SB = StringBuilder.NewInstance
 
-    If IsArray(args) Then
-        For Each c In args
+    If IsArray(Args) Then
+        For Each c In Args
             SB.Append AddQuot(c)
         Next
         'TextWriter‚ÉˆÏ÷‚·‚éB
         mIW.WriteLine SB.ToString(mDelimiter)
     Else
         'TextWriter‚ÉˆÏ÷‚·‚éB
-        mIW.WriteLine AddQuot(args)
+        mIW.WriteLine AddQuot(Args)
     End If
 
 End Sub

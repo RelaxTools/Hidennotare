@@ -261,13 +261,13 @@ End Sub
 '--------------------------------------------------------------
 ' BOMチェック
 '--------------------------------------------------------------
-Private Function StartWith(bytBuf, ParamArray args() As Variant) As Boolean
+Private Function StartWith(bytBuf, ParamArray Args() As Variant) As Boolean
 
     Dim v As Variant
     Dim i As Long
     
     i = 0
-    For Each v In args
+    For Each v In Args
             
         If i > UBound(bytBuf) Then
             StartWith = False

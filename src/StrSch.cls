@@ -182,8 +182,8 @@ Function Replace(ByVal strText As String, ByVal strExp As String, ByVal strRepla
     
         Set bean = col(i)
     
-        strL = Mid$(strBuf, 1, bean.Index - 1)
-        strR = Mid$(strBuf, bean.Index + bean.Length)
+        strL = Mid$(strBuf, 1, bean.index - 1)
+        strR = Mid$(strBuf, bean.index + bean.Length)
 
         strBuf = strL & strReplace & strR
     
@@ -266,7 +266,7 @@ Public Function Execute(ByVal strText As String, ByVal strExp As String, Optiona
         
             Set MB = New MatchBean
             
-            MB.Index = 1
+            MB.index = 1
             MB.Length = Len(strCmp1)
             MB.Value = strCmp1
         
@@ -281,7 +281,7 @@ Public Function Execute(ByVal strText As String, ByVal strExp As String, Optiona
         
             Set MB = New MatchBean
             
-            MB.Index = 1
+            MB.index = 1
             MB.Length = 0
             MB.Value = strCmp1
         
@@ -296,7 +296,7 @@ Public Function Execute(ByVal strText As String, ByVal strExp As String, Optiona
                 
                 Set MB = New MatchBean
                 
-                MB.Index = lngPos
+                MB.index = lngPos
                 MB.Length = Len(strResult)
                 MB.Value = strResult
             
@@ -404,10 +404,10 @@ Sub ReplaceShape(ByRef sh As Shape, ByVal strExp As String, ByVal strReplace As 
         
             Set bean = col(i)
         
-            Call .Characters(bean.Index, bean.Length).Delete
+            Call .Characters(bean.index, bean.Length).Delete
             
             If strReplace <> "" Then
-                Call .Characters(bean.Index, 0).InsertAfter(strReplace)
+                Call .Characters(bean.index, 0).InsertAfter(strReplace)
             End If
         
         Next
@@ -473,10 +473,10 @@ Sub ReplaceRange(ByRef rng As Range, ByVal strExp As String, ByVal strReplace As
         
             Set bean = col(i)
         
-            Call .Characters(bean.Index, bean.Length).Delete
+            Call .Characters(bean.index, bean.Length).Delete
             
             If strReplace <> "" Then
-                Call .Characters(bean.Index, 0).Insert(strReplace)
+                Call .Characters(bean.index, 0).Insert(strReplace)
             End If
         
         Next

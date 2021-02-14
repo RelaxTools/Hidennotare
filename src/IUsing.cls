@@ -46,6 +46,7 @@ Attribute VB_Exposed = True
 '>
 '>```
 '>Public Sub Begin()
+'>Public Function GetInstance() as Object
 '>Public Sub Finish()
 '>```
 '>

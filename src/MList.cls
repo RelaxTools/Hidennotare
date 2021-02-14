@@ -143,7 +143,7 @@ Private mIndex As Long
 '>
 '>* None
 '>
-Public Function NewInstance(ParamArray args() As Variant) As IList
+Public Function NewInstance(ParamArray Args() As Variant) As IList
 
     Dim cnt As Long
     Dim lngValue As Long
@@ -154,7 +154,7 @@ Public Function NewInstance(ParamArray args() As Variant) As IList
     Dim v As Variant
     Dim i As Long
     
-    var = args
+    var = Args
     
     lngMin = 0
     lngMax = -1
@@ -181,20 +181,20 @@ Public Function NewInstance(ParamArray args() As Variant) As IList
             Select Case True
                 
                 'コレクションまたは配列からの変換
-                Case TypeOf args(0) Is Collection, IsArray(args(0))
+                Case TypeOf Args(0) Is Collection, IsArray(Args(0))
                     
-                    Set IL = Arrays.ToList(args(0))
+                    Set IL = Arrays.ToList(Args(0))
                 
                 Case Else
                 
-                    IL.Add args(0)
+                    IL.Add Args(0)
             
             End Select
             
         Case Else
             
             For i = lngMin To lngMax
-                IL.Add args(i)
+                IL.Add Args(i)
             Next
     
     End Select

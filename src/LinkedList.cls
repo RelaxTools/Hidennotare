@@ -164,13 +164,13 @@ Private mIndex As Long
 '>
 '>* None
 '>
-Public Function NewInstance(ParamArray args() As Variant) As IList
+Public Function NewInstance(ParamArray Args() As Variant) As IList
 
     Dim IL As IList
     Dim var As Variant
     Dim v As Variant
     
-    var = args
+    var = Args
     
     Set IL = New LinkedList
     IL.Clear
@@ -182,21 +182,21 @@ Public Function NewInstance(ParamArray args() As Variant) As IList
             Select Case True
                 
                 'コレクションまたは配列からの変換
-                Case TypeOf args(0) Is Collection, IsArray(args(0))
+                Case TypeOf Args(0) Is Collection, IsArray(Args(0))
                     
-                    For Each v In args(0)
+                    For Each v In Args(0)
                         IL.Add v
                     Next
                 
                 Case Else
                 
-                    IL.Add args(0)
+                    IL.Add Args(0)
             
             End Select
             
         Case Else
             
-            For Each v In args
+            For Each v In Args
                 IL.Add v
             Next
     

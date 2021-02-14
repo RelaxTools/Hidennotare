@@ -111,3 +111,6 @@ Private Sub IUsing_Finish()
 
 End Sub
 
+Private Function IUsing_GetInstance() As Object
+
+End Function

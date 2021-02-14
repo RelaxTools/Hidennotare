@@ -55,6 +55,6 @@ Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 
-Public Property Get args() As Collection
+Public Function Args(ByVal index As Long) As Object
 
-End Property
+End Function

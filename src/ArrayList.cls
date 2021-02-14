@@ -168,7 +168,7 @@ Private mIndex As Long
 '>
 '>* None
 '>
-Public Function NewInstance(Optional ByVal args As Variant) As IList
+Public Function NewInstance(Optional ByVal Args As Variant) As IList
 
     Dim v As Variant
     Dim IL As IList
@@ -176,9 +176,9 @@ Public Function NewInstance(Optional ByVal args As Variant) As IList
     Set IL = New ArrayList
     IL.Clear
     
-    If Not IsMissing(args) Then
+    If Not IsMissing(Args) Then
             
-        For Each v In args
+        For Each v In Args
             IL.Add v
         Next
     

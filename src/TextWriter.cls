@@ -203,7 +203,7 @@ End Sub
 '>
 '>* TextWriter.Flush
 '>
-Private Sub IWriter_WriteData(ByVal args As Variant)
+Private Sub IWriter_WriteData(ByVal Args As Variant)
     
     Dim strLine As String
     Dim bytBuf() As Byte
@@ -243,7 +243,7 @@ Private Sub IWriter_WriteData(ByVal args As Variant)
 '        Case NewLineCodeConstants.LF
 '            strLine = Args & vbLf
 '        Case NewLineCodeConstants.None
-            strLine = args
+            strLine = Args
 '    End Select
         
     'エンコード
@@ -293,7 +293,7 @@ End Sub
 '>
 '>* TextWriter.Flush
 '>
-Private Sub IWriter_WriteLine(ByVal args As Variant)
+Private Sub IWriter_WriteLine(ByVal Args As Variant)
     
     Dim strLine As String
     Dim bytBuf() As Byte
@@ -329,11 +329,11 @@ Private Sub IWriter_WriteLine(ByVal args As Variant)
     '改行
     Select Case mNewLineCode
         Case NewLineCodeConstants.NewLineCodeCRLF
-            strLine = args & vbCrLf
+            strLine = Args & vbCrLf
         Case NewLineCodeConstants.NewLineCodeLF
-            strLine = args & vbLf
+            strLine = Args & vbLf
         Case NewLineCodeConstants.NewLineCodeNone
-            strLine = args
+            strLine = Args
     End Select
         
     'エンコード

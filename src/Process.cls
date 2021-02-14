@@ -57,7 +57,7 @@ Attribute VB_Exposed = True
 Option Explicit
 
 Private Declare PtrSafe Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (destination As Any, Source As Any, ByVal Length As LongPtr)
-
+Private Declare PtrSafe Sub SleepLocal Lib "kernel32" Alias "Sleep" (ByVal ms As LongPtr)
 Private RefCount As Long
 '--------------------------------------------------------------
 ' マルチプロセス実行用（マクロ）
@@ -204,4 +204,10 @@ Function ExecPowerShell(ByVal strCommand As String) As Long
 e:
     FileIO.DeleteFile strFile
 
+End Function
+'--------------------------------------------------------------
+'　Sleep
+'--------------------------------------------------------------
+Function Sleep(ByVal lngtime As Long)
+    SleepLocal lngtime
 End Function

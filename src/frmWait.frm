@@ -49,6 +49,10 @@ Implements IUsing
 Private mlngMax As Long
 Private m_Cancel As Boolean
 
+Private Function IUsing_GetInstance() As Object
+
+End Function
+
 Private Sub UserForm_Initialize()
     m_Cancel = False
 End Sub

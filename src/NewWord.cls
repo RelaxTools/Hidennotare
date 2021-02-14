@@ -5,7 +5,7 @@ END
 Attribute VB_Name = "NewWord"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = False
+Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 '
@@ -46,7 +46,7 @@ Attribute VB_Exposed = True
 '>**Example**
 '>
 '>```
-'>With Using.NewInstance(New Word)
+'>With Using.NewInstance(Word.NewInstance())
 '>   .Args(1).GetInstance
 '>End With
 '>```
@@ -67,25 +67,24 @@ Implements IUsing
 
 Private mWD As Object
 'Instance を取得時にオブジェクトを生成する。
-Public Property Get GetInstance() As Object
-    If mWD Is Nothing Then
-        Set mWD = VBA.CreateObject("Word.Application")
-    End If
-    Set GetInstance = mWD
-End Property
+Public Function NewInstance() As NewWord
+    
+    Set NewInstance = New NewWord
 
-Private Sub Class_Terminate()
-    Call IUsing_Finish
-End Sub
+End Function
 Private Sub IUsing_Begin()
+    
+    Set mWD = VBA.CreateObject("Word.Application")
 
 End Sub
-
 Private Sub IUsing_Finish()
     
-    If Not mWD Is Nothing Then
-        mWD.Quit
-    End If
+    mWD.Quit
     Set mWD = Nothing
 
 End Sub
+Public Function GetInstance() As Object
+    
+    Set GetInstance = mWD
+
+End Function

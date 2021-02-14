@@ -242,7 +242,7 @@ Function Execute(ByVal strText As String, ByVal strExp As String, Optional ByVal
         
         Set r = New MatchBean
         
-        r.Index = m.FirstIndex + 1
+        r.index = m.FirstIndex + 1
         r.Length = m.Length
         r.Value = m.Value
         
@@ -355,10 +355,10 @@ Sub ReplaceShape(ByRef sh As Shape, ByVal strExp As String, ByVal strReplace As 
 
             Set bean = col(i)
 
-            Call .Characters(bean.Index, bean.Length).Delete
+            Call .Characters(bean.index, bean.Length).Delete
 
             If strReplace <> "" Then
-                Call .Characters(bean.Index, 0).InsertAfter(strReplace)
+                Call .Characters(bean.index, 0).InsertAfter(strReplace)
             End If
 
         Next
@@ -416,10 +416,10 @@ Sub ReplaceRange(ByRef rng As Range, ByVal strExp As String, ByVal strReplace As
 
             Set bean = col(i)
 
-            Call .Characters(bean.Index, bean.Length).Delete
+            Call .Characters(bean.index, bean.Length).Delete
 
             If strReplace <> "" Then
-                Call .Characters(bean.Index, 0).Insert(strReplace)
+                Call .Characters(bean.index, 0).Insert(strReplace)
             End If
 
         Next

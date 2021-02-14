@@ -5,7 +5,7 @@ END
 Attribute VB_Name = "NewExcel"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = False
+Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 '
@@ -46,7 +46,7 @@ Attribute VB_Exposed = True
 '>**Example**
 '>
 '>```
-'>With Using.NewInstance(New NewExcel)
+'>With Using.NewInstance(NewExcel.NewInstance())
 '>   .Args(1).GetInstance
 '>End With
 '>```
@@ -67,37 +67,35 @@ Implements IUsing
 
 Private mXL As Excel.Application
 'Instance を取得時にオブジェクトを生成する。
-Public Property Get GetInstance() As Excel.Application
-    If mXL Is Nothing Then
-        Set mXL = New Excel.Application
-        mXL.EnableEvents = False
-        mXL.PrintCommunication = False
-        mXL.DisplayAlerts = False
-    End If
-    Set GetInstance = mXL
-End Property
+Public Function NewInstance() As NewExcel
+    
+    Set NewInstance = New NewExcel
 
-Private Sub Class_Terminate()
-    Call IUsing_Finish
-End Sub
+End Function
 
 Private Sub IUsing_Begin()
+    
+    Set mXL = New Excel.Application
+    mXL.EnableEvents = False
+    mXL.PrintCommunication = False
+    mXL.DisplayAlerts = False
 
 End Sub
-
 Private Sub IUsing_Finish()
     
-    If Not mXL Is Nothing Then
-        '開いているブックがあれば全部閉じる
-        If mXL.Workbooks.Count > 0 Then
-            Dim WB As Workbook
-            For Each WB In mXL.Workbooks
-                WB.Close SaveChanges:=False
-            Next
-        End If
-        mXL.Quit
+    '開いているブックがあれば全部閉じる
+    If mXL.Workbooks.Count > 0 Then
+        Dim WB As Workbook
+        For Each WB In mXL.Workbooks
+            WB.Close SaveChanges:=False
+        Next
     End If
+    mXL.Quit
     Set mXL = Nothing
 
 End Sub
+Public Function GetInstance() As Object
+    
+    Set GetInstance = mXL
 
+End Function

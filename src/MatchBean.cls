@@ -60,7 +60,7 @@ Private m_index As Long
 Private m_Length As Long
 Private m_Value As String
 
-Public Property Let Index(v As Long)
+Public Property Let index(v As Long)
     m_index = v
 End Property
 Public Property Let Length(v As Long)
@@ -69,8 +69,8 @@ End Property
 Public Property Let Value(v As String)
     m_Value = v
 End Property
-Public Property Get Index() As Long
-    Index = m_index
+Public Property Get index() As Long
+    index = m_index
 End Property
 Public Property Get Length() As Long
     Length = m_Length

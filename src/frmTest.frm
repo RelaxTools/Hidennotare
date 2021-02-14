@@ -1,7 +1,7 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} frmTest 
    Caption         =   "Hdennotare Test"
-   ClientHeight    =   3696
+   ClientHeight    =   3705
    ClientLeft      =   45
    ClientTop       =   330
    ClientWidth     =   8310.001
@@ -96,7 +96,6 @@ Private Sub cmdOk_Click()
         Exit Sub
     End If
 
-
     Dim lngMax As Long
     Dim i As Long
     
@@ -115,13 +114,15 @@ Private Sub cmdOk_Click()
                 Exit For
             End If
         
-        
             '実行
             lvTest.ListItems(i).Selected = True
             lvTest.ListItems(i).EnsureVisible
             
             Application.Run "Test." & lvTest.ListItems(i).Text
-        
+            
+            Process.Sleep 50
+            DoEvents
+                    
             'ゲージの現在値を設定
             FM.DisplayGauge i
         Next
