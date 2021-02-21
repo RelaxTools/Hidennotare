@@ -223,18 +223,18 @@ Public Function LoadIcon(ByVal FileName As String, Optional ByVal size As IconCo
     
     End If
 
-    Dim info  As SHFILEINFO
+    Dim Info  As SHFILEINFO
     Dim ret As LongPtr
 
     If hIcon = 0 Then
         
         If size = IconConstants.IconSmall Then
-            ret = SHGetFileInfoW(StrPtr(FileName), FILE_ATTRIBUTE_NORMAL, info, Len(info), SHGFI_USEFILEATTRIBUTES Or SHGFI_TYPENAME Or SHGFI_ICON Or SHGFI_SMALLICON)
+            ret = SHGetFileInfoW(StrPtr(FileName), FILE_ATTRIBUTE_NORMAL, Info, Len(Info), SHGFI_USEFILEATTRIBUTES Or SHGFI_TYPENAME Or SHGFI_ICON Or SHGFI_SMALLICON)
         Else
-            ret = SHGetFileInfoW(StrPtr(FileName), FILE_ATTRIBUTE_NORMAL, info, Len(info), SHGFI_USEFILEATTRIBUTES Or SHGFI_TYPENAME Or SHGFI_ICON)
+            ret = SHGetFileInfoW(StrPtr(FileName), FILE_ATTRIBUTE_NORMAL, Info, Len(Info), SHGFI_USEFILEATTRIBUTES Or SHGFI_TYPENAME Or SHGFI_ICON)
         End If
         
-        hIcon = info.hIcon
+        hIcon = Info.hIcon
     End If
 
     If hIcon = 0 Then

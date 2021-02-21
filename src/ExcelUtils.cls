@@ -328,7 +328,7 @@ End Function
 '--------------------------------------------------------------
 Function Except(r As Range, s As Range) As Range
 
-     Dim PL As PairLogger: Set PL = PairLogger.NewInstance(TypeName(Me) & ".Except")
+'     Dim PL As PairLogger: Set PL = PairLogger.NewInstance(TypeName(Me) & ".Except")
     'd‚È‚é•”•ª‚ª‚ ‚é‚©H
 
     Dim n As Range

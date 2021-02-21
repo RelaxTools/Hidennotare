@@ -55,35 +55,50 @@ Attribute VB_Exposed = True
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
+Implements IRegistry
+Implements IAppNameParam
+
 Private mAppName As String
+
+Public Function NewInstance(ai As IAppInfo) As IRegistry
+
+    Dim p As IAppNameParam
+    
+    Set p = New Registry
+
+    p.Name = ai.AppName
+
+    Set NewInstance = p
+
+End Function
+Private Property Let IAppNameParam_Name(RHS As String)
+    mAppName = RHS
+End Property
 '--------------------------------------------------------------
 ' 初期化処理
 '--------------------------------------------------------------
 Private Sub Class_Initialize()
     mAppName = "Default"
 End Sub
-'--------------------------------------------------------------
-' アプリケーション名
-'--------------------------------------------------------------
-Public Property Let AppName(v As String)
-    mAppName = v
-End Property
+
+
+
 '--------------------------------------------------------------
 ' レジストリ読み込み
 '--------------------------------------------------------------
-Public Function GetSetting(ByVal Section As String, ByVal key As String, Optional ByVal Default As String = "") As String
-    GetSetting = VBA.GetSetting(mAppName, Section, key, Default)
+Private Function IRegistry_GetSetting(ByVal Section As String, ByVal key As String, Optional ByVal Default As String = "") As String
+    IRegistry_GetSetting = VBA.GetSetting(mAppName, Section, key, Default)
 End Function
 '--------------------------------------------------------------
 ' レジストリ書き込み
 '--------------------------------------------------------------
-Public Sub SaveSetting(ByVal Section As String, ByVal key As String, ByVal Value As String)
+Private Sub IRegistry_SaveSetting(ByVal Section As String, ByVal key As String, ByVal Value As String)
     VBA.SaveSetting mAppName, Section, key, Value
 End Sub
 '--------------------------------------------------------------
 'レジストリ削除
 '--------------------------------------------------------------
-Public Sub DeleteSetting(ByVal Section As String, Optional ByVal key As String = "")
+Private Sub IRegistry_DeleteSetting(ByVal Section As String, Optional ByVal key As String = "")
     On Error Resume Next
     If Len(key) = 0 Then
         VBA.DeleteSetting mAppName, Section
@@ -95,7 +110,7 @@ End Sub
 ' レジストリのExport
 ' UTF-16 LE にてレジストリの内容を出力する。
 '--------------------------------------------------------------
-Public Sub Export()
+Private Sub IRegistry_Export()
 
     Dim strDat As String
     Const C_FF As Byte = &HFF
@@ -120,7 +135,7 @@ Public Sub Export()
 
     Set Locator = VBA.CreateObject("WbemScripting.SWbemLocator")
     Set Service = Locator.ConnectServer(vbNullString, "root\default")
-    Set Reg = Service.Get("StdRegProv")
+    Set Reg = Service.get("StdRegProv")
     
     Const HKEY_CURRENT_USER = &H80000001
     

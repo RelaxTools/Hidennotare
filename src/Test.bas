@@ -695,7 +695,7 @@ Sub Test_CsvWriter()
     Dim blnFind As Boolean
     blnFind = False
     
-    With CsvReader.NewInstance(strFile, NewLineCodeLF, EncodeUTF16LE, ",", True)
+    With CSVReader.NewInstance(strFile, NewLineCodeLF, EncodeUTF16LE, ",", True)
         Do Until .Eof
             blnFind = True
             .MoveNext
@@ -714,7 +714,7 @@ Sub Test_CsvWriter()
     End With
 
 
-    With CsvReader.NewInstance(strFile, NewLineCodeLF, EncodeUTF16LE, ",", True)
+    With CSVReader.NewInstance(strFile, NewLineCodeLF, EncodeUTF16LE, ",", True)
 
         Do Until .Eof
 
@@ -729,7 +729,7 @@ Sub Test_CsvWriter()
     Debug.Assert strBuf1 = "‚ ‚¢,‚¤‚¦‚¨"
     Debug.Assert strBuf2 = "‚©‚«‚­" & vbLf & "‚¯‚±"
     
-    With CsvReader.NewInstance(strFile, NewLineCodeLF, EncodeUTF16LE, ",", True, True)
+    With CSVReader.NewInstance(strFile, NewLineCodeLF, EncodeUTF16LE, ",", True, True)
 
         Do Until .Eof
 

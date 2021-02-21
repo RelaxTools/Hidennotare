@@ -50,15 +50,15 @@ Private mKey As String
 
 Sub start(ByVal strMessage As String, ByVal strKey As String)
 
-    If CBool(Registry.GetSetting("ShowOnece", strKey, False)) = False Then
-        mKey = strKey
-        lblMessage.Caption = strMessage
-        Me.Show
-    End If
+'    If CBool(Registry.GetSetting("ShowOnece", strKey, False)) = False Then
+'        mKey = strKey
+'        lblMessage.Caption = strMessage
+'        Me.Show
+'    End If
 
 End Sub
 
 Private Sub chkShowOnece_Change()
-    Registry.SaveSetting "ShowOnce", mKey, chkShowOnece.Value
+'    Registry.SaveSetting "ShowOnce", mKey, chkShowOnece.Value
 End Sub
 

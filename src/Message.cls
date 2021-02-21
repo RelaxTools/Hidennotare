@@ -48,22 +48,22 @@ Private mTitle As String
 ' 初期化処理
 '---------------------------------------
 Private Sub Class_Initialize()
-    mTitle = "Message"
+    mTitle = "Microsoft Excel"
 End Sub
 '>---
-'>#### Title(Message)
+'>#### AppInfo(Message)
 '>
 '>**Syntax**
 '>
 '>```
-'>Message.Title = title
+'>Message.AppInfo = ThisWorkBook
 '>```
 '>
 '>**Parameters**
 '>
 '>|Name|Required/Optional|Data type|Description|
 '>---|---|---|---
-'>|title|必須|String|メッセージタイトル|
+'>|title|必須|IAppInfo|アプリケーション情報I/F|
 '>
 '>**Return Value**
 '>
@@ -71,7 +71,7 @@ End Sub
 '>
 '>**Remarks**
 '>
-'>メッセージボックスに表示する文字列を設定<br>
+'>メッセージボックスに表示するアプリケーション名を設定<br>
 '>
 '>**Example**
 '>
@@ -86,8 +86,8 @@ End Sub
 '>* Message.Critical
 '>* Message.Question
 '>
-Public Property Let Title(v As String)
-    mTitle = v
+Public Property Let AppInfo(v As IAppInfo)
+    mTitle = v.AppName
 End Property
 '>---
 '>#### Information(Message)

@@ -55,6 +55,8 @@ Attribute VB_Exposed = True
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
+Implements ILogger
+Implements ILoggerParam
 
 #If Win64 Then
     Private Declare PtrSafe Function GetTickCount Lib "kernel32" Alias "GetTickCount64" () As LongPtr
@@ -69,48 +71,62 @@ Private colStack As New Collection
 'ファイル番号
 Private FP As Integer
 
-'ログタイプ
-Public Enum LogType
-    DebugWindow = 1
-    Logfile
-    All
-End Enum
 
-'ログレベル
-Public Enum LogLevel
-    Trace = 0
-    info = 1
-    Warn = 2
-    Fatal = 3
-    None = 4
-End Enum
-
-Private mLevel As LogLevel
-Private mLogType As Long
-Private mlngHistory As Long
-Private mLevelStr As Variant
 Private mFSO As Object
 
-Private mAppName As String
-'--------------------------------------------------------------
-'　Class_Initialize
-'--------------------------------------------------------------
-Private Sub Class_Initialize()
+Private mLevel As LogLevel
+Private mLogType As LogType
+Private mlngHistory As Long
+Private mLevelStr As Variant
+Private mName As String
+
+Private mOpen As Boolean
+
+Private mFolder As String
+
+Public Function NewInstance(ai As IAppInfo) As ILogger
+
+    Dim p As ILoggerParam
+    
+    Set p = New Logger
+
+    p.Name = ai.AppName
+    p.History = ai.LogHistory
+    p.Level = ai.LogLevel
+    p.LogType = ai.LogType
+    p.Folder = ai.LogFolder
+    
+    p.Init
+
+    Set NewInstance = p
+
+End Function
+Private Property Let ILoggerParam_Folder(RHS As String)
+    mFolder = RHS
+End Property
+Private Property Let ILoggerParam_History(RHS As Long)
+    mlngHistory = RHS
+End Property
+
+Private Property Let ILoggerParam_Level(RHS As LogLevel)
+    mLevel = RHS
+End Property
+
+Private Property Let ILoggerParam_LogType(RHS As LogType)
+    mLogType = RHS
+End Property
+
+Private Property Let ILoggerParam_Name(RHS As String)
+    mName = RHS
+End Property
+
+Private Sub ILoggerParam_Init()
 
     Set mFSO = VBA.CreateObject("Scripting.FileSystemObject")
-    
+
     FP = 225
 
     mLevelStr = Array("Trace", "Info", "Warn", "Fatal", "None")
-    
-    '規定のログレベル
-    mLevel = GetSetting(mAppName, "Log", "Level", LogLevel.info)
-    
-    'ログ出力先
-    mLogType = CLng(GetSetting(mAppName, "Log", "LogType", LogType.Logfile))
-    
-    'ヒストリ数
-    mlngHistory = CLng(GetSetting(mAppName, "Log", "History", 5))
 
     If mLogType And LogType.Logfile Then
         Call OpenLog
@@ -118,19 +134,30 @@ Private Sub Class_Initialize()
 
 End Sub
 '--------------------------------------------------------------
+'　Class_Initialize
+'--------------------------------------------------------------
+Private Sub Class_Initialize()
+
+End Sub
+'--------------------------------------------------------------
 '　Class_Terminate
 '--------------------------------------------------------------
 Private Sub Class_Terminate()
+
     On Error Resume Next
-    Close FP
-    Set mFSO = Nothing
+    
+    If mOpen Then
+        Close FP
+        Set mFSO = Nothing
+    End If
+
 End Sub
 '--------------------------------------------------------------
 ' アプリケーション名
 '--------------------------------------------------------------
-Public Property Let AppName(v As String)
-    mAppName = v
-End Property
+'Private Property Let ILogger_AppName(v As String)
+'    mAppName = v
+'End Property
 '>---
 '>#### LogTrace(Logger)
 '>
@@ -159,8 +186,8 @@ End Property
 '>
 '>* None
 '>
-Public Sub LogTrace(Message As String, ParamArray p())
-    ReportLog LogLevel.Trace, PlaceHolder(Message, p)
+Private Sub ILogger_LogTrace(m As String, ParamArray p())
+    ReportLog LogLevel.Trace, PlaceHolder(m, p)
 End Sub
 '>---
 '>#### LogInfo(Logger)
@@ -190,8 +217,8 @@ End Sub
 '>
 '>* None
 '>
-Public Sub LogInfo(Message As String, ParamArray p())
-    ReportLog LogLevel.info, PlaceHolder(Message, p)
+Private Sub ILogger_LogInfo(m As String, ParamArray p())
+    ReportLog LogLevel.Info, PlaceHolder(m, p)
 End Sub
 '>---
 '>#### LogWarn(Logger)
@@ -221,8 +248,8 @@ End Sub
 '>
 '>* None
 '>
-Public Sub LogWarn(Message As String, ParamArray p())
-    ReportLog LogLevel.Warn, PlaceHolder(Message, p)
+Private Sub ILogger_LogWarn(m As String, ParamArray p())
+    ReportLog LogLevel.Warn, PlaceHolder(m, p)
 End Sub
 '>---
 '>#### LogFatal(Logger)
@@ -252,20 +279,20 @@ End Sub
 '>
 '>* None
 '>
-Public Sub LogFatal(Message As String, ParamArray p())
+Private Sub ILogger_LogFatal(m As String, ParamArray p())
 
     Dim lngErr As Long
     Dim strDesc As String
 
     lngErr = Err.Number
     strDesc = Err.Description
-    
-    ReportLog LogLevel.Fatal, "Fatal Error (" & PlaceHolder(Message, p) & ")"
-    Me.LogFlash
-    
+
+    ReportLog LogLevel.Fatal, "Fatal Error (" & PlaceHolder(m, p) & ")"
+    ILogger_LogFlash
+
     Err.Number = lngErr
     Err.Description = strDesc
-    
+
 End Sub
 '>---
 '>#### LogBegin(Logger)
@@ -296,13 +323,13 @@ End Sub
 '>
 '>* None
 '>
-Public Sub LogBegin(lvl As LogLevel, Message As String, ParamArray p())
-    
+Private Sub ILogger_LogBegin(lvl As LogLevel, m As String, ParamArray p())
+
     If colStack Is Nothing Then
         Set colStack = New Collection
     End If
-    
-    ReportLog lvl, "[" & colStack.Count + 1 & "]" & PlaceHolder(Message, p) & ",BEGIN"
+
+    ReportLog lvl, "[" & colStack.Count + 1 & "]" & PlaceHolder(m, p) & ",BEGIN"
 
     colStack.Add GetTickCount
 
@@ -336,8 +363,8 @@ End Sub
 '>
 '>* None
 '>
-Public Sub LogFinish(lvl As LogLevel, Message As String, ParamArray p())
-    
+Private Sub ILogger_LogFinish(lvl As LogLevel, m As String, ParamArray p())
+
     Dim t As LongPtr
 
     If colStack Is Nothing Then
@@ -350,15 +377,16 @@ Public Sub LogFinish(lvl As LogLevel, Message As String, ParamArray p())
             colStack.Remove colStack.Count
         End If
     End If
-    
+
     If t = 0 Then
-        ReportLog lvl, PlaceHolder(Message, p) & ",FINISH,[?]ms"
+        ReportLog lvl, PlaceHolder(m, p) & ",FINISH,[?]ms"
     Else
         t = GetTickCount - t
-        ReportLog lvl, "[" & colStack.Count + 1 & "]" & PlaceHolder(Message, p) & ",FINISH,[" & t & "]ms"
+        ReportLog lvl, "[" & colStack.Count + 1 & "]" & PlaceHolder(m, p) & ",FINISH,[" & t & "]ms"
     End If
-    Me.LogFlash
     
+    ILogger_LogFlash
+
 End Sub
 '>---
 '>#### LogFlash(Logger)
@@ -385,7 +413,7 @@ End Sub
 '>
 '>* None
 '>
-Public Sub LogFlash()
+Private Sub ILogger_LogFlash()
     Call OpenLog
 End Sub
 '>---
@@ -415,7 +443,7 @@ End Sub
 '>
 '>* None
 '>
-Public Property Let Level(ByVal l As LogLevel)
+Private Property Let ILogger_Level(ByVal l As LogLevel)
     mLevel = l
 End Property
 'ログ出力
@@ -423,11 +451,11 @@ Private Sub ReportLog(ByVal l As LogLevel, ByVal strMsg As String)
 
     Dim strLog As String
     Dim lngRetry As Long
-    
+
     On Error GoTo e
 
     If l >= mLevel Then
-        strLog = mAppName & "," & Format$(Now, "yyyy-mm-dd,hh:nn:ss") & "." & getMSec & "," & mLevelStr(l) & "," & strMsg
+        strLog = mName & "," & Format$(Now, "yyyy-mm-dd,hh:nn:ss") & "." & getMSec & "," & mLevelStr(l) & "," & strMsg
         If mLogType And LogType.DebugWindow Then
             Debug.Print strLog
         End If
@@ -435,7 +463,7 @@ Private Sub ReportLog(ByVal l As LogLevel, ByVal strMsg As String)
             Print #FP, strLog
         End If
     End If
-    
+
     Exit Sub
 e:
     If Err.Number = 52 Then 'ファイル名または番号が不正です。
@@ -482,7 +510,7 @@ Private Sub OpenLog()
     'ログフォルダを Collection に追加
     Set objFolder = mFSO.GetFolder(strLogFolder)
     For Each objFile In objFolder.files
-    
+
         For i = 1 To col.Count
             If col(i) >= objFile.Name Then
                 col.Add objFile.Name, , i
@@ -511,6 +539,8 @@ pass:
     strFile = mFSO.BuildPath(strLogFolder, Format(Now, "yyyymmdd") & ".log")
     Open strFile For Append As FP
     
+    mOpen = True
+
     Exit Sub
 e:
     Debug.Print "Logger File Open Error " & Err.Description
@@ -521,22 +551,18 @@ End Sub
 Private Property Get AppDataFolder() As String
 
     On Error Resume Next
-    
-    Dim strFolder As String
-    
+
     AppDataFolder = ""
-    
+
     With mFSO
-    
-        strFolder = .BuildPath(VBA.CreateObject("Wscript.Shell").SpecialFolders("AppData"), mAppName & "\Log")
-        
-        If .FolderExists(strFolder) Then
+
+        If .FolderExists(mFolder) Then
         Else
-            CreateFolder strFolder
+            CreateFolder mFolder
         End If
-        
-        AppDataFolder = .BuildPath(strFolder, "\")
-        
+
+        AppDataFolder = .BuildPath(mFolder, "\")
+
     End With
 
 End Property
@@ -546,15 +572,15 @@ End Property
 Private Sub CreateFolder(ByVal strPath As String)
 
     With mFSO
-    
+
         If .FolderExists(strPath) Then
             Exit Sub
         End If
-    
+
         Call CreateFolder(.GetParentFolderName(strPath))
-        
+
         .CreateFolder strPath
-    
+
     End With
 
 End Sub
@@ -575,3 +601,6 @@ Private Function PlaceHolder(ByVal strMsg As String, ByVal p As Variant) As Stri
     PlaceHolder = strMsg
 
 End Function
+
+
+

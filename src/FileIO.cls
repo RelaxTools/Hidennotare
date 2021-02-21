@@ -359,60 +359,60 @@ Public Property Get TempFolder() As String
     TempFolder = FSO.GetSpecialFolder(2).Path
 
 End Property
-'>---
-'>#### PrivateTempFolder(FileIO)
-'>
-'>**Syntax**
-'>
-'>```
-'>ret = FileIO.PrivateTempFolder()
-'>```
-'>
-'>**Parameters**
-'>
-'>* None
-'>
-'>**Return Value**
-'>
-'>|Name|Data type|Description|
-'>---|---|---
-'>|ret|String|テンポラリフォルダのパス|
-'>
-'>**Remarks**
-'>
-'>テンポラリフォルダ取得
-'>
-'>**Example**
-'>
-'>* None
-'>
-'>**See also**
-'>
-'>* FileIO.AppDataFolder
-'>
-Public Property Get PrivateTempFolder() As String
-
-    On Error Resume Next
-    
-    Dim strFolder As String
-    
-    PrivateTempFolder = ""
-    
-    With FSO
-    
-        strFolder = AppDataFolder & "Temp"
-        
-        If .FolderExists(strFolder) Then
-        Else
-            .CreateFolder strFolder
-        End If
-        
-        PrivateTempFolder = .BuildPath(strFolder, "\")
-        
-    End With
-    
-
-End Property
+''>---
+''>#### PrivateTempFolder(FileIO)
+''>
+''>**Syntax**
+''>
+''>```
+''>ret = FileIO.PrivateTempFolder()
+''>```
+''>
+''>**Parameters**
+''>
+''>* None
+''>
+''>**Return Value**
+''>
+''>|Name|Data type|Description|
+''>---|---|---
+''>|ret|String|テンポラリフォルダのパス|
+''>
+''>**Remarks**
+''>
+''>テンポラリフォルダ取得
+''>
+''>**Example**
+''>
+''>* None
+''>
+''>**See also**
+''>
+''>* FileIO.AppDataFolder
+''>
+'Public Property Get PrivateTempFolder() As String
+'
+'    On Error Resume Next
+'
+'    Dim strFolder As String
+'
+'    PrivateTempFolder = ""
+'
+'    With FSO
+'
+'        strFolder = AppDataFolder & "Temp"
+'
+'        If .FolderExists(strFolder) Then
+'        Else
+'            .CreateFolder strFolder
+'        End If
+'
+'        PrivateTempFolder = .BuildPath(strFolder, "\")
+'
+'    End With
+'
+'
+'End Property
 '>---
 '>#### GetTempName(FileIO)
 '>
@@ -454,59 +454,59 @@ Public Property Get GetTempName() As String
     
 
 End Property
-'>---
-'>#### AppDataFolder(FileIO)
-'>
-'>**Syntax**
-'>
-'>```
-'>folder = FileIO.AppDataFolder()
-'>```
-'>
-'>**Parameters**
-'>
-'>* None
-'>
-'>**Return Value**
-'>
-'>アプリケーションフォルダのパス
-'>
-'>**Remarks**
-'>
-'>|Name|Data type|Description|
-'>---|---|---
-'>|ret|String|アプリケーションフォルダ取得|
-'>
-'>**Example**
-'>
-'>* None
-'>
-'>**See also**
-'>
-'>* FileIO.TempFolder
-'>
-Public Property Get AppDataFolder() As String
-
-    On Error Resume Next
-    
-    Dim strFolder As String
-    
-    AppDataFolder = ""
-    
-    With FSO
-    
-        strFolder = .BuildPath(VBA.CreateObject("Wscript.Shell").SpecialFolders("AppData"), Title)
-        
-        If .FolderExists(strFolder) Then
-        Else
-            .CreateFolder strFolder
-        End If
-        
-        AppDataFolder = .BuildPath(strFolder, "\")
-        
-    End With
-
-End Property
+''>---
+''>#### AppDataFolder(FileIO)
+''>
+''>**Syntax**
+''>
+''>```
+''>folder = FileIO.AppDataFolder()
+''>```
+''>
+''>**Parameters**
+''>
+''>* None
+''>
+''>**Return Value**
+''>
+''>アプリケーションフォルダのパス
+''>
+''>**Remarks**
+''>
+''>|Name|Data type|Description|
+''>---|---|---
+''>|ret|String|アプリケーションフォルダ取得|
+''>
+''>**Example**
+''>
+''>* None
+''>
+''>**See also**
+''>
+''>* FileIO.TempFolder
+''>
+'Public Property Get AppDataFolder() As String
+'
+'    On Error Resume Next
+'
+'    Dim strFolder As String
+'
+'    AppDataFolder = ""
+'
+'    With FSO
+'
+'        strFolder = .BuildPath(VBA.CreateObject("Wscript.Shell").SpecialFolders("AppData"), Title)
+'
+'        If .FolderExists(strFolder) Then
+'        Else
+'            .CreateFolder strFolder
+'        End If
+'
+'        AppDataFolder = .BuildPath(strFolder, "\")
+'
+'    End With
+'
+'End Property
 '>---
 '>#### FileSearch(FileIO)
 '>
@@ -2006,8 +2006,8 @@ Sub MoveFolder(ByVal Source As String, ByVal destination As String)
 
 End Sub
 
-'アプリケーション名取得
-Private Property Get Title() As String
-    Title = ThisWorkbook.BuiltinDocumentProperties("Title").Value
-End Property
+''アプリケーション名取得
+'Private Property Get Title() As String
+'    Title = ThisWorkbook.BuiltinDocumentProperties("Title").Value
+'End Property
 

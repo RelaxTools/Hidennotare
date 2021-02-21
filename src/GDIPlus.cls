@@ -945,7 +945,7 @@ End Function
 '------------------------------------------------------------------------------------------------------------------------
 Private Sub CopyClipboardSleep(pic As IPictureDisp)
     DoEvents
-    Sleep val(Registry.GetSetting("Option", "ClipboardSleep", 10))
+'    Sleep val(Registry.GetSetting("Option", "ClipboardSleep", 10))
 End Sub
 
 'Public Function ConvertPixelByPixel(ipd As IPictureDisp) As IPictureDisp
