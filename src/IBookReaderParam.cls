@@ -36,8 +36,25 @@ Attribute VB_Exposed = True
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-' IBookReaderParam インターフェイス
-' BookReader のクラス内部のパラメータ受け渡しを隠蔽するインターフェイス
+'>### ICharCursorParam インターフェイス
+'>
+'>**Remarks**
+'>
+'>ICharCursorParam のインターフェイス
+'>
+'>**Definition**
+'>
+'>```
+'>Public Property Let BookName(ByVal v As String)
+'>Public Property Let ReadOnly(ByVal v As Boolean)
+'>Public Property Set Application(v As Application)
+'>Public Sub Init()
+'>```
+'>
+'>**Sample**
+'>
+'>* None
+'>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 

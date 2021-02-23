@@ -966,5 +966,61 @@ Sub Test_NewPowerPoint()
 
 End Sub
 
+Sub Test_Logger()
 
+    Dim ai As IAppInfo
+    
+    Set ai = New TestAppInfo
+
+    With Logger.NewInstance(ai)
+
+        .LogInfo "ÉçÉO"
+
+    End With
+    
+    Debug.Assert FileIO.FileExists(FileIO.BuildPath(ai.LogFolder, Format$(Now, "yyyymmdd") & ".log"))
+    
+    FileIO.DeleteFolder ai.LogFolder
+
+End Sub
+
+Sub Test_Registry()
+
+    Dim ai As IAppInfo
+    
+    Set ai = New TestAppInfo
+
+    With Registry.NewInstance(ai)
+
+        .SaveSetting "Section", "Key", "Value"
+        Debug.Assert .GetSetting("Section", "Key", "") = "Value"
+
+        .DeleteSetting "Section", "Key"
+        Debug.Assert .GetSetting("Section", "Key", "Default") = "Default"
+    
+    End With
+
+End Sub
+
+Sub Test_IniFile()
+
+    Dim ai As IAppInfo
+    
+    Set ai = New TestAppInfo
+
+    With IniFile.NewInstance(ai)
+
+        .SaveSetting "Section", "Key", "Value"
+        Debug.Assert .GetSetting("Section", "Key", "") = "Value"
+
+        .DeleteSetting "Section", "Key"
+        .DeleteSetting "Section"
+        Debug.Assert .GetSetting("Section", "Key", "Default") = "Default"
+    
+        FileIO.DeleteFile ai.IniFileName
+        Debug.Assert Not FileIO.FileExists(ai.IniFileName)
+    
+    End With
+
+End Sub
 

@@ -36,8 +36,31 @@ Attribute VB_Exposed = True
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-' IGDIPlusParam インターフェイス
-' GDIPlus のクラス内部のパラメータ受け渡しを隠蔽するインターフェイス
+'>### IGDIPlusParam インターフェイス
+'>
+'>**Remarks**
+'>
+'>IGDIPlusParam のインターフェイス
+'>
+'>**Definition**
+'>
+'>```
+'>Public Property Let EditType(v As GDIPlusConstants)
+'>Public Property Let FileName(v As String)
+'>Public Property Let hIcon(v As LongPtr)
+'>Public Property Let Width(v As Long)
+'>Public Property Let Height(v As Long)
+'>Public Property Let color(v As Long)
+'>Public Property Set pic(v As IPictureDisp)
+'>Public Property Set Shape(v As Object)
+'>Public Sub Initialize()
+'>Public Sub Run()
+'>```
+'>
+'>**Sample**
+'>
+'>* None
+'>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 

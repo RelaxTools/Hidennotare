@@ -36,8 +36,22 @@ Attribute VB_Exposed = True
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-' IRangeCursorParam インターフェイス
-' RangeCursorのクラス内部のパラメータ受け渡しを隠蔽するインターフェイス
+'>### IRangeCursorParam インターフェイス
+'>
+'>**Remarks**
+'>
+'>IRangeCursorParam のインターフェイス
+'>
+'>**Definition**
+'>
+'>```
+'>Public Property Set Source(v As Range)
+'>```
+'>
+'>**Sample**
+'>
+'>* None
+'>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 

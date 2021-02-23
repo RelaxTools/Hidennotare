@@ -80,7 +80,38 @@ Public Function NewInstance(ParamArray Args() As Variant) As IUsingArgs
     Set NewInstance = us
 
 End Function
-
+'>---
+'>#### Args(IUsingArgs I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>Set col = obj.Args()
+'>```
+'>
+'>**Parameters**
+'>
+'>* None
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|col|Collection|引数に渡されたオブジェクトのコレクション|
+'>
+'>**Remarks**
+'>
+'>CreteObjectに指定したオブジェクトを参照するためのコレクション<br>
+'>Collectionなので1開始です。<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* None
+'>
 Private Function IUsingArgs_Args(ByVal index As Long) As Object
     Set IUsingArgs_Args = m_col(index)
 End Function
@@ -117,37 +148,6 @@ Private Sub Class_Terminate()
     Set m_col = Nothing
 
 End Sub
-'>---
-'>#### Args(IUsingArgs I/F)
-'>
-'>**Syntax**
-'>
-'>```
-'>Set col = obj.Args()
-'>```
-'>
-'>**Parameters**
-'>
-'>* None
-'>
-'>**Return Value**
-'>
-'>|Name|Data type|Description|
-'>---|---|---
-'>|col|Collection|引数に渡されたオブジェクトのコレクション|
-'>
-'>**Remarks**
-'>
-'>CreteObjectに指定したオブジェクトを参照するためのコレクション<br>
-'>Collectionなので1開始です。<br>
-'>
-'>**Example**
-'>
-'>* None
-'>
-'>**See also**
-'>
-'>* None
-'>
+
 
 

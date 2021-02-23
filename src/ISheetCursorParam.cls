@@ -36,8 +36,26 @@ Attribute VB_Exposed = True
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-' ISheetCursorParam インターフェイス
-' SheetCursor のクラス内部のパラメータ受け渡しを隠蔽するインターフェイス
+'>### ISheetCursorParam インターフェイス
+'>
+'>**Remarks**
+'>
+'>ISheetCursorParam のインターフェイス
+'>
+'>**Definition**
+'>
+'>```
+'>Public Property Set Worksheet(ByRef WS As Worksheet)
+'>Public Property Let Direction(ByVal pDirection As SheetCursorConstants)
+'>Public Property Let StartNum(ByVal v As Variant)
+'>Public Property Let EofNum(ByVal v As Variant)
+'>Public Property Let EofStr(ByVal s As String)
+'>```
+'>
+'>**Sample**
+'>
+'>* None
+'>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 

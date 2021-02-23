@@ -52,6 +52,7 @@ Attribute VB_Exposed = True
 '>|Date|Version|Note|
 '>|---|---|---|
 '>|2019-01-01|Ver.1.0.0|新規作成|
+'>|2021-02-23|Ver.1.0.1|アプリケーション設定値を指定できるようにした|
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
@@ -71,7 +72,6 @@ Private colStack As New Collection
 'ファイル番号
 Private FP As Integer
 
-
 Private mFSO As Object
 
 Private mLevel As LogLevel
@@ -83,7 +83,39 @@ Private mName As String
 Private mOpen As Boolean
 
 Private mFolder As String
-
+'>---
+'>#### コンストラクタ
+'>
+'>**Syntax**
+'>
+'>```
+'>Set ret = Logger.NewInstance(appInfo)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|appInfo|必須|IAppInfo|アプリケーション設定値 I/F|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|ret|ILogger|新しいインスタンス(ILogger I/F)|
+'>
+'>**Remarks**
+'>
+'> アプリケーション固有の設定を元にLoggerを生成する
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* None
+'>
 Public Function NewInstance(ai As IAppInfo) As ILogger
 
     Dim p As ILoggerParam
@@ -152,14 +184,8 @@ Private Sub Class_Terminate()
     End If
 
 End Sub
-'--------------------------------------------------------------
-' アプリケーション名
-'--------------------------------------------------------------
-'Private Property Let ILogger_AppName(v As String)
-'    mAppName = v
-'End Property
 '>---
-'>#### LogTrace(Logger)
+'>#### LogTrace(ILogger I/F)
 '>
 '>**Syntax**
 '>
@@ -190,7 +216,7 @@ Private Sub ILogger_LogTrace(m As String, ParamArray p())
     ReportLog LogLevel.Trace, PlaceHolder(m, p)
 End Sub
 '>---
-'>#### LogInfo(Logger)
+'>#### LogInfo(ILogger I/F)
 '>
 '>**Syntax**
 '>
@@ -221,7 +247,7 @@ Private Sub ILogger_LogInfo(m As String, ParamArray p())
     ReportLog LogLevel.Info, PlaceHolder(m, p)
 End Sub
 '>---
-'>#### LogWarn(Logger)
+'>#### LogWarn(ILogger I/F)
 '>
 '>**Syntax**
 '>
@@ -252,7 +278,7 @@ Private Sub ILogger_LogWarn(m As String, ParamArray p())
     ReportLog LogLevel.Warn, PlaceHolder(m, p)
 End Sub
 '>---
-'>#### LogFatal(Logger)
+'>#### LogFatal(ILogger I/F)
 '>
 '>**Syntax**
 '>
@@ -295,7 +321,7 @@ Private Sub ILogger_LogFatal(m As String, ParamArray p())
 
 End Sub
 '>---
-'>#### LogBegin(Logger)
+'>#### LogBegin(ILogger I/F)
 '>
 '>**Syntax**
 '>
@@ -335,7 +361,7 @@ Private Sub ILogger_LogBegin(lvl As LogLevel, m As String, ParamArray p())
 
 End Sub
 '>---
-'>#### LogFinish(Logger)
+'>#### LogFinish(ILogger I/F)
 '>
 '>**Syntax**
 '>
@@ -389,7 +415,7 @@ Private Sub ILogger_LogFinish(lvl As LogLevel, m As String, ParamArray p())
 
 End Sub
 '>---
-'>#### LogFlash(Logger)
+'>#### LogFlash(ILogger I/F)
 '>
 '>**Syntax**
 '>
@@ -417,7 +443,7 @@ Private Sub ILogger_LogFlash()
     Call OpenLog
 End Sub
 '>---
-'>#### Level(Logger)
+'>#### Level(ILogger I/F)
 '>
 '>**Syntax**
 '>
@@ -585,7 +611,7 @@ Private Sub CreateFolder(ByVal strPath As String)
 
 End Sub
 '----------------------------------------------------------------------------------
-'プレースホルダ変換
+' プレースホルダ変換(ログ用)
 '----------------------------------------------------------------------------------
 Private Function PlaceHolder(ByVal strMsg As String, ByVal p As Variant) As String
 
@@ -601,6 +627,4 @@ Private Function PlaceHolder(ByVal strMsg As String, ByVal p As Variant) As Stri
     PlaceHolder = strMsg
 
 End Function
-
-
 

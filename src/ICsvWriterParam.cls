@@ -36,8 +36,28 @@ Attribute VB_Exposed = True
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-' ICsvWriterParam インターフェイス
-' CsvWriter のクラス内部のパラメータ受け渡しを隠蔽するインターフェイス
+'>### ICsvWriterParam インターフェイス
+'>
+'>**Remarks**
+'>
+'>ICsvWriterParam のインターフェイス
+'>
+'>**Definition**
+'>
+'>```
+'>Public Property Let FileName(v As String)
+'>Public Property Let NewLineCode(v As NewLineCodeConstants)
+'>Public Property Let Encode(v As EncodeConstants)
+'>Public Property Let Mode(v As OpenModeConstants)
+'>Public Property Let Bom(v As Boolean)
+'>Public Property Let Delimiter(v As String)
+'>Public Sub Init()
+'>```
+'>
+'>**Sample**
+'>
+'>* None
+'>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 

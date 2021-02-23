@@ -59,7 +59,40 @@ Implements IRegistry
 Implements IAppNameParam
 
 Private mAppName As String
-
+'>---
+'>#### コンストラクタ
+'>
+'>**Syntax**
+'>
+'>```
+'>Set objct = Registry.NewInstance(appInfo)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|Registry|必須|Registry|InFileクラスを指定|
+'>|appInfo|必須|IAppinfo|IAppInfo I/F のインスタンスを指定|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|objct|IRegistry|新しいインスタンス(IRegistry)|
+'>
+'>**Remarks**
+'>
+'>コンストラクタ<br>
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* None
+'>
 Public Function NewInstance(ai As IAppInfo) As IRegistry
 
     Dim p As IAppNameParam
@@ -80,24 +113,121 @@ End Property
 Private Sub Class_Initialize()
     mAppName = "Default"
 End Sub
-
-
-
-'--------------------------------------------------------------
-' レジストリ読み込み
-'--------------------------------------------------------------
+'>---
+'>#### GetSetting(IRegistry I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>ret = expression.GetSetting(Section, Key, [Default])
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|IRegistry|IRegistry I/F のインスタンス|
+'>|Section|必須|String|値を取得するカテゴリ|
+'>|Key|必須|String|値を取得するキー|
+'>|Defalut|任意|String|キーが存在しなかった場合のデフォルトを指定|
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---|---
+'>|ret|String|レジストリに保存されている設定値|
+'>
+'>**Remarks**
+'>
+'> IRegistry I/F のメソッドです。<br>
+'> レジストリ読み込み
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* IRegistry
+'>* IniFile
+'>
 Private Function IRegistry_GetSetting(ByVal Section As String, ByVal key As String, Optional ByVal Default As String = "") As String
     IRegistry_GetSetting = VBA.GetSetting(mAppName, Section, key, Default)
 End Function
-'--------------------------------------------------------------
-' レジストリ書き込み
-'--------------------------------------------------------------
+'>---
+'>#### SaveSetting(IRegistry I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>expression.SaveSetting(Section, Key, Value)
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|IRegistry|IRegistry I/F のインスタンス|
+'>|Section|必須|String|値を設定するカテゴリ|
+'>|Key|必須|String|値を設定するキー|
+'>|Value|必須|String|設定する値を指定|
+'>
+'>**Return Value**
+'>
+'>* None
+'>
+'>**Remarks**
+'>
+'> IRegistry I/F のメソッドです。<br>
+'> レジストリ書き込み
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* IRegistry
+'>* IniFile
+'>
 Private Sub IRegistry_SaveSetting(ByVal Section As String, ByVal key As String, ByVal Value As String)
     VBA.SaveSetting mAppName, Section, key, Value
 End Sub
-'--------------------------------------------------------------
-'レジストリ削除
-'--------------------------------------------------------------
+'>---
+'>#### DeleteSetting(IRegistry I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>expression.DeleteSetting(Section, [Key])
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|IRegistry|IRegistry I/F のインスタンス|
+'>|Section|必須|String|削除するカテゴリ|
+'>|Key|任意|String|削除するキー|
+'>
+'>**Return Value**
+'>
+'>* None
+'>
+'>**Remarks**
+'>
+'> IRegistry I/F のメソッドです。<br>
+'> レジストリの削除
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* IRegistry
+'>* IniFile
+'>
 Private Sub IRegistry_DeleteSetting(ByVal Section As String, Optional ByVal key As String = "")
     On Error Resume Next
     If Len(key) = 0 Then
@@ -106,10 +236,40 @@ Private Sub IRegistry_DeleteSetting(ByVal Section As String, Optional ByVal key 
         VBA.DeleteSetting mAppName, Section, key
     End If
 End Sub
-'--------------------------------------------------------------
-' レジストリのExport
-' UTF-16 LE にてレジストリの内容を出力する。
-'--------------------------------------------------------------
+'>---
+'>#### Export(IRegistry I/F)
+'>
+'>**Syntax**
+'>
+'>```
+'>expression.Export()
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|expression|必須|IRegistry|IRegistry I/F のインスタンス|
+'>
+'>**Return Value**
+'>
+'>* None
+'>
+'>**Remarks**
+'>
+'> IRegistry I/F のメソッド<br>
+'> レジストリのExport
+'> UTF-16 LE にてレジストリの内容を出力する
+'>
+'>**Example**
+'>
+'>* None
+'>
+'>**See also**
+'>
+'>* IRegistry
+'>* IniFile
+'>
 Private Sub IRegistry_Export()
 
     Dim strDat As String
@@ -135,7 +295,7 @@ Private Sub IRegistry_Export()
 
     Set Locator = VBA.CreateObject("WbemScripting.SWbemLocator")
     Set Service = Locator.ConnectServer(vbNullString, "root\default")
-    Set Reg = Service.get("StdRegProv")
+    Set Reg = Service.Get("StdRegProv")
     
     Const HKEY_CURRENT_USER = &H80000001
     

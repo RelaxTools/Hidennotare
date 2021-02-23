@@ -36,8 +36,23 @@ Attribute VB_Exposed = True
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-' IUsingParam インターフェイス
-' Using のクラス内部のパラメータ受け渡しを隠蔽するインターフェイス
+'>### IUsingParam インターフェイス
+'>
+'>**Remarks**
+'>
+'>IUsingParam のインターフェイス
+'>
+'>**Definition**
+'>
+'>```
+'>Public Property Set Source(v As Collection)
+'>Public Sub Init()
+'>```
+'>
+'>**Sample**
+'>
+'>* None
+'>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 

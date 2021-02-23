@@ -40,7 +40,7 @@ Attribute VB_Exposed = True
 '>
 '>**Remarks**
 '>
-'>データ読み込みを行う際のインターフェイス
+'>IReader のインターフェイス
 '>
 '>**Definition**
 '>

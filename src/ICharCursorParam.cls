@@ -36,8 +36,22 @@ Attribute VB_Exposed = True
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-' ICharCursorParam インターフェイス
-' CharCursor のクラス内部のパラメータ受け渡しを隠蔽するインターフェイス
+'>### ICharCursorParam インターフェイス
+'>
+'>**Remarks**
+'>
+'>ICharCursorParam のインターフェイス
+'>
+'>**Definition**
+'>
+'>```
+'>Public Property Let Source(v As String)
+'>```
+'>
+'>**Sample**
+'>
+'>* None
+'>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 

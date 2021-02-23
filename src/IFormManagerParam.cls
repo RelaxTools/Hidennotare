@@ -36,8 +36,23 @@ Attribute VB_Exposed = True
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-' IFormManagerParam インターフェイス
-' FormManager のクラス内部のパラメータ受け渡しを隠蔽するインターフェイス
+'>### IFormManagerParam インターフェイス
+'>
+'>**Remarks**
+'>
+'>IFormManagerParam インターフェイス
+'>
+'>**Definition**
+'>
+'>```
+'>Public Property Set Form(frm As UserForm)
+'>Public Property Let ButtonCaption(ByVal v As String)
+'>```
+'>
+'>**Sample**
+'>
+'>* None
+'>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 

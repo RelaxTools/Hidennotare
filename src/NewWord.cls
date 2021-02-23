@@ -41,7 +41,7 @@ Attribute VB_Exposed = True
 '>**Remarks**
 '>
 '>別プロセスWord起動<br>
-'>起動時ではなく最初の参照時にWordを起動するため注意。<br>
+'>Usingクラスと併用してください<br>
 '>
 '>**Example**
 '>

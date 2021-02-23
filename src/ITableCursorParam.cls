@@ -36,8 +36,22 @@ Attribute VB_Exposed = True
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-' ITableCursorParam インターフェイス
-' TableCursor のクラス内部のパラメータ受け渡しを隠蔽するインターフェイス
+'>### ITableCursorParam インターフェイス
+'>
+'>**Remarks**
+'>
+'>ITableCursorParam のインターフェイス
+'>
+'>**Definition**
+'>
+'>```
+'>Public Property Set ListObject(v As ListObject)
+'>```
+'>
+'>**Sample**
+'>
+'>* None
+'>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 

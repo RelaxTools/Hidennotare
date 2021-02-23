@@ -36,8 +36,22 @@ Attribute VB_Exposed = True
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-' IPairLoggerParam インターフェイス
-' IPairLogger のクラス内部のパラメータ受け渡しを隠蔽するインターフェイス
+'>### IPairLoggerParam インターフェイス
+'>
+'>**Remarks**
+'>
+'>IPairLoggerParam のインターフェイス
+'>
+'>**Definition**
+'>
+'>```
+'>Public Property Let Message(v As String)
+'>```
+'>
+'>**Sample**
+'>
+'>* None
+'>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 

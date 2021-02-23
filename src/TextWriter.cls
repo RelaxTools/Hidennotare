@@ -145,7 +145,7 @@ Public Function NewInstance(ByVal FileName As String, _
     Set NewInstance = FP
     
 End Function
-
+'以下、コンストラクタ以外の受け渡しパラメータを隠蔽
 Private Property Let ITextWriterParam_Bom(RHS As Boolean)
     mBom = RHS
 End Property

@@ -36,8 +36,22 @@ Attribute VB_Exposed = True
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-' IStringBuilderParam インターフェイス
-' StringBuilder のクラス内部のパラメータ受け渡しを隠蔽するインターフェイス
+'>### IStringBuilderParam インターフェイス
+'>
+'>**Remarks**
+'>
+'>IStringBuilderParam のインターフェイス
+'>
+'>**Definition**
+'>
+'>```
+'>Public Property Let size(v As Long)
+'>```
+'>
+'>**Sample**
+'>
+'>* None
+'>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 

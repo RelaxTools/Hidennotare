@@ -120,8 +120,8 @@ Private Sub cmdOk_Click()
             
             Application.Run "Test." & lvTest.ListItems(i).Text
             
-            Process.Sleep 50
-            DoEvents
+            Process.Sleep 100
+'            DoEvents
                     
             'ÉQÅ[ÉWÇÃåªç›ílÇê›íË
             FM.DisplayGauge i
