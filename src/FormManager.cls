@@ -69,7 +69,7 @@ Option Explicit
 
 Implements IUsing
 Implements IFormManager
-Implements IFormManagerParam
+Implements IParam
 
 Private mFrm As UserForm
 Private mlngMax As Long
@@ -117,23 +117,24 @@ Private mcolEnable As Collection
 '>
 Public Function NewInstance(frm As UserForm, Optional ByVal ButtonCaption As String = C_CANCEL_STR) As FormManager
 
-    Dim FM As IFormManagerParam
+    Dim p As IParam
 
-    Set FM = New FormManager
+    Set p = New FormManager
     
-    Set FM.Form = frm
-    FM.ButtonCaption = ButtonCaption
-
-    Set NewInstance = FM
+    p.Parameters = Array(frm, ButtonCaption)
+    
+    Set NewInstance = p
 
 End Function
-Private Property Set IFormManagerParam_Form(frm As UserForm)
-
+Private Property Let IParam_Parameters(ByVal Args As Variant)
+    
     Dim c As control
     
     Set mobjGaugeLabel = Nothing
     Set mobjMessageLabel = Nothing
-    Set mFrm = frm
+    
+    Set mFrm = Args(0)
+    mstrCancelStr = Args(1)
 
     For Each c In mFrm.Controls
 
@@ -152,9 +153,7 @@ Private Property Set IFormManagerParam_Form(frm As UserForm)
     Next
 
 End Property
-Private Property Let IFormManagerParam_ButtonCaption(ByVal v As String)
-    mstrCancelStr = v
-End Property
+
 '--------------------------------------------------------------
 ' Initialize
 '--------------------------------------------------------------
@@ -322,6 +321,8 @@ End Sub
 Private Sub IFormManager_StopRunning()
     IUsing_Finish
 End Sub
+
+
 
 '--------------------------------------------------------------
 '  èàóùäJén(IUsing I/F)

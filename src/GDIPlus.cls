@@ -56,7 +56,7 @@ Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements IGDIPlus
-Implements IGDIPlusParam
+Implements IParam
 
 'クラスID
 Private Const IID_IPictureDisp As String = "{7BF80981-BF32-101A-8BBB-00AA00300CAB}"
@@ -381,231 +381,195 @@ Private Declare PtrSafe Function GdipCreateBitmapFromScan0 Lib "gdiplus.dll" (By
 '--------------------------------------------------------------
 Public Function CreateObjectFromFile(ByVal FileName As String) As IGDIPlus
                 
-    Dim GP As IGDIPlusParam
+    Dim p As IParam
                 
-    Set GP = New GDIPlus
+    Set p = New GDIPlus
     
-    GP.Initialize
-    
-    GP.EditType = GDIPlusConstants.GDIPlusCreateFromFile
-    GP.FileName = FileName
-    
-    GP.Run
+    p.Parameters = Array(GDIPlusConstants.GDIPlusCreateFromFile, FileName)
                 
-    Set CreateObjectFromFile = GP
+    Set CreateObjectFromFile = p
 
 End Function
 Public Function CreateObjectFromIconHandle(ByVal hIcon As LongPtr) As IGDIPlus
                 
-    Dim GP As IGDIPlusParam
+    Dim p As IParam
                 
-    Set GP = New GDIPlus
+    Set p = New GDIPlus
     
-    GP.Initialize
-    
-    GP.EditType = GDIPlusConstants.GDIPlusCreateFromIconHandle
-    GP.hIcon = hIcon
-    
-    GP.Run
+    p.Parameters = Array(GDIPlusConstants.GDIPlusCreateFromIconHandle, hIcon)
                 
-    Set CreateObjectFromIconHandle = GP
+    Set CreateObjectFromIconHandle = p
 
 End Function
 Public Function CreateObjectFromShape(obj As Object) As IGDIPlus
                 
-    Dim GP As IGDIPlusParam
+    Dim p As IParam
                 
-    Set GP = New GDIPlus
+    Set p = New GDIPlus
     
-    GP.Initialize
-    
-    GP.EditType = GDIPlusConstants.GDIPlusCreateFromShape
-    Set GP.Shape = obj
-    
-    GP.Run
+    p.Parameters = Array(GDIPlusConstants.GDIPlusCreateFromShape, obj)
                 
-    Set CreateObjectFromShape = GP
+    Set CreateObjectFromShape = p
 End Function
 Public Function CreateObjectFromIPictureDisp(pic As IPictureDisp) As IGDIPlus
 
-    Dim GP As IGDIPlusParam
+    Dim p As IParam
                 
-    Set GP = New GDIPlus
+    Set p = New GDIPlus
     
-    GP.Initialize
-    
-    GP.EditType = GDIPlusConstants.GDIPlusCreateFromIPictureDisp
-    Set GP.pic = pic
-    
-    GP.Run
+    p.Parameters = Array(GDIPlusConstants.GDIPlusCreateFromIPictureDisp, pic)
                 
-    Set CreateObjectFromIPictureDisp = GP
+    Set CreateObjectFromIPictureDisp = p
 
 End Function
 Public Function NewInstance(ByVal Width As Long, ByVal Height As Long, Optional ByVal color As Long = 0) As IGDIPlus
                     
-    Dim GP As IGDIPlusParam
+    Dim p As IParam
                 
-    Set GP = New GDIPlus
+    Set p = New GDIPlus
     
-    GP.Initialize
-    
-    GP.EditType = GDIPlusConstants.GDIPlusCreateImage
-    GP.Width = Width
-    GP.Height = Height
-    GP.color = color
-    
-    GP.Run
-                
-    Set NewInstance = GP
+    p.Parameters = Array(GDIPlusConstants.GDIPlusCreateImage, Width, Height, color)
+
+    Set NewInstance = p
 
 End Function
-Private Property Let IGDIPlusParam_EditType(v As GDIPlusConstants)
-    mEditType = v
-End Property
-Private Property Let IGDIPlusParam_FileName(v As String)
-    mFileName = v
-End Property
-Private Property Let IGDIPlusParam_hIcon(v As LongPtr)
-    mhIcon = v
-End Property
-Private Property Let IGDIPlusParam_Width(v As Long)
-    mWidth = v
-End Property
-Private Property Let IGDIPlusParam_Height(v As Long)
-    mHeight = v
-End Property
-Private Property Let IGDIPlusParam_Color(v As Long)
-    mColor = v
-End Property
-Private Property Set IGDIPlusParam_Pic(v As IPictureDisp)
-    Set mPic = v
-End Property
-Private Property Set IGDIPlusParam_Shape(v As Object)
-    Set mShape = v
-End Property
-Private Sub IGDIPlusParam_Run()
+Private Property Let IParam_Parameters(ByVal Args As Variant)
 
-        Dim result As Long
+    Dim result As Long
+    
+    mEditType = Args(0)
 
-        Select Case mEditType
-            Case GDIPlusCreateFromFile
+    Select Case mEditType
+        Case GDIPlusCreateFromFile
+        
+            mFileName = Args(1)
 
-                'BMP, GIF, JPEG, PNG, TIFF, Exif, WMF, and EMF
-                result = GdipCreateBitmapFromFile(StrPtr(mFileName), hGdiImage)
+            'BMP, GIF, JPEG, PNG, TIFF, Exif, WMF, and EMF
+            result = GdipCreateBitmapFromFile(StrPtr(mFileName), hGdiImage)
 
-                Select Case result
-                    Case Status.ok
-                    Case Status.FileNotFound
-                        MsgBox "file not found", vbExclamation, "GDIPlus"
-                    Case Status.UnknownImageFormat
-                        MsgBox "not support iamge format", vbExclamation, "GDIPlus"
-                    Case Else
-                        Err.Raise 512 + result, TypeName(Me) & ".Run", "GdipCreateBitmapFromFile error"
-                End Select
+            Select Case result
+                Case Status.ok
+                Case Status.FileNotFound
+                    MsgBox "file not found", vbExclamation, "GDIPlus"
+                Case Status.UnknownImageFormat
+                    MsgBox "not support iamge format", vbExclamation, "GDIPlus"
+                Case Else
+                    Err.Raise 512 + result, TypeName(Me) & ".Run", "GdipCreateBitmapFromFile error"
+            End Select
 
-            Case GDIPlusCreateFromIconHandle
+        Case GDIPlusCreateFromIconHandle
 
-                'hIcon → GdiPlusBitmap
-                result = GdipCreateBitmapFromHICON(mhIcon, hGdiImage)
-                If result <> Status.ok Then
-                    Err.Raise 512 + result, TypeName(Me) & ".Run", "GdipCreateBitmapFromHICON error"
-                End If
+            mhIcon = Args(1)
+            
+            'hIcon → GdiPlusBitmap
+            result = GdipCreateBitmapFromHICON(mhIcon, hGdiImage)
+            If result <> Status.ok Then
+                Err.Raise 512 + result, TypeName(Me) & ".Run", "GdipCreateBitmapFromHICON error"
+            End If
 
-            Case GDIPlusCreateFromShape
+        Case GDIPlusCreateFromShape
 
-                Dim hImg As LongPtr
-                Dim hCopy As LongPtr
-                Dim hPalette As LongPtr
+            Dim hImg As LongPtr
+            Dim hCopy As LongPtr
+            Dim hPalette As LongPtr
 
-                'クリップボードの保存
-                If OpenClipboard(0&) = BOOL_FALSE Then
-                    Err.Raise 512 + 1, TypeName(Me) & ".Run", "OpenClipboard error"
-                End If
+            Set mShape = Args(1)
+            
+            'クリップボードの保存
+            If OpenClipboard(0&) = BOOL_FALSE Then
+                Err.Raise 512 + 1, TypeName(Me) & ".Run", "OpenClipboard error"
+            End If
 
-                Call EmptyClipboard
-                Call CloseClipboard
+            Call EmptyClipboard
+            Call CloseClipboard
 
-                '指定シェイプをビットマップでクリップボードに貼り付け
+            '指定シェイプをビットマップでクリップボードに貼り付け
 10              mShape.CopyPicture Appearance:=xlScreen, Format:=xlBitmap
 
 '                Call CopyClipboardSleep
 
-                If IsClipboardFormatAvailable(CF_BITMAP) = BOOL_FALSE Then
-                    Err.Raise 512 + 1, TypeName(Me) & ".Run", "IsClipboardFormatAvailable error"
-                End If
+            If IsClipboardFormatAvailable(CF_BITMAP) = BOOL_FALSE Then
+                Err.Raise 512 + 1, TypeName(Me) & ".Run", "IsClipboardFormatAvailable error"
+            End If
 
-                If OpenClipboard(0&) = BOOL_FALSE Then
-                    Err.Raise 512 + 1, TypeName(Me) & ".Run", "OpenClipboard error"
-                End If
+            If OpenClipboard(0&) = BOOL_FALSE Then
+                Err.Raise 512 + 1, TypeName(Me) & ".Run", "OpenClipboard error"
+            End If
 
-                hImg = GetClipboardData(CF_BITMAP)
-                If hImg = 0 Then
-                    Err.Raise 512 + 1, TypeName(Me) & ".Run", "GetClipboardData error"
-                End If
+            hImg = GetClipboardData(CF_BITMAP)
+            If hImg = 0 Then
+                Err.Raise 512 + 1, TypeName(Me) & ".Run", "GetClipboardData error"
+            End If
 
-                hPalette = GetClipboardData(CF_PALETTE)
+            hPalette = GetClipboardData(CF_PALETTE)
 
-                hCopy = CopyImage(hImg, IMAGE_BITMAP, 0, 0, LR_COPYRETURNORG)
-                If hCopy = 0 Then
-                    Err.Raise 512 + 1, TypeName(Me) & ".Run", "CopyImage error"
-                End If
+            hCopy = CopyImage(hImg, IMAGE_BITMAP, 0, 0, LR_COPYRETURNORG)
+            If hCopy = 0 Then
+                Err.Raise 512 + 1, TypeName(Me) & ".Run", "CopyImage error"
+            End If
 
-                result = GdipCreateBitmapFromHBITMAP(hCopy, hPalette, hGdiImage)
-                If result <> Status.ok Then
-                    Err.Raise 512 + result, TypeName(Me) & ".Run", "GdipCreateBitmapFromHBITMAP error"
-                End If
+            result = GdipCreateBitmapFromHBITMAP(hCopy, hPalette, hGdiImage)
+            If result <> Status.ok Then
+                Err.Raise 512 + result, TypeName(Me) & ".Run", "GdipCreateBitmapFromHBITMAP error"
+            End If
 
-                Call EmptyClipboard
-                Call CloseClipboard
+            Call EmptyClipboard
+            Call CloseClipboard
 
-            Case GDIPlusCreateFromIPictureDisp
-                Select Case mPic.Type
-                    Case PICTYPE_BITMAP
-                        result = GdipCreateBitmapFromHBITMAP(mPic.Handle, mPic.hpal, hGdiImage)
-                    Case PICTYPE_ICON
-                        result = GdipCreateBitmapFromHBITMAP(mPic.Handle, 0, hGdiImage)
-                    Case Else
-                        Err.Raise 512 + result, TypeName(Me) & ".Run", "invalid Pic Type"
-                End Select
-                If result <> Status.ok Then
-                    Err.Raise 512 + result, TypeName(Me) & ".Run", "GdipCreateBitmapFromHBITMAP error"
-                End If
+        Case GDIPlusCreateFromIPictureDisp
+            
+            Set mPic = Args(1)
+            
+            Select Case mPic.Type
+                Case PICTYPE_BITMAP
+                    result = GdipCreateBitmapFromHBITMAP(mPic.Handle, mPic.hpal, hGdiImage)
+                Case PICTYPE_ICON
+                    result = GdipCreateBitmapFromHBITMAP(mPic.Handle, 0, hGdiImage)
+                Case Else
+                    Err.Raise 512 + result, TypeName(Me) & ".Run", "invalid Pic Type"
+            End Select
+            If result <> Status.ok Then
+                Err.Raise 512 + result, TypeName(Me) & ".Run", "GdipCreateBitmapFromHBITMAP error"
+            End If
 
-            Case GDIPlusCreateImage
+        Case GDIPlusCreateImage
 
-                '作業用hDC取得
-                Dim hDc As LongPtr
-                Dim hBitmap As LongPtr
+            mWidth = Args(1)
+            mHeight = Args(2)
+            mColor = Args(3)
+            
+            '作業用hDC取得
+            Dim hDc As LongPtr
+            Dim hBitmap As LongPtr
 
-                Dim lngWidth As Long
-                Dim lngHeight As Long
+            Dim lngWidth As Long
+            Dim lngHeight As Long
 
-                lngWidth = mWidth
-                lngHeight = mHeight
+            lngWidth = mWidth
+            lngHeight = mHeight
 
-                hDc = GetDC(Application.hWnd)
+            hDc = GetDC(Application.hWnd)
 
-                hBitmap = CreateCompatibleBitmap(hDc, lngWidth, lngHeight)
+            hBitmap = CreateCompatibleBitmap(hDc, lngWidth, lngHeight)
 
-                ReleaseDC Application.hWnd, hDc
+            ReleaseDC Application.hWnd, hDc
 
-                result = GdipCreateBitmapFromHBITMAP(hBitmap, 0&, hGdiImage)
-                If result <> Status.ok Then
-                    Err.Raise 512 + result, TypeName(Me) & ".Run", "GdipCreateBitmapFromHBITMAP error"
-                End If
+            result = GdipCreateBitmapFromHBITMAP(hBitmap, 0&, hGdiImage)
+            If result <> Status.ok Then
+                Err.Raise 512 + result, TypeName(Me) & ".Run", "GdipCreateBitmapFromHBITMAP error"
+            End If
 
-                Dim lngColor As Long
+            Dim lngColor As Long
 
-                lngColor = mColor
+            lngColor = mColor
 
-                IGDIPlus_DrawFillRectangle 0, 0, lngWidth, lngHeight, lngColor, 100
+            IGDIPlus_DrawFillRectangle 0, 0, lngWidth, lngHeight, lngColor, 100
 
-            Case Else
-                Exit Sub
-        End Select
+        Case Else
+            Exit Property
+    End Select
 
-End Sub
+End Property
 '--------------------------------------------------------------
 ' Initialize
 '--------------------------------------------------------------
@@ -1088,3 +1052,4 @@ End Sub
 '    End If
 '
 'End Function
+

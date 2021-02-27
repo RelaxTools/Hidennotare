@@ -85,7 +85,7 @@ Attribute VB_Exposed = True
 Option Explicit
 
 Implements ICursor
-Implements ICharCursorParam
+Implements IParam
 
 Private mBuf As String
 Private mIndex As Long
@@ -127,22 +127,21 @@ End Sub
 '>
 Public Function NewInstance(ByVal Source As String) As ICursor
 
-    Dim CC As ICharCursorParam
+    Dim p As IParam
     
-    Set CC = New CharCursor
+    Set p = New CharCursor
     
-    CC.Source = Source
+    p.Parameters = Source
     
-    Set NewInstance = CC
+    Set NewInstance = p
 
     NewInstance.MoveFirst
 
 End Function
+Private Property Let IParam_Parameters(ByVal RHS As Variant)
 
-
-
-Private Property Let ICharCursorParam_Source(RHS As String)
     mBuf = RHS
+
 End Property
 '>---
 '>#### Eof(ICursor I/F)
@@ -303,3 +302,4 @@ Private Property Get ICursor_Item(Optional ByVal opt As Variant) As Variant
     End If
 
 End Property
+

@@ -69,7 +69,7 @@ Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements IStringBuilder
-Implements IStringBuilderParam
+Implements IParam
 
 Private mstrBuf() As String
 Private mlngCount As Long
@@ -121,13 +121,13 @@ Private mlngInitCount As Long
 '>
 Public Function NewInstance(Optional ByVal size As Long = 25) As IStringBuilder
 
-    Dim obj As IStringBuilderParam
+    Dim p As IParam
     
-    Set obj = New StringBuilder
+    Set p = New StringBuilder
 
-    obj.size = size
+    p.Parameters = size
     
-    Set NewInstance = obj
+    Set NewInstance = p
     
     NewInstance.Clear
 
@@ -137,7 +137,7 @@ Private Sub Class_Initialize()
     Call IStringBuilder_Clear
 End Sub
 
-Private Property Let IStringBuilderParam_Size(RHS As Long)
+Private Property Let IParam_Parameters(ByVal RHS As Variant)
     mlngInitCount = RHS
 End Property
 '------------------------------------------------------

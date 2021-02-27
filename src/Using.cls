@@ -58,7 +58,7 @@ Attribute VB_Exposed = True
 '>
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
-Implements IUsingParam
+Implements IParam
 Implements IUsingArgs
 
 Private m_col As Collection
@@ -67,19 +67,30 @@ Private m_col As Collection
 '--------------------------------
 Public Function NewInstance(ParamArray Args() As Variant) As IUsingArgs
 
-    Dim us As IUsingParam
+    Dim p As IParam
     Dim v As Variant
+
+    Set p = New Using
+
+    p.Parameters = Args 'Array(Arrays.ToCollection(v))
     
-    v = Args
-    
-    Set us = New Using
-    
-    Set us.Source = Arrays.ToCollection(v)
-    us.Init
-    
-    Set NewInstance = us
+    Set NewInstance = p
 
 End Function
+
+Private Property Let IParam_Parameters(ByVal RHS As Variant)
+    
+'    Set m_col = RHS(0)
+'
+    Dim v As IUsing
+    
+    Set m_col = Arrays.ToCollection(RHS)
+    
+    For Each v In m_col
+        v.Begin
+    Next
+End Property
+
 '>---
 '>#### Args(IUsingArgs I/F)
 '>
@@ -115,22 +126,6 @@ End Function
 Private Function IUsingArgs_Args(ByVal index As Long) As Object
     Set IUsingArgs_Args = m_col(index)
 End Function
-
-Private Property Set IUsingParam_Source(RHS As Collection)
-    Set m_col = RHS
-End Property
-'--------------------------------
-'With 時点で実行
-'--------------------------------
-Private Sub IUsingParam_Init()
-    
-    Dim v As IUsing
-    
-    For Each v In m_col
-        v.Begin
-    Next
-
-End Sub
 '--------------------------------
 'End With 時点で実行
 '--------------------------------

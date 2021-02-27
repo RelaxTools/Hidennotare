@@ -325,6 +325,31 @@ Sub Test_LineCursor()
     Loop
 
 End Sub
+Sub Test_TableCursor()
+
+    Dim v As Variant
+    Dim IC As ICursor
+
+    Set IC = TableCursor.NewInstance(ThisWorkbook.Worksheets("ƒeƒXƒg").ListObjects(1))
+
+    Dim i As Long
+    i = 0
+    
+    Do Until IC.Eof
+    
+        Select Case i
+            Case 0
+                Debug.Assert IC.Item("A") = "A1"
+            Case 1
+                Debug.Assert IC.Item("B") = "B2"
+            Case 2
+                Debug.Assert IC.Item("C") = "C3"
+        End Select
+        i = i + 1
+        IC.MoveNext
+    Loop
+
+End Sub
 Sub Test_StringBuilder()
 
     Dim SB As IStringBuilder
@@ -970,7 +995,7 @@ Sub Test_Logger()
 
     Dim ai As IAppInfo
     
-    Set ai = New TestAppInfo
+    Set ai = New SampleAppInfo
 
     With Logger.NewInstance(ai)
 
@@ -988,7 +1013,7 @@ Sub Test_Registry()
 
     Dim ai As IAppInfo
     
-    Set ai = New TestAppInfo
+    Set ai = New SampleAppInfo
 
     With Registry.NewInstance(ai)
 
@@ -1006,7 +1031,7 @@ Sub Test_IniFile()
 
     Dim ai As IAppInfo
     
-    Set ai = New TestAppInfo
+    Set ai = New SampleAppInfo
 
     With IniFile.NewInstance(ai)
 

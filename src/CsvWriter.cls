@@ -62,7 +62,7 @@ Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements IWriter
-Implements ICsvWriterParam
+Implements IParam
 
 Private mIW As IWriter
 
@@ -137,50 +137,26 @@ Public Function NewInstance(ByVal FileName As String, _
                              Optional ByVal Bom As Boolean = False, _
                              Optional ByVal Delimiter As String = ",") As IWriter
     
-    Dim FP As ICsvWriterParam
-    Set FP = New CsvWriter
+    Dim p As IParam
+    Set p = New CsvWriter
     
-    FP.FileName = FileName
-    FP.NewLineCode = NewLineCode
-    FP.Encode = Encode
-    FP.Mode = Mode
-    FP.Bom = Bom
-    FP.Delimiter = Delimiter
+    p.Parameters = Array(FileName, NewLineCode, Encode, Mode, Bom, Delimiter)
     
-    FP.Init
-    
-    Set NewInstance = FP
+    Set NewInstance = p
     
 End Function
 
-Private Property Let ICsvWriterParam_Bom(RHS As Boolean)
-    mBom = RHS
-End Property
+Private Property Let IParam_Parameters(ByVal Args As Variant)
+    
+    mFileName = Args(0)
+    mNewLineCode = Args(1)
+    mEncode = Args(2)
+    mMode = Args(3)
+    mBom = Args(4)
+    mDelimiter = Args(5)
 
-Private Property Let ICsvWriterParam_Delimiter(RHS As String)
-    mDelimiter = RHS
-End Property
-
-Private Property Let ICsvWriterParam_Encode(RHS As EncodeConstants)
-    mEncode = RHS
-
-End Property
-
-Private Property Let ICsvWriterParam_FileName(RHS As String)
-    mFileName = RHS
-End Property
-
-Private Sub ICsvWriterParam_Init()
     'TextWriterÇ…àœè˜Ç∑ÇÈÅB
     Set mIW = TextWriter.NewInstance(mFileName, mNewLineCode, mEncode, mMode, mBom)
-End Sub
-
-Private Property Let ICsvWriterParam_Mode(RHS As OpenModeConstants)
-    mMode = RHS
-End Property
-
-Private Property Let ICsvWriterParam_NewLineCode(RHS As NewLineCodeConstants)
-    mNewLineCode = RHS
 
 End Property
 

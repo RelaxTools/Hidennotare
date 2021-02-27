@@ -61,7 +61,7 @@ Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements IBookReader
-Implements IBookReaderParam
+Implements IParam
 
 Private XL As Excel.Application
 Private WB As Workbook
@@ -133,38 +133,28 @@ End Sub
 '>
 Public Function NewInstance(ByVal BookName As String, Optional ByVal ReadOnly As Boolean = True, Optional App As Application = Nothing) As IBookReader
     
-    Dim BR As IBookReaderParam
+    Dim p As IParam
     
-    Set BR = New BookReader
+    Set p = New BookReader
     
-    BR.BookName = BookName
-    BR.ReadOnly = ReadOnly
+    p.Parameters = Array(BookName, ReadOnly, App)
     
-    If App Is Nothing Then
-        Set BR.Application = Excel.Application
-    Else
-        Set BR.Application = App
-    End If
-    
-    BR.Init
-    
-    Set NewInstance = BR
+    Set NewInstance = p
 
 End Function
-Private Property Set IBookReaderParam_Application(RHS As Application)
-    Set XL = RHS
-End Property
+Private Property Let IParam_Parameters(ByVal Args As Variant)
 
-Private Property Let IBookReaderParam_BookName(ByVal RHS As String)
-    mBookName = RHS
-End Property
-
-Private Sub IBookReaderParam_Init()
+    mBookName = Args(0)
+    mReadOnly = Args(1)
+    
+    If Args(2) Is Nothing Then
+        Set XL = Excel.Application
+    Else
+        Set XL = Args(2)
+    End If
+    
     OpenFile
-End Sub
 
-Private Property Let IBookReaderParam_ReadOnly(ByVal RHS As Boolean)
-    mReadOnly = RHS
 End Property
 '>---
 '>#### VisibleSheets(IBookReader I/F)
@@ -327,4 +317,5 @@ Private Sub setAllA1()
     Next
     
 End Sub
+
 

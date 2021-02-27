@@ -61,7 +61,7 @@ Attribute VB_Exposed = True
 Option Explicit
 Implements IReader
 Implements ICursor
-Implements ITextReaderParam
+Implements IParam
 
 Private FP As Integer
 Private mOpen As Boolean
@@ -143,36 +143,26 @@ Public Function NewInstance(ByVal FileName As String, _
                             Optional ByVal NewLineCode As NewLineCodeConstants = NewLineCodeConstants.NewLineCodeCRLF, _
                             Optional ByVal Encode As EncodeConstants = EncodeConstants.EncodeCP932) As ICursor
 
-    Dim FA As ITextReaderParam
+    Dim p As IParam
     
-    Set FA = New TextReader
+    Set p = New TextReader
     
-    FA.FileName = FileName
-    FA.NewLineCode = NewLineCode
-    FA.Encode = Encode
+    p.Parameters = Array(FileName, NewLineCode, Encode)
     
-    FA.Init
-
-    Set NewInstance = FA
+    Set NewInstance = p
 
 End Function
+Private Property Let IParam_Parameters(ByVal Args As Variant)
 
-Private Property Let ITextReaderParam_Encode(RHS As EncodeConstants)
-    mEncode = RHS
-End Property
-
-Private Property Let ITextReaderParam_FileName(RHS As String)
-    mFileName = RHS
-End Property
-
-Private Property Let ITextReaderParam_NewLineCode(RHS As NewLineCodeConstants)
-    mNewLineCode = RHS
-End Property
-
-Private Sub ITextReaderParam_Init()
+    mFileName = Args(0)
+    mNewLineCode = Args(1)
+    mEncode = Args(2)
+    
     BulkRead
+    
     ICursor_MoveFirst
-End Sub
+
+End Property
 
 '--------------------------------------------------------------
 ' テキストファイルの一括読み込み
@@ -284,6 +274,9 @@ Private Function StartWith(bytBuf, ParamArray Args() As Variant) As Boolean
     StartWith = True
 
 End Function
+
+
+
 '>---
 '>#### 一括読み込み
 '>

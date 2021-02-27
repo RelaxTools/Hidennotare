@@ -58,7 +58,7 @@ Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements IWriter
-Implements ITextWriterParam
+Implements IParam
 
 Private FP As Integer
 Private mOpen As Boolean
@@ -131,44 +131,26 @@ Public Function NewInstance(ByVal FileName As String, _
                             Optional ByVal Mode As OpenModeConstants = OpenModeOutput, _
                             Optional ByVal Bom As Boolean = False) As IWriter
     
-    Dim FP As ITextWriterParam
-    Set FP = New TextWriter
+    Dim p As IParam
+    Set p = New TextWriter
     
-    FP.FileName = FileName
-    FP.NewLineCode = NewLineCode
-    FP.Encode = Encode
-    FP.Mode = Mode
-    FP.Bom = Bom
+    p.Parameters = Array(FileName, NewLineCode, Encode, Mode, Bom)
     
-    FP.Init
-    
-    Set NewInstance = FP
+    Set NewInstance = p
     
 End Function
 '以下、コンストラクタ以外の受け渡しパラメータを隠蔽
-Private Property Let ITextWriterParam_Bom(RHS As Boolean)
-    mBom = RHS
-End Property
-
-Private Property Let ITextWriterParam_Encode(RHS As EncodeConstants)
-    mEncode = RHS
-End Property
-
-Private Property Let ITextWriterParam_FileName(RHS As String)
-    mFileName = RHS
-End Property
-
-Private Property Let ITextWriterParam_Mode(RHS As OpenModeConstants)
-    mMode = RHS
-End Property
-
-Private Property Let ITextWriterParam_NewLineCode(RHS As NewLineCodeConstants)
-    mNewLineCode = RHS
-End Property
-
-Private Sub ITextWriterParam_Init()
+Private Property Let IParam_Parameters(ByVal RHS As Variant)
+    
+    mFileName = RHS(0)
+    mNewLineCode = RHS(1)
+    mEncode = RHS(2)
+    mMode = RHS(3)
+    mBom = RHS(4)
+    
     fileOpen
-End Sub
+
+End Property
 '>---
 '>#### WriteData(IWriter I/F)
 '>

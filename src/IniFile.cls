@@ -55,7 +55,7 @@ Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements IRegistry
-Implements IAppNameParam
+Implements IParam
 
 Private mINIFile As String
 
@@ -97,16 +97,16 @@ Private Declare PtrSafe Function WritePrivateProfileStringW Lib "kernel32" (ByVa
 '>
 Public Function NewInstance(ai As IAppInfo) As IRegistry
 
-    Dim p As IAppNameParam
+    Dim p As IParam
     
     Set p = New IniFile
 
-    p.Name = ai.IniFileName
+    p.Parameters = ai.IniFileName
 
     Set NewInstance = p
 
 End Function
-Private Property Let IAppNameParam_Name(RHS As String)
+Private Property Let IParam_Parameters(ByVal RHS As Variant)
     mINIFile = RHS
 End Property
 '>---

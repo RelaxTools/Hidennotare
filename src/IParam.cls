@@ -2,7 +2,7 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "ISheetCursorParam"
+Attribute VB_Name = "IParam"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
@@ -36,20 +36,16 @@ Attribute VB_Exposed = True
 ' SOFTWARE.
 '
 '-----------------------------------------------------------------------------------------------------
-'>### ISheetCursorParam インターフェイス
+'>### IParam インターフェイス
 '>
 '>**Remarks**
 '>
-'>ISheetCursorParam のインターフェイス
+'>IParam のインターフェイス
 '>
 '>**Definition**
 '>
 '>```
-'>Public Property Set Worksheet(ByRef WS As Worksheet)
-'>Public Property Let Direction(ByVal pDirection As SheetCursorConstants)
-'>Public Property Let StartNum(ByVal v As Variant)
-'>Public Property Let EofNum(ByVal v As Variant)
-'>Public Property Let EofStr(ByVal s As String)
+'>Public Property Let Parameters(ByVal Args As Variant)
 '>```
 '>
 '>**Sample**
@@ -59,18 +55,9 @@ Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 
-Public Property Set Worksheet(ByRef WS As Worksheet)
+Public Property Let Parameters(ByVal Args As Variant)
 
 End Property
-Public Property Let Direction(ByVal pDirection As SheetCursorConstants)
 
-End Property
-Public Property Let StartNum(ByVal v As Variant)
 
-End Property
-Public Property Let EofNum(ByVal v As Variant)
 
-End Property
-Public Property Let EofStr(ByVal s As String)
-
-End Property

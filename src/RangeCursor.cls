@@ -73,7 +73,7 @@ Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements ICursor
-Implements IRangeCursorParam
+Implements IParam
 
 'Range
 Private mRange As Range
@@ -117,20 +117,19 @@ Private mRow As Long
 '>
 Public Function NewInstance(rng As Range) As ICursor
     
-    Dim RC As IRangeCursorParam
-    Set RC = New RangeCursor
+    Dim p As IParam
+    Set p = New RangeCursor
     
-    Set RC.Source = rng
+    p.Parameters = Array(rng)
     
-    Set NewInstance = RC
+    Set NewInstance = p
 
     NewInstance.MoveFirst
 
 End Function
-Private Property Set IRangeCursorParam_Source(RHS As Range)
-    Set mRange = RHS
+Private Property Let IParam_Parameters(ByVal RHS As Variant)
+    Set mRange = RHS(0)
 End Property
-
 Private Sub Class_Initialize()
     mStartRow = 1
 End Sub
@@ -295,5 +294,3 @@ Private Sub ICursor_MoveNext()
     mRow = mRow + 1
     SkipHiddenRow
 End Sub
-
-

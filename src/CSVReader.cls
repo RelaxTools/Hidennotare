@@ -63,7 +63,7 @@ Attribute VB_Exposed = True
 Option Explicit
 Implements ICursor
 Implements IReader
-Implements ICsvReaderParam
+Implements IParam
 
 Private mIR As IReader
 
@@ -161,45 +161,24 @@ Public Function NewInstance(ByVal FileName As String, _
                             Optional ByVal Header As Boolean = False, _
                             Optional ByVal Skip As Long = 0) As ICursor
 
-    Dim FP As ICsvReaderParam
+    Dim p As IParam
     
-    Set FP = New CSVReader
+    Set p = New CSVReader
     
-    FP.FileName = FileName
-    FP.NewLineCode = NewLineCode
-    FP.Encode = Encode
-    FP.Delimiter = Delimiter
-    FP.Quotation = Quotation
-    FP.Header = Header
-    FP.Skip = Skip
+    p.Parameters = Array(FileName, NewLineCode, Encode, Delimiter, Quotation, Header, Skip)
     
-    FP.Init
-    
-    Set NewInstance = FP
+    Set NewInstance = p
 
 End Function
-Private Property Let ICsvReaderParam_Delimiter(RHS As String)
-    mDelimiter = RHS
-End Property
-Private Property Let ICsvReaderParam_Encode(RHS As EncodeConstants)
-    mEncode = RHS
-End Property
-Private Property Let ICsvReaderParam_FileName(RHS As String)
-    mFileName = RHS
-End Property
-Private Property Let ICsvReaderParam_NewLineCode(RHS As NewLineCodeConstants)
-    mNewLineCode = RHS
-End Property
-Private Property Let ICsvReaderParam_Quotation(RHS As Boolean)
-    mQuotation = RHS
-End Property
-Private Property Let ICsvReaderParam_Header(RHS As Boolean)
-    mHeader = RHS
-End Property
-Private Property Let ICsvReaderParam_Skip(RHS As Long)
-    mSkip = RHS
-End Property
-Private Sub ICsvReaderParam_Init()
+Private Property Let IParam_Parameters(ByVal Args As Variant)
+    
+    mFileName = Args(0)
+    mNewLineCode = Args(1)
+    mEncode = Args(2)
+    mDelimiter = Args(3)
+    mQuotation = Args(4)
+    mHeader = Args(5)
+    mSkip = Args(6)
     
     'TextReaderに委譲する。改行コードをCsvReader側でパースする。
     Set mIR = TextReader.NewInstance(mFileName, NewLineCodeConstants.NewLineCodeNone, mEncode)
@@ -212,7 +191,7 @@ Private Sub ICsvReaderParam_Init()
     
     ICursor_MoveFirst
 
-End Sub
+End Property
 Private Sub Class_Terminate()
     Set mIR = Nothing
 End Sub

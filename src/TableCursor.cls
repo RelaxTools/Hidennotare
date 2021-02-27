@@ -73,7 +73,7 @@ Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements ICursor
-Implements ITableCursorParam
+Implements IParam
 
 Private mLO As ListObject
 Private mWS As Worksheet
@@ -123,20 +123,20 @@ End Sub
 '>
 Public Function NewInstance(LO As ListObject) As ICursor
     
-    Dim TC As ITableCursorParam
+    Dim p As IParam
     
-    Set TC = New TableCursor
+    Set p = New TableCursor
     
-    Set TC.ListObject = LO
+    p.Parameters = Array(LO)
     
-    Set NewInstance = TC
+    Set NewInstance = p
     
     NewInstance.MoveFirst
     
 End Function
-Private Property Set ITableCursorParam_ListObject(RHS As ListObject)
-    
-    Set mLO = RHS
+Private Property Let IParam_Parameters(ByVal RHS As Variant)
+
+    Set mLO = RHS(0)
     Set mWS = mLO.Parent
 
 End Property
@@ -317,5 +317,6 @@ Private Sub ICursor_MoveNext()
     mlngRow = mlngRow + 1
     SkipHiddenRow
 End Sub
+
 
 

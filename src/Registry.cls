@@ -56,7 +56,7 @@ Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements IRegistry
-Implements IAppNameParam
+Implements IParam
 
 Private mAppName As String
 '>---
@@ -95,16 +95,16 @@ Private mAppName As String
 '>
 Public Function NewInstance(ai As IAppInfo) As IRegistry
 
-    Dim p As IAppNameParam
+    Dim p As IParam
     
     Set p = New Registry
 
-    p.Name = ai.AppName
+    p.Parameters = ai.AppName
 
     Set NewInstance = p
 
 End Function
-Private Property Let IAppNameParam_Name(RHS As String)
+Private Property Let IParam_Parameters(ByVal RHS As Variant)
     mAppName = RHS
 End Property
 '--------------------------------------------------------------
@@ -113,6 +113,9 @@ End Property
 Private Sub Class_Initialize()
     mAppName = "Default"
 End Sub
+
+
+
 '>---
 '>#### GetSetting(IRegistry I/F)
 '>

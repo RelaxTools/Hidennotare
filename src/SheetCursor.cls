@@ -71,7 +71,7 @@ Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements ICursor
-Implements ISheetCursorParam
+Implements IParam
 
 'ワークシート
 Private mWS As Worksheet
@@ -143,50 +143,43 @@ Public Function NewInstance(ByRef WS As Worksheet, _
                             Optional ByVal Direction As SheetCursorConstants = SheetCursorConstants.DirectionDown, _
                             Optional ByVal EofStr As String = "") As ICursor
 
-    Dim SC As ISheetCursorParam
+    Dim p As IParam
 
-    Set SC = New SheetCursor
+    Set p = New SheetCursor
     
-    Set SC.Worksheet = WS
-    SC.Direction = Direction
-    SC.StartNum = StartNum
-    SC.EofNum = EofNum
-    SC.EofStr = EofStr
+    
+    p.Parameters = Array(WS, Direction, StartNum, EofNum, EofStr)
 
-    Set NewInstance = SC
+    Set NewInstance = p
     
     NewInstance.MoveFirst
 
 End Function
-Private Property Let ISheetCursorParam_Direction(ByVal RHS As SheetCursorConstants)
-    mDirection = RHS
-End Property
-Private Property Let ISheetCursorParam_EofNum(ByVal RHS As Variant)
-    If mDirection = DirectionDown Then
-        mEofCol = RHS
-    Else
-        mEofRow = CLng(RHS)
-    End If
-End Property
-Private Property Let ISheetCursorParam_EofStr(ByVal RHS As String)
-    mEofStr = RHS
-End Property
+Private Property Let IParam_Parameters(ByVal RHS As Variant)
 
-Private Property Let ISheetCursorParam_StartNum(ByVal RHS As Variant)
+    Set mWS = RHS(0)
+    mDirection = RHS(1)
+    
     If mDirection = DirectionDown Then
-        mStartRow = RHS
+        mEofCol = RHS(3)
+    Else
+        mEofRow = CLng(RHS(3))
+    End If
+    
+    mEofStr = RHS(4)
+    
+    If mDirection = DirectionDown Then
+        mStartRow = RHS(2)
     Else
         '指定が数値ならそのまま。アルファベットなら列変換
-        If IsNumeric(RHS) Then
-            mStartCol = RHS
+        If IsNumeric(RHS(2)) Then
+            mStartCol = RHS(2)
         Else
-            mStartCol = mWS.Columns(RHS).column
+            mStartCol = mWS.Columns(RHS(2)).column
         End If
     
     End If
-End Property
-Private Property Set ISheetCursorParam_Worksheet(RHS As Worksheet)
-    Set mWS = RHS
+
 End Property
 '------------------------------------------------------
 ' デストラクタ
@@ -379,4 +372,5 @@ Private Sub ICursor_MoveNext()
         SkipHiddenCol
     End If
 End Sub
+
 

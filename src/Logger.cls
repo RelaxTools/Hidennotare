@@ -57,7 +57,7 @@ Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements ILogger
-Implements ILoggerParam
+Implements IParam
 
 #If Win64 Then
     Private Declare PtrSafe Function GetTickCount Lib "kernel32" Alias "GetTickCount64" () As LongPtr
@@ -118,41 +118,22 @@ Private mFolder As String
 '>
 Public Function NewInstance(ai As IAppInfo) As ILogger
 
-    Dim p As ILoggerParam
+    Dim p As IParam
     
     Set p = New Logger
-
-    p.Name = ai.AppName
-    p.History = ai.LogHistory
-    p.Level = ai.LogLevel
-    p.LogType = ai.LogType
-    p.Folder = ai.LogFolder
     
-    p.Init
+    p.Parameters = Array(ai.AppName, ai.LogHistory, ai.LogLevel, ai.LogType, ai.LogFolder)
 
     Set NewInstance = p
 
 End Function
-Private Property Let ILoggerParam_Folder(RHS As String)
-    mFolder = RHS
-End Property
-Private Property Let ILoggerParam_History(RHS As Long)
-    mlngHistory = RHS
-End Property
+Private Property Let IParam_Parameters(ByVal Args As Variant)
 
-Private Property Let ILoggerParam_Level(RHS As LogLevel)
-    mLevel = RHS
-End Property
-
-Private Property Let ILoggerParam_LogType(RHS As LogType)
-    mLogType = RHS
-End Property
-
-Private Property Let ILoggerParam_Name(RHS As String)
-    mName = RHS
-End Property
-
-Private Sub ILoggerParam_Init()
+    mName = Args(0)
+    mlngHistory = Args(1)
+    mLevel = Args(2)
+    mLogType = Args(3)
+    mFolder = Args(4)
 
     Set mFSO = VBA.CreateObject("Scripting.FileSystemObject")
 
@@ -164,13 +145,7 @@ Private Sub ILoggerParam_Init()
         Call OpenLog
     End If
 
-End Sub
-'--------------------------------------------------------------
-'Å@Class_Initialize
-'--------------------------------------------------------------
-Private Sub Class_Initialize()
-
-End Sub
+End Property
 '--------------------------------------------------------------
 'Å@Class_Terminate
 '--------------------------------------------------------------
@@ -627,4 +602,5 @@ Private Function PlaceHolder(ByVal strMsg As String, ByVal p As Variant) As Stri
     PlaceHolder = strMsg
 
 End Function
+
 
