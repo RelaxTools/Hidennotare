@@ -5,7 +5,7 @@ END
 Attribute VB_Name = "OneTimeSpeedBooster"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = False
+Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 '
@@ -71,6 +71,9 @@ Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
 Implements IUsing
+Public Function NewInstance() As OneTimeSpeedBooster
+    Set NewInstance = New OneTimeSpeedBooster
+End Function
 
 Private Sub IUsing_Begin()
     

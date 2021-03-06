@@ -6,7 +6,7 @@ Attribute VB_Name = "Arrays"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
-Attribute VB_Exposed = False
+Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 '
 ' [Hidennotare] v2.5
@@ -544,7 +544,7 @@ End Sub
 '>* INewInstance
 '>* IValueObject
 '>
-Public Sub CopyToListView(ary As IList, objList As Object, Fields As Variant)
+Public Sub CopyToListView(ary As IList, objList As Object)
 
     Dim objRec As Object
     Dim v As Variant
@@ -553,6 +553,10 @@ Public Sub CopyToListView(ary As IList, objList As Object, Fields As Variant)
     If objList.Tag = "" Then
         Err.Raise 512 + 1, TypeName(Me) & ".IListToListbox", "Item name is not set in tag"
     End If
+    
+    Dim Fields As Variant
+    
+    Fields = Split(objList.Tag, ",")
 
     'ListView‚ÌƒNƒŠƒA
     objList.ListItems.Clear
@@ -636,4 +640,16 @@ Sub ArrayMove(src As Variant, srcPos As Long, dstPos As Long, Length As Long)
     ZeroMemory src(zeroPos), VARIANT_SIZE * zeroLen
 
 End Sub
+Public Function IsArray(arg As Variant) As Boolean
+
+    On Error GoTo e
+
+    IsArray = VBA.IsArray(arg)
+
+    Exit Function
+e:
+
+    IsArray = False
+
+End Function
 

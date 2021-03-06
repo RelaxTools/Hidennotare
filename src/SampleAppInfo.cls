@@ -7,6 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
+Option Explicit
 Implements IAppInfo
 
 Private mLogger As ILogger
@@ -41,20 +42,20 @@ End Property
 
 'Public Function Logger() As ILogger
 '    If mLogger Is Nothing Then
-'        Set mLogger = Hidennotare.Logger.NewInstance(ThisWorkbook)
+'        Set mLogger = Hidennotare.Logger.NewInstance(Me)
 '    End If
 '    Set Logger = mLogger
 'End Function
 
 'Public Function Registry() As IRegistry
 '    If mRegistry Is Nothing Then
-'        Set mRegistry = Hidennotare.Registry.NewInstance(ThisWorkbook)
+'        Set mRegistry = Hidennotare.Registry.NewInstance(Me)
 '    End If
 '    Set Registry = mRegistry
 'End Function
 'Public Function INIFile() As IRegistry
 '    If mINIFile Is Nothing Then
-'        Set mINIFile = Hidennotare.INIFile.NewInstance(ThisWorkbook)
+'        Set mINIFile = Hidennotare.INIFile.NewInstance(Me)
 '    End If
 '    Set INIFile = mINIFile
 'End Function

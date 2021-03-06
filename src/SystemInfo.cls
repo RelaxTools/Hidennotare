@@ -181,3 +181,4 @@ Public Function GetAppFolder() As String
     GetAppFolder = VBA.CreateObject("Wscript.Shell").SpecialFolders("AppData")
 
 End Function
+

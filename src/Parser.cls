@@ -449,8 +449,6 @@ Private Function ParseValue(ByVal strJSON As String) As Variant
     End Select
 
 End Function
-
-
 '>---
 '>#### ParseFromListbox(Parser)
 '>
@@ -554,6 +552,117 @@ Public Function ParseFromListbox(objList As Object, Optional obj As Object = Not
     Next
 
     Set ParseFromListbox = ary
+
+End Function
+'>---
+'>#### ParseFromListbox(Parser)
+'>
+'>**Syntax**
+'>
+'>```
+'>Set ret = Parser.ParseFromListview(objList,[obj = Nothing])
+'>```
+'>
+'>**Parameters**
+'>
+'>|Name|Required/Optional|Data type|Description|
+'>---|---|---|---
+'>|objList|必須|Object|Parseする ListBox or ComboBox を指定|
+'>|obj|省略可|Object|レコードに使用するオブジェクトを指定。省略時は Dictionary |
+'>
+'>**Return Value**
+'>
+'>|Name|Data type|Description|
+'>---|---|---
+'>|ret|Boolean|新しいインスタンス(ArrayList)|
+'>
+'>
+'>**Remarks**
+'>
+'>ListView/ComboBox パース<br>
+'>ListView/ComboBoxからArrayList(レコードはDictionary)を生成する。<br>
+'>Tagにレコードを生成するためのフィールド名リスト（カンマ区切り）が必須。<br>
+'>レコードに使用するオブジェクトは INewInstance と ICompatibleProperty を Implements したクラスであること。
+'>
+'>**Example**
+'>
+'>```
+'>    'これはコードではなくプロパティウィンドウで設定しても良い
+'>    lstFavorite.Tag = "No,Name,Address"
+'>
+'>    Dim lst As IList
+'>    Set lst = Parser.ParseFromListview(lstFavorite, New FavoriteBean)
+'>
+'>```
+'>
+'>**See also**
+'>
+'>* Parser.CopyToListbox
+'>* Dictionary
+'>* INewInstance
+'>* ICompatibleProperty
+'>
+Public Function ParseFromListview(objList As Object, Optional obj As Object = Nothing) As IList
+
+    Dim ary As IList
+    Dim objRec As Object
+    Dim Fields As Variant
+    Dim i As Long
+    Dim j As Long
+    
+    'Tagにフィールド情報が無い場合
+    If objList.Tag = "" Then
+        Err.Raise 512 + 1, TypeName(Me) & ".ParseFromListview", "Item name is not set in tag"
+    End If
+    
+    '配列に変換
+    Fields = Split(objList.Tag, ",")
+    
+    '引数によりインスタンス化するオブジェクトを判定
+    Select Case True
+        Case obj Is Nothing
+            Set ary = ArrayList.NewInstance()
+        Case Else
+            If TypeOf obj Is Collection Then
+                Set ary = Objects.AsINewInstance(obj(1)).NewInstance
+            Else
+                Set ary = ArrayList.NewInstance()
+            End If
+    End Select
+        
+'    For i = 0 To objList.ListCount - 1
+    Dim l As Variant
+    For Each l In objList.ListItems
+        
+        '引数によりインスタンス化するオブジェクトを判定
+        Select Case True
+            Case obj Is Nothing
+                Set objRec = Dictionary.NewInstance
+            Case Else
+                If TypeOf obj Is Collection Then
+                    Set objRec = Objects.AsINewInstance(obj(2)).NewInstance
+                Else
+                    Set objRec = Objects.AsINewInstance(obj).NewInstance
+                End If
+        End Select
+        
+        For j = 0 To objList.ColumnHeaders.Count - 1
+        
+            '設定されているフィールドのみコピーする。
+            If Fields(j) <> "" Then
+                If j = 0 Then
+                    Objects.AsIValueObject(objRec).Fields(Fields(j)) = l.Text
+                Else
+                    Objects.AsIValueObject(objRec).Fields(Fields(j)) = l.SubItems(j)
+                End If
+            End If
+        Next
+            
+        ary.Add objRec
+    
+    Next
+
+    Set ParseFromListview = ary
 
 End Function
 '>---

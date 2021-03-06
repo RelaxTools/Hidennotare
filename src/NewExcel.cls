@@ -85,9 +85,9 @@ Private Sub IUsing_Finish()
     
     '開いているブックがあれば全部閉じる
     If mXL.Workbooks.Count > 0 Then
-        Dim WB As Workbook
-        For Each WB In mXL.Workbooks
-            WB.Close SaveChanges:=False
+        Dim wb As Workbook
+        For Each wb In mXL.Workbooks
+            wb.Close SaveChanges:=False
         Next
     End If
     mXL.Quit

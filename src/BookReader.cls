@@ -64,7 +64,7 @@ Implements IBookReader
 Implements IParam
 
 Private XL As Excel.Application
-Private WB As Workbook
+Private wb As Workbook
 
 Private mBookName As String
 Private mReadOnly As Boolean
@@ -194,7 +194,7 @@ Private Property Get IBookReader_VisibleSheets() As Collection
     Dim col As Collection
     Set col = New Collection
     
-    For Each WS In WB.Worksheets
+    For Each WS In wb.Worksheets
         If WS.visible = xlSheetVisible Then
             col.Add WS, WS.Name
         End If
@@ -219,9 +219,9 @@ Private Sub OpenFile()
         End If
     Next
     
-    Set WB = XL.Workbooks.Open(FileName:=mBookName, ReadOnly:=mReadOnly, UpdateLinks:=0, IgnoreReadOnlyRecommended:=True, notify:=False, local:=True)
+    Set wb = XL.Workbooks.Open(FileName:=mBookName, ReadOnly:=mReadOnly, UpdateLinks:=0, IgnoreReadOnlyRecommended:=True, notify:=False, local:=True)
     If XL.visible Then
-        WB.Application.WindowState = xlMinimized
+        wb.Application.WindowState = xlMinimized
         DoEvents
     End If
     
@@ -235,8 +235,8 @@ Private Sub CloseFile()
     
     If mOpen Then
         On Error Resume Next
-        WB.Close SaveChanges:=False
-        Set WB = Nothing
+        wb.Close SaveChanges:=False
+        Set wb = Nothing
         mOpen = False
     End If
 
@@ -274,14 +274,14 @@ End Sub
 '>
 Private Sub IBookReader_Save(Optional ByVal opt As Boolean = False)
     
-    If Not WB.ReadOnly Then
+    If Not wb.ReadOnly Then
         'Ç®çÏñ@
         If opt Then
             setAllA1
         End If
         
         XL.DisplayAlerts = False
-        WB.Save
+        wb.Save
         XL.DisplayAlerts = True
     End If
 
@@ -296,20 +296,20 @@ Private Sub setAllA1()
     Dim WS As Worksheet
     Dim WD As Window
     
-    For Each WS In WB.Worksheets
+    For Each WS In wb.Worksheets
         
         If WS.visible = xlSheetVisible Then
             
             WS.Activate
             WS.Range("A1").Activate
-            WB.Windows(1).ScrollRow = 1
-            WB.Windows(1).ScrollColumn = 1
-            WB.Windows(1).Zoom = 100
+            wb.Windows(1).ScrollRow = 1
+            wb.Windows(1).ScrollColumn = 1
+            wb.Windows(1).Zoom = 100
         
         End If
     Next
 
-    For Each WS In WB.Worksheets
+    For Each WS In wb.Worksheets
         If WS.visible = xlSheetVisible Then
             WS.Select
             Exit For

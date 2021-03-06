@@ -47,12 +47,12 @@ Private Sub UserForm_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, 
         With .Controls.Add
             .BeginGroup = True
             .Caption = "情報メッセージ"
-            .OnAction = CB.CreateOnAction(ActionMessageInfo)
+            .OnAction = CB.CreateOnAction(ThisWorkbook, ActionMessageInfo)
             .FaceId = 535
         End With
         With .Controls.Add
             .Caption = "警告メッセージ"
-            .OnAction = CB.CreateOnAction(ActionMessageExcl)
+            .OnAction = CB.CreateOnAction(ThisWorkbook, ActionMessageExcl)
             .FaceId = 534
         End With
         
@@ -64,7 +64,7 @@ End Sub
 'OnTimeにも使える
 Private Sub CommandButton1_Click()
     '３秒後に実行
-    Process.UnsyncRun CB.CreateOnAction(DeleyExec), 3
+    Process.UnsyncRun CB.CreateOnAction(ThisWorkbook, DeleyExec), 3
 End Sub
 
 '実際の処理を記述するイベント

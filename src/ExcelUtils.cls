@@ -129,14 +129,7 @@ Public Function IsOpenedBook(ByVal strBook As String) As Boolean
     Next
 
 End Function
-'---------------------------------------------------------------------------------------------------
-'　Application.Run / .OnKey / .OnAction / .OnUndo / .OnRepeat / .OnTime の頭にブック名を付ける
-'---------------------------------------------------------------------------------------------------
-Public Function BuildOnAction(ByVal strMacro As String) As String
 
-    BuildOnAction = "'" & ThisWorkbook.Name & "'!" & strMacro
-    
-End Function
 '--------------------------------------------------------------
 '  Excelの絶対参照文字列を生成する。
 '--------------------------------------------------------------
@@ -328,30 +321,25 @@ End Function
 '--------------------------------------------------------------
 Function Except(r As Range, s As Range) As Range
 
-'     Dim PL As PairLogger: Set PL = PairLogger.NewInstance(TypeName(Me) & ".Except")
-    '重なる部分があるか？
-
     Dim n As Range
     
     '共通部分があるか？
     Set n = Me.Intersect(r, s)
     If n Is Nothing Then
         Set Except = r
-        GoTo e
+        Exit Function
     End If
         
     Dim u As Range
     Dim m As Range
     For Each m In r
         '共通部が範囲外なら対象
-        If n(1).Row <= m.Row And n(1).column <= m.column And n(n.Count).Row >= m.Row And n(n.Count).column >= m.column Then
-        Else
+        If Me.Intersect(m, s) Is Nothing Then
             Set u = Me.Union(u, m)
         End If
     Next
     
     Set Except = u
-e:
 
 End Function
 '--------------------------------------------------------------
@@ -385,4 +373,11 @@ End Function
 Private Function lBuildPath(ByVal strBook As String, ByVal strSheet As String, ByVal strAddress) As String
     lBuildPath = "'[" & strBook & "]" & strSheet & "'!" & strAddress
 End Function
+'---------------------------------------------------------------------------------------------------
+'　Application.Run / .OnKey / .OnAction / .OnUndo / .OnRepeat / .OnTime の頭にブック名を付ける
+'---------------------------------------------------------------------------------------------------
+Public Function BuildOnAction(ByVal wb As Workbook, ByVal strMacro As String) As String
 
+    BuildOnAction = "'" & wb.Name & "'!" & strMacro
+    
+End Function

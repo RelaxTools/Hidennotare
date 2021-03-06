@@ -5,7 +5,7 @@ END
 Attribute VB_Name = "Callback"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = False
+Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 '-----------------------------------------------------------------------------------------------------
 '
@@ -42,21 +42,39 @@ Attribute VB_Exposed = True
 ' クラスのイベントに変換するクラス。
 '-----------------------------------------------------------------------------------------------------
 Option Explicit
+Implements IParam
+
 
 'メインイベント
 Public Event OnAction(ByVal Action As Long, ByVal opt As String)
 
 Public Tag As String
 Private mKey As String
+Private mBk As Workbook
+Public Function NewInstance(bk As Workbook) As Callback
+
+    Dim p As IParam
+
+    Set p = New Callback
+
+    p.Parameters = Array(bk)
+
+    Set NewInstance = p
+End Function
+Private Property Let IParam_Parameters(ByVal Args As Variant)
+    Set mBk = Args(0)
+    mKey = CallbackHelper.InstallCallback(Me)
+End Property
+
 Public Function CreateOnAction(ByVal Action As Long, Optional ByVal opt As String = "") As String
-    CreateOnAction = ExcelUtils.BuildOnAction("'CallbackHelper.OnActionCallback """ & mKey & """, """ & Action & """, """ & opt & """ '")
+    CreateOnAction = ExcelUtils.BuildOnAction(ThisWorkbook, "'CallbackHelper.OnActionCallback """ & mKey & """, """ & Action & """, """ & opt & """ '")
 End Function
 Public Sub OnActionCallback(ByVal Action As Long, ByVal opt As String)
     RaiseEvent OnAction(Action, opt)
 End Sub
-Private Sub Class_Initialize()
-    mKey = CallbackHelper.InstallCallback(Me)
-End Sub
 Private Sub Class_Terminate()
-    CallbackHelper.UninstallCallback mKey
+    If mKey <> "" Then
+        CallbackHelper.UninstallCallback mKey
+    End If
 End Sub
+
